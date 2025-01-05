@@ -3,20 +3,20 @@ package org.frc5687.robot;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class OperatorInterface {
-    private final CommandPS4Controller _driverController;
+    private final CommandXboxController _driverController;
 
     public OperatorInterface() {
-        _driverController = new CommandPS4Controller(0);
+        _driverController = new CommandXboxController(0);
     }
 
     public void configureCommandMapping(DriveSubsystem drive) {
         _driverController.povDown().onTrue(Commands.runOnce(drive::zeroGyroscope));
     }
 
-    public CommandPS4Controller getDriverController()  {
+    public CommandXboxController getDriverController()  {
         return _driverController;
     }
 }

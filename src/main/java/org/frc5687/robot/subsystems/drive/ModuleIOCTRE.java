@@ -51,6 +51,9 @@ public class ModuleIOCTRE implements ModuleIO {
 
         _encoder.getConfigurator().apply(CANfig);
         configureTurnMotorFeedback(encoderID);
+
+        _driveMotor.configureClosedLoop(Constants.SwerveModule.DRIVE_CONTROLLER_CONFIG);
+        _turnMotor.configureClosedLoop(Constants.SwerveModule.STEER_CONTROLLER_CONFIG);
         
         _drivePosition = _driveMotor.getPosition();
         _driveVelocity = _driveMotor.getVelocity();

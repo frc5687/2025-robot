@@ -3,6 +3,7 @@ package org.frc5687.robot.subsystems.drive;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.subsystems.drive.DriveIO.DriveIOInputs;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.console.ConsoleSource;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -82,13 +83,22 @@ public class DriveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         _io.updateInputs(_inputs);
-        updateDesiredStates();
-        _io.setModuleStates(_currentSetpoint.moduleStates());
+        updateModuleStatesSimple();
+        //updateDesiredStates();
+        //_io.setModuleStates(_currentSetpoint.moduleStates());
     }
 
     public void setVelocity(ChassisSpeeds speeds) {
         Logger.recordOutput("Requested Speeds", speeds);
         _desiredChassisSpeeds = speeds;
+    }
+
+    public void updateModuleStatesSimple() {
+        ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(_desiredChassisSpeeds, 0.02);
+        SwerveModuleState[] setpointStates = _kinematics.toSwerveModuleStates(discreteSpeeds);
+        SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, Constants.DriveTrain.MAX_MPS * 0.8);
+        var moduleStates = _kinematics.toSwerveModuleStates(_desiredChassisSpeeds);
+        _io.setModuleStates(moduleStates);
     }
 
     private void updateDesiredStates() {
