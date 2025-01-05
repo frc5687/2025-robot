@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 // import edu.wpi.first.math.util.Units;
@@ -71,7 +72,7 @@ public class Constants {
 
         static {
             STEER_CONTROLLER_CONFIG.SLOT = 0;
-            STEER_CONTROLLER_CONFIG.kP = -50.0; // FIXME
+            STEER_CONTROLLER_CONFIG.kP = 10.0; // FIXME
             STEER_CONTROLLER_CONFIG.kI = 0.0;
             STEER_CONTROLLER_CONFIG.kD = 0.0;
             STEER_CONTROLLER_CONFIG.kV = 0.0;
@@ -197,6 +198,17 @@ public class Constants {
 
         public static final double POSITION_TOLERANCE = 0.01;
         public static final double HEADING_TOLERANCE = 0.04; // rad
+
+        public static final Translation2d LOCATIONS[] =  {
+            Constants.DriveTrain.NORTH_WEST_CONFIG.position,
+            Constants.DriveTrain.NORTH_EAST_CONFIG.position,
+            Constants.DriveTrain.SOUTH_WEST_CONFIG.position,
+            Constants.DriveTrain.SOUTH_EAST_CONFIG.position
+        };
+
+        public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
+            LOCATIONS
+        );
     }
 
     public static class Vision {

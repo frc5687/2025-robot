@@ -4,22 +4,32 @@
 
 package org.frc5687.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
-  private final RobotContainer m_robotContainer;
+  private final RobotContainer _robotContainer;
 
   public Robot() {
-    m_robotContainer = new RobotContainer();
+    Logger.addDataReceiver(new NT4Publisher());
+    Logger.start();
+    _robotContainer = new RobotContainer();
   }
 
   @Override
   public void robotPeriodic() {
+    Threads.setCurrentThreadPriority(true, 99);
+
     CommandScheduler.getInstance().run();
+    _robotContainer.periodic();
+
+    Threads.setCurrentThreadPriority(false, 10);
   }
 
   @Override
@@ -33,7 +43,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = _robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

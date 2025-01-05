@@ -22,9 +22,13 @@ public class SwerveModule {
     }
 
     public SwerveModule(ModuleConfiguration config, int driveID, int turnID, int encoderID) {
-        _io = new ModuleIOCTRE(driveID, turnID, encoderID, config.canBus, config.encoderOffset);
+        _io = createIO(driveID, turnID, encoderID, config.canBus, config.encoderOffset);
         _modulePosition = config.position;
         _moduleName = config.moduleName;
+    }
+
+    protected ModuleIO createIO(int driveID, int turnID, int encoderID, String canBus, double offset) {
+        return new ModuleIOCTRE(driveID, turnID, encoderID, canBus, offset);
     }
     
     public void periodic() {

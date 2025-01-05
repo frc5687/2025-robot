@@ -2,6 +2,7 @@ package org.frc5687.robot.subsystems.drive;
 
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.subsystems.drive.DriveIO.DriveIOInputs;
+import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -51,16 +52,17 @@ public class DriveSubsystem extends SubsystemBase {
 
         _kinematics = new SwerveDriveKinematics(moduleLocations);
         
+        // var motor = DCMotor.getKrakenX60(1).withReduction(Constants.SwerveModule.GEAR_RATIO_DRIVE);
         var config = new RobotConfig(
             Units.Pounds.of(50.0),
             Units.KilogramSquareMeters.of(9),
             new ModuleConfig(
-                0.0508, // wheel radius in meters
-                4.5, // max module speed in m/s
+                Constants.SwerveModule.WHEEL_RADIUS, // wheel radius in meters
+                Constants.DriveTrain.MAX_MPS, // max module speed in m/s
                 1.0, // drive base radius in meters
                 DCMotor.getKrakenX60Foc(1).withReduction(Constants.SwerveModule.GEAR_RATIO_DRIVE), // drive motor and reduction
                 120, // drive current limit
-                1 // minimum module speed, m/s
+                1 
             ),
             moduleLocations[0], // NW 
             moduleLocations[1], // NE 
@@ -72,6 +74,7 @@ public class DriveSubsystem extends SubsystemBase {
                 config,
                 DCMotor.getKrakenX60(1).freeSpeedRadPerSec / (Constants.SwerveModule.GEAR_RATIO_STEER) // steer motor max speed divided by reduction
         );
+        _currentSetpoint = new SwerveSetpoint(_desiredChassisSpeeds, _inputs.measuredStates, DriveFeedforwards.zeros(config.numModules));
         
         configureAutoBuilder(config);
     }
@@ -84,6 +87,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void setVelocity(ChassisSpeeds speeds) {
+        Logger.recordOutput("Requested Speeds", speeds);
         _desiredChassisSpeeds = speeds;
     }
 
@@ -98,7 +102,6 @@ public class DriveSubsystem extends SubsystemBase {
             twistVel.dx / Constants.UPDATE_PERIOD,
             twistVel.dy / Constants.UPDATE_PERIOD,
             twistVel.dtheta / Constants.UPDATE_PERIOD);
-
         _currentSetpoint = _setpointGenerator.generateSetpoint(_currentSetpoint, updatedSpeeds, Constants.UPDATE_PERIOD);
     }
 
@@ -119,11 +122,19 @@ public class DriveSubsystem extends SubsystemBase {
             this);
     }
 
+    public Rotation2d getHeading() {
+        return _io.getHeading();
+    }
+
     public ChassisSpeeds getMeasuredChassisSpeeds() {
         return _kinematics.toChassisSpeeds(_inputs.measuredStates);
     }
 
     public void zeroGyroscope() {
         _io.zeroGyroscope();
+    }
+
+    public DriveIOInputs getDriveIOInputs() {
+        return _inputs;
     }
 }

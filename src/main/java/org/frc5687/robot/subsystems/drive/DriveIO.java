@@ -33,6 +33,9 @@ public interface DriveIO {
     /** Set states for all swerve modules */
     public default void setModuleStates(SwerveModuleState[] states) {}
 
+    /** Get heading of the gyroscope */
+    public default Rotation2d getHeading() { return new Rotation2d(); }
+
     /** Zero the gyroscope */
     public default void zeroGyroscope() {}
 }
