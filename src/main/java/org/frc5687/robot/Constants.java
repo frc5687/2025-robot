@@ -2,6 +2,8 @@
 package org.frc5687.robot;
 
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleConfig;
+import org.frc5687.robot.subsystems.intake.IntakeConfig;
+import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.util.PIDConstants;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -186,6 +188,10 @@ public class Constants {
         // );
     }
 
+    public static class Intake {
+
+        public static final IntakeConfig INTAKE_CONFIG = new IntakeConfig(false, false, 60, "CANivore");
+    }
     public static class Vision {
         public static final double VISION_kP = 3.0;
         public static final double VISION_kI = 0.0;

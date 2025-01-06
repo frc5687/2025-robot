@@ -1,9 +1,13 @@
 package org.frc5687.robot;
 
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
+import org.frc5687.robot.commands.intake.IdleIntake;
 import org.frc5687.robot.subsystems.drive.*;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleIO;
+import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
+import org.frc5687.robot.subsystems.intake.IntakeIO;
+import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.util.Helpers;
 import org.frc5687.robot.subsystems.drive.modules.CTRESwerveModuleIO;
 import org.frc5687.robot.subsystems.drive.modules.SimSwerveModuleIO;
@@ -24,6 +28,9 @@ public class RobotContainer {
     private final DriveSubsystem _drive;
     @NotLogged
     private final SwerveModule[] _modules;
+
+    @Logged
+    private final IntakeSubsystem _intake;
     
     private final Field2d _field;
 
@@ -31,7 +38,8 @@ public class RobotContainer {
         _oi = new OperatorInterface();
         _field = new Field2d();
         _modules = new SwerveModule[Constants.SwerveModule.NUM_MODULES];
- 
+        
+        IntakeIO intakeIO = new HardwareIntakeIO(20, Constants.Intake.INTAKE_CONFIG);
         DriveIO driveIO = RobotBase.isSimulation() ?
             new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON) :
             new CTREDriveIO(RobotMap.CAN.PIGEON.PIGEON, Constants.SwerveModule.CAN_BUS);
@@ -113,12 +121,13 @@ public class RobotContainer {
  
         _drive = new DriveSubsystem(driveIO, _modules, Constants.DriveTrain.MODULE_LOCATIONS);
  
+        _intake = new IntakeSubsystem(intakeIO);
         if (RobotBase.isSimulation()) {
             SmartDashboard.putData("Field", _field);
         }
  
         configureDefaultCommands();
-        _oi.configureCommandMapping(_drive);
+        _oi.configureCommandMapping(_drive, _intake);
     }
 
     private void configureDefaultCommands() {
@@ -129,6 +138,7 @@ public class RobotContainer {
             () -> -modifyAxis(_oi.getDriverController().getRightX()) * Constants.SwerveModule.MAX_ANGULAR_SPEED,
             () -> true  // Always field relative
         ));
+        _intake.setDefaultCommand(new IdleIntake(_intake));
     }
 
     public Command getAutonomousCommand() {
