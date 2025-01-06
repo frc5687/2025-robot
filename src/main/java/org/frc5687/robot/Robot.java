@@ -3,23 +3,30 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package org.frc5687.robot;
-
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
+import edu.wpi.first.epilogue.Epilogue;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.logging.errors.ErrorHandler;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-public class Robot extends LoggedRobot {
+@Logged
+public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer _robotContainer;
 
   public Robot() {
-    Logger.addDataReceiver(new NT4Publisher());
-    // Logger.start();
+    DataLogManager.start();
+    Epilogue.configure(config -> {
+        config.root = "Robot";
+        config.minimumImportance = Logged.Importance.DEBUG;
+        config.errorHandler = ErrorHandler.printErrorMessages();
+    });
     _robotContainer = new RobotContainer();
+    Epilogue.bind(this);
   }
 
   @Override
