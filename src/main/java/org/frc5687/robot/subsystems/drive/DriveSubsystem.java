@@ -1,129 +1,121 @@
 package org.frc5687.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import org.frc5687.robot.Constants;
-import org.frc5687.robot.subsystems.drive.DriveIO.DriveIOInputs;
+import org.frc5687.robot.subsystems.OutliersSubsystem;
+import org.frc5687.robot.subsystems.SubsystemIO;
+import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.ModuleConfig;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.util.DriveFeedforwards;
-import com.pathplanner.lib.util.swerve.SwerveSetpoint;
-import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
-
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.units.Units;
-import java.util.Optional;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
-public class DriveSubsystem extends SubsystemBase {
-    private final DriveIO _io;
-    private final DriveIOInputs _inputs = new DriveIOInputs();
-    
+public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs> {
+    @NotLogged
+    private final SwerveModule[] _modules;
+    @NotLogged
     private final SwerveDriveKinematics _kinematics;
-    private final SwerveSetpointGenerator _setpointGenerator;
+    @NotLogged
+    private final SwerveDriveOdometry _odometry;
+    private final SysIdRoutine _sysId;
+    @Logged
+    private String _sysIdStateString = "";
 
-    private SwerveSetpoint _currentSetpoint = new SwerveSetpoint(
-        new ChassisSpeeds(), new SwerveModuleState[4], DriveFeedforwards.zeros(4));
+    @Logged
     private ChassisSpeeds _desiredChassisSpeeds = new ChassisSpeeds();
 
-    public DriveSubsystem(DriveIO io) {
-        _io = io;
-
-        // I dont really like this, maybe move kinematics to DriveIO?
-
-        Translation2d moduleLocations[] =  {
-            Constants.DriveTrain.NORTH_WEST_CONFIG.position,
-            Constants.DriveTrain.NORTH_EAST_CONFIG.position,
-            Constants.DriveTrain.SOUTH_WEST_CONFIG.position,
-            Constants.DriveTrain.SOUTH_EAST_CONFIG.position
-        };
-
+    public DriveSubsystem(
+            SubsystemIO<DriveInputs, DriveOutputs> io,
+            SwerveModule[] modules,
+            Translation2d[] moduleLocations) {
+        super(io, new DriveInputs(), new DriveOutputs());
+        _modules = modules;
         _kinematics = new SwerveDriveKinematics(moduleLocations);
-        
-        var config = new RobotConfig(
-            Units.Pounds.of(50.0),
-            Units.KilogramSquareMeters.of(9),
-            new ModuleConfig(
-                0.0508, // wheel radius in meters
-                4.5, // max module speed in m/s
-                1.0, // drive base radius in meters
-                DCMotor.getKrakenX60Foc(1).withReduction(Constants.SwerveModule.GEAR_RATIO_DRIVE), // drive motor and reduction
-                120, // drive current limit
-                1 // minimum module speed, m/s
-            ),
-            moduleLocations[0], // NW 
-            moduleLocations[1], // NE 
-            moduleLocations[2], // SW
-            moduleLocations[3]  // SE
-        );
-        
-        _setpointGenerator = new SwerveSetpointGenerator(
-                config,
-                DCMotor.getKrakenX60(1).freeSpeedRadPerSec / (Constants.SwerveModule.GEAR_RATIO_STEER) // steer motor max speed divided by reduction
-        );
-        
-        configureAutoBuilder(config);
+        _odometry = new SwerveDriveOdometry(
+                _kinematics,
+                _inputs.yawPosition,
+                _inputs.modulePositions);
+        _sysId = new SysIdRoutine(
+                new SysIdRoutine.Config(
+                        null,
+                        null,
+                        null,
+                        (state) -> _sysIdStateString = state.toString()),
+                new SysIdRoutine.Mechanism(
+                        (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+
     }
 
     @Override
-    public void periodic() {
-        _io.updateInputs(_inputs);
-        updateDesiredStates();
-        _io.setModuleStates(_currentSetpoint.moduleStates());
+    protected void processInputs() {
+        // Update module states
+        for (int i = 0; i < 4; i++) {
+            _inputs.measuredStates[i] = _modules[i].getState();
+            _inputs.modulePositions[i] = _modules[i].getPosition();
+        }
+
+        // Update odometry
+        _odometry.update(_inputs.yawPosition, _inputs.modulePositions);
     }
 
-    public void setVelocity(ChassisSpeeds speeds) {
+    @Override
+    protected void periodic(DriveInputs inputs, DriveOutputs outputs) {
+        outputs.desiredStates = _kinematics.toSwerveModuleStates(_desiredChassisSpeeds);
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(
+                outputs.desiredStates,
+                Constants.DriveTrain.MAX_MPS);
+
+        for (int i = 0; i < 4; i++) {
+            _modules[i].setDesiredState(outputs.desiredStates[i]);
+        }
+    }
+
+    public void setDesiredChassisSpeeds(ChassisSpeeds speeds) {
         _desiredChassisSpeeds = speeds;
     }
 
-    private void updateDesiredStates() {
-        Pose2d robotPoseVel = new Pose2d(
-            _desiredChassisSpeeds.vxMetersPerSecond * Constants.UPDATE_PERIOD,
-            _desiredChassisSpeeds.vyMetersPerSecond * Constants.UPDATE_PERIOD,
-            Rotation2d.fromRadians(_desiredChassisSpeeds.omegaRadiansPerSecond * Constants.UPDATE_PERIOD));
-
-        Twist2d twistVel = new Pose2d().log(robotPoseVel);
-        ChassisSpeeds updatedSpeeds = new ChassisSpeeds(
-            twistVel.dx / Constants.UPDATE_PERIOD,
-            twistVel.dy / Constants.UPDATE_PERIOD,
-            twistVel.dtheta / Constants.UPDATE_PERIOD);
-
-        _currentSetpoint = _setpointGenerator.generateSetpoint(_currentSetpoint, updatedSpeeds, Constants.UPDATE_PERIOD);
+    public Rotation2d getHeading() {
+        return _inputs.yawPosition;
     }
 
-    private void configureAutoBuilder(RobotConfig config) {
-        AutoBuilder.configure(
-            () -> new Pose2d(), // Robot pose supplier
-            (pose) -> {}, // Method to reset odometry
-            this::getMeasuredChassisSpeeds,
-            this::setVelocity,
-            new PPHolonomicDriveController(
-                new PIDConstants(5.0, 0.0, 0.0),
-                new PIDConstants(5.0, 0.0, 0.0)),
-            config,
-            () -> {
-                Optional<Alliance> alliance = DriverStation.getAlliance();
-                return alliance.isPresent() && alliance.get() == Alliance.Red;
-            },
-            this);
+    public Pose2d getPose() {
+        return _odometry.getPoseMeters();
     }
 
     public ChassisSpeeds getMeasuredChassisSpeeds() {
         return _kinematics.toChassisSpeeds(_inputs.measuredStates);
     }
 
-    public void zeroGyroscope() {
-        _io.zeroGyroscope();
+    public SwerveDriveKinematics getKinematics() {
+        return _kinematics;
+    }
+
+    public void resetPose(Pose2d pose) {
+        _odometry.resetPosition(_inputs.yawPosition, _inputs.modulePositions, pose);
+    }
+
+    public void runCharacterization(double output) {
+        for (int i = 0; i < 4; i++) {
+            _modules[i].runCharacterization(output);
+        }
+    }
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return run(() -> runCharacterization(0.0))
+                .withTimeout(1.0)
+                .andThen(_sysId.quasistatic(direction));
+    }
+
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(_sysId.dynamic(direction));
     }
 }
