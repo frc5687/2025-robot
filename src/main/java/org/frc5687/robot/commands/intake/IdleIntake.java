@@ -17,10 +17,12 @@ public class IdleIntake extends OutliersCommand {
     @Override
     protected void execute(double timestamp) {
         _intake.setRollerVoltage(0);
+        _intake.setIntakeVoltage(0);
     }
 
     @Override
         public void end(boolean interrupted){
             _intake.setRollerVoltage(0);
+            _intake.setIntakeVoltage(0);
         }
 }

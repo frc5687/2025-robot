@@ -21,7 +21,7 @@ public class OperatorInterface {
         // _driverController.y().onTrue(drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         // _driverController.x().onTrue(drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
-        _driverController.leftTrigger().whileTrue(new RunIntake(intake,6));
+        _driverController.leftTrigger().whileTrue(new RunIntake(intake, 6, 6));
     }
 
     public CommandXboxController getDriverController()  {

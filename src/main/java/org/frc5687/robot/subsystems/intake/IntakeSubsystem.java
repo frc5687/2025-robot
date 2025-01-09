@@ -24,4 +24,8 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     public void setRollerVoltage(double voltage){
         _outputs.rollerVoltage = voltage;
     }
+
+    public void setIntakeVoltage(double voltage){
+        _outputs.intakeVoltage = voltage;
+    }
 }
