@@ -39,7 +39,7 @@ public class RobotContainer {
         _field = new Field2d();
         _modules = new SwerveModule[Constants.SwerveModule.NUM_MODULES];
         
-        IntakeIO intakeIO = new HardwareIntakeIO(20, 21, Constants.Intake.ROLLER_CONFIG, Constants.Intake.INTAKE_CONFIG);
+        IntakeIO intakeIO = new HardwareIntakeIO(20, 21, 22, Constants.Intake.ROLLER_CONFIG, Constants.Intake.INTAKE_CONFIG, Constants.Intake.INTAKE_CONFIG2);
         DriveIO driveIO = RobotBase.isSimulation() ?
             new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON) :
             new CTREDriveIO(RobotMap.CAN.PIGEON.PIGEON, Constants.SwerveModule.CAN_BUS);

@@ -191,8 +191,9 @@ public class Constants {
 
     public static class Intake {
 
-        public static final IntakeConfig INTAKE_CONFIG = new IntakeConfig(false, false, 60, "CANivore");
-        public static final IntakeConfig ROLLER_CONFIG = new IntakeConfig(false, false, 60, "CANivore");
+        public static final IntakeConfig INTAKE_CONFIG = new IntakeConfig(false, false, 60, "rio");
+        public static final IntakeConfig INTAKE_CONFIG2 = new IntakeConfig(true, false, 60, "CANivore");
+        public static final IntakeConfig ROLLER_CONFIG = new IntakeConfig(true, false, 60, "rio");
 
     }
     public static class Vision {
