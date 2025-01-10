@@ -122,7 +122,8 @@ public class Constants {
 
         public static final double ROBOT_RADIUS = Math.sqrt(WIDTH * WIDTH + LENGTH * LENGTH) / 2.0;
 
-        public static final double MAX_MPS = DCMotor.getKrakenX60Foc(1).withReduction(Constants.SwerveModule.GEAR_RATIO_DRIVE).freeSpeedRadPerSec * SwerveModule.WHEEL_RADIUS;
+        //public static final double MAX_MPS = DCMotor.getKrakenX60Foc(1).withReduction(Constants.SwerveModule.GEAR_RATIO_DRIVE).freeSpeedRadPerSec * SwerveModule.WHEEL_RADIUS;
+        public static final double MAX_MPS = 1.0;
 
         public static final double MAX_ANG_VEL = 2.0 * Math.PI; // Max rotation rate of robot (rads/s)
         public static final double MAX_ANG_ACC = 2.0 * Math.PI; // Max angular acceleration of robot (rads/s^2)

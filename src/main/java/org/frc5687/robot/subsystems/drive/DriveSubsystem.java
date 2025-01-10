@@ -26,6 +26,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     @NotLogged
     private final SwerveDriveOdometry _odometry;
     private final SysIdRoutine _sysId;
+
     @Logged
     private String _sysIdStateString = "";
 
@@ -85,6 +86,10 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     public Rotation2d getHeading() {
         return _inputs.yawPosition;
+    }
+
+    public void resetHeading(){
+        _io.reset();
     }
 
     public Pose2d getPose() {
