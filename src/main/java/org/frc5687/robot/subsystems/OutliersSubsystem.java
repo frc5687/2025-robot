@@ -37,6 +37,7 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
         System.out.println(inputLoggerName);
     }
 
+
     protected abstract void processInputs();
 
     protected abstract void periodic(Inputs inputs, Outputs outputs);
