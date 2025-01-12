@@ -4,10 +4,6 @@ package org.frc5687.robot;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleConfig;
 import org.frc5687.robot.util.PIDConstants;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
@@ -50,8 +46,9 @@ public class Constants {
         public static final double STEER_MOTION_ACCELERATION = 200.0;     // rad/s^2
 
         public static final double COUPLING_RATIO = 0.0;
+        public static final double COEFFICIENT_OF_FRICTION = 1.6;
 
-        public static final double MAX_LINEAR_SPEED = 5.0;  // meters per second
+        public static final double MAX_LINEAR_SPEED = DCMotor.getKrakenX60Foc(1).withReduction(Constants.SwerveModule.GEAR_RATIO_DRIVE).freeSpeedRadPerSec * SwerveModule.WHEEL_RADIUS;
         public static final double MAX_ANGULAR_SPEED = Math.PI * 2.0;  // radians per second
 
         public static SwerveModuleConfig createModuleConfig(String name, double offset, boolean driveInverted, boolean steerInverted) {

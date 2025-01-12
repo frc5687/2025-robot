@@ -2,13 +2,17 @@ package org.frc5687.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.Optional;
+
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
-import org.frc5687.robot.subsystems.SubsystemIO;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
+import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -25,12 +29,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs> {
-    @NotLogged
-    private final SwerveModule[] _modules;
+    private final DriveIO _driveIO;
     @NotLogged
     private final SwerveDriveKinematics _kinematics;
     @NotLogged
@@ -47,16 +52,16 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     // I think I want to move Module creating into the IO classes as they can be considered as "Hardware"
     public DriveSubsystem(
-            SubsystemIO<DriveInputs, DriveOutputs> io,
-            SwerveModule[] modules,
+            DriveIO io,
             Translation2d[] moduleLocations) {
         super(io, new DriveInputs(), new DriveOutputs());
-        _modules = modules;
+        _driveIO = io;
         _kinematics = new SwerveDriveKinematics(moduleLocations);
         _odometry = new SwerveDriveOdometry(
                 _kinematics,
                 _inputs.yawPosition,
                 _inputs.modulePositions);
+
         _sysId = new SysIdRoutine(
                 new SysIdRoutine.Config(
                         null,
@@ -65,13 +70,14 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                         (state) -> _sysIdStateString = state.toString()),
                 new SysIdRoutine.Mechanism(
                         (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
+
         _robotConfig = new RobotConfig(
             Units.Pound.of(115),
             Units.KilogramSquareMeters.of(8.085),
             new ModuleConfig(
                 Constants.SwerveModule.WHEEL_RADIUS,
-                Constants.DriveTrain.MAX_MPS,
-                1.0,
+                Constants.SwerveModule.MAX_LINEAR_SPEED,
+                Constants.SwerveModule.COEFFICIENT_OF_FRICTION,
                 DCMotor.getKrakenX60Foc(1).withReduction(Constants.SwerveModule.GEAR_RATIO_DRIVE),
                 Constants.SwerveModule.DRIVE_CURRENT_LIMIT,
                 1
@@ -87,16 +93,12 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                 DCMotor.getKrakenX60(1).freeSpeedRadPerSec / (Constants.SwerveModule.GEAR_RATIO_STEER) // steer motor max speed divided by reduction
         );
         _currentSetpoint = new SwerveSetpoint(_outputs.desiredSpeeds, _inputs.measuredStates, DriveFeedforwards.zeros(_robotConfig.numModules));
+
+        configureAutoBuilder(_robotConfig);
     }
 
     @Override
     protected void processInputs() {
-        // Update module states
-        for (int i = 0; i < 4; i++) {
-            _inputs.measuredStates[i] = _modules[i].getState();
-            _inputs.modulePositions[i] = _modules[i].getPosition();
-        }
-
         // Update odometry
         _inputs.odometryPose = _odometry.update(_inputs.yawPosition, _inputs.modulePositions);
     }
@@ -111,10 +113,6 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
         updateSetpoint();
         outputs.desiredStates = _currentSetpoint.moduleStates();
-
-        for (int i = 0; i < 4; i++) {
-            _modules[i].setDesiredState(outputs.desiredStates[i]);
-        }
     }
 
     public void setDesiredChassisSpeeds(ChassisSpeeds speeds) {
@@ -143,7 +141,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public Pose2d getPose() {
-        return _odometry.getPoseMeters();
+        return _inputs.odometryPose;
     }
 
     public ChassisSpeeds getMeasuredChassisSpeeds() {
@@ -159,9 +157,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public void runCharacterization(double output) {
-        for (int i = 0; i < 4; i++) {
-            _modules[i].runCharacterization(output);
-        }
+        _driveIO.runCharacterization(output);
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -172,5 +168,22 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(_sysId.dynamic(direction));
+    }
+
+    private void configureAutoBuilder(RobotConfig config) {
+        AutoBuilder.configure(
+            this::getPose,
+            this::resetPose,
+            this::getMeasuredChassisSpeeds,
+            this::setDesiredChassisSpeeds,
+            new PPHolonomicDriveController(
+                new PIDConstants(5.0, 0.0, 0.0),
+                new PIDConstants(5.0, 0.0, 0.0)),
+            config,
+            () -> {
+                Optional<Alliance> alliance = DriverStation.getAlliance();
+                return alliance.isPresent() && alliance.get() == Alliance.Red;
+            },
+            this);
     }
 }

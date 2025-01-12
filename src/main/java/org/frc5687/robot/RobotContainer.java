@@ -9,6 +9,8 @@ import org.frc5687.robot.subsystems.drive.modules.CTRESwerveModuleIO;
 import org.frc5687.robot.subsystems.drive.modules.SimSwerveModuleIO;
 import org.littletonrobotics.junction.Logger;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -36,66 +38,7 @@ public class RobotContainer {
             new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON) :
             new CTREDriveIO(RobotMap.CAN.PIGEON.PIGEON, Constants.SwerveModule.CAN_BUS);
  
-        SwerveModuleIO northWestIO;
-        SwerveModuleIO northEastIO;
-        SwerveModuleIO southWestIO;
-        SwerveModuleIO southEastIO; 
-        if (RobotBase.isReal()) {
-            northWestIO = new CTRESwerveModuleIO(
-                Constants.DriveTrain.NW_CONFIG,
-                RobotMap.CAN.TALONFX.NORTH_WEST_TRANSLATION,
-                RobotMap.CAN.TALONFX.NORTH_WEST_ROTATION,
-                RobotMap.CAN.CANCODER.ENCODER_NW,
-                Constants.DriveTrain.CAN_BUS
-            );
-            
-            northEastIO = new CTRESwerveModuleIO(
-                Constants.DriveTrain.NE_CONFIG,
-                RobotMap.CAN.TALONFX.NORTH_EAST_TRANSLATION,
-                RobotMap.CAN.TALONFX.NORTH_EAST_ROTATION,
-                RobotMap.CAN.CANCODER.ENCODER_NE,
-                Constants.DriveTrain.CAN_BUS
-            );
-
-            southWestIO = new CTRESwerveModuleIO(
-                Constants.DriveTrain.SW_CONFIG,
-                RobotMap.CAN.TALONFX.SOUTH_WEST_TRANSLATION,
-                RobotMap.CAN.TALONFX.SOUTH_WEST_ROTATION,
-                RobotMap.CAN.CANCODER.ENCODER_SW,
-                Constants.DriveTrain.CAN_BUS
-            );
-
-            southEastIO = new CTRESwerveModuleIO(
-                Constants.DriveTrain.SE_CONFIG,
-                RobotMap.CAN.TALONFX.SOUTH_EAST_TRANSLATION,
-                RobotMap.CAN.TALONFX.SOUTH_EAST_ROTATION,
-                RobotMap.CAN.CANCODER.ENCODER_SE,
-                Constants.DriveTrain.CAN_BUS
-            );
-        } else {
-            northWestIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.NW_CONFIG
-            );
-            
-            northEastIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.NE_CONFIG
-            );
-
-            southWestIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.SW_CONFIG
-            );
-
-            southEastIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.SE_CONFIG
-            );
-
-        }
-        _modules[0] = new SwerveModule(Constants.DriveTrain.NW_CONFIG, northWestIO);
-        _modules[1] = new SwerveModule(Constants.DriveTrain.NE_CONFIG, northEastIO);
-        _modules[2] = new SwerveModule(Constants.DriveTrain.SW_CONFIG, southWestIO);
-        _modules[3] = new SwerveModule(Constants.DriveTrain.SE_CONFIG, southEastIO);
- 
-        _drive = new DriveSubsystem(driveIO, _modules, Constants.DriveTrain.MODULE_LOCATIONS);
+        _drive = new DriveSubsystem(driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
  
         if (RobotBase.isSimulation()) {
             SmartDashboard.putData("Field", _field);
@@ -116,7 +59,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return new PathPlannerAuto("Test Auto");
     }
 
     public void periodic() {

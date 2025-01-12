@@ -7,6 +7,7 @@ import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 
 public class SimSwerveModuleIO implements SwerveModuleIO {
     private static final double SIM_DRIVE_KP = 0.25;
@@ -91,6 +92,7 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
 
         inputs.absoluteAngle = inputs.steerAngle;
         inputs.faults = 0;
+        // System.out.println("SimSwerveModuleIO Update time: " + Timer.getTimestamp());
     }
 
     @Override

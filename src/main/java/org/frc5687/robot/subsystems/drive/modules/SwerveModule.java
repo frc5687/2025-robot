@@ -1,7 +1,6 @@
 package org.frc5687.robot.subsystems.drive.modules;
 
 import org.frc5687.robot.subsystems.OutliersSubsystem;
-import org.frc5687.robot.subsystems.SubsystemIO;
 
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -14,7 +13,7 @@ public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveMo
 
     public SwerveModule(
         SwerveModuleConfig config,
-        SubsystemIO<SwerveModuleInputs, SwerveModuleOutputs> io
+        SwerveModuleIO io
     ) {
         super(
             io,
