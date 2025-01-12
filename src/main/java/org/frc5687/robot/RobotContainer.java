@@ -74,35 +74,19 @@ public class RobotContainer {
             );
         } else {
             northWestIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.NW_CONFIG,
-                RobotMap.CAN.TALONFX.NORTH_WEST_TRANSLATION,
-                RobotMap.CAN.TALONFX.NORTH_WEST_ROTATION,
-                RobotMap.CAN.CANCODER.ENCODER_NW,
-                Constants.DriveTrain.CAN_BUS
+                Constants.DriveTrain.NW_CONFIG
             );
             
             northEastIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.NE_CONFIG,
-                RobotMap.CAN.TALONFX.NORTH_EAST_TRANSLATION,
-                RobotMap.CAN.TALONFX.NORTH_EAST_ROTATION,
-                RobotMap.CAN.CANCODER.ENCODER_NE,
-                Constants.DriveTrain.CAN_BUS
+                Constants.DriveTrain.NE_CONFIG
             );
 
             southWestIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.SW_CONFIG,
-                RobotMap.CAN.TALONFX.SOUTH_WEST_TRANSLATION,
-                RobotMap.CAN.TALONFX.SOUTH_WEST_ROTATION,
-                RobotMap.CAN.CANCODER.ENCODER_SW,
-                Constants.DriveTrain.CAN_BUS
+                Constants.DriveTrain.SW_CONFIG
             );
 
             southEastIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.SE_CONFIG,
-                RobotMap.CAN.TALONFX.SOUTH_EAST_TRANSLATION,
-                RobotMap.CAN.TALONFX.SOUTH_EAST_ROTATION,
-                RobotMap.CAN.CANCODER.ENCODER_SE,
-                Constants.DriveTrain.CAN_BUS
+                Constants.DriveTrain.SE_CONFIG
             );
 
         }
