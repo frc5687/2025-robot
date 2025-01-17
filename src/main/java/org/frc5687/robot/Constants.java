@@ -194,6 +194,12 @@ public class Constants {
         public static final IntakeConfig ROLLER_CONFIG = new IntakeConfig(false, false, 60, "CANivore");
 
     }
+
+    public static class Elevator {
+        
+        public static final String CANBUS = "Canivore";
+        
+    }
     public static class Vision {
         public static final double VISION_kP = 3.0;
         public static final double VISION_kI = 0.0;
