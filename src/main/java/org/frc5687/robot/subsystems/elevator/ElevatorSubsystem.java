@@ -1,17 +1,31 @@
 
 
-// package org.frc5687.robot.subsystems.elevator;
+package org.frc5687.robot.subsystems.elevator;
 
-// import org.frc5687.robot.RobotContainer;
-// import org.frc5687.robot.subsystems.OutliersSubsystem;
+import org.frc5687.robot.subsystems.OutliersSubsystem;
 
+public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, ElevatorOutputs> {
+     
+    public ElevatorSubsystem(ElevatorIO io){
+        super(io, new ElevatorInputs(), new ElevatorOutputs());
 
+     }
 
-// public class ElevatorSubsystem extends OutliersSubsystem() {
-//      public Elevator(RobotContainer container) {
+    @Override
+    protected void processInputs() {
         
-//      }
-//  }
+    }
+
+    @Override
+    protected void periodic(ElevatorInputs inputs, ElevatorOutputs outputs) {
+        
+    }
+
+    public void setPositionMeters(double positionMeters){
+        _outputs.desiredElevatorPositionMeters = positionMeters;
+    
+    }
+ }
 
 
 /* 

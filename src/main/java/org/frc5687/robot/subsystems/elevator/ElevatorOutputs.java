@@ -10,7 +10,7 @@ public class ElevatorOutputs extends BaseOutputs {
     @Logged(name = "Elevator Voltage Command (V)", importance = Logged.Importance.CRITICAL)
     public double elevatorVoltage = 0.0;
 
-    @Logged(name = "Set Position Command (V)", importance = Logged.Importance.CRITICAL)
+    @Logged(name = "Set Position Command", importance = Logged.Importance.CRITICAL)
     public double desiredElevatorPositionMeters = 0.0;
 
 }

@@ -1,10 +1,14 @@
 package org.frc5687.robot;
 
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
+import org.frc5687.robot.commands.elevator.IdleElevator;
 import org.frc5687.robot.commands.intake.IdleIntake;
 import org.frc5687.robot.subsystems.drive.*;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleIO;
+import org.frc5687.robot.subsystems.elevator.ElevatorIO;
+import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
+import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
@@ -29,6 +33,7 @@ public class RobotContainer {
     @NotLogged
     private final SwerveModule[] _modules;
 
+    private final ElevatorSubsystem _elevator;
     @Logged
     private final IntakeSubsystem _intake;
     
@@ -125,6 +130,10 @@ public class RobotContainer {
         if (RobotBase.isSimulation()) {
             SmartDashboard.putData("Field", _field);
         }
+
+        ElevatorIO elevatorIO = new HardwareElevatorIO(5);
+        _elevator = new ElevatorSubsystem(elevatorIO);
+        
  
         configureDefaultCommands();
         _oi.configureCommandMapping(_drive, _intake);
@@ -138,6 +147,7 @@ public class RobotContainer {
             () -> -modifyAxis(_oi.getDriverController().getRightX()) * Constants.SwerveModule.MAX_ANGULAR_SPEED,
             () -> true  // Always field relative
         ));
+        _elevator.setDefaultCommand(new IdleElevator(_elevator));
         _intake.setDefaultCommand(new IdleIntake(_intake));
     }
 
