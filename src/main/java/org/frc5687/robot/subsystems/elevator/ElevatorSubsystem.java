@@ -25,9 +25,13 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         _outputs.desiredElevatorPositionMeters = positionMeters;
     
     }
- }
+ 
 
-
+    public void setVoltage(double voltage){
+        _outputs.elevatorVoltage = voltage;
+ 
+    } 
+}
 /* 
  * class init
  * create private motors (through motor id's and configs in constants.java)

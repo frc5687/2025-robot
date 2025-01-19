@@ -2,6 +2,7 @@ package org.frc5687.robot;
 
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
+import org.frc5687.robot.commands.elevator.SetElevatorVoltage;
 import org.frc5687.robot.commands.intake.IdleIntake;
 import org.frc5687.robot.subsystems.drive.*;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
@@ -131,7 +132,7 @@ public class RobotContainer {
             SmartDashboard.putData("Field", _field);
         }
 
-        ElevatorIO elevatorIO = new HardwareElevatorIO(5);
+        ElevatorIO elevatorIO = new HardwareElevatorIO(RobotMap.CAN.TALONFX.ELEVATOR, RobotMap.CAN.TALONFX.ELEVATOR_FOLLOWER);
         _elevator = new ElevatorSubsystem(elevatorIO);
         
  
@@ -147,7 +148,11 @@ public class RobotContainer {
             () -> -modifyAxis(_oi.getDriverController().getRightX()) * Constants.SwerveModule.MAX_ANGULAR_SPEED,
             () -> true  // Always field relative
         ));
-        _elevator.setDefaultCommand(new IdleElevator(_elevator));
+        //_elevator.setDefaultCommand(new IdleElevator(_elevator));
+        _elevator.setDefaultCommand(new SetElevatorVoltage(
+            _elevator,
+            () -> -modifyAxis(_oi.getDriverController().getLeftY()) * 12
+        ));
         _intake.setDefaultCommand(new IdleIntake(_intake));
     }
 

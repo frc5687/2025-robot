@@ -218,6 +218,8 @@ public class Constants {
         public static final double kA = 0.0;
         public static final boolean INVERTED = false;
 
+        public static final boolean FOLLOWER_INVERTED = true;
+
         public static final double CURRENT_LIMIT = 60.0;
 
         public static final double MAX_ACCELERATION_MPSS = 1;
