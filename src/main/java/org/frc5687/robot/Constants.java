@@ -183,6 +183,10 @@ public class Constants {
         // );
     }
 
+    public static class GroundIntake{
+        
+    }
+
     public static class Vision {
         public static final double VISION_kP = 3.0;
         public static final double VISION_kI = 0.0;
