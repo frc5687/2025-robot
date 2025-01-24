@@ -1,6 +1,7 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2025.1.1"
+    id "edu.wpi.first.GradleRIO" version "2025.2.1"
+    id "com.diffplug.spotless" version "7.0.2"
 }
 
 java {
@@ -9,6 +10,25 @@ java {
 }
 
 def ROBOT_MAIN_CLASS = "org.frc5687.robot.Main"
+
+spotless {
+  java {
+    importOrder()
+    removeUnusedImports()
+    cleanthat()          // has its own section below
+    googleJavaFormat()
+    leadingSpacesToTabs(2)
+    leadingTabsToSpaces(4)
+
+    // eclipse()            // has its own section below
+    // prettier()           // has its own section below
+    // clangFormat()        // has its own section below
+    formatAnnotations()  // fixes formatting of type annotations, see below
+
+    // licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
+  }
+}
+
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
@@ -109,5 +129,6 @@ wpi.java.configureTestTasks(test)
 
 // Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
+    dependsOn spotlessApply
     options.compilerArgs.add '-XDstringConcat=inline'
 }

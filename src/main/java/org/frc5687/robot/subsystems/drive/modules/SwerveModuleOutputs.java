@@ -1,8 +1,8 @@
 package org.frc5687.robot.subsystems.drive.modules;
 
-import org.frc5687.robot.util.BaseOutputs; 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.frc5687.robot.util.BaseOutputs;
 
 @Logged
 public class SwerveModuleOutputs extends BaseOutputs {

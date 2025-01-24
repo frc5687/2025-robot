@@ -1,20 +1,19 @@
 package org.frc5687.robot.subsystems.drive.modules;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class SimSwerveModuleIO implements SwerveModuleIO {
     private static final double SIM_DRIVE_KP = 0.25;
     private static final double SIM_DRIVE_KD = 0.0;
     private static final double SIM_STEER_KP = 8.0;
     private static final double SIM_STEER_KD = 0.0;
-    private static final double LOOP_PERIOD_SECS = 0.02;  // 50Hz
+    private static final double LOOP_PERIOD_SECS = 0.02; // 50Hz
 
     private final DCMotorSim _driveSim;
     private final DCMotorSim _steerSim;
@@ -34,23 +33,16 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
     public SimSwerveModuleIO(SwerveModuleConfig config) {
         _driveGearRatio = config.driveGearRatio();
 
-        _driveSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                DCMotor.getKrakenX60Foc(1),
-                0.025,
-                _driveGearRatio
-            ),
-            DCMotor.getKrakenX60Foc(1)
-        );
+        _driveSim =
+                new DCMotorSim(
+                        LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.025, _driveGearRatio),
+                        DCMotor.getKrakenX60Foc(1));
 
-        _steerSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                DCMotor.getKrakenX60Foc(1),
-                0.004,
-                config.steerGearRatio()
-            ),
-            DCMotor.getKrakenX60Foc(1)
-        );
+        _steerSim =
+                new DCMotorSim(
+                        LinearSystemId.createDCMotorSystem(
+                                DCMotor.getKrakenX60Foc(1), 0.004, config.steerGearRatio()),
+                        DCMotor.getKrakenX60Foc(1));
 
         _wheelCircumference = 2 * Math.PI * config.wheelRadius();
         _steerController.enableContinuousInput(-Math.PI, Math.PI);
@@ -61,8 +53,9 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
         double voltage = RobotController.getBatteryVoltage();
 
         if (_driveClosedLoop) {
-            _driveAppliedVolts = _driveFeedforwardVolts + 
-                _driveController.calculate(_driveSim.getAngularVelocityRadPerSec());
+            _driveAppliedVolts =
+                    _driveFeedforwardVolts
+                            + _driveController.calculate(_driveSim.getAngularVelocityRadPerSec());
         }
 
         if (_steerClosedLoop) {
@@ -105,7 +98,7 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
             case VELOCITY:
                 _driveClosedLoop = true;
                 _driveFeedforwardVolts = outputs.driveFeedforwardVolts;
-                double targetRadPerSec =  outputs.driveVelocitySetpointMPS / _wheelCircumference;
+                double targetRadPerSec = outputs.driveVelocitySetpointMPS / _wheelCircumference;
                 _driveController.setSetpoint(targetRadPerSec);
                 break;
             default:

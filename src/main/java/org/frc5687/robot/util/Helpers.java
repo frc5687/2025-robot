@@ -1,10 +1,8 @@
 /* Team 5687 (C)2020-2022 */
 package org.frc5687.robot.util;
 
-import org.frc5687.robot.util.math.Vector2d;
-
 import edu.wpi.first.math.util.Units;
-
+import org.frc5687.robot.util.math.Vector2d;
 
 /** Created by Ben Bernard on 6/4/2018. */
 public class Helpers {
@@ -127,7 +125,7 @@ public class Helpers {
     public static Vector2d axisToSegmentedUnitCircleRadians(double x, double y, int[] array) {
         double angle = joystickToAngle(x, y);
         angle = (angle + 360) % 360;
-        angle = angle / 360;
+        angle /= 360;
         int segment = (int) (angle * array.length);
         double power = Math.hypot(x, y);
         if (power > 1) {

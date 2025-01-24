@@ -1,26 +1,23 @@
 package org.frc5687.robot.subsystems.drive;
 
-import org.frc5687.robot.Constants;
-import org.frc5687.robot.subsystems.drive.modules.SimSwerveModuleIO;
-import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
-import org.frc5687.robot.subsystems.drive.modules.SwerveModuleIO;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.sim.Pigeon2SimState;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.Timer;
+import org.frc5687.robot.Constants;
+import org.frc5687.robot.subsystems.drive.modules.SimSwerveModuleIO;
+import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
+import org.frc5687.robot.subsystems.drive.modules.SwerveModuleIO;
 
 public class SimDriveIO implements DriveIO {
     private final Pigeon2 _imu;
     private final Pigeon2SimState _imuSim;
-    
+
     private final SwerveDriveKinematics _kinematics;
-    private final double loopPeriodSecs = 0.02;  // 50Hz Make constant i
+    private final double loopPeriodSecs = 0.02; // 50Hz Make constant i
     private Rotation2d prevYaw = new Rotation2d();
 
     private SwerveModule[] _modules;
@@ -32,17 +29,13 @@ public class SimDriveIO implements DriveIO {
         _kinematics = new SwerveDriveKinematics(Constants.DriveTrain.MODULE_LOCATIONS);
         _modules = new SwerveModule[Constants.SwerveModule.NUM_MODULES];
 
-        SwerveModuleIO northWestIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.NW_CONFIG);
+        SwerveModuleIO northWestIO = new SimSwerveModuleIO(Constants.DriveTrain.NW_CONFIG);
 
-        SwerveModuleIO northEastIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.NE_CONFIG);
+        SwerveModuleIO northEastIO = new SimSwerveModuleIO(Constants.DriveTrain.NE_CONFIG);
 
-        SwerveModuleIO southWestIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.SW_CONFIG);
+        SwerveModuleIO southWestIO = new SimSwerveModuleIO(Constants.DriveTrain.SW_CONFIG);
 
-        SwerveModuleIO southEastIO = new SimSwerveModuleIO(
-                Constants.DriveTrain.SE_CONFIG);
+        SwerveModuleIO southEastIO = new SimSwerveModuleIO(Constants.DriveTrain.SE_CONFIG);
 
         // This is ok. We should make this enforced as a part of DriveIO
         _modules[0] = new SwerveModule(Constants.DriveTrain.NW_CONFIG, northWestIO);
@@ -60,7 +53,7 @@ public class SimDriveIO implements DriveIO {
             inputs.modulePositions[i] = _modules[i].getPosition();
         }
 
-        ChassisSpeeds speeds =_kinematics.toChassisSpeeds(inputs.measuredStates);
+        ChassisSpeeds speeds = _kinematics.toChassisSpeeds(inputs.measuredStates);
         _imuSim.addYaw(Units.radiansToDegrees(speeds.omegaRadiansPerSecond * loopPeriodSecs));
 
         inputs.yawPosition = Rotation2d.fromDegrees(_imu.getYaw().getValueAsDouble());
@@ -68,8 +61,8 @@ public class SimDriveIO implements DriveIO {
         inputs.rollPosition = Rotation2d.fromDegrees(_imu.getRoll().getValueAsDouble());
 
         inputs.yawVelocityRadPerSec = inputs.yawPosition.minus(prevYaw).getRadians() / loopPeriodSecs;
-        inputs.pitchVelocityRadPerSec = 0.0; 
-        inputs.rollVelocityRadPerSec = 0.0; 
+        inputs.pitchVelocityRadPerSec = 0.0;
+        inputs.rollVelocityRadPerSec = 0.0;
 
         prevYaw = inputs.yawPosition;
         // System.out.println("SimDriveIO Update time: " + Timer.getTimestamp());

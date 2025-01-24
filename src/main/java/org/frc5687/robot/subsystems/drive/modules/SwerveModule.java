@@ -1,9 +1,8 @@
 package org.frc5687.robot.subsystems.drive.modules;
 
-import org.frc5687.robot.subsystems.OutliersSubsystem;
-
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import org.frc5687.robot.subsystems.OutliersSubsystem;
 
 public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveModuleOutputs> {
     private final SwerveModuleConfig _config;
@@ -11,15 +10,8 @@ public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveMo
     private boolean _hasReset = false;
     private boolean _isCharacterization = false;
 
-    public SwerveModule(
-        SwerveModuleConfig config,
-        SwerveModuleIO io
-    ) {
-        super(
-            io,
-            new SwerveModuleInputs(),
-            new SwerveModuleOutputs()
-        );
+    public SwerveModule(SwerveModuleConfig config, SwerveModuleIO io) {
+        super(io, new SwerveModuleInputs(), new SwerveModuleOutputs());
         _config = config;
         _inputs.setLogRootName(config.moduleName());
         _outputs.setLogRootName(config.moduleName());
@@ -36,7 +28,8 @@ public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveMo
             return;
         }
 
-        if (!_hasReset && Math.abs(_inputs.steerAngle.minus(_inputs.absoluteAngle).getRadians()) > 0.1) {
+        if (!_hasReset
+                && Math.abs(_inputs.steerAngle.minus(_inputs.absoluteAngle).getRadians()) > 0.1) {
             _outputs.steerControlMode = ModuleControlMode.VOLTAGE;
             _outputs.steerVoltage = 0.0;
             _hasReset = true;
@@ -53,15 +46,16 @@ public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveMo
         } else {
             outputs.driveControlMode = ModuleControlMode.VELOCITY;
             outputs.driveVelocitySetpointMPS = _desiredState.speedMetersPerSecond;
-            outputs.driveFeedforwardVolts = _config.driveKs() * Math.signum(_desiredState.speedMetersPerSecond) +
-                    _config.driveKv() * _desiredState.speedMetersPerSecond;
+            outputs.driveFeedforwardVolts =
+                    _config.driveKs() * Math.signum(_desiredState.speedMetersPerSecond)
+                            + _config.driveKv() * _desiredState.speedMetersPerSecond;
         }
 
         outputs.steerControlMode = ModuleControlMode.POSITION;
         outputs.steerAngleSetpoint = _desiredState.angle;
-        outputs.steerFeedforwardVolts = 
-            _config.steerKs() * Math.signum(outputs.steerVoltage) +
-            _config.steerKv() * inputs.steerVelocityRadPerSec;
+        outputs.steerFeedforwardVolts =
+                _config.steerKs() * Math.signum(outputs.steerVoltage)
+                        + _config.steerKv() * inputs.steerVelocityRadPerSec;
     }
 
     public void setDesiredState(SwerveModuleState state) {
@@ -69,17 +63,11 @@ public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveMo
     }
 
     public SwerveModuleState getState() {
-        return new SwerveModuleState(
-            _inputs.driveVelocityMPS,
-            _inputs.steerAngle
-        );
+        return new SwerveModuleState(_inputs.driveVelocityMPS, _inputs.steerAngle);
     }
 
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(
-            _inputs.drivePositionMeters,
-            _inputs.steerAngle
-        );
+        return new SwerveModulePosition(_inputs.drivePositionMeters, _inputs.steerAngle);
     }
 
     public void runCharacterization(double output) {

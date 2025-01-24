@@ -1,12 +1,11 @@
 package org.frc5687.robot.subsystems.drive;
 
-import org.frc5687.robot.util.BaseInputs;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import org.frc5687.robot.util.BaseInputs;
 
 @Logged
 public class DriveInputs extends BaseInputs {
@@ -35,7 +34,10 @@ public class DriveInputs extends BaseInputs {
     public SwerveModulePosition[] modulePositions = new SwerveModulePosition[4];
 
     @Logged(name = "Odometry Pose", importance = Logged.Importance.CRITICAL)
-    public Pose2d odometryPose = new Pose2d(); 
+    public Pose2d odometryPose = new Pose2d();
+
+    @Logged(name = "Estimated Pose", importance = Logged.Importance.CRITICAL)
+    public Pose2d estimatedPose = new Pose2d();
 
     public DriveInputs() {
         // Initialize arrays with non-null values to avoid nullptr errors
