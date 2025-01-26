@@ -1,10 +1,7 @@
 package org.frc5687.robot.subsystems.intake;
 
-import javax.tools.DocumentationTool.Location;
-
-import org.frc5687.robot.util.BaseInputs;
-
 import edu.wpi.first.epilogue.Logged;
+import org.frc5687.robot.util.BaseInputs;
 
 @Logged
 public class IntakeInputs extends BaseInputs {

@@ -1,9 +1,8 @@
 package org.frc5687.robot.subsystems.drive;
 
-import org.frc5687.robot.util.BaseOutputs;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import org.frc5687.robot.util.BaseOutputs;
 
 @Logged
 public class DriveOutputs extends BaseOutputs {

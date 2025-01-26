@@ -19,7 +19,7 @@ public class CTREDriveIO implements DriveIO {
 
     public CTREDriveIO(int pigeonId, String canbus) {
         _imu = new Pigeon2(pigeonId, canbus);
-        
+
         // Get signals
         _yaw = _imu.getYaw();
         _pitch = _imu.getPitch();
@@ -30,18 +30,12 @@ public class CTREDriveIO implements DriveIO {
 
         // Set up synchronized signals
         BaseStatusSignal.setUpdateFrequencyForAll(
-            100.0,
-            _yaw, _pitch, _roll,
-            _yawVelocity, _pitchVelocity, _rollVelocity
-        );
+                100.0, _yaw, _pitch, _roll, _yawVelocity, _pitchVelocity, _rollVelocity);
     }
 
     @Override
     public void updateInputs(DriveInputs inputs) {
-        BaseStatusSignal.refreshAll(
-            _yaw, _pitch, _roll,
-            _yawVelocity, _pitchVelocity, _rollVelocity
-        );
+        BaseStatusSignal.refreshAll(_yaw, _pitch, _roll, _yawVelocity, _pitchVelocity, _rollVelocity);
 
         inputs.yawPosition = Rotation2d.fromDegrees(_yaw.getValueAsDouble());
         inputs.pitchPosition = Rotation2d.fromDegrees(_pitch.getValueAsDouble());

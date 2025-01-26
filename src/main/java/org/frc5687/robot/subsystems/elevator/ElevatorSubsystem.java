@@ -18,15 +18,15 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     protected void processInputs() {
         _inputs.firstStagePositionMeters =
                 (_inputs.stageNorthWestPositionMeters
-                        + _inputs.stageNorthEastPositionMeters
-                        + _inputs.stageSouthWestPositionMeters)
+                                + _inputs.stageNorthEastPositionMeters
+                                + _inputs.stageSouthWestPositionMeters)
                         / 3.0;
 
         _robotState.updatePlatform(
                 _inputs.stageNorthWestPositionMeters,
                 _inputs.stageNorthEastPositionMeters,
                 _inputs.stageSouthWestPositionMeters);
-        
+
         _inputs.platformHeightMeters = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP).getZ();
 
         _inputs.stagePose = _robotState.getPose(RobotCoordinate.ELEVATOR_STAGE);
@@ -34,12 +34,11 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     }
 
     @Override
-    protected void periodic(ElevatorInputs inputs, ElevatorOutputs outputs) {
-    }
+    protected void periodic(ElevatorInputs inputs, ElevatorOutputs outputs) {}
 
     public void setDesiredPlatformHeightWorld(double heightMeters) {
         _outputs.desiredPlatformHeightWorldMeters = heightMeters;
-        _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0; 
+        _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
         _outputs.desiredPlatformPitchRadians = 0.0;
         _outputs.desiredPlatformRollRadians = 0.0;
     }

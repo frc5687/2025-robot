@@ -1,13 +1,13 @@
 package org.frc5687.robot.subsystems;
 
-import org.frc5687.robot.util.BaseInputs;
-import org.frc5687.robot.util.BaseOutputs;
-
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.frc5687.robot.util.BaseInputs;
+import org.frc5687.robot.util.BaseOutputs;
 
-public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs extends BaseOutputs> extends SubsystemBase {
+public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs extends BaseOutputs>
+        extends SubsystemBase {
     protected final SubsystemIO<Inputs, Outputs> _io;
     protected final Inputs _inputs;
     protected final Outputs _outputs;
@@ -24,13 +24,15 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
         String outputLoggerName = _outputs.getClass().getSimpleName() + "Logger";
         // Hack in fucntinallity such that we can still use Epilogue for logging
         try {
-            inputLogger = Class.forName("edu.wpi.first.epilogue.Epilogue")
-                .getField(firstCharToLowerCase(inputLoggerName))
-                .get(null);
-                
-            outputLogger = Class.forName("edu.wpi.first.epilogue.Epilogue")
-                .getField(firstCharToLowerCase(outputLoggerName))
-                .get(null);
+            inputLogger =
+                    Class.forName("edu.wpi.first.epilogue.Epilogue")
+                            .getField(firstCharToLowerCase(inputLoggerName))
+                            .get(null);
+
+            outputLogger =
+                    Class.forName("edu.wpi.first.epilogue.Epilogue")
+                            .getField(firstCharToLowerCase(outputLoggerName))
+                            .get(null);
         } catch (Exception e) {
             throw new RuntimeException("Failed to get loggers", e);
         }
@@ -44,10 +46,14 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
     @Override
     public final void periodic() {
         _io.updateInputs(_inputs);
-        // reflection to call update() on the logger, We are hacking in functionallity due to Epilgue stuggling to find necessary IO classes
+        // reflection to call update() on the logger, We are hacking in functionallity due to Epilgue
+        // stuggling to find necessary IO classes
         try {
-            inputLogger.getClass().getMethod("update", EpilogueBackend.class, _inputs.getClass())
-                    .invoke(inputLogger, Epilogue.getConfig().backend.getNested(_inputs.getLogPath()), _inputs);
+            inputLogger
+                    .getClass()
+                    .getMethod("update", EpilogueBackend.class, _inputs.getClass())
+                    .invoke(
+                            inputLogger, Epilogue.getConfig().backend.getNested(_inputs.getLogPath()), _inputs);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,8 +62,13 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
         periodic(_inputs, _outputs);
 
         try {
-            outputLogger.getClass().getMethod("update", EpilogueBackend.class, _outputs.getClass())
-                    .invoke(outputLogger, Epilogue.getConfig().backend.getNested(_outputs.getLogPath()), _outputs);
+            outputLogger
+                    .getClass()
+                    .getMethod("update", EpilogueBackend.class, _outputs.getClass())
+                    .invoke(
+                            outputLogger,
+                            Epilogue.getConfig().backend.getNested(_outputs.getLogPath()),
+                            _outputs);
         } catch (Exception e) {
             e.printStackTrace();
         }

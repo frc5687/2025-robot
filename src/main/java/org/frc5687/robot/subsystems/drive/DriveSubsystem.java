@@ -2,11 +2,6 @@ package org.frc5687.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import org.frc5687.robot.Constants;
-import org.frc5687.robot.subsystems.OutliersSubsystem;
-import org.frc5687.robot.subsystems.SubsystemIO;
-import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,20 +12,19 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.frc5687.robot.Constants;
+import org.frc5687.robot.subsystems.OutliersSubsystem;
+import org.frc5687.robot.subsystems.SubsystemIO;
+import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
 
 public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs> {
-    @NotLogged
-    private final SwerveModule[] _modules;
-    @NotLogged
-    private final SwerveDriveKinematics _kinematics;
-    @NotLogged
-    private final SwerveDriveOdometry _odometry;
+    @NotLogged private final SwerveModule[] _modules;
+    @NotLogged private final SwerveDriveKinematics _kinematics;
+    @NotLogged private final SwerveDriveOdometry _odometry;
     private final SysIdRoutine _sysId;
-    @Logged
-    private String _sysIdStateString = "";
+    @Logged private String _sysIdStateString = "";
 
-    @Logged
-    private ChassisSpeeds _desiredChassisSpeeds = new ChassisSpeeds();
+    @Logged private ChassisSpeeds _desiredChassisSpeeds = new ChassisSpeeds();
 
     public DriveSubsystem(
             SubsystemIO<DriveInputs, DriveOutputs> io,
@@ -39,19 +33,13 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
         super(io, new DriveInputs(), new DriveOutputs());
         _modules = modules;
         _kinematics = new SwerveDriveKinematics(moduleLocations);
-        _odometry = new SwerveDriveOdometry(
-                _kinematics,
-                _inputs.yawPosition,
-                _inputs.modulePositions);
-        _sysId = new SysIdRoutine(
-                new SysIdRoutine.Config(
-                        null,
-                        null,
-                        null,
-                        (state) -> _sysIdStateString = state.toString()),
-                new SysIdRoutine.Mechanism(
-                        (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
-
+        _odometry = new SwerveDriveOdometry(_kinematics, _inputs.yawPosition, _inputs.modulePositions);
+        _sysId =
+                new SysIdRoutine(
+                        new SysIdRoutine.Config(
+                                null, null, null, (state) -> _sysIdStateString = state.toString()),
+                        new SysIdRoutine.Mechanism(
+                                (voltage) -> runCharacterization(voltage.in(Volts)), null, this));
     }
 
     @Override
@@ -71,8 +59,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
         outputs.desiredStates = _kinematics.toSwerveModuleStates(_desiredChassisSpeeds);
 
         SwerveDriveKinematics.desaturateWheelSpeeds(
-                outputs.desiredStates,
-                Constants.DriveTrain.MAX_MPS);
+                outputs.desiredStates, Constants.DriveTrain.MAX_MPS);
 
         for (int i = 0; i < 4; i++) {
             _modules[i].setDesiredState(outputs.desiredStates[i]);

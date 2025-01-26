@@ -1,12 +1,10 @@
 package org.frc5687.robot.commands.drive;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
-
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 public class TeleopDriveCommand extends OutliersCommand {
     private final DriveSubsystem _drive;
@@ -16,12 +14,11 @@ public class TeleopDriveCommand extends OutliersCommand {
     private final BooleanSupplier _fieldRelativeSupplier;
 
     public TeleopDriveCommand(
-        DriveSubsystem drive,
-        DoubleSupplier xSupplier,
-        DoubleSupplier ySupplier,
-        DoubleSupplier rotationSupplier,
-        BooleanSupplier fieldRelativeSupplier
-    ) {
+            DriveSubsystem drive,
+            DoubleSupplier xSupplier,
+            DoubleSupplier ySupplier,
+            DoubleSupplier rotationSupplier,
+            BooleanSupplier fieldRelativeSupplier) {
         _drive = drive;
         _xSupplier = xSupplier;
         _ySupplier = ySupplier;
@@ -33,18 +30,17 @@ public class TeleopDriveCommand extends OutliersCommand {
     @Override
     public void execute(double timestamp) {
         // Calculate chassis speeds
-        ChassisSpeeds chassisSpeeds = _fieldRelativeSupplier.getAsBoolean()
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                _xSupplier.getAsDouble(),
-                _ySupplier.getAsDouble(),
-                _rotationSupplier.getAsDouble(),
-                _drive.getHeading()
-            )
-            : new ChassisSpeeds(
-                _xSupplier.getAsDouble(),
-                _ySupplier.getAsDouble(),
-                _rotationSupplier.getAsDouble()
-            );
+        ChassisSpeeds chassisSpeeds =
+                _fieldRelativeSupplier.getAsBoolean()
+                        ? ChassisSpeeds.fromFieldRelativeSpeeds(
+                                _xSupplier.getAsDouble(),
+                                _ySupplier.getAsDouble(),
+                                _rotationSupplier.getAsDouble(),
+                                _drive.getHeading())
+                        : new ChassisSpeeds(
+                                _xSupplier.getAsDouble(),
+                                _ySupplier.getAsDouble(),
+                                _rotationSupplier.getAsDouble());
 
         // Set desired chassis speeds
         _drive.setDesiredChassisSpeeds(chassisSpeeds);

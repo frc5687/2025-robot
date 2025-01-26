@@ -1,11 +1,10 @@
 package org.frc5687.robot.subsystems.drive;
 
-import org.frc5687.robot.util.BaseInputs;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import org.frc5687.robot.util.BaseInputs;
 
 @Logged
 public class DriveInputs extends BaseInputs {

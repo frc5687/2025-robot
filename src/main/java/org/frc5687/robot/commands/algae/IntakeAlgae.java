@@ -1,18 +1,18 @@
 package org.frc5687.robot.commands.algae;
 
 import java.util.function.DoubleSupplier;
-
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 
 public class IntakeAlgae extends OutliersCommand {
-    
+
     AlgaeArmSubsystem _algaeArm;
     double _angle;
     double _voltage;
     DoubleSupplier _angleSupplier;
-    
-    public IntakeAlgae(AlgaeArmSubsystem algaeArmSubsystem, double voltage, DoubleSupplier angleSupplier){
+
+    public IntakeAlgae(
+            AlgaeArmSubsystem algaeArmSubsystem, double voltage, DoubleSupplier angleSupplier) {
         _algaeArm = algaeArmSubsystem;
         _voltage = voltage;
         _angleSupplier = angleSupplier;
@@ -28,8 +28,7 @@ public class IntakeAlgae extends OutliersCommand {
     }
 
     @Override
-    public void end(boolean interrupted){
+    public void end(boolean interrupted) {
         _algaeArm.setAlgaeMotorVoltage(0);
-        
     }
 }

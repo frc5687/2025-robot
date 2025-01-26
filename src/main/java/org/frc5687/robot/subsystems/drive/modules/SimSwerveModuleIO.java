@@ -1,16 +1,16 @@
 package org.frc5687.robot.subsystems.drive.modules;
 
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.CANcoderSimState;
+import com.ctre.phoenix6.sim.TalonFXSimState;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class SimSwerveModuleIO implements SwerveModuleIO {
     // Simulation constants
@@ -36,7 +36,7 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
     private final PIDController _steerController = new PIDController(SIM_TURN_KP, 0, SIM_TURN_KD);
 
     private final double _driveRotationsPerMeter;
-    private final double _loopPeriodSecs = 0.02;  // 50Hz
+    private final double _loopPeriodSecs = 0.02; // 50Hz
 
     private boolean _driveClosedLoop = false;
     private boolean _steerClosedLoop = false;
@@ -45,12 +45,11 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
     private double _steerAppliedVolts = 0.0;
 
     public SimSwerveModuleIO(
-        SwerveModuleConfig config,
-        int driveMotorId,
-        int steerMotorId,
-        int cancoderId,
-        String canbus
-    ) {
+            SwerveModuleConfig config,
+            int driveMotorId,
+            int steerMotorId,
+            int cancoderId,
+            String canbus) {
         _driveMotor = new TalonFX(driveMotorId, canbus);
         _steerMotor = new TalonFX(steerMotorId, canbus);
         _cancoder = new CANcoder(cancoderId, canbus);
@@ -59,23 +58,17 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
         _steerSim = _steerMotor.getSimState();
         _cancoderSim = _cancoder.getSimState();
 
-        _driveMotorSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                DCMotor.getKrakenX60Foc(1), 
-                0.025,
-                config.driveGearRatio()
-            ),
-            DCMotor.getKrakenX60Foc(1)
-        );
+        _driveMotorSim =
+                new DCMotorSim(
+                        LinearSystemId.createDCMotorSystem(
+                                DCMotor.getKrakenX60Foc(1), 0.025, config.driveGearRatio()),
+                        DCMotor.getKrakenX60Foc(1));
 
-        _steerMotorSim = new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(
-                DCMotor.getKrakenX60Foc(1),
-                0.004,
-                config.steerGearRatio()
-            ),
-            DCMotor.getKrakenX60Foc(1)
-        );
+        _steerMotorSim =
+                new DCMotorSim(
+                        LinearSystemId.createDCMotorSystem(
+                                DCMotor.getKrakenX60Foc(1), 0.004, config.steerGearRatio()),
+                        DCMotor.getKrakenX60Foc(1));
 
         double wheelCircumference = 2 * Math.PI * config.wheelRadius();
         _driveRotationsPerMeter = config.driveGearRatio() / wheelCircumference;
@@ -86,14 +79,14 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
     @Override
     public void updateInputs(SwerveModuleInputs inputs) {
         double voltage = RobotController.getBatteryVoltage();
-        
+
         if (_driveClosedLoop) {
-            _driveAppliedVolts = _driveFeedforwardVolts + 
-                _driveController.calculate(_driveMotorSim.getAngularVelocityRadPerSec());
+            _driveAppliedVolts =
+                    _driveFeedforwardVolts
+                            + _driveController.calculate(_driveMotorSim.getAngularVelocityRadPerSec());
         }
         if (_steerClosedLoop) {
-            _steerAppliedVolts = 
-                _steerController.calculate(_steerMotorSim.getAngularPositionRad());
+            _steerAppliedVolts = _steerController.calculate(_steerMotorSim.getAngularPositionRad());
         }
 
         _driveMotorSim.setInputVoltage(MathUtil.clamp(_driveAppliedVolts, -12.0, 12.0));
@@ -101,10 +94,10 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
         _driveMotorSim.update(_loopPeriodSecs);
         _steerMotorSim.update(_loopPeriodSecs);
 
-        inputs.drivePositionMeters = 
-            _driveMotorSim.getAngularPositionRad() / (2 * Math.PI * _driveRotationsPerMeter);
-        inputs.driveVelocityMPS = 
-            _driveMotorSim.getAngularVelocityRadPerSec() / (2 * Math.PI * _driveRotationsPerMeter);
+        inputs.drivePositionMeters =
+                _driveMotorSim.getAngularPositionRad() / (2 * Math.PI * _driveRotationsPerMeter);
+        inputs.driveVelocityMPS =
+                _driveMotorSim.getAngularVelocityRadPerSec() / (2 * Math.PI * _driveRotationsPerMeter);
         inputs.driveAppliedVolts = _driveAppliedVolts;
         inputs.driveCurrentAmps = Math.abs(_driveMotorSim.getCurrentDrawAmps());
         inputs.driveTempCelsius = 25.0;
@@ -133,11 +126,12 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
                 break;
             case VELOCITY:
                 _driveClosedLoop = true;
-                _driveFeedforwardVolts = SIM_DRIVE_KS * Math.signum(outputs.driveVelocitySetpointMPS) + 
-                    SIM_DRIVE_KV * outputs.driveVelocitySetpointMPS + 
-                    outputs.driveFeedforwardVolts;
-                _driveController.setSetpoint(outputs.driveVelocitySetpointMPS * 
-                    2 * Math.PI * _driveRotationsPerMeter);
+                _driveFeedforwardVolts =
+                        SIM_DRIVE_KS * Math.signum(outputs.driveVelocitySetpointMPS)
+                                + SIM_DRIVE_KV * outputs.driveVelocitySetpointMPS
+                                + outputs.driveFeedforwardVolts;
+                _driveController.setSetpoint(
+                        outputs.driveVelocitySetpointMPS * 2 * Math.PI * _driveRotationsPerMeter);
                 break;
             default:
                 _driveClosedLoop = false;

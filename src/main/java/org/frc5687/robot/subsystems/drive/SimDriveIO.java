@@ -2,15 +2,14 @@ package org.frc5687.robot.subsystems.drive;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.sim.Pigeon2SimState;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotController;
 
 public class SimDriveIO implements DriveIO {
     private final Pigeon2 _imu;
     private final Pigeon2SimState _imuSim;
-    
-    private final double loopPeriodSecs = 0.02;  // 50Hz Make constant i
+
+    private final double loopPeriodSecs = 0.02; // 50Hz Make constant i
     private Rotation2d prevYaw = new Rotation2d();
 
     public SimDriveIO(int pigeonId) {
@@ -28,8 +27,8 @@ public class SimDriveIO implements DriveIO {
         inputs.rollPosition = Rotation2d.fromDegrees(_imu.getRoll().getValueAsDouble());
 
         inputs.yawVelocityRadPerSec = inputs.yawPosition.minus(prevYaw).getRadians() / loopPeriodSecs;
-        inputs.pitchVelocityRadPerSec = 0.0; 
-        inputs.rollVelocityRadPerSec = 0.0; 
+        inputs.pitchVelocityRadPerSec = 0.0;
+        inputs.rollVelocityRadPerSec = 0.0;
 
         prevYaw = inputs.yawPosition;
     }
