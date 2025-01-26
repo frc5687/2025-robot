@@ -14,6 +14,7 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
 
     private final Object inputLogger;
     private final Object outputLogger;
+    private boolean _seperateControl = false;
 
     public OutliersSubsystem(SubsystemIO<Inputs, Outputs> io, Inputs inputs, Outputs outputs) {
         _io = io;
@@ -43,8 +44,16 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
 
     protected abstract void periodic(Inputs inputs, Outputs outputs);
 
-    @Override
-    public final void periodic() {
+    protected void setToSeperateControl(boolean seperateControl) {
+        System.out.println("Set to seperate control: " + seperateControl);
+        _seperateControl = seperateControl;
+    }
+
+    protected boolean isSeperateControl() {
+        return _seperateControl;
+    }
+
+    protected void process() {
         _io.updateInputs(_inputs);
         // reflection to call update() on the logger, We are hacking in functionallity due to Epilgue
         // stuggling to find necessary IO classes
@@ -74,6 +83,13 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
         }
 
         _io.writeOutputs(_outputs);
+    }
+
+    @Override
+    public final void periodic() {
+        if (!_seperateControl) {
+            process();
+        }
     }
 
     private String firstCharToLowerCase(String str) {

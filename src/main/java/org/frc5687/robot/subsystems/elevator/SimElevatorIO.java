@@ -95,9 +95,9 @@ public class SimElevatorIO implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorInputs inputs) {
-        _platformNorthEastSim.update(0.020);
-        _platformNorthWestSim.update(0.020);
-        _platformSouthWestSim.update(0.020);
+        _platformNorthEastSim.update(Constants.Elevator.PERIOD);
+        _platformNorthWestSim.update(Constants.Elevator.PERIOD);
+        _platformSouthWestSim.update(Constants.Elevator.PERIOD);
 
         // Get raw stage positions from simulation
         inputs.stageNorthEastPositionMeters = _platformNorthEastSim.getPositionMeters();

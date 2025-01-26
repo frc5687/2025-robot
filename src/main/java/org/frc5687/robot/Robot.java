@@ -27,7 +27,7 @@ public class Robot extends TimedRobot {
                     config.minimumImportance = Logged.Importance.DEBUG;
                     config.errorHandler = ErrorHandler.printErrorMessages();
                 });
-        _robotContainer = new RobotContainer();
+        _robotContainer = new RobotContainer(this);
         Epilogue.bind(this);
     }
 

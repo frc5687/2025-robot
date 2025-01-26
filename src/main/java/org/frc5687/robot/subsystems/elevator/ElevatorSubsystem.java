@@ -11,6 +11,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
 
     public ElevatorSubsystem(ElevatorIO io) {
         super(io, new ElevatorInputs(), new ElevatorOutputs());
+        this.setToSeperateControl(true);
         System.out.println(Constants.Elevator.MAX_VELOCITY_MPS);
     }
 
@@ -25,7 +26,10 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         _robotState.updatePlatform(
                 _inputs.stageNorthWestPositionMeters,
                 _inputs.stageNorthEastPositionMeters,
-                _inputs.stageSouthWestPositionMeters);
+                _inputs.stageSouthWestPositionMeters
+                // _inputs.platformPitchRadians,
+                // _inputs.platformPitchRadians
+                );
 
         _inputs.platformHeightMeters = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP).getZ();
 
@@ -80,5 +84,12 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
             }
         }
         _inputs.elevatorState = closestState;
+    }
+
+    public void processWithSeparateControl() {
+        if (!this.isSeperateControl()) {
+            throw new IllegalStateException("Cannot call when separate control is disabled");
+        }
+        process();
     }
 }

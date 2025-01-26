@@ -198,6 +198,7 @@ public class Constants {
 
     public static class Elevator {
 
+        public static final double PERIOD = 0.004;
         public static final String CANBUS = "CANivore";
 
         public static final int NUM_MOTORS = 1;
@@ -218,6 +219,9 @@ public class Constants {
         public static final double kS = 0.0;
         public static final double kV = 0.0;
         public static final double kA = 0.0;
+
+        public static final double PITCH_kP = 0.1;
+        public static final double ROLL_kP = 0.1;
 
         public static final boolean NORTH_WEST_INVERTED = true;
         public static final boolean NORTH_EAST_INVERTED = false;

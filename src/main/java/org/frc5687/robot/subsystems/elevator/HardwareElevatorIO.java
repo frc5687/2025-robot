@@ -65,6 +65,8 @@ public class HardwareElevatorIO implements ElevatorIO {
         _imuPitch = _imu.getPitch();
         _imuRoll = _imu.getRoll();
 
+        setSignalFrequency();
+
         configureMotor(_northEastElevatorMotor, Constants.Elevator.NORTH_EAST_INVERTED);
         configureMotor(_northWestElevatorMotor, Constants.Elevator.NORTH_WEST_INVERTED);
         configureMotor(_southWestElevatorMotor, Constants.Elevator.SOUTH_EAST_INVERTED);
@@ -73,14 +75,28 @@ public class HardwareElevatorIO implements ElevatorIO {
         _northEastElevatorMotor.setPosition(0);
         _southWestElevatorMotor.setPosition(0);
 
-        _pitchController = new PIDController(0.01, 0.0, 0.0);
-        _rollController = new PIDController(0.01, 0.0, 0.0);
+        _pitchController = new PIDController(Constants.Elevator.PITCH_kP, 0.0, 0.0);
+        _rollController = new PIDController(Constants.Elevator.ROLL_kP, 0.0, 0.0);
 
         _pitchController.setSetpoint(0.0);
         _rollController.setSetpoint(0.0);
 
-        _pitchController.setTolerance(0.1);
-        _rollController.setTolerance(0.1);
+        _pitchController.setTolerance(Units.degreesToRadians(0.1));
+        _rollController.setTolerance(Units.degreesToRadians(0.1));
+    }
+
+    private void setSignalFrequency() {
+        _northWestPosition.setUpdateFrequency(1.0 / Constants.Elevator.PERIOD);
+        _northWestVelocity.setUpdateFrequency(1.0 / Constants.Elevator.PERIOD);
+
+        _southWestPosition.setUpdateFrequency(1.0 / Constants.Elevator.PERIOD);
+        _southWestVelocity.setUpdateFrequency(1.0 / Constants.Elevator.PERIOD);
+
+        _northEastPosition.setUpdateFrequency(1.0 / Constants.Elevator.PERIOD);
+        _northEastVelocity.setUpdateFrequency(1.0 / Constants.Elevator.PERIOD);
+
+        _imuPitch.setUpdateFrequency(1.0 / Constants.Elevator.PERIOD);
+        _imuRoll.setUpdateFrequency(1.0 / Constants.Elevator.PERIOD);
     }
 
     public double[] calculateHeightCorrections(
@@ -91,9 +107,9 @@ public class HardwareElevatorIO implements ElevatorIO {
         pitchCorrection = MathUtil.clamp(pitchCorrection, -MAX_CORRECTION, MAX_CORRECTION);
         rollCorrection = MathUtil.clamp(rollCorrection, -MAX_CORRECTION, MAX_CORRECTION);
 
-        double northWest = baseHeight - pitchCorrection - rollCorrection;
-        double northEast = baseHeight - pitchCorrection + rollCorrection;
-        double southWest = baseHeight + pitchCorrection - rollCorrection;
+        double northWest = baseHeight + pitchCorrection - rollCorrection;
+        double northEast = baseHeight + pitchCorrection + rollCorrection;
+        double southWest = baseHeight - pitchCorrection - rollCorrection;
 
         return new double[] {northWest, northEast, southWest};
     }
@@ -123,6 +139,11 @@ public class HardwareElevatorIO implements ElevatorIO {
                 Units.rotationsToRadians(_southWestPosition.getValueAsDouble())
                         * Constants.Elevator.DRUM_RADIUS
                         / Constants.Elevator.GEAR_RATIO;
+
+        inputs.platformPitchRadians =
+                Units.degreesToRadians(Units.degreesToRadians(_imuPitch.getValueAsDouble()));
+        inputs.platformRollRadians =
+                Units.degreesToRadians(Units.degreesToRadians(_imuRoll.getValueAsDouble()));
 
         inputs.platformMotorCurrents =
                 new double[] {

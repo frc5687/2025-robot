@@ -28,6 +28,7 @@ import org.frc5687.robot.util.Helpers;
 
 public class RobotContainer {
 
+    private final Robot _robot;
     private final OperatorInterface _oi;
     @Logged private final DriveSubsystem _drive;
     @NotLogged private final SwerveModule[] _modules;
@@ -39,7 +40,8 @@ public class RobotContainer {
     private final AlgaeArmSubsystem _algaeArm;
     @Logged private final Field2d _field;
 
-    public RobotContainer() {
+    public RobotContainer(Robot robot) {
+        _robot = robot;
         _oi = new OperatorInterface();
         _field = new Field2d();
         _modules = new SwerveModule[Constants.SwerveModule.NUM_MODULES];
@@ -152,6 +154,9 @@ public class RobotContainer {
 
         configureDefaultCommands();
         _oi.configureCommandMapping(this);
+
+        // Need to control faster due to stabilization
+        addElevatorControlLoop();
     }
 
     private void configureDefaultCommands() {
@@ -191,6 +196,13 @@ public class RobotContainer {
         if (RobotBase.isSimulation()) {
             _field.setRobotPose(_drive.getPose());
         }
+    }
+
+    public void addElevatorControlLoop() {
+        _robot.addPeriodic(
+                _elevator::processWithSeparateControl,
+                Constants.Elevator.PERIOD,
+                Constants.Elevator.PERIOD);
     }
 
     // for not be lazy and just square input TODO: DONT
