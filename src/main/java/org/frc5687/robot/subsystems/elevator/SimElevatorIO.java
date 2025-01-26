@@ -33,7 +33,6 @@ public class SimElevatorIO implements ElevatorIO {
     private final EncoderSim _southWestEncoderSim;
 
     public SimElevatorIO() {
-        // Setup motion constraints - these apply to stage height movement
         TrapezoidProfile.Constraints constraints =
                 new TrapezoidProfile.Constraints(
                         Constants.Elevator.MAX_VELOCITY_MPS, Constants.Elevator.MAX_ACCELERATION_MPSS);
@@ -92,18 +91,6 @@ public class SimElevatorIO implements ElevatorIO {
         _northWestEncoder.setDistancePerPulse(1.0);
         _northEastEncoder.setDistancePerPulse(1.0);
         _southWestEncoder.setDistancePerPulse(1.0);
-    }
-
-    private double worldHeightToStageHeight(double worldHeight) {
-        // Convert world height to actual stage extension
-        // Stage height is half of the world height - static offsets
-        return (worldHeight - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
-    }
-
-    private double stageHeightToWorldHeight(double stageHeight) {
-        // Convert stage extension to world height
-        // World height includes static offsets + 2x stage height
-        return Geometry.ELEVATOR_STAGE_TWO_HEIGHT + (stageHeight * 2.0);
     }
 
     @Override

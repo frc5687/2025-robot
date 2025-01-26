@@ -62,7 +62,7 @@ public class HardwareElevatorIO implements ElevatorIO {
         _northEastPositionRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
         _southWestPositionRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
 
-        _imuPitch = _imu.getPitch(); //
+        _imuPitch = _imu.getPitch();
         _imuRoll = _imu.getRoll();
 
         configureMotor(_northEastElevatorMotor, Constants.Elevator.NORTH_EAST_INVERTED);
