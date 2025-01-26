@@ -18,7 +18,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import org.frc5687.robot.Constants;
 
 public class HardwareElevatorIO implements ElevatorIO {
-    private static final double MAX_CORRECTION = 0.05;
+    private static final double MAX_CORRECTION = 0.02;
 
     private final TalonFX _northWestElevatorMotor;
     private final TalonFX _northEastElevatorMotor;
@@ -75,7 +75,7 @@ public class HardwareElevatorIO implements ElevatorIO {
         _northEastElevatorMotor.setPosition(0);
         _southWestElevatorMotor.setPosition(0);
 
-        _pitchController = new PIDController(Constants.Elevator.PITCH_kP, 0.0, 0.0);
+        _pitchController = new PIDController(Constants.Elevator.PITCH_kP, 0.0, Constants.Elevator.kD);
         _rollController = new PIDController(Constants.Elevator.ROLL_kP, 0.0, 0.0);
 
         _pitchController.setSetpoint(0.0);
@@ -107,9 +107,10 @@ public class HardwareElevatorIO implements ElevatorIO {
         pitchCorrection = MathUtil.clamp(pitchCorrection, -MAX_CORRECTION, MAX_CORRECTION);
         rollCorrection = MathUtil.clamp(rollCorrection, -MAX_CORRECTION, MAX_CORRECTION);
 
-        double northWest = baseHeight + pitchCorrection - rollCorrection;
-        double northEast = baseHeight + pitchCorrection + rollCorrection;
-        double southWest = baseHeight - pitchCorrection - rollCorrection;
+        System.out.println(pitchCorrection);
+        double northWest = baseHeight - pitchCorrection - rollCorrection;
+        double northEast = baseHeight - pitchCorrection + rollCorrection;
+        double southWest = baseHeight + pitchCorrection - rollCorrection;
 
         return new double[] {northWest, northEast, southWest};
     }
@@ -140,10 +141,8 @@ public class HardwareElevatorIO implements ElevatorIO {
                         * Constants.Elevator.DRUM_RADIUS
                         / Constants.Elevator.GEAR_RATIO;
 
-        inputs.platformPitchRadians =
-                Units.degreesToRadians(Units.degreesToRadians(_imuPitch.getValueAsDouble()));
-        inputs.platformRollRadians =
-                Units.degreesToRadians(Units.degreesToRadians(_imuRoll.getValueAsDouble()));
+        inputs.platformPitchRadians = Units.degreesToRadians(_imuPitch.getValueAsDouble());
+        inputs.platformRollRadians = Units.degreesToRadians(_imuRoll.getValueAsDouble());
 
         inputs.platformMotorCurrents =
                 new double[] {
@@ -162,7 +161,9 @@ public class HardwareElevatorIO implements ElevatorIO {
         // System.out.println(_northEastElevatorMotor.getClosedLoopOutput());
         double[] correctedHeights =
                 calculateHeightCorrections(
-                        desiredHeight, _imuPitch.getValueAsDouble(), _imuRoll.getValueAsDouble());
+                        desiredHeight,
+                        Units.degreesToRadians(_imuPitch.getValueAsDouble()),
+                        Units.degreesToRadians(_imuRoll.getValueAsDouble()));
 
         double nwRotations =
                 Units.radiansToRotations(correctedHeights[0] / Constants.Elevator.DRUM_RADIUS)

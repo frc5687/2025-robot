@@ -220,8 +220,9 @@ public class Constants {
         public static final double kV = 0.0;
         public static final double kA = 0.0;
 
-        public static final double PITCH_kP = 0.1;
-        public static final double ROLL_kP = 0.1;
+        public static final double PITCH_kP = 0.2;
+        public static final double PITCH_kD = 0.01;
+        public static final double ROLL_kP = 0.0;
 
         public static final boolean NORTH_WEST_INVERTED = true;
         public static final boolean NORTH_EAST_INVERTED = false;

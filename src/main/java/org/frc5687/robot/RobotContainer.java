@@ -202,7 +202,7 @@ public class RobotContainer {
         _robot.addPeriodic(
                 _elevator::processWithSeparateControl,
                 Constants.Elevator.PERIOD,
-                Constants.Elevator.PERIOD);
+                Constants.Elevator.PERIOD / 2.0);
     }
 
     // for not be lazy and just square input TODO: DONT

@@ -11,7 +11,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
 
     public ElevatorSubsystem(ElevatorIO io) {
         super(io, new ElevatorInputs(), new ElevatorOutputs());
-        this.setToSeperateControl(true);
+        this.setToSeparateControl(true);
         System.out.println(Constants.Elevator.MAX_VELOCITY_MPS);
     }
 
@@ -87,7 +87,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     }
 
     public void processWithSeparateControl() {
-        if (!this.isSeperateControl()) {
+        if (!this.isSeparateControl()) {
             throw new IllegalStateException("Cannot call when separate control is disabled");
         }
         process();

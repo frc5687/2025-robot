@@ -44,12 +44,12 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
 
     protected abstract void periodic(Inputs inputs, Outputs outputs);
 
-    protected void setToSeperateControl(boolean seperateControl) {
+    protected void setToSeparateControl(boolean seperateControl) {
         System.out.println("Set to seperate control: " + seperateControl);
         _seperateControl = seperateControl;
     }
 
-    protected boolean isSeperateControl() {
+    protected boolean isSeparateControl() {
         return _seperateControl;
     }
 
