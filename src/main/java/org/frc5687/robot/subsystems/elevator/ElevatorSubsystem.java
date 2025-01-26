@@ -1,43 +1,85 @@
-
-
 package org.frc5687.robot.subsystems.elevator;
 
+import org.frc5687.robot.Constants;
+import org.frc5687.robot.RobotStateManager;
+import org.frc5687.robot.RobotStateManager.Geometry;
+import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 
 public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, ElevatorOutputs> {
-     
-    public ElevatorSubsystem(ElevatorIO io){
-        super(io, new ElevatorInputs(), new ElevatorOutputs());
+    private final RobotStateManager _robotState = RobotStateManager.getInstance();
 
-     }
+    public ElevatorSubsystem(ElevatorIO io) {
+        super(io, new ElevatorInputs(), new ElevatorOutputs());
+        System.out.println(Constants.Elevator.MAX_VELOCITY_MPS);
+    }
 
     @Override
     protected void processInputs() {
+        _inputs.firstStagePositionMeters =
+                (_inputs.stageNorthWestPositionMeters
+                        + _inputs.stageNorthEastPositionMeters
+                        + _inputs.stageSouthWestPositionMeters)
+                        / 3.0;
+
+        _robotState.updatePlatform(
+                _inputs.stageNorthWestPositionMeters,
+                _inputs.stageNorthEastPositionMeters,
+                _inputs.stageSouthWestPositionMeters);
         
+        _inputs.platformHeightMeters = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP).getZ();
+
+        _inputs.stagePose = _robotState.getPose(RobotCoordinate.ELEVATOR_STAGE);
+        _inputs.platformPose = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP);
     }
 
     @Override
     protected void periodic(ElevatorInputs inputs, ElevatorOutputs outputs) {
-        
     }
 
-    public void setPositionMeters(double positionMeters){
-        _outputs.desiredElevatorPositionMeters = positionMeters;
-    
+    public void setDesiredPlatformHeightWorld(double heightMeters) {
+        _outputs.desiredPlatformHeightWorldMeters = heightMeters;
+        _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0; 
+        _outputs.desiredPlatformPitchRadians = 0.0;
+        _outputs.desiredPlatformRollRadians = 0.0;
     }
- 
 
-    public void setVoltage(double voltage){
-        _outputs.elevatorVoltage = voltage;
- 
-    } 
+    public void setDesiredState(ElevatorState state) {
+        setDesiredPlatformHeightWorld(state.getValue());
+        _outputs.desiredState = state;
+    }
+
+    public ElevatorState getCurrentState() {
+        return _inputs.elevatorState;
+    }
+
+    public void setCurrentState(ElevatorState state) {
+        _inputs.elevatorState = state;
+    }
+
+    public ElevatorState getDesiredState() {
+        return _outputs.desiredState;
+    }
+
+    public double getPlatformWorldHeight() {
+        return _inputs.platformPose.getZ();
+    }
+
+    public boolean isAtDesiredPosition() {
+        return Math.abs(_outputs.desiredPlatformHeightWorldMeters - getPlatformWorldHeight()) < 0.001;
+    }
+
+    public void mapToClosestState() {
+        ElevatorState closestState = ElevatorState.STOWED;
+        double minDist = Double.MAX_VALUE;
+
+        for (ElevatorState state : ElevatorState.values()) {
+            double heightDiff = Math.abs(getPlatformWorldHeight() - state.getValue());
+            if (heightDiff < minDist) {
+                closestState = state;
+                minDist = heightDiff;
+            }
+        }
+        _inputs.elevatorState = closestState;
+    }
 }
-/* 
- * class init
- * create private motors (through motor id's and configs in constants.java)
- * 
- * create getters/setters (public function that can set and get things (angles, speeds))
- * 
- * create commands in classes/new files (require the subsytems that you are using and call its methods)
- * 
-*/

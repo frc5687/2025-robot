@@ -1,8 +1,9 @@
 package org.frc5687.robot;
 
-import org.frc5687.robot.commands.elevator.SetElevatorPosition;
+import org.frc5687.robot.commands.elevator.ElevatorSetState;
 import org.frc5687.robot.commands.intake.RunIntake;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
+import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 
@@ -19,13 +20,11 @@ public class OperatorInterface {
         _driverController = new CommandXboxController(0);
     }
 
-    public void configureCommandMapping(DriveSubsystem drive, ElevatorSubsystem elevator) {
-        _driverController.a().onTrue(new SetElevatorPosition(elevator, () -> {return 10;}));
-        _driverController.b().onTrue(new SetElevatorPosition(elevator, () -> {return 15;}));
-
-        _driverController.x().onTrue(new SetElevatorPosition(elevator, () -> {return 30;}));
-
-        _driverController.y().onTrue(new SetElevatorPosition(elevator, () -> {return 35;}));
+    public void configureCommandMapping(RobotContainer container) {
+        _driverController.y().onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L3_CORAL_PLACING));
+        _driverController.x().onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L4_CORAL_PLACING));
+        _driverController.b().onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L2_CORAL_PLACING));
+        _driverController.a().onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.STOWED));
         //_driverController.povDown().onTrue(Commands.runOnce(drive::zeroGyroscope));
         // _driverController.a().onTrue(drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // _driverController.b().onTrue(drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
