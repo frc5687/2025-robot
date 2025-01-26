@@ -23,7 +23,7 @@ public class Constants {
 
         // Physical Configuration
         public static final double WHEEL_RADIUS = 0.0508; // 11/15/2024 test (meters)
-        public static final double GEAR_RATIO_DRIVE = (54.0 / 14.0) * (18.0 / 34.0) * (45.0 / 16.0);
+        public static final double GEAR_RATIO_DRIVE = (54.0 / 14.0) * (18.0 / 34.0) * (45.0 / 15.0);
         public static final double GEAR_RATIO_STEER = (48.0 / 18.0) * (96.0 / 16.0);
 
         // Drive Motor Configuration
@@ -49,7 +49,7 @@ public class Constants {
         public static final double STEER_MOTION_CRUISE_VELOCITY = 100.0; // rad/s
         public static final double STEER_MOTION_ACCELERATION = 200.0; // rad/s^2
 
-        public static final double COUPLING_RATIO = 0.0;
+        public static final double COUPLING_RATIO = (45.0 / 15.0); // Inverse of the last stage, where we link to the bevel gear
         public static final double COEFFICIENT_OF_FRICTION = 1.6;
 
         public static final double MAX_LINEAR_SPEED =
