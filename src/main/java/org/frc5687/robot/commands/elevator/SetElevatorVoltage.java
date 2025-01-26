@@ -17,6 +17,7 @@ public class SetElevatorVoltage extends OutliersCommand{
    ){
         _elevator = elevator;
         _voltageSupplier = voltageSupplier;
+        addRequirements(_elevator);
     }
 
     @Override

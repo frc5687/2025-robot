@@ -1,9 +1,16 @@
 package org.frc5687.robot;
 
+import org.frc5687.robot.Constants.AlgaeArm;
+import org.frc5687.robot.commands.algae.IdleAlgae;
+import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
+import org.frc5687.robot.commands.elevator.SetElevatorPosition;
 import org.frc5687.robot.commands.elevator.SetElevatorVoltage;
 import org.frc5687.robot.commands.intake.IdleIntake;
+import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
+import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
+import org.frc5687.robot.subsystems.algaearm.HardwareAlgaeArmIO;
 import org.frc5687.robot.subsystems.drive.*;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleIO;
@@ -35,8 +42,11 @@ public class RobotContainer {
     private final SwerveModule[] _modules;
 
     private final ElevatorSubsystem _elevator;
+    // @Logged
+    // private final IntakeSubsystem _intake;
+    
+    private final AlgaeArmSubsystem _algaeArm;
     @Logged
-    private final IntakeSubsystem _intake;
     
     private final Field2d _field;
 
@@ -127,33 +137,48 @@ public class RobotContainer {
  
         _drive = new DriveSubsystem(driveIO, _modules, Constants.DriveTrain.MODULE_LOCATIONS);
  
-        _intake = new IntakeSubsystem(intakeIO);
+        // _intake = new IntakeSubsystem(intakeIO);
         if (RobotBase.isSimulation()) {
             SmartDashboard.putData("Field", _field);
         }
 
-        ElevatorIO elevatorIO = new HardwareElevatorIO(RobotMap.CAN.TALONFX.ELEVATOR, RobotMap.CAN.TALONFX.ELEVATOR_FOLLOWER);
+        ElevatorIO elevatorIO = new HardwareElevatorIO(RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR, RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR, RobotMap.CAN.TALONFX.SOUTH_WEST_ELEVATOR);
         _elevator = new ElevatorSubsystem(elevatorIO);
         
- 
+        AlgaeArmIO algaeArmIO = new HardwareAlgaeArmIO();
+        _algaeArm = new AlgaeArmSubsystem(algaeArmIO);
+
         configureDefaultCommands();
-        _oi.configureCommandMapping(_drive, _intake);
+        _oi.configureCommandMapping(_drive, _elevator);
     }
 
     private void configureDefaultCommands() {
+        // _drive.setDefaultCommand(new TeleopDriveCommand(
+        //     _drive,
+        //     () -> -modifyAxis(_oi.getDriverController().getLeftY()) * Constants.SwerveModule.MAX_LINEAR_SPEED,
+        //     () -> -modifyAxis(_oi.getDriverController().getLeftX()) * Constants.SwerveModule.MAX_LINEAR_SPEED,
+        //     () -> -modifyAxis(_oi.getDriverController().getRightX()) * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+        //     () -> true  // Always field relative
+        // ));
+
         _drive.setDefaultCommand(new TeleopDriveCommand(
             _drive,
-            () -> -modifyAxis(_oi.getDriverController().getLeftY()) * Constants.SwerveModule.MAX_LINEAR_SPEED,
-            () -> -modifyAxis(_oi.getDriverController().getLeftX()) * Constants.SwerveModule.MAX_LINEAR_SPEED,
-            () -> -modifyAxis(_oi.getDriverController().getRightX()) * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+            () -> 0,
+            () -> 0,
+            () -> 0,
             () -> true  // Always field relative
         ));
-        //_elevator.setDefaultCommand(new IdleElevator(_elevator));
-        _elevator.setDefaultCommand(new SetElevatorVoltage(
-            _elevator,
-            () -> -modifyAxis(_oi.getDriverController().getLeftY()) * 12
-        ));
-        _intake.setDefaultCommand(new IdleIntake(_intake));
+        
+        _elevator.setDefaultCommand(new IdleElevator(_elevator));
+        // _elevator.setDefaultCommand(new SetElevatorPosition(
+        //     _elevator,
+        //     () -> -modifyAxis(_oi.getDriverController().getLeftY())
+        // ));
+
+        // _algaeArm.setDefaultCommand(new IntakeAlgae(_algaeArm, 0, 
+        // () -> -modifyAxis(_oi.getDriverController().getRightX()));
+        _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
+    //     _intake.setDefaultCommand(new IdleIntake(_intake));
     }
 
     public Command getAutonomousCommand() {

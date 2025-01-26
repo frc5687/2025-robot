@@ -27,9 +27,9 @@ public class RobotMap {
             public static final int SOUTH_WEST_ROTATION = 6;
             public static final int SOUTH_WEST_TRANSLATION = 7;
 
-            public static final int ELEVATOR = 8;
-            public static final int ELEVATOR_FOLLOWER = 8;
-
+            public static final int NORTH_WEST_ELEVATOR = 10;
+            public static final int SOUTH_WEST_ELEVATOR = 11;
+            public static final int NORTH_EAST_ELEVATOR = 12;
         }
 
         public static class CANCODER {

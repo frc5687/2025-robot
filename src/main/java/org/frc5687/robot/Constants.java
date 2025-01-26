@@ -10,8 +10,10 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 // import edu.wpi.first.math.util.Units;
 
@@ -198,9 +200,9 @@ public class Constants {
     public static class Elevator {
         
         
-        public static final String CANBUS = "Canivore";
+        public static final String CANBUS = "CANivore";
 
-        public static final int NUM_MOTORS = 2;
+        public static final int NUM_MOTORS = 1;
         public static final DCMotor MOTOR = DCMotor.getKrakenX60Foc(NUM_MOTORS);
         public static final double GEAR_RATIO = 9.0;
         public static final double MASS = 13.6078; // kg
@@ -210,23 +212,29 @@ public class Constants {
         public static final double EFFICIENCY = 0.85;
 
 
-        public static final double kP = 0.0;
+        public static final double kP = 0.7;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double kS = 0.0;
         public static final double kV = 0.0;
         public static final double kA = 0.0;
-        public static final boolean INVERTED = false;
 
-        public static final boolean FOLLOWER_INVERTED = true;
+        public static final boolean NORTH_WEST_INVERTED = true;
+        public static final boolean NORTH_EAST_INVERTED = false;
+        public static final boolean SOUTH_EAST_INVERTED = false;
 
         public static final double CURRENT_LIMIT = 60.0;
 
         public static final double MAX_ACCELERATION_MPSS = 1;
         public static final double MAX_VELOCITY_MPS = 1;
         public static final double MAX_JERK_MPSSS = 1;
+    }
 
+    public static class AlgaeArm{
         
+        public static final double kP = 0.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
     }
     public static class Vision {
         public static final double VISION_kP = 3.0;
