@@ -225,6 +225,11 @@ public class HardwareElevatorIO implements ElevatorIO {
                 Units.radiansToRotations(correctedHeights[2] / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO;
 
+        double desiredRotations =
+                Units.radiansToRotations(desiredHeight)
+                        / Constants.Elevator.DRUM_RADIUS
+                        * Constants.Elevator.GEAR_RATIO;
+
         // If we are looking to hold a position, use the more aggressive holding pid including using the
         // pitch controller
         if (isWithinPositionTolerance(desiredHeight)) {
@@ -235,9 +240,9 @@ public class HardwareElevatorIO implements ElevatorIO {
         } else {
             // Otherwise use motion magic
             outputs.usingPositionHolding = false;
-            _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(nwRotations));
-            _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(neRotations));
-            _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(swRotations));
+            _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(desiredRotations));
+            _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotations));
+            _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotations));
         }
         outputs.voltageCommandNorthEast =
                 _northEastElevatorMotor.getClosedLoopOutput().getValueAsDouble();
