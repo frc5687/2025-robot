@@ -24,6 +24,9 @@ public class ElevatorInputs extends BaseInputs {
     @Logged(name = "Platform Height (m)", importance = Logged.Importance.CRITICAL)
     public double platformHeightMeters = 0.0;
 
+    @Logged(name = "Platform Velocity (mps)")
+    public double platformVelocityMPS = 0.0;
+
     @Logged(name = "Platform Roll (rad)", importance = Logged.Importance.CRITICAL)
     public double platformRollRadians = 0.0;
 

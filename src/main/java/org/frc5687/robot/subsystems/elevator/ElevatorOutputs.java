@@ -29,6 +29,9 @@ public class ElevatorOutputs extends BaseOutputs {
     @Logged(name = "Platform South West Voltage Command (V)", importance = Logged.Importance.DEBUG)
     public double voltageCommandSouthWest = 0.0;
 
+    @Logged(name = "Using Hold Position PID")
+    public boolean usingPositionHolding = false;
+
     @Logged(name = "Feedforwards", importance = Logged.Importance.DEBUG)
     public double[] voltageFeedForwards = {0.0, 0.0, 0.0};
 }

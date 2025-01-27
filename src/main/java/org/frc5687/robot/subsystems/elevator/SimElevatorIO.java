@@ -138,7 +138,7 @@ public class SimElevatorIO implements ElevatorIO {
                 _southWestPIDController.calculate(_platformSouthWestSim.getPositionMeters());
 
         double ffVolts =
-                Constants.Elevator.kS
+                Constants.Elevator.MOTION_kS
                         * Math.signum(desiredStageHeight - _platformNorthWestSim.getPositionMeters());
 
         outputs.voltageCommandNorthEast = northEastVoltage;

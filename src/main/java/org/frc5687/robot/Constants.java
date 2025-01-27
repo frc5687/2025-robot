@@ -213,22 +213,33 @@ public class Constants {
         public static final double MAX_ACCELERATION_MPSS = 10;
         public static final double MAX_JERK_MPSSS = 20;
 
-        public static final double kP = 10.0;
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
-        public static final double kS = 0.0;
-        public static final double kV = 0.0;
-        public static final double kA = 0.0;
+        public static final double HOLD_kP = 2.5; // 2.5
+        public static final double HOLD_kI = 0.0;
+        public static final double HOLD_kD = 0.0;
+        public static final double HOLD_kS = 0.0;
+        public static final double HOLD_kV = 0.0;
+        public static final double HOLD_kA = 0.0;
 
-        public static final double PITCH_kP = 0.2;
-        public static final double PITCH_kD = 0.01;
-        public static final double ROLL_kP = 0.0;
+        public static final double MOTION_kP = 2;
+        public static final double MOTION_kI = 0.0;
+        public static final double MOTION_kD = 0.0;
+        public static final double MOTION_kS = 0.0;
+        public static final double MOTION_kV = 0.0;
+        public static final double MOTION_kA = 0.0;
+
+        public static final double PITCH_kP = 0.9;
+        public static final double PITCH_kD = 0.09;
+        public static final double ROLL_kP = 0.1;
+        public static final double ROLL_kD = 0.01;
 
         public static final boolean NORTH_WEST_INVERTED = true;
         public static final boolean NORTH_EAST_INVERTED = false;
         public static final boolean SOUTH_EAST_INVERTED = false;
 
         public static final double CURRENT_LIMIT = 60.0;
+
+        public static final double MAX_POSITION_CORRECTION = 0.02;
+        public static final double VELOCITY_TOLERANCE = 0.02;
     }
 
     public static class AlgaeArm {
