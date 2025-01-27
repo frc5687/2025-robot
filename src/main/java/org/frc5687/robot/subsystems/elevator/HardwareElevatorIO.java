@@ -141,6 +141,12 @@ public class HardwareElevatorIO implements ElevatorIO {
                         * Constants.Elevator.DRUM_RADIUS
                         / Constants.Elevator.GEAR_RATIO;
 
+        inputs.firstStagePositionMeters =
+                (inputs.stageNorthWestPositionMeters
+                        + inputs.stageNorthEastPositionMeters
+                        + inputs.stageSouthWestPositionMeters)
+                        / 3.0;
+
         inputs.platformPitchRadians = Units.degreesToRadians(_imuPitch.getValueAsDouble());
         inputs.platformRollRadians = Units.degreesToRadians(_imuRoll.getValueAsDouble());
 
