@@ -45,7 +45,6 @@ public class SimElevatorIO implements ElevatorIO {
         _northEastPIDController.setTolerance(0.001);
         _southWestPIDController.setTolerance(0.001);
 
-        // Initialize elevator sims with stage height limits (0 to MAX_HEIGHT)
         double platformMass = Constants.Elevator.MASS / 3.0;
         _platformNorthEastSim =
                 new ElevatorSim(
@@ -54,7 +53,7 @@ public class SimElevatorIO implements ElevatorIO {
                         platformMass,
                         Constants.Elevator.DRUM_RADIUS,
                         0,
-                        Geometry.ELEVATOR_MAX_HEIGHT, // Max stage height
+                        Geometry.ELEVATOR_MAX_HEIGHT,
                         true,
                         0);
 

@@ -75,4 +75,17 @@ public class RobotMap {
     public static class DIO {
         // IS THIS A 5687 REFERENCE?!?!?!?!?!?!?
     }
+
+    public static class SIM {
+        public static class DIO {
+            public static final int CORAL_ENCODER_A = 0;
+            public static final int CORAL_ENCODER_B = 1;
+
+            public static final int ALGAE_ENCODER_A = 2;
+            public static final int ALGAE_ENCODER_B = 3;
+
+            public static final int ELEVATOR_ENCODER_A = 4;
+            public static final int ELEVATOR_ENCODER_B = 5;
+        }
+    }
 }

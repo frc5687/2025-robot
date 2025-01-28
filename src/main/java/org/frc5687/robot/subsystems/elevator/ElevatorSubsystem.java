@@ -24,12 +24,9 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
                         / 3.0;
 
         _robotState.updatePlatform(
-                _inputs.stageNorthWestPositionMeters,
-                _inputs.stageNorthEastPositionMeters,
-                _inputs.stageSouthWestPositionMeters
-                // _inputs.platformPitchRadians,
-                // _inputs.platformPitchRadians
-                );
+                _inputs.firstStagePositionMeters,
+                _inputs.platformPitchRadians,
+                _inputs.platformPitchRadians);
 
         _inputs.platformHeightMeters = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP).getZ();
 

@@ -52,6 +52,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
         // Update odometry
         _odometry.update(_inputs.yawPosition, _inputs.modulePositions);
+        _inputs.odometryPose = _odometry.getPoseMeters();
     }
 
     @Override

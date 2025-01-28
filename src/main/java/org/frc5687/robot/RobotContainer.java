@@ -1,18 +1,22 @@
 package org.frc5687.robot;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import org.frc5687.robot.commands.algae.IdleAlgae;
+import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.algaearm.HardwareAlgaeArmIO;
+import org.frc5687.robot.subsystems.algaearm.SimAlgaeArmIO;
+import org.frc5687.robot.subsystems.coralarm.CoralArmIO;
+import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
+import org.frc5687.robot.subsystems.coralarm.HardwareCoralArmIO;
+import org.frc5687.robot.subsystems.coralarm.SimCoralArmIO;
 import org.frc5687.robot.subsystems.drive.*;
 import org.frc5687.robot.subsystems.drive.modules.CTRESwerveModuleIO;
 import org.frc5687.robot.subsystems.drive.modules.SimSwerveModuleIO;
@@ -30,15 +34,16 @@ public class RobotContainer {
 
     private final Robot _robot;
     private final OperatorInterface _oi;
-    @Logged private final DriveSubsystem _drive;
-    @NotLogged private final SwerveModule[] _modules;
+    private final DriveSubsystem _drive;
+    private final SwerveModule[] _modules;
 
     private final ElevatorSubsystem _elevator;
     // @Logged
     // private final IntakeSubsystem _intake;
 
     private final AlgaeArmSubsystem _algaeArm;
-    @Logged private final Field2d _field;
+    private final CoralArmSubsystem _coralArm;
+    private final Field2d _field;
 
     public RobotContainer(Robot robot) {
         _robot = robot;
@@ -149,8 +154,13 @@ public class RobotContainer {
 
         _elevator = new ElevatorSubsystem(elevatorIO);
 
-        AlgaeArmIO algaeArmIO = new HardwareAlgaeArmIO();
+        AlgaeArmIO algaeArmIO =
+                RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
         _algaeArm = new AlgaeArmSubsystem(algaeArmIO);
+
+        CoralArmIO coralArmIO =
+                RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
+        _coralArm = new CoralArmSubsystem(coralArmIO);
 
         configureDefaultCommands();
         _oi.configureCommandMapping(this);
@@ -185,6 +195,7 @@ public class RobotContainer {
         // _algaeArm.setDefaultCommand(new IntakeAlgae(_algaeArm, 0,
         // () -> -modifyAxis(_oi.getDriverController().getRightX()));
         _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
+        _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
         //     _intake.setDefaultCommand(new IdleIntake(_intake));
     }
 

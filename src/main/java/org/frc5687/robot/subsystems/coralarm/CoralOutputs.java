@@ -1,11 +1,11 @@
-package org.frc5687.robot.subsystems.algaearm;
+package org.frc5687.robot.subsystems.coralarm;
 
 import edu.wpi.first.epilogue.Logged;
 import org.frc5687.robot.util.BaseOutputs;
 
-public class AlgaeOutputs extends BaseOutputs {
-    @Logged(name = "Desired Algae State", importance = Logged.Importance.CRITICAL)
-    AlgaeState desiredState = AlgaeState.IDLE;
+public class CoralOutputs extends BaseOutputs {
+    @Logged(name = "Desired Coral State", importance = Logged.Importance.CRITICAL)
+    public CoralState desiredState = CoralState.STOWED;
 
     @Logged(name = "Desired Angle (rad)", importance = Logged.Importance.CRITICAL)
     double desiredAngleRad = 0.0;

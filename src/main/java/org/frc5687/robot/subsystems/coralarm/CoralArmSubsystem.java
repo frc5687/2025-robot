@@ -1,27 +1,27 @@
-package org.frc5687.robot.subsystems.algaearm;
+package org.frc5687.robot.subsystems.coralarm;
 
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 
-public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutputs> {
+public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutputs> {
 
     private final RobotStateManager _stateManger = RobotStateManager.getInstance();
 
-    public AlgaeArmSubsystem(AlgaeArmIO io) {
-        super(io, new AlgaeInputs(), new AlgaeOutputs());
+    public CoralArmSubsystem(CoralArmIO io) {
+        super(io, new CoralInputs(), new CoralOutputs());
     }
 
     @Override
     protected void processInputs() {}
 
     @Override
-    protected void periodic(AlgaeInputs inputs, AlgaeOutputs outputs) {
-        _stateManger.updateAlgaeArm(_inputs.angleRads);
-        _inputs.pose = _stateManger.getPose(RobotCoordinate.ALGAE_ARM_BASE);
+    protected void periodic(CoralInputs inputs, CoralOutputs outputs) {
+        _stateManger.updateCoralArm(_inputs.angleRads);
+        _inputs.pose = _stateManger.getPose(RobotCoordinate.CORAL_ARM_BASE);
     }
 
-    public AlgaeState getDesiredState() {
+    public CoralState getDesiredState() {
         return _outputs.desiredState;
     }
 
@@ -31,6 +31,10 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
 
     public void setArmAngle(double angle) {
         _outputs.desiredAngleRad = angle;
+    }
+
+    public boolean isAtDesiredAngle() {
+        return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.001;
     }
 
     public void setAlgaeMotorVoltage(double voltage) {

@@ -8,7 +8,7 @@ import org.frc5687.robot.util.BaseOutputs;
 public interface SubsystemIO<Inputs extends BaseInputs, Outputs extends BaseOutputs> {
     void updateInputs(Inputs inputs);
 
-    void writeOutputs(Outputs Outputs);
+    void writeOutputs(Outputs outputs);
 
     /* This is only really for zeroing sensors */
     default void reset() {}

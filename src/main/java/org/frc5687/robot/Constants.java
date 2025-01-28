@@ -4,6 +4,7 @@ package org.frc5687.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleConfig;
 import org.frc5687.robot.subsystems.intake.IntakeConfig;
 import org.frc5687.robot.util.PIDConstants;
@@ -243,10 +244,46 @@ public class Constants {
     }
 
     public static class AlgaeArm {
+        public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(10, 0, 0);
 
         public static final double kP = 0.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
+
+        public static final int NUM_MOTORS = 1;
+
+        public static final DCMotor GEARBOX = DCMotor.getBag(1);
+        public static final double GEAR_RATIO = 300;
+        public static final double ARM_LENGTH = 0.589;
+        public static final double ARM_MASS = Units.lbsToKilograms(10);
+        public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
+        public static final double MIN_ANGLE = 0.0;
+        public static final double MAX_ANGLE = Units.degreesToRadians(270.0);
+
+        public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 2.0 * Math.PI;
+    }
+
+    public static class CoralArm {
+
+        public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(10, 0, 0);
+
+        public static final double kP = 0.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+
+        public static final int NUM_MOTORS = 1;
+
+        public static final DCMotor GEARBOX = DCMotor.getBag(1);
+        public static final double GEAR_RATIO = 300;
+        public static final double ARM_LENGTH = Units.inchesToMeters(12.0);
+        public static final double ARM_MASS = Units.lbsToKilograms(10);
+        public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
+        public static final double MIN_ANGLE = 0.0;
+        public static final double MAX_ANGLE = Units.degreesToRadians(180);
+
+        public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 2.0 * Math.PI;
     }
 
     public static class Vision {
