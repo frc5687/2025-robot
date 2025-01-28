@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -39,6 +40,10 @@ public class HardwareElevatorIO implements ElevatorIO {
     private final MotionMagicVoltage _northEastMotionRequest;
     private final MotionMagicVoltage _southWestMotionRequest;
 
+    private final MotionMagicExpoVoltage _northWestExpoMotionRequest;
+    private final MotionMagicExpoVoltage _northEastExpoMotionRequest;
+    private final MotionMagicExpoVoltage _southWestExpoMotionRequest;
+
     private final PositionVoltage _northWestPositionRequest;
     private final PositionVoltage _northEastPositionRequest;
     private final PositionVoltage _southWestPositionRequest;
@@ -70,6 +75,10 @@ public class HardwareElevatorIO implements ElevatorIO {
         _northWestMotionRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
         _northEastMotionRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
         _southWestMotionRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
+
+        _northWestExpoMotionRequest = new MotionMagicExpoVoltage(0).withSlot(2).withEnableFOC(true);
+        _northEastExpoMotionRequest = new MotionMagicExpoVoltage(0).withSlot(2).withEnableFOC(true);
+        _southWestExpoMotionRequest = new MotionMagicExpoVoltage(0).withSlot(2).withEnableFOC(true);
 
         _northWestPositionRequest = new PositionVoltage(0).withSlot(1).withEnableFOC(true);
         _northEastPositionRequest = new PositionVoltage(0).withSlot(1).withEnableFOC(true);
@@ -243,6 +252,11 @@ public class HardwareElevatorIO implements ElevatorIO {
             _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(desiredRotations));
             _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotations));
             _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotations));
+
+        //     _northWestElevatorMotor.setControl(_northWestExpoMotionRequest.withPosition(desiredRotations));
+        //     _northEastElevatorMotor.setControl(_northEastExpoMotionRequest.withPosition(desiredRotations));
+        //     _southWestElevatorMotor.setControl(_southWestExpoMotionRequest.withPosition(desiredRotations));
+
         }
         outputs.voltageCommandNorthEast =
                 _northEastElevatorMotor.getClosedLoopOutput().getValueAsDouble();
@@ -287,6 +301,14 @@ public class HardwareElevatorIO implements ElevatorIO {
         config.Slot1.kS = Constants.Elevator.HOLD_kS;
         config.Slot1.kV = Constants.Elevator.HOLD_kV;
         config.Slot1.kA = Constants.Elevator.HOLD_kA;
+
+        // config.Slot2.kP = Constants.Elevator.EXPO_MOTION_kP;
+        // config.Slot2.kI = Constants.Elevator.EXPO_MOTION_kI;
+        // config.Slot2.kD = Constants.Elevator.EXPO_MOTION_kD;
+        // config.Slot2.kS = Constants.Elevator.EXPO_MOTION_kS;
+        // config.Slot2.kV = Constants.Elevator.EXPO_MOTION_kV;
+        // config.Slot2.kA = Constants.Elevator.EXPO_MOTION_kA;
+        // config.Slot2.kG = Constants.Elevator.EXPO_MOTION_kG;
 
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = Constants.Elevator.CURRENT_LIMIT;

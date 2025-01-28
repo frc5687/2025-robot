@@ -228,6 +228,14 @@ public class Constants {
         public static final double MOTION_kV = 0.0;
         public static final double MOTION_kA = 0.0;
 
+        public static final double MOTION_EXPO_kP = 0.0;
+        public static final double MOTION_EXPO_kI = 0.0;
+        public static final double MOTION_EXPO_kD = 0.0;
+        public static final double MOTION_EXPO_kS = 0.0;
+        public static final double MOTION_EXPO_kV = 0.0;
+        public static final double MOTION_EXPO_kA = 0.0;
+        public static final double MOTION_EXPO_kG = 0.0;
+
         public static final double PITCH_kP = 0.9;
         public static final double PITCH_kD = 0.09;
         public static final double ROLL_kP = 0.1;
