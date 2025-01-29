@@ -210,9 +210,10 @@ public class Constants {
         public static final double MIN_HEIGHT = 0.0; // m
         public static final double MAX_HEIGHT = 0.7295515; // m THIS IS THE HEIGHT OF THE FIRST STAGE
         public static final double EFFICIENCY = 0.85;
-        public static final double MAX_VELOCITY_MPS = 5;
-        public static final double MAX_ACCELERATION_MPSS = 20;
-        public static final double MAX_JERK_MPSSS = 50;
+        public static final double MAX_VELOCITY_MPS =
+                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO) * (2 * Math.PI * DRUM_RADIUS);
+        public static final double MAX_ACCELERATION_MPSS = 50;
+        public static final double MAX_JERK_MPSSS = 400;
 
         public static final double HOLD_kP = 2.5; // 2.5
         public static final double HOLD_kI = 0.0;
@@ -221,7 +222,7 @@ public class Constants {
         public static final double HOLD_kV = 0.0;
         public static final double HOLD_kA = 0.0;
 
-        public static final double MOTION_kP = 5;
+        public static final double MOTION_kP = 7.5;
         public static final double MOTION_kI = 0.0;
         public static final double MOTION_kD = 0.0;
         public static final double MOTION_kS = 0.0;

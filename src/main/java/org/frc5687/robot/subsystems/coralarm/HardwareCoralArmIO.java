@@ -16,8 +16,8 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
         _pid = new PIDController(Constants.AlgaeArm.kP, Constants.AlgaeArm.kI, Constants.AlgaeArm.kD);
         _encoder = new Encoder(4, 5);
-        _pivotMotor = new VictorSP(2);
-        _wheelMotor = new VictorSP(3);
+        _pivotMotor = new VictorSP(6);
+        _wheelMotor = new VictorSP(7);
     }
 
     @Override
