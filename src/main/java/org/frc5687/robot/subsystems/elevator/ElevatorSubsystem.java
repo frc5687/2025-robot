@@ -12,7 +12,6 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     public ElevatorSubsystem(ElevatorIO io) {
         super(io, new ElevatorInputs(), new ElevatorOutputs());
         this.setToSeparateControl(true);
-        System.out.println(Constants.Elevator.MAX_VELOCITY_MPS);
     }
 
     @Override

@@ -112,6 +112,11 @@ public class SimElevatorIO implements ElevatorIO {
         _northWestEncoderSim.setRate(_platformNorthWestSim.getVelocityMetersPerSecond());
         _northEastEncoderSim.setRate(_platformNorthEastSim.getVelocityMetersPerSecond());
         _southWestEncoderSim.setRate(_platformSouthWestSim.getVelocityMetersPerSecond());
+        inputs.platformVelocityMPS =
+                ((_platformNorthWestSim.getVelocityMetersPerSecond()
+                                + _platformNorthEastSim.getVelocityMetersPerSecond()
+                                + _platformSouthWestSim.getVelocityMetersPerSecond())
+                        / 3);
 
         // Set motor currents
         inputs.platformMotorCurrents[0] = _platformNorthEastSim.getCurrentDrawAmps();
