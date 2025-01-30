@@ -193,8 +193,21 @@ public class Constants {
 
     public static class Intake {
 
-        public static final IntakeConfig INTAKE_CONFIG = new IntakeConfig(false, false, 60, "CANivore");
-        public static final IntakeConfig ROLLER_CONFIG = new IntakeConfig(false, false, 60, "CANivore");
+        public static final String CAN_BUS = "CANivore";
+
+        public static final boolean PIVOT_INVERTED = true;
+        public static final boolean INTAKE_INVERTED = true;
+        public static final boolean ROLLER_INVERTED = true;
+
+        public static final double CURRENT_LIMIT = 60;
+
+        public static final double kP = 7.5;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+        public static final double kS = 0.0;
+        public static final double kV = 0.0;
+        public static final double kA = 0.0;
+
     }
 
     public static class Elevator {

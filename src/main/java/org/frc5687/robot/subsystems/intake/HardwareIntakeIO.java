@@ -1,7 +1,12 @@
 package org.frc5687.robot.subsystems.intake;
 
+import org.frc5687.robot.Constants;
+
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -11,8 +16,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 
 public class HardwareIntakeIO implements IntakeIO {
 
-    private final IntakeConfig _rollerConfig;
-    private final IntakeConfig _intakeConfig;
+    private final TalonFX _pivotMotor;
     private final TalonFX _rollerMotor;
     private final TalonFX _intakeMotor;
 
@@ -22,19 +26,21 @@ public class HardwareIntakeIO implements IntakeIO {
     private final VoltageOut _rollerVoltageReq = new VoltageOut(0);
     private final VoltageOut _intakeVoltageReq = new VoltageOut(0);
 
-    public HardwareIntakeIO(
-            int rollerMotorID, int intakeMotorID, IntakeConfig rollerConfig, IntakeConfig intakeConfig) {
-        _rollerMotor = new TalonFX(rollerMotorID, rollerConfig.canBUS());
-        _intakeMotor = new TalonFX(rollerMotorID, intakeConfig.canBUS());
+    private final MotionMagicVoltage _pivotPositionReq = new MotionMagicVoltage(0);
 
-        _rollerConfig = rollerConfig;
-        _intakeConfig = intakeConfig;
+    public HardwareIntakeIO(
+            int rollerMotorID, int intakeMotorID, int pivotMotorID) {
+        _rollerMotor = new TalonFX(rollerMotorID, Constants.Intake.CAN_BUS);
+        _intakeMotor = new TalonFX(intakeMotorID, Constants.Intake.CAN_BUS);
+        _pivotMotor = new TalonFX(pivotMotorID, Constants.Intake.CAN_BUS);
 
         _rollerVelocity = _rollerMotor.getVelocity();
         _intakeVelocity = _intakeMotor.getVelocity();
+        
 
-        configureRollerMotor(rollerConfig);
-        configureIntakeMotor(intakeConfig);
+        configureMotor(_rollerMotor, Constants.Intake.ROLLER_INVERTED);
+        configureMotor(_intakeMotor,Constants.Intake.INTAKE_INVERTED);
+        configureMotor(_pivotMotor, Constants.Intake.PIVOT_INVERTED);
     }
 
     @Override
@@ -47,6 +53,8 @@ public class HardwareIntakeIO implements IntakeIO {
 
         inputs.intakeVelocityRadperSec = Units.rotationsToRadians(_intakeVelocity.getValueAsDouble());
         inputs.intakeTemperatureCelsius = _intakeMotor.getDeviceTemp().getValueAsDouble();
+
+        
     }
 
     @Override
@@ -54,39 +62,28 @@ public class HardwareIntakeIO implements IntakeIO {
 
         _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
         _intakeMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
+        _pivotMotor.setControl(_pivotPositionReq.withPosition(Outputs.pivotTargetAngle));
     }
 
-    private void configureIntakeMotor(IntakeConfig config) {
-        var talonConfigs = new TalonFXConfiguration();
+     private void configureMotor(TalonFX motor, boolean isInverted) {
+        var config = new TalonFXConfiguration();
 
-        talonConfigs.MotorOutput.NeutralMode =
-                config.isRollerBrakeMode() ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.Inverted =
+                isInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
 
-        talonConfigs.MotorOutput.Inverted =
-                config.isRollerMotorInverted()
-                        ? InvertedValue.Clockwise_Positive
-                        : InvertedValue.CounterClockwise_Positive;
+        config.Voltage.withPeakForwardVoltage(Volts.of(12)).withPeakReverseVoltage(Volts.of(-12));
 
-        talonConfigs.CurrentLimits.SupplyCurrentLimit = config.rollerMotorCurrentLimit();
-        talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        config.Slot0.kP = Constants.Intake.kP;
+        config.Slot0.kI = Constants.Intake.kI;
+        config.Slot0.kD = Constants.Intake.kD;
+        config.Slot0.kS = Constants.Intake.kS;
+        config.Slot0.kV = Constants.Intake.kV;
+        config.Slot0.kA = Constants.Intake.kA;
 
-        _intakeMotor.getConfigurator().apply(talonConfigs);
-    }
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        config.CurrentLimits.SupplyCurrentLimit = Constants.Intake.CURRENT_LIMIT;
 
-    private void configureRollerMotor(IntakeConfig config) {
-        var talonConfigs = new TalonFXConfiguration();
-
-        talonConfigs.MotorOutput.NeutralMode =
-                config.isRollerBrakeMode() ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-
-        talonConfigs.MotorOutput.Inverted =
-                config.isRollerMotorInverted()
-                        ? InvertedValue.Clockwise_Positive
-                        : InvertedValue.CounterClockwise_Positive;
-
-        talonConfigs.CurrentLimits.SupplyCurrentLimit = config.rollerMotorCurrentLimit();
-        talonConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-
-        _rollerMotor.getConfigurator().apply(talonConfigs);
+        motor.getConfigurator().apply(config);
     }
 }

@@ -1,28 +1,25 @@
 package org.frc5687.robot.commands.coral;
 
+import java.util.function.DoubleSupplier;
+
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
 
 public class SetCoralArmAngle extends OutliersCommand {
 
     private final CoralArmSubsystem _arm;
-    private final double _angleRad;
-
-    public SetCoralArmAngle(CoralArmSubsystem arm, double angleRad) {
+    private DoubleSupplier _angleSupplier;
+    public SetCoralArmAngle(CoralArmSubsystem arm, DoubleSupplier angleSupplier) {
         _arm = arm;
-        _angleRad = angleRad;
+        _angleSupplier = angleSupplier;
         addRequirements(_arm);
     }
 
     @Override
-    public void initialize() {
-        super.initialize();
-        System.out.println("Coral setpoint is now: " + _angleRad);
-        _arm.setDesiredAngleRadians(_angleRad);
+    protected void execute(double timestamp) {
+        double targetAngle = Math.atan2(0, _angleSupplier.getAsDouble());
+        _arm.setArmAngle(targetAngle);
     }
-
-    @Override
-    protected void execute(double timestamp) {}
 
     @Override
     public boolean isFinished() {

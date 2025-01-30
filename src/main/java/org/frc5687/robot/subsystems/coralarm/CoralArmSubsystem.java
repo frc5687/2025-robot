@@ -37,7 +37,7 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
         return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.001;
     }
 
-    public void setAlgaeMotorVoltage(double voltage) {
+    public void setCoralMotorVoltage(double voltage) {
         _outputs.voltageCommand = voltage;
     }
 }

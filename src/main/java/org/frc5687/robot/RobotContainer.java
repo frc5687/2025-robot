@@ -1,5 +1,6 @@
 package org.frc5687.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -9,6 +10,7 @@ import org.frc5687.robot.commands.algae.IdleAlgae;
 import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
+import org.frc5687.robot.commands.intake.RunIntake;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.algaearm.HardwareAlgaeArmIO;
@@ -28,6 +30,7 @@ import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
 import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
+import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.util.Helpers;
 
 public class RobotContainer {
@@ -39,8 +42,7 @@ public class RobotContainer {
 
     private final ElevatorSubsystem _elevator;
     // @Logged
-    // private final IntakeSubsystem _intake;
-
+    private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
     private final CoralArmSubsystem _coralArm;
     private final Field2d _field;
@@ -53,7 +55,7 @@ public class RobotContainer {
 
         IntakeIO intakeIO =
                 new HardwareIntakeIO(
-                        20, 21, Constants.Intake.ROLLER_CONFIG, Constants.Intake.INTAKE_CONFIG);
+                        20, 21, 22);
         DriveIO driveIO =
                 RobotBase.isSimulation()
                         ? new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON)
@@ -162,6 +164,7 @@ public class RobotContainer {
                 RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
         _coralArm = new CoralArmSubsystem(coralArmIO);
 
+        _intake = new IntakeSubsystem(intakeIO);
         configureDefaultCommands();
         _oi.configureCommandMapping(this);
 
@@ -196,7 +199,14 @@ public class RobotContainer {
         // () -> -modifyAxis(_oi.getDriverController().getRightX()));
         _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
         _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
-        //     _intake.setDefaultCommand(new IdleIntake(_intake));
+        //_coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
+        //_intake.setDefaultCommand(new IdleIntake(_intake() -> -modifyAxis(_oi.getDriverController().getLeft())));
+        _intake.setDefaultCommand(new RunIntake(_intake, 3, 3, () -> MathUtil.clamp(
+                -modifyAxis(_oi.getDriverController().getLeftY()),
+                -12,
+                 12)
+        ));
+
     }
 
     public Command getAutonomousCommand() {

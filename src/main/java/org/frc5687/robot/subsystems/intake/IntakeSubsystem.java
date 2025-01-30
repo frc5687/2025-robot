@@ -22,4 +22,8 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     public void setIntakeVoltage(double voltage) {
         _outputs.intakeVoltage = voltage;
     }
+
+    public void setPivotAngle(double angle){
+        _outputs.pivotTargetAngle = angle;
+    }
 }
