@@ -17,6 +17,7 @@ public class ElevatorSetState extends OutliersCommand {
     @Override
     public void initialize() {
         _elevator.setDesiredState(_desiredState);
+        log("ElevatorDesiredState", _desiredState);
     }
 
     @Override
