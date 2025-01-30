@@ -273,7 +273,7 @@ public class Constants {
         public static final int NUM_MOTORS = 1;
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
-        public static final double GEAR_RATIO = 300;
+        public static final double GEAR_RATIO = 315; // From Amory
         public static final double ARM_LENGTH = 0.589;
         public static final double ARM_MASS = Units.lbsToKilograms(10);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
@@ -295,7 +295,7 @@ public class Constants {
         public static final int NUM_MOTORS = 1;
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
-        public static final double GEAR_RATIO = 300;
+        public static final double GEAR_RATIO = 196; // From Amory
         public static final double ARM_LENGTH = Units.inchesToMeters(12.0);
         public static final double ARM_MASS = Units.lbsToKilograms(10);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);

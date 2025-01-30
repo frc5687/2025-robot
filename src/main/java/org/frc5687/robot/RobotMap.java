@@ -48,7 +48,13 @@ public class RobotMap {
      * There should be an entry here for each PWM port, preferrably in numerical order. Note that for
      * PWM only one device can connect to each port, so the numbers should be unique.
      */
-    public static class PWM {}
+    public static class PWM {
+        public static final int CORAL_PIVOT_MOTOR = 0;
+        public static final int CORAL_WHEEL_MOTOR = 1;
+
+        public static final int ALGAE_PIVOT_MOTOR = 2;
+        public static final int ALGAE_WHEEL_MOTOR = 3;
+    }
 
     /**
      * There should be an entry here for each PCM port, preferrably in numerical order. Note that for
@@ -74,6 +80,13 @@ public class RobotMap {
      */
     public static class DIO {
         // IS THIS A 5687 REFERENCE?!?!?!?!?!?!?
+        public static final int CORAL_SENSOR = 9;
+        public static final int CORAL_ENCODER_A = 0;
+        public static final int CORAL_ENCODER_B = 1;
+
+        public static final int ALGAE_SENSOR = 8;
+        public static final int ALGAE_ENCODER_A = 2;
+        public static final int ALGAE_ENCODER_B = 3;
     }
 
     public static class SIM {

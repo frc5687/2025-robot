@@ -26,4 +26,7 @@ public class CoralInputs extends BaseInputs {
 
     @Logged(name = "Arm Pose (m radps)", importance = Logged.Importance.DEBUG)
     public Pose3d pose = new Pose3d();
+
+    @Logged(name = "Coral Detected", importance = Logged.Importance.CRITICAL)
+    public boolean isCoralDetected = false;
 }

@@ -26,4 +26,7 @@ public class AlgaeInputs extends BaseInputs {
 
     @Logged(name = "Arm Pose (m radps)", importance = Logged.Importance.DEBUG)
     public Pose3d pose = new Pose3d();
+
+    @Logged(name = "Algae Detected", importance = Logged.Importance.CRITICAL)
+    public boolean isAlgaeDetected = false;
 }
