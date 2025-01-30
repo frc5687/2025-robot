@@ -49,7 +49,8 @@ public class Constants {
         public static final double STEER_MOTION_CRUISE_VELOCITY = 100.0; // rad/s
         public static final double STEER_MOTION_ACCELERATION = 200.0; // rad/s^2
 
-        public static final double COUPLING_RATIO = (45.0 / 15.0); // Inverse of the last stage, where we link to the bevel gear
+        public static final double COUPLING_RATIO =
+                (45.0 / 15.0); // Inverse of the last stage, where we link to the bevel gear
         public static final double COEFFICIENT_OF_FRICTION = 1.6;
 
         public static final double MAX_LINEAR_SPEED =
