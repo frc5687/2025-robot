@@ -1,7 +1,5 @@
 package org.frc5687.robot.subsystems.intake;
 
-import org.frc5687.robot.Constants;
-
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -13,6 +11,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import org.frc5687.robot.Constants;
 
 public class HardwareIntakeIO implements IntakeIO {
 
@@ -28,18 +27,16 @@ public class HardwareIntakeIO implements IntakeIO {
 
     private final MotionMagicVoltage _pivotPositionReq = new MotionMagicVoltage(0);
 
-    public HardwareIntakeIO(
-            int rollerMotorID, int intakeMotorID, int pivotMotorID) {
+    public HardwareIntakeIO(int rollerMotorID, int intakeMotorID, int pivotMotorID) {
         _rollerMotor = new TalonFX(rollerMotorID, Constants.Intake.CAN_BUS);
         _intakeMotor = new TalonFX(intakeMotorID, Constants.Intake.CAN_BUS);
         _pivotMotor = new TalonFX(pivotMotorID, Constants.Intake.CAN_BUS);
 
         _rollerVelocity = _rollerMotor.getVelocity();
         _intakeVelocity = _intakeMotor.getVelocity();
-        
 
         configureMotor(_rollerMotor, Constants.Intake.ROLLER_INVERTED);
-        configureMotor(_intakeMotor,Constants.Intake.INTAKE_INVERTED);
+        configureMotor(_intakeMotor, Constants.Intake.INTAKE_INVERTED);
         configureMotor(_pivotMotor, Constants.Intake.PIVOT_INVERTED);
     }
 
@@ -53,8 +50,6 @@ public class HardwareIntakeIO implements IntakeIO {
 
         inputs.intakeVelocityRadperSec = Units.rotationsToRadians(_intakeVelocity.getValueAsDouble());
         inputs.intakeTemperatureCelsius = _intakeMotor.getDeviceTemp().getValueAsDouble();
-
-        
     }
 
     @Override
@@ -65,7 +60,7 @@ public class HardwareIntakeIO implements IntakeIO {
         _pivotMotor.setControl(_pivotPositionReq.withPosition(Outputs.pivotTargetAngle));
     }
 
-     private void configureMotor(TalonFX motor, boolean isInverted) {
+    private void configureMotor(TalonFX motor, boolean isInverted) {
         var config = new TalonFXConfiguration();
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;

@@ -283,9 +283,12 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         config.Voltage.withPeakForwardVoltage(Volts.of(12)).withPeakReverseVoltage(Volts.of(-12));
 
-        double metersToRotations = (1.0 / (Constants.Elevator.DRUM_RADIUS)) * Constants.Elevator.GEAR_RATIO;
-        config.MotionMagic.MotionMagicCruiseVelocity = Constants.Elevator.MAX_VELOCITY_MPS * metersToRotations;
-        config.MotionMagic.MotionMagicAcceleration = Constants.Elevator.MAX_ACCELERATION_MPSS * metersToRotations;
+        double metersToRotations =
+                (1.0 / (Constants.Elevator.DRUM_RADIUS)) * Constants.Elevator.GEAR_RATIO;
+        config.MotionMagic.MotionMagicCruiseVelocity =
+                Constants.Elevator.MAX_VELOCITY_MPS * metersToRotations;
+        config.MotionMagic.MotionMagicAcceleration =
+                Constants.Elevator.MAX_ACCELERATION_MPSS * metersToRotations;
         config.MotionMagic.MotionMagicJerk = Constants.Elevator.MAX_JERK_MPSSS * metersToRotations;
 
         config.Slot0.kP = Constants.Elevator.MOTION_kP;

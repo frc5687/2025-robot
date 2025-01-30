@@ -12,6 +12,6 @@ public class IntakeOutputs extends BaseOutputs {
     @Logged(name = "Intake Voltage Command (V)", importance = Logged.Importance.CRITICAL)
     public double intakeVoltage = 0.0;
 
-    @Logged(name = "Pivot Target Angle", importance =  Logged.Importance.CRITICAL)
+    @Logged(name = "Pivot Target Angle", importance = Logged.Importance.CRITICAL)
     public double pivotTargetAngle = 0.0;
 }

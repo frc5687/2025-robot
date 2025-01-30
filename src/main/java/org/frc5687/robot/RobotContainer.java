@@ -53,9 +53,7 @@ public class RobotContainer {
         _field = new Field2d();
         _modules = new SwerveModule[Constants.SwerveModule.NUM_MODULES];
 
-        IntakeIO intakeIO =
-                new HardwareIntakeIO(
-                        20, 21, 22);
+        IntakeIO intakeIO = new HardwareIntakeIO(20, 21, 22);
         DriveIO driveIO =
                 RobotBase.isSimulation()
                         ? new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON)
@@ -199,14 +197,15 @@ public class RobotContainer {
         // () -> -modifyAxis(_oi.getDriverController().getRightX()));
         _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
         _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
-        //_coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
-        //_intake.setDefaultCommand(new IdleIntake(_intake() -> -modifyAxis(_oi.getDriverController().getLeft())));
-        _intake.setDefaultCommand(new RunIntake(_intake, 3, 3, () -> MathUtil.clamp(
-                -modifyAxis(_oi.getDriverController().getLeftY()),
-                -12,
-                 12)
-        ));
-
+        // _coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
+        // _intake.setDefaultCommand(new IdleIntake(_intake() ->
+        // -modifyAxis(_oi.getDriverController().getLeft())));
+        _intake.setDefaultCommand(
+                new RunIntake(
+                        _intake,
+                        3,
+                        3,
+                        () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftY()), -12, 12)));
     }
 
     public Command getAutonomousCommand() {

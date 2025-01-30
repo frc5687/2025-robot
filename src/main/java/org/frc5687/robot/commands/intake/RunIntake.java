@@ -1,7 +1,6 @@
 package org.frc5687.robot.commands.intake;
 
 import java.util.function.DoubleSupplier;
-
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 
@@ -10,7 +9,12 @@ public class RunIntake extends OutliersCommand {
     private final double _rollerVoltage;
     private final double _intakeVoltage;
     private final DoubleSupplier _angleSupplier;
-    public RunIntake(IntakeSubsystem intake, double rollerVoltage, double intakeVoltage, DoubleSupplier angleSupplier) {
+
+    public RunIntake(
+            IntakeSubsystem intake,
+            double rollerVoltage,
+            double intakeVoltage,
+            DoubleSupplier angleSupplier) {
         _intake = intake;
         _rollerVoltage = rollerVoltage;
         _intakeVoltage = intakeVoltage;
@@ -29,7 +33,7 @@ public class RunIntake extends OutliersCommand {
     }
 
     @Override
-    public void end(boolean interrupted){
+    public void end(boolean interrupted) {
         _intake.setRollerVoltage(0);
         _intake.setIntakeVoltage(0);
     }

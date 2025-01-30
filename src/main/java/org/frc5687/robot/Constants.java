@@ -6,7 +6,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleConfig;
-import org.frc5687.robot.subsystems.intake.IntakeConfig;
 import org.frc5687.robot.util.PIDConstants;
 
 // import edu.wpi.first.math.util.Units;
@@ -207,7 +206,6 @@ public class Constants {
         public static final double kS = 0.0;
         public static final double kV = 0.0;
         public static final double kA = 0.0;
-
     }
 
     public static class Elevator {
@@ -224,7 +222,7 @@ public class Constants {
         public static final double MAX_HEIGHT = 0.7295515; // m THIS IS THE HEIGHT OF THE FIRST STAGE
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =
-                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO) *  DRUM_RADIUS;
+                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO) * DRUM_RADIUS;
         public static final double MAX_ACCELERATION_MPSS = 5;
         public static final double MAX_JERK_MPSSS = 40;
 

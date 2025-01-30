@@ -1,6 +1,5 @@
 package org.frc5687.robot.subsystems.elevator;
 
-import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.Geometry;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;

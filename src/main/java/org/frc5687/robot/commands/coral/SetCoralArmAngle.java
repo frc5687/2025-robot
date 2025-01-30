@@ -1,7 +1,6 @@
 package org.frc5687.robot.commands.coral;
 
 import java.util.function.DoubleSupplier;
-
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
 
@@ -9,6 +8,7 @@ public class SetCoralArmAngle extends OutliersCommand {
 
     private final CoralArmSubsystem _arm;
     private DoubleSupplier _angleSupplier;
+
     public SetCoralArmAngle(CoralArmSubsystem arm, DoubleSupplier angleSupplier) {
         _arm = arm;
         _angleSupplier = angleSupplier;
