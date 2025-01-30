@@ -2,13 +2,13 @@ package org.frc5687.robot.subsystems;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
-import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.frc5687.robot.util.BaseInputs;
 import org.frc5687.robot.util.BaseOutputs;
+import org.frc5687.robot.util.EpilogueLog;
 
 public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs extends BaseOutputs>
-        extends SubsystemBase {
+        extends SubsystemBase implements EpilogueLog {
     protected final SubsystemIO<Inputs, Outputs> _io;
     protected final Inputs _inputs;
     protected final Outputs _outputs;
@@ -16,6 +16,11 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
     private final Object inputLogger;
     private final Object outputLogger;
     private boolean _seperateControl = false;
+
+    @Override
+    public String getLogBase() {
+        return this.getName();
+    }
 
     public OutliersSubsystem(SubsystemIO<Inputs, Outputs> io, Inputs inputs, Outputs outputs) {
         _io = io;
@@ -96,73 +101,5 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
 
     private String firstCharToLowerCase(String str) {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
-    }
-
-    private String getLogPath(String identifier) {
-        return this.getName() + "/" + identifier;
-    }
-
-    public void log(String identifier, int value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, long value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, float value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, double value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, boolean value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, String value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, byte[] value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, int[] value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, long[] value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, float[] value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, double[] value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, boolean[] value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public void log(String identifier, String[] value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public <E extends Enum<E>> void log(String identifier, E value) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value);
-    }
-
-    public <S> void log(String identifier, S value, Struct<S> struct) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value, struct);
-    }
-
-    public <S> void log(String identifier, S[] value, Struct<S> struct) {
-        Epilogue.getConfig().backend.log(getLogPath(identifier), value, struct);
     }
 }
