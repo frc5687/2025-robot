@@ -253,9 +253,12 @@ public class HardwareElevatorIO implements ElevatorIO {
             _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotations));
             _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotations));
 
-        //     _northWestElevatorMotor.setControl(_northWestExpoMotionRequest.withPosition(desiredRotations));
-        //     _northEastElevatorMotor.setControl(_northEastExpoMotionRequest.withPosition(desiredRotations));
-        //     _southWestElevatorMotor.setControl(_southWestExpoMotionRequest.withPosition(desiredRotations));
+            //
+            // _northWestElevatorMotor.setControl(_northWestExpoMotionRequest.withPosition(desiredRotations));
+            //
+            // _northEastElevatorMotor.setControl(_northEastExpoMotionRequest.withPosition(desiredRotations));
+            //
+            // _southWestElevatorMotor.setControl(_southWestExpoMotionRequest.withPosition(desiredRotations));
 
         }
         outputs.voltageCommandNorthEast =
@@ -280,12 +283,9 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         config.Voltage.withPeakForwardVoltage(Volts.of(12)).withPeakReverseVoltage(Volts.of(-12));
 
-        double metersToRotations = 1.0 / (2.0 * Math.PI * Constants.Elevator.DRUM_RADIUS);
-
-        config.MotionMagic.MotionMagicCruiseVelocity =
-                Constants.Elevator.MAX_VELOCITY_MPS * metersToRotations;
-        config.MotionMagic.MotionMagicAcceleration =
-                Constants.Elevator.MAX_ACCELERATION_MPSS * metersToRotations;
+        double metersToRotations = (1.0 / (Constants.Elevator.DRUM_RADIUS)) * Constants.Elevator.GEAR_RATIO;
+        config.MotionMagic.MotionMagicCruiseVelocity = Constants.Elevator.MAX_VELOCITY_MPS * metersToRotations;
+        config.MotionMagic.MotionMagicAcceleration = Constants.Elevator.MAX_ACCELERATION_MPSS * metersToRotations;
         config.MotionMagic.MotionMagicJerk = Constants.Elevator.MAX_JERK_MPSSS * metersToRotations;
 
         config.Slot0.kP = Constants.Elevator.MOTION_kP;

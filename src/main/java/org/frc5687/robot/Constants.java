@@ -217,16 +217,16 @@ public class Constants {
 
         public static final int NUM_MOTORS = 1;
         public static final DCMotor MOTOR = DCMotor.getKrakenX60Foc(NUM_MOTORS);
-        public static final double GEAR_RATIO = 9.3;
+        public static final double GEAR_RATIO = 9;
         public static final double MASS = 13.6078; // kg
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
         public static final double MIN_HEIGHT = 0.0; // m
         public static final double MAX_HEIGHT = 0.7295515; // m THIS IS THE HEIGHT OF THE FIRST STAGE
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =
-                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO) * (2 * Math.PI * DRUM_RADIUS);
-        public static final double MAX_ACCELERATION_MPSS = 50;
-        public static final double MAX_JERK_MPSSS = 400;
+                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO) *  DRUM_RADIUS;
+        public static final double MAX_ACCELERATION_MPSS = 5;
+        public static final double MAX_JERK_MPSSS = 40;
 
         public static final double HOLD_kP = 2.5; // 2.5
         public static final double HOLD_kI = 0.0;
