@@ -25,6 +25,11 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
         return _outputs.desiredState;
     }
 
+    public void setDesiredState(AlgaeState state) {
+        _outputs.desiredState = state;
+        setDesiredAngleRadians(state.getValue());
+    }
+
     public void setDesiredAngleRadians(double angleRadians) {
         _outputs.desiredAngleRad = angleRadians;
     }
@@ -33,7 +38,36 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
         _outputs.desiredAngleRad = angle;
     }
 
+    public double getArmAngleRads() {
+        return _inputs.angleRads;
+    }
+
     public void setAlgaeMotorVoltage(double voltage) {
         _outputs.voltageCommand = voltage;
+    }
+
+    public boolean isAtDesiredAngle() {
+        return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.001;
+    }
+
+    public void setCurrentState(AlgaeState state) {
+        _inputs.algaeState = state;
+    }
+
+    public AlgaeState getCurrentState() {
+        return _inputs.algaeState;
+    }
+
+    public void mapToClosestState() {
+        AlgaeState closestState = AlgaeState.IDLE;
+        double min_dist = Double.MAX_VALUE;
+        for (AlgaeState state : AlgaeState.values()) {
+            double dist = Math.abs(getArmAngleRads() - state.getValue());
+            if (dist < min_dist) {
+                closestState = state;
+                min_dist = dist;
+            }
+        }
+        _inputs.algaeState = closestState;
     }
 }

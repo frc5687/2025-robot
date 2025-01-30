@@ -21,12 +21,21 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
         _inputs.pose = _stateManger.getPose(RobotCoordinate.CORAL_ARM_BASE);
     }
 
+    public void setDesiredState(CoralState state) {
+        _outputs.desiredState = state;
+        setDesiredAngleRadians(state.getValue());
+    }
+
     public CoralState getDesiredState() {
         return _outputs.desiredState;
     }
 
     public void setDesiredAngleRadians(double angleRadians) {
         _outputs.desiredAngleRad = angleRadians;
+    }
+
+    public double getArmAngleRads() {
+        return _inputs.angleRads;
     }
 
     public void setArmAngle(double angle) {
@@ -39,5 +48,26 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
 
     public void setCoralMotorVoltage(double voltage) {
         _outputs.voltageCommand = voltage;
+    }
+
+    public void setCurrentState(CoralState state) {
+        _inputs.currentState = state;
+    }
+
+    public CoralState getCurrentState() {
+        return _inputs.currentState;
+    }
+
+    public void mapToClosestState() {
+        CoralState closestState = CoralState.STOWED;
+        double min_dist = Double.MAX_VALUE;
+        for (CoralState state : CoralState.values()) {
+            double dist = Math.abs(getArmAngleRads() - state.getValue());
+            if (dist < min_dist) {
+                closestState = state;
+                min_dist = dist;
+            }
+        }
+        _inputs.currentState = closestState;
     }
 }

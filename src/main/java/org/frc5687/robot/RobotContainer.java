@@ -31,6 +31,7 @@ import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
 import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
 import org.frc5687.robot.util.Helpers;
 
 public class RobotContainer {
@@ -45,6 +46,8 @@ public class RobotContainer {
     private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
     private final CoralArmSubsystem _coralArm;
+
+    private final SuperstructureTracker _superstructureTracker;
     private final Field2d _field;
 
     public RobotContainer(Robot robot) {
@@ -164,6 +167,8 @@ public class RobotContainer {
 
         _intake = new IntakeSubsystem(intakeIO);
         configureDefaultCommands();
+
+        _superstructureTracker = new SuperstructureTracker(this);
         _oi.configureCommandMapping(this);
 
         // Need to control faster due to stabilization
@@ -239,5 +244,17 @@ public class RobotContainer {
 
     public ElevatorSubsystem getElevator() {
         return _elevator;
+    }
+
+    public AlgaeArmSubsystem getAlgae() {
+        return _algaeArm;
+    }
+
+    public CoralArmSubsystem getCoral() {
+        return _coralArm;
+    }
+
+    public SuperstructureTracker getSuperstructureTracker() {
+        return _superstructureTracker;
     }
 }

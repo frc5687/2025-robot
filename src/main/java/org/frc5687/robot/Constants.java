@@ -264,7 +264,7 @@ public class Constants {
     }
 
     public static class AlgaeArm {
-        public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(10, 0, 0);
+        public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
         public static final double kP = 0.0;
         public static final double kI = 0.0;
@@ -281,12 +281,12 @@ public class Constants {
         public static final double MAX_ANGLE = Units.degreesToRadians(270.0);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 2.0 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 5.0 * Math.PI;
     }
 
     public static class CoralArm {
 
-        public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(10, 0, 0);
+        public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
         public static final double kP = 0.0;
         public static final double kI = 0.0;
@@ -303,7 +303,7 @@ public class Constants {
         public static final double MAX_ANGLE = Units.degreesToRadians(180);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 2.0 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 5.0 * Math.PI;
     }
 
     public static class Vision {
