@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
+import org.frc5687.robot.commands.elevator.IdleElevator;
 import org.frc5687.robot.commands.intake.RunIntake;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
@@ -18,6 +19,7 @@ import org.frc5687.robot.subsystems.drive.modules.SimSwerveModuleIO;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorIO;
+import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
 import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
@@ -33,7 +35,7 @@ public class RobotContainer {
     //     private final DriveSubsystem _drive;
     private final SwerveModule[] _modules;
 
-    //     private final ElevatorSubsystem _elevator;
+    private final ElevatorSubsystem _elevator;
     // @Logged
     private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
@@ -147,7 +149,7 @@ public class RobotContainer {
                             RobotMap.CAN.PIGEON.ELEVATOR);
         }
 
-        // _elevator = new ElevatorSubsystem(elevatorIO);
+        _elevator = new ElevatorSubsystem(elevatorIO);
 
         AlgaeArmIO algaeArmIO =
                 RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
@@ -164,7 +166,7 @@ public class RobotContainer {
         _oi.configureCommandMapping(this);
 
         // Need to control faster due to stabilization
-        // addElevatorControlLoop();
+        addElevatorControlLoop();
     }
 
     private void configureDefaultCommands() {
@@ -184,7 +186,7 @@ public class RobotContainer {
         //         _drive, () -> 0, () -> 0, () -> 0, () -> true // Always field relative
         //         ));
 
-        // _elevator.setDefaultCommand(new IdleElevator(_elevator));
+        _elevator.setDefaultCommand(new IdleElevator(_elevator));
         // _elevator.setDefaultCommand(new SetElevatorPosition(
         //     _elevator,
         //     () -> -modifyAxis(_oi.getDriverController().getLeftY())
@@ -203,8 +205,8 @@ public class RobotContainer {
         _intake.setDefaultCommand(
                 new RunIntake(
                         _intake,
-                        6,
-                        -6,
+                        0,
+                        0,
                         () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12, 12)));
     }
 
@@ -218,12 +220,12 @@ public class RobotContainer {
         // }
     }
 
-    //     public void addElevatorControlLoop() {
-    //         _robot.addPeriodic(
-    //                 _elevator::processWithSeparateControl,
-    //                 Constants.Elevator.PERIOD,
-    //                 Constants.Elevator.PERIOD / 2.0);
-    //     }
+    public void addElevatorControlLoop() {
+        _robot.addPeriodic(
+                _elevator::processWithSeparateControl,
+                Constants.Elevator.PERIOD,
+                Constants.Elevator.PERIOD / 2.0);
+    }
 
     // for not be lazy and just square input TODO: DONT
     private static double modifyAxis(double value) {
@@ -237,9 +239,9 @@ public class RobotContainer {
     //         return _drive;
     //     }
 
-    //     public ElevatorSubsystem getElevator() {
-    //         return _elevator;
-    //     }
+    public ElevatorSubsystem getElevator() {
+        return _elevator;
+    }
 
     public AlgaeArmSubsystem getAlgae() {
         return _algaeArm;

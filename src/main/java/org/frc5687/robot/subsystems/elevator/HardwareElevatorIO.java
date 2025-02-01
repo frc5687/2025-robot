@@ -241,26 +241,25 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         // If we are looking to hold a position, use the more aggressive holding pid including using the
         // pitch controller
-        if (isWithinPositionTolerance(desiredHeight)) {
-            outputs.usingPositionHolding = true;
-            _northWestElevatorMotor.setControl(_northWestPositionRequest.withPosition(nwRotations));
-            _northEastElevatorMotor.setControl(_northEastPositionRequest.withPosition(neRotations));
-            _southWestElevatorMotor.setControl(_southWestPositionRequest.withPosition(swRotations));
-        } else {
-            // Otherwise use motion magic
-            outputs.usingPositionHolding = false;
-            _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(desiredRotations));
-            _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotations));
-            _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotations));
+        // if (isWithinPositionTolerance(desiredHeight)) {
+        //     outputs.usingPositionHolding = true;
+        //     _northWestElevatorMotor.setControl(_northWestPositionRequest.withPosition(nwRotations));
+        //     _northEastElevatorMotor.setControl(_northEastPositionRequest.withPosition(neRotations));
+        //     _southWestElevatorMotor.setControl(_southWestPositionRequest.withPosition(swRotations));
+        // } else {
+        // Otherwise use motion magic
+        outputs.usingPositionHolding = false;
+        //
+        // _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(desiredRotations));
+        //
+        // _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotations));
+        //
+        // _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotations));
 
-            //
-            // _northWestElevatorMotor.setControl(_northWestExpoMotionRequest.withPosition(desiredRotations));
-            //
-            // _northEastElevatorMotor.setControl(_northEastExpoMotionRequest.withPosition(desiredRotations));
-            //
-            // _southWestElevatorMotor.setControl(_southWestExpoMotionRequest.withPosition(desiredRotations));
-
-        }
+        _northWestElevatorMotor.setControl(_northWestExpoMotionRequest.withPosition(desiredRotations));
+        _northEastElevatorMotor.setControl(_northEastExpoMotionRequest.withPosition(desiredRotations));
+        _southWestElevatorMotor.setControl(_southWestExpoMotionRequest.withPosition(desiredRotations));
+        // }
         outputs.voltageCommandNorthEast =
                 _northEastElevatorMotor.getClosedLoopOutput().getValueAsDouble();
         outputs.voltageCommandNorthWest =
@@ -285,11 +284,15 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         double metersToRotations =
                 (1.0 / (Constants.Elevator.DRUM_RADIUS)) * Constants.Elevator.GEAR_RATIO;
-        config.MotionMagic.MotionMagicCruiseVelocity =
-                Constants.Elevator.MAX_VELOCITY_MPS * metersToRotations;
-        config.MotionMagic.MotionMagicAcceleration =
-                Constants.Elevator.MAX_ACCELERATION_MPSS * metersToRotations;
-        config.MotionMagic.MotionMagicJerk = Constants.Elevator.MAX_JERK_MPSSS * metersToRotations;
+        // config.MotionMagic.MotionMagicCruiseVelocity = Constants.Elevator.MAX_VELOCITY_MPS *
+        // metersToRotations;
+        // config.MotionMagic.MotionMagicAcceleration = Constants.Elevator.MAX_ACCELERATION_MPSS *
+        // metersToRotations;
+        // config.MotionMagic.MotionMagicJerk = Constants.Elevator.MAX_JERK_MPSSS * metersToRotations;
+
+        config.MotionMagic.MotionMagicCruiseVelocity = 0;
+        config.MotionMagic.MotionMagicExpo_kA = Constants.Elevator.MOTION_MAGIC_EXPO_KA;
+        config.MotionMagic.MotionMagicExpo_kV = Constants.Elevator.MOTION_MAGIC_EXPO_KV;
 
         config.Slot0.kP = Constants.Elevator.MOTION_kP;
         config.Slot0.kI = Constants.Elevator.MOTION_kI;
@@ -305,13 +308,13 @@ public class HardwareElevatorIO implements ElevatorIO {
         config.Slot1.kV = Constants.Elevator.HOLD_kV;
         config.Slot1.kA = Constants.Elevator.HOLD_kA;
 
-        // config.Slot2.kP = Constants.Elevator.EXPO_MOTION_kP;
-        // config.Slot2.kI = Constants.Elevator.EXPO_MOTION_kI;
-        // config.Slot2.kD = Constants.Elevator.EXPO_MOTION_kD;
-        // config.Slot2.kS = Constants.Elevator.EXPO_MOTION_kS;
-        // config.Slot2.kV = Constants.Elevator.EXPO_MOTION_kV;
-        // config.Slot2.kA = Constants.Elevator.EXPO_MOTION_kA;
-        // config.Slot2.kG = Constants.Elevator.EXPO_MOTION_kG;
+        config.Slot2.kP = Constants.Elevator.EXPO_MOTION_kP;
+        config.Slot2.kI = Constants.Elevator.EXPO_MOTION_kI;
+        config.Slot2.kD = Constants.Elevator.EXPO_MOTION_kD;
+        config.Slot2.kS = Constants.Elevator.EXPO_MOTION_kS;
+        config.Slot2.kV = Constants.Elevator.EXPO_MOTION_kV;
+        config.Slot2.kA = Constants.Elevator.EXPO_MOTION_kA;
+        config.Slot2.kG = Constants.Elevator.EXPO_MOTION_kG;
 
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = Constants.Elevator.CURRENT_LIMIT;
