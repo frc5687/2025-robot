@@ -264,6 +264,8 @@ public class Constants {
 
         public static final double MAX_POSITION_CORRECTION = 0.02;
         public static final double VELOCITY_TOLERANCE = 0.02;
+        public static final double MAX_DRIVETRAIN_TILT = 0.05;
+        public static final double BOTTOM_POSITION_CORRECTION = 0.254;
     }
 
     public static class AlgaeArm {

@@ -33,6 +33,12 @@ public class ElevatorInputs extends BaseInputs {
     @Logged(name = "Platform Pitch (rad)", importance = Logged.Importance.CRITICAL)
     public double platformPitchRadians = 0.0;
 
+    @Logged(name = "DriveTrain Pitch (rad)", importance = Logged.Importance.CRITICAL)
+    public double driveTrainPitchRadians = 0.0;
+
+    @Logged(name = "DriveTrain Roll (rad)", importance = Logged.Importance.CRITICAL)
+    public double driveTrainRollRadians = 0.0;
+
     @Logged(name = "Platform Motors Current (A)", importance = Logged.Importance.CRITICAL)
     public double[] platformMotorCurrents = new double[3];
 
