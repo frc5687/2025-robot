@@ -7,15 +7,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
-import org.frc5687.robot.commands.coral.ManualDriveCoral;
+import org.frc5687.robot.commands.intake.RunIntake;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.algaearm.HardwareAlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.SimAlgaeArmIO;
-import org.frc5687.robot.subsystems.coralarm.CoralArmIO;
-import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
-import org.frc5687.robot.subsystems.coralarm.HardwareCoralArmIO;
-import org.frc5687.robot.subsystems.coralarm.SimCoralArmIO;
 import org.frc5687.robot.subsystems.drive.*;
 import org.frc5687.robot.subsystems.drive.modules.CTRESwerveModuleIO;
 import org.frc5687.robot.subsystems.drive.modules.SimSwerveModuleIO;
@@ -26,6 +22,7 @@ import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
 import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
+import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
 import org.frc5687.robot.util.Helpers;
 
@@ -38,9 +35,9 @@ public class RobotContainer {
 
     //     private final ElevatorSubsystem _elevator;
     // @Logged
-    //     private final IntakeSubsystem _intake;
+    private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
-    private final CoralArmSubsystem _coralArm;
+    //     private final CoralArmSubsystem _coralArm;
 
     private final SuperstructureTracker _superstructureTracker;
     private final Field2d _field;
@@ -133,7 +130,7 @@ public class RobotContainer {
 
         // _drive = new DriveSubsystem(driveIO, _modules, Constants.DriveTrain.MODULE_LOCATIONS);
 
-        // _intake = new IntakeSubsystem(intakeIO);
+        _intake = new IntakeSubsystem(intakeIO);
         if (RobotBase.isSimulation()) {
             SmartDashboard.putData("Field", _field);
         }
@@ -156,9 +153,9 @@ public class RobotContainer {
                 RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
         _algaeArm = new AlgaeArmSubsystem(algaeArmIO);
 
-        CoralArmIO coralArmIO =
-                RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
-        _coralArm = new CoralArmSubsystem(coralArmIO);
+        // CoralArmIO coralArmIO =
+        //         RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
+        // _coralArm = new CoralArmSubsystem(coralArmIO);
 
         // _intake = new IntakeSubsystem(intakeIO);
         configureDefaultCommands();
@@ -197,24 +194,18 @@ public class RobotContainer {
                 new IntakeAlgae(
                         _algaeArm,
                         0,
-                        () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX() * 12), -12, 12)));
-        _coralArm.setDefaultCommand(
-                new ManualDriveCoral(
-                        _coralArm,
-                        () ->
-                                MathUtil.clamp(-modifyAxis(_oi.getDriverController().getRightX() * 12), -12, 12)));
+                        () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12, 12)));
         // _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
         // _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
         // _coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
         // _intake.setDefaultCommand(new IdleIntake(_intake() ->
         // -modifyAxis(_oi.getDriverController().getLeft())));
-        //         //_intake.setDefaultCommand(
-        //                 new RunIntake(
-        //                         _intake,
-        //                         3,
-        //                         3,
-        //                         () ->
-        // MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftY()), -12, 12)));
+        _intake.setDefaultCommand(
+                new RunIntake(
+                        _intake,
+                        6,
+                        -6,
+                        () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12, 12)));
     }
 
     public Command getAutonomousCommand() {

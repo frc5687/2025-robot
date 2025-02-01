@@ -28,9 +28,9 @@ public class HardwareIntakeIO implements IntakeIO {
     private final MotionMagicVoltage _pivotPositionReq = new MotionMagicVoltage(0);
 
     public HardwareIntakeIO(int rollerMotorID, int intakeMotorID, int pivotMotorID) {
-        _rollerMotor = new TalonFX(rollerMotorID, Constants.Intake.CAN_BUS);
-        _intakeMotor = new TalonFX(intakeMotorID, Constants.Intake.CAN_BUS);
-        _pivotMotor = new TalonFX(pivotMotorID, Constants.Intake.CAN_BUS);
+        _rollerMotor = new TalonFX(17, Constants.Intake.CAN_BUS);
+        _intakeMotor = new TalonFX(18, Constants.Intake.CAN_BUS);
+        _pivotMotor = new TalonFX(16, Constants.Intake.CAN_BUS);
 
         _rollerVelocity = _rollerMotor.getVelocity();
         _intakeVelocity = _intakeMotor.getVelocity();
@@ -57,7 +57,7 @@ public class HardwareIntakeIO implements IntakeIO {
 
         _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
         _intakeMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
-        _pivotMotor.setControl(_pivotPositionReq.withPosition(Outputs.pivotTargetAngle));
+        // _pivotMotor.setControl(_pivotPositionReq.withPosition(Outputs.pivotTargetAngle));
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted) {
