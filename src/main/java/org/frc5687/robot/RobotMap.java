@@ -49,11 +49,11 @@ public class RobotMap {
      * PWM only one device can connect to each port, so the numbers should be unique.
      */
     public static class PWM {
-        public static final int CORAL_PIVOT_MOTOR = 0;
-        public static final int CORAL_WHEEL_MOTOR = 1;
+        public static final int CORAL_PIVOT_MOTOR = 3;
+        public static final int CORAL_WHEEL_MOTOR = 2;
 
-        public static final int ALGAE_PIVOT_MOTOR = 2;
-        public static final int ALGAE_WHEEL_MOTOR = 3;
+        public static final int ALGAE_PIVOT_MOTOR = 1;
+        public static final int ALGAE_WHEEL_MOTOR = 0;
     }
 
     /**

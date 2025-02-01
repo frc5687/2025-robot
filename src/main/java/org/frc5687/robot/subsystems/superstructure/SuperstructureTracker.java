@@ -1,8 +1,6 @@
 package org.frc5687.robot.subsystems.superstructure;
 
-import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.RobotContainer;
-import org.frc5687.robot.subsystems.coralarm.CoralState;
 
 public class SuperstructureTracker {
     private final RobotContainer _container;
@@ -19,16 +17,16 @@ public class SuperstructureTracker {
     }
 
     public boolean needsSafeCoralTransition() {
-        if (_container.getCoral().getArmAngleRads()
-                < (CoralState.STOWED.getValue() - Units.degreesToRadians(10))) {
-            System.out.println("Arm angle is to far in need to stow");
-            return true;
-        }
+        // if (_container.getCoral().getArmAngleRads()
+        //         < (CoralState.STOWED.getValue() - Units.degreesToRadians(10))) {
+        //     System.out.println("Arm angle is to far in need to stow");
+        //     return true;
+        // }
 
-        if (_desiredState.getCoral() == CoralState.RECEIVE_FROM_FUNNEL) {
-            System.out.println("Going to receive from funnel need to stow");
-            return true;
-        }
+        // if (_desiredState.getCoral() == CoralState.RECEIVE_FROM_FUNNEL) {
+        //     System.out.println("Going to receive from funnel need to stow");
+        //     return true;
+        // }
 
         return false;
     }

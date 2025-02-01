@@ -6,31 +6,21 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import org.frc5687.robot.commands.algae.IdleAlgae;
-import org.frc5687.robot.commands.coral.IdleCoral;
-import org.frc5687.robot.commands.drive.TeleopDriveCommand;
-import org.frc5687.robot.commands.elevator.IdleElevator;
-import org.frc5687.robot.commands.intake.RunIntake;
+import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.algaearm.HardwareAlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.SimAlgaeArmIO;
-import org.frc5687.robot.subsystems.coralarm.CoralArmIO;
-import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
-import org.frc5687.robot.subsystems.coralarm.HardwareCoralArmIO;
-import org.frc5687.robot.subsystems.coralarm.SimCoralArmIO;
 import org.frc5687.robot.subsystems.drive.*;
 import org.frc5687.robot.subsystems.drive.modules.CTRESwerveModuleIO;
 import org.frc5687.robot.subsystems.drive.modules.SimSwerveModuleIO;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorIO;
-import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
 import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
-import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
 import org.frc5687.robot.util.Helpers;
 
@@ -38,14 +28,14 @@ public class RobotContainer {
 
     private final Robot _robot;
     private final OperatorInterface _oi;
-    private final DriveSubsystem _drive;
+    //     private final DriveSubsystem _drive;
     private final SwerveModule[] _modules;
 
-    private final ElevatorSubsystem _elevator;
+    //     private final ElevatorSubsystem _elevator;
     // @Logged
-    private final IntakeSubsystem _intake;
+    //     private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
-    private final CoralArmSubsystem _coralArm;
+    //     private final CoralArmSubsystem _coralArm;
 
     private final SuperstructureTracker _superstructureTracker;
     private final Field2d _field;
@@ -136,7 +126,7 @@ public class RobotContainer {
         _modules[2] = new SwerveModule(Constants.DriveTrain.SW_CONFIG, southWestIO);
         _modules[3] = new SwerveModule(Constants.DriveTrain.SE_CONFIG, southEastIO);
 
-        _drive = new DriveSubsystem(driveIO, _modules, Constants.DriveTrain.MODULE_LOCATIONS);
+        // _drive = new DriveSubsystem(driveIO, _modules, Constants.DriveTrain.MODULE_LOCATIONS);
 
         // _intake = new IntakeSubsystem(intakeIO);
         if (RobotBase.isSimulation()) {
@@ -155,24 +145,24 @@ public class RobotContainer {
                             RobotMap.CAN.PIGEON.ELEVATOR);
         }
 
-        _elevator = new ElevatorSubsystem(elevatorIO);
+        // _elevator = new ElevatorSubsystem(elevatorIO);
 
         AlgaeArmIO algaeArmIO =
                 RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
         _algaeArm = new AlgaeArmSubsystem(algaeArmIO);
 
-        CoralArmIO coralArmIO =
-                RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
-        _coralArm = new CoralArmSubsystem(coralArmIO);
+        // CoralArmIO coralArmIO =
+        //         RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
+        // _coralArm = new CoralArmSubsystem(coralArmIO);
 
-        _intake = new IntakeSubsystem(intakeIO);
-        configureDefaultCommands();
+        // _intake = new IntakeSubsystem(intakeIO);
+        // configureDefaultCommands();
 
         _superstructureTracker = new SuperstructureTracker(this);
         _oi.configureCommandMapping(this);
 
         // Need to control faster due to stabilization
-        addElevatorControlLoop();
+        // addElevatorControlLoop();
     }
 
     private void configureDefaultCommands() {
@@ -187,30 +177,34 @@ public class RobotContainer {
         //     () -> true  // Always field relative
         // ));
 
-        _drive.setDefaultCommand(
-                new TeleopDriveCommand(
-                        _drive, () -> 0, () -> 0, () -> 0, () -> true // Always field relative
-                        ));
+        // _drive.setDefaultCommand(
+        // new TeleopDriveCommand(
+        //         _drive, () -> 0, () -> 0, () -> 0, () -> true // Always field relative
+        //         ));
 
-        _elevator.setDefaultCommand(new IdleElevator(_elevator));
+        // _elevator.setDefaultCommand(new IdleElevator(_elevator));
         // _elevator.setDefaultCommand(new SetElevatorPosition(
         //     _elevator,
         //     () -> -modifyAxis(_oi.getDriverController().getLeftY())
         // ));
 
-        // _algaeArm.setDefaultCommand(new IntakeAlgae(_algaeArm, 0,
-        // () -> -modifyAxis(_oi.getDriverController().getRightX()));
-        _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
-        _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
+        _algaeArm.setDefaultCommand(
+                new IntakeAlgae(
+                        _algaeArm,
+                        0,
+                        () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12, 12)));
+        // _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
+        // _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
         // _coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
         // _intake.setDefaultCommand(new IdleIntake(_intake() ->
         // -modifyAxis(_oi.getDriverController().getLeft())));
-        _intake.setDefaultCommand(
-                new RunIntake(
-                        _intake,
-                        3,
-                        3,
-                        () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftY()), -12, 12)));
+        //         //_intake.setDefaultCommand(
+        //                 new RunIntake(
+        //                         _intake,
+        //                         3,
+        //                         3,
+        //                         () ->
+        // MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftY()), -12, 12)));
     }
 
     public Command getAutonomousCommand() {
@@ -218,17 +212,17 @@ public class RobotContainer {
     }
 
     public void periodic() {
-        if (RobotBase.isSimulation()) {
-            _field.setRobotPose(_drive.getPose());
-        }
+        // if (RobotBase.isSimulation()) {
+        //     _field.setRobotPose(_drive.getPose());
+        // }
     }
 
-    public void addElevatorControlLoop() {
-        _robot.addPeriodic(
-                _elevator::processWithSeparateControl,
-                Constants.Elevator.PERIOD,
-                Constants.Elevator.PERIOD / 2.0);
-    }
+    //     public void addElevatorControlLoop() {
+    //         _robot.addPeriodic(
+    //                 _elevator::processWithSeparateControl,
+    //                 Constants.Elevator.PERIOD,
+    //                 Constants.Elevator.PERIOD / 2.0);
+    //     }
 
     // for not be lazy and just square input TODO: DONT
     private static double modifyAxis(double value) {
@@ -238,21 +232,21 @@ public class RobotContainer {
         return value;
     }
 
-    public DriveSubsystem getDrivet() {
-        return _drive;
-    }
+    //     public DriveSubsystem getDrivet() {
+    //         return _drive;
+    //     }
 
-    public ElevatorSubsystem getElevator() {
-        return _elevator;
-    }
+    //     public ElevatorSubsystem getElevator() {
+    //         return _elevator;
+    //     }
 
     public AlgaeArmSubsystem getAlgae() {
         return _algaeArm;
     }
 
-    public CoralArmSubsystem getCoral() {
-        return _coralArm;
-    }
+    //     public CoralArmSubsystem getCoral() {
+    //         return _coralArm;
+    //     }
 
     public SuperstructureTracker getSuperstructureTracker() {
         return _superstructureTracker;

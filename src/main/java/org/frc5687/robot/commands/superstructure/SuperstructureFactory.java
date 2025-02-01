@@ -6,8 +6,6 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
-import org.frc5687.robot.commands.coral.CoralSetState;
-import org.frc5687.robot.commands.elevator.ElevatorSetState;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 
@@ -26,11 +24,12 @@ public class SuperstructureFactory {
                         container,
                         SuperstructureGoals.SAFE_CORAL_TRANSITION,
                         new ParallelCommandGroup(
-                                new ElevatorSetState(
-                                        container.getElevator(),
-                                        SuperstructureGoals.SAFE_CORAL_TRANSITION.getElevator()),
-                                new CoralSetState(
-                                        container.getCoral(), SuperstructureGoals.SAFE_CORAL_TRANSITION.getCoral()),
+                                // new ElevatorSetState(
+                                //         container.getElevator(),
+                                //         SuperstructureGoals.SAFE_CORAL_TRANSITION.getElevator()),
+                                // new CoralSetState(
+                                //         container.getCoral(),
+                                // SuperstructureGoals.SAFE_CORAL_TRANSITION.getCoral()),
                                 new AlgaeSetState(
                                         container.getAlgae(), SuperstructureGoals.SAFE_CORAL_TRANSITION.getAlgae())))
                 .unless(() -> !container.getSuperstructureTracker().needsSafeCoralTransition());
@@ -43,10 +42,12 @@ public class SuperstructureFactory {
                 new SequentialCommandGroup(
                         transitionToSafeCoralState(container),
                         new ParallelCommandGroup(
-                                new ElevatorSetState(
-                                        container.getElevator(), SuperstructureGoals.RECEIVE_FROM_FUNNEL.getElevator()),
-                                new CoralSetState(
-                                        container.getCoral(), SuperstructureGoals.RECEIVE_FROM_FUNNEL.getCoral()),
+                                // new ElevatorSetState(
+                                //         container.getElevator(),
+                                // SuperstructureGoals.RECEIVE_FROM_FUNNEL.getElevator()),
+                                // new CoralSetState(
+                                //         container.getCoral(),
+                                // SuperstructureGoals.RECEIVE_FROM_FUNNEL.getCoral()),
                                 new AlgaeSetState(
                                         container.getAlgae(), SuperstructureGoals.RECEIVE_FROM_FUNNEL.getAlgae()))));
     }
@@ -58,10 +59,11 @@ public class SuperstructureFactory {
                 new SequentialCommandGroup(
                         transitionToSafeCoralState(container),
                         new ParallelCommandGroup(
-                                new ElevatorSetState(
-                                        container.getElevator(), SuperstructureGoals.RECEIVE_FROM_INTAKE.getElevator()),
-                                new CoralSetState(
-                                        container.getCoral(), SuperstructureGoals.RECEIVE_FROM_INTAKE.getCoral()),
+                                // new ElevatorSetState(
+                                //         container.getElevator(),
+                                // SuperstructureGoals.RECEIVE_FROM_INTAKE.getElevator()),
+                                // new CoralSetState(
+                                // container.getCoral(), SuperstructureGoals.RECEIVE_FROM_INTAKE.getCoral()),
                                 new AlgaeSetState(
                                         container.getAlgae(), SuperstructureGoals.RECEIVE_FROM_INTAKE.getAlgae()))));
     }
@@ -78,8 +80,8 @@ public class SuperstructureFactory {
                 new SequentialCommandGroup(
                         transitionToSafeCoralState(container),
                         new ParallelCommandGroup(
-                                new ElevatorSetState(container.getElevator(), targetState.getElevator()),
-                                new CoralSetState(container.getCoral(), targetState.getCoral()),
+                                // new ElevatorSetState(container.getElevator(), targetState.getElevator()),
+                                // new CoralSetState(container.getCoral(), targetState.getCoral()),
                                 new AlgaeSetState(container.getAlgae(), targetState.getAlgae()))));
     }
 
@@ -95,8 +97,8 @@ public class SuperstructureFactory {
                 new SequentialCommandGroup(
                         transitionToSafeCoralState(container),
                         new ParallelCommandGroup(
-                                new ElevatorSetState(container.getElevator(), targetState.getElevator()),
-                                new CoralSetState(container.getCoral(), targetState.getCoral()),
+                                // new ElevatorSetState(container.getElevator(), targetState.getElevator()),
+                                // new CoralSetState(container.getCoral(), targetState.getCoral()),
                                 new AlgaeSetState(container.getAlgae(), targetState.getAlgae()))));
     }
 
@@ -107,10 +109,11 @@ public class SuperstructureFactory {
                 new SequentialCommandGroup(
                         transitionToSafeCoralState(container),
                         new ParallelCommandGroup(
-                                new ElevatorSetState(
-                                        container.getElevator(), SuperstructureGoals.PLACE_CORAL_L2.getElevator()),
-                                new CoralSetState(
-                                        container.getCoral(), SuperstructureGoals.PLACE_CORAL_L2.getCoral()),
+                                // new ElevatorSetState(
+                                //         container.getElevator(),
+                                // SuperstructureGoals.PLACE_CORAL_L2.getElevator()),
+                                // new CoralSetState(
+                                // container.getCoral(), SuperstructureGoals.PLACE_CORAL_L2.getCoral()),
                                 new AlgaeSetState(
                                         container.getAlgae(), SuperstructureGoals.PLACE_CORAL_L2.getAlgae()))));
     }
@@ -120,9 +123,10 @@ public class SuperstructureFactory {
                 container,
                 SuperstructureGoals.L1_ALGAE_GRAB,
                 new ParallelCommandGroup(
-                        new ElevatorSetState(
-                                container.getElevator(), SuperstructureGoals.L1_ALGAE_GRAB.getElevator()),
-                        new CoralSetState(container.getCoral(), SuperstructureGoals.L1_ALGAE_GRAB.getCoral()),
+                        // new ElevatorSetState(
+                        //         container.getElevator(), SuperstructureGoals.L1_ALGAE_GRAB.getElevator()),
+                        // new CoralSetState(container.getCoral(),
+                        // SuperstructureGoals.L1_ALGAE_GRAB.getCoral()),
                         new AlgaeSetState(container.getAlgae(), SuperstructureGoals.L1_ALGAE_GRAB.getAlgae())));
     }
 
@@ -131,14 +135,15 @@ public class SuperstructureFactory {
                 container,
                 SuperstructureGoals.L2_ALGAE_GRAB,
                 new ParallelCommandGroup(
-                        new ElevatorSetState(
-                                container.getElevator(), SuperstructureGoals.L2_ALGAE_GRAB.getElevator()),
-                        new CoralSetState(container.getCoral(), SuperstructureGoals.L2_ALGAE_GRAB.getCoral()),
+                        // new ElevatorSetState(
+                        //         container.getElevator(), SuperstructureGoals.L2_ALGAE_GRAB.getElevator()),
+                        // new CoralSetState(container.getCoral(),
+                        // SuperstructureGoals.L2_ALGAE_GRAB.getCoral()),
                         new AlgaeSetState(container.getAlgae(), SuperstructureGoals.L2_ALGAE_GRAB.getAlgae())));
     }
 
-    public static Command place(RobotContainer container) {
-        return new SuperstructurePlace(
-                container.getElevator(), container.getCoral(), container.getAlgae());
-    }
+    //     public static Command place(RobotContainer container) {
+    //         return new SuperstructurePlace(
+    //                 container.getElevator(), container.getCoral(), container.getAlgae());
+    //     }
 }

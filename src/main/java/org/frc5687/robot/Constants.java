@@ -19,7 +19,7 @@ public class Constants {
     public static final double EPSILON = 1e-9;
 
     public static class SwerveModule {
-        public static final String CAN_BUS = "CANivore";
+        public static final String CAN_BUS = "DriveTrain";
         public static final int NUM_MODULES = 4;
 
         // Physical Configuration
@@ -102,7 +102,7 @@ public class Constants {
      * <p>Note: when robot is flipped over, his is clockwise.
      */
     public static class DriveTrain {
-        public static final String CAN_BUS = "CANivore";
+        public static final String CAN_BUS = "DriveTrain";
         public static final int NUM_MODULES = 4;
         public static final double ROBOT_WEIGHT = Units.lbsToKilograms(120.0);
 

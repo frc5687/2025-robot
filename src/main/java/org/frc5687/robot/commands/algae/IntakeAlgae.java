@@ -23,7 +23,7 @@ public class IntakeAlgae extends OutliersCommand {
     @Override
     protected void execute(double timestamp) {
         double targetAngle = Math.atan2(0, _angleSupplier.getAsDouble());
-        _algaeArm.setArmAngle(targetAngle);
+        // _algaeArm.setArmAngle(targetAngle);
         _algaeArm.setAlgaeMotorVoltage(_voltage);
     }
 
