@@ -7,10 +7,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
+import org.frc5687.robot.commands.coral.ManualDriveCoral;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.algaearm.HardwareAlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.SimAlgaeArmIO;
+import org.frc5687.robot.subsystems.coralarm.CoralArmIO;
+import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
+import org.frc5687.robot.subsystems.coralarm.HardwareCoralArmIO;
+import org.frc5687.robot.subsystems.coralarm.SimCoralArmIO;
 import org.frc5687.robot.subsystems.drive.*;
 import org.frc5687.robot.subsystems.drive.modules.CTRESwerveModuleIO;
 import org.frc5687.robot.subsystems.drive.modules.SimSwerveModuleIO;
@@ -35,7 +40,7 @@ public class RobotContainer {
     // @Logged
     //     private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
-    //     private final CoralArmSubsystem _coralArm;
+    private final CoralArmSubsystem _coralArm;
 
     private final SuperstructureTracker _superstructureTracker;
     private final Field2d _field;
@@ -151,12 +156,12 @@ public class RobotContainer {
                 RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
         _algaeArm = new AlgaeArmSubsystem(algaeArmIO);
 
-        // CoralArmIO coralArmIO =
-        //         RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
-        // _coralArm = new CoralArmSubsystem(coralArmIO);
+        CoralArmIO coralArmIO =
+                RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
+        _coralArm = new CoralArmSubsystem(coralArmIO);
 
         // _intake = new IntakeSubsystem(intakeIO);
-        // configureDefaultCommands();
+        configureDefaultCommands();
 
         _superstructureTracker = new SuperstructureTracker(this);
         _oi.configureCommandMapping(this);
@@ -192,7 +197,12 @@ public class RobotContainer {
                 new IntakeAlgae(
                         _algaeArm,
                         0,
-                        () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12, 12)));
+                        () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX() * 12), -12, 12)));
+        _coralArm.setDefaultCommand(
+                new ManualDriveCoral(
+                        _coralArm,
+                        () ->
+                                MathUtil.clamp(-modifyAxis(_oi.getDriverController().getRightX() * 12), -12, 12)));
         // _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
         // _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
         // _coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))

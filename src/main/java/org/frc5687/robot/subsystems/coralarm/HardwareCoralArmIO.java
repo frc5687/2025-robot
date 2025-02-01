@@ -32,8 +32,9 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
     @Override
     public void writeOutputs(CoralOutputs outputs) {
-        double voltage = _pid.calculate(_encoder.getDistance(), outputs.desiredAngleRad);
-        _pivotMotor.setVoltage(voltage);
+        // double voltage = _pid.calculate(_encoder.getDistance(), outputs.desiredAngleRad);
+        // _pivotMotor.setVoltage(voltage);
+        _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
         // _wheelMotor.setVoltage(Outputs.algaeMotorVoltage);
     }
 }

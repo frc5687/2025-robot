@@ -8,14 +8,17 @@ public class CoralOutputs extends BaseOutputs {
     public CoralState desiredState = CoralState.STOWED;
 
     @Logged(name = "Desired Angle (rad)", importance = Logged.Importance.CRITICAL)
-    double desiredAngleRad = 0.0;
+    public double desiredAngleRad = 0.0;
 
     @Logged(name = "Controller Output", importance = Logged.Importance.DEBUG)
-    double controllerOutput = 0.0;
+    public double controllerOutput = 0.0;
 
     @Logged(name = "Desired Voltage (V)", importance = Logged.Importance.DEBUG)
-    double voltageCommand = 0.0;
+    public double voltageCommand = 0.0;
 
     @Logged(name = "Desired Voltage Feed Forward (V)", importance = Logged.Importance.DEBUG)
-    double voltageFeedForward = 0.0;
+    public double voltageFeedForward = 0.0;
+
+    @Logged(name = "Wheel Voltage Command", importance = Logged.Importance.DEBUG)
+    public double wheelVoltageCommand = 0.0;
 }
