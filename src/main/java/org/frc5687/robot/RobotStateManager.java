@@ -74,8 +74,8 @@ public class RobotStateManager {
         return _instance;
     }
 
-    public synchronized void updateRobotBase(Pose2d robotPose) {
-        _poses.put(RobotCoordinate.ROBOT_BASE, new Pose3d(robotPose));
+    public synchronized void updateRobotBase(Pose2d robotPose, Rotation3d rot) {
+        _poses.put(RobotCoordinate.ROBOT_BASE, new Pose3d(robotPose.getX(), robotPose.getY(), 0, rot));
     }
 
     public synchronized void updateCoralArm(double angleRadians) {

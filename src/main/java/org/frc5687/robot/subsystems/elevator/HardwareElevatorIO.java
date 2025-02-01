@@ -14,14 +14,13 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.drive.RobotDriveBase;
-
 import org.frc5687.robot.Constants;
-import org.frc5687.robot.RobotMap;
 import org.frc5687.robot.RobotStateManager;
+import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 
 public class HardwareElevatorIO implements ElevatorIO {
 
@@ -29,8 +28,6 @@ public class HardwareElevatorIO implements ElevatorIO {
     private final TalonFX _northEastElevatorMotor;
     private final TalonFX _southWestElevatorMotor;
     private final Pigeon2 _imu;
-
-    private final Pigeon2 _imuDriveTrain;
 
     private final StatusSignal<AngularVelocity> _northWestVelocity;
     private final StatusSignal<Angle> _northWestPosition;
@@ -41,9 +38,6 @@ public class HardwareElevatorIO implements ElevatorIO {
 
     private final StatusSignal<Angle> _imuPitch;
     private final StatusSignal<Angle> _imuRoll;
-
-    private final StatusSignal<Angle> _imuDriveTrainPitch;
-    private final StatusSignal<Angle> _imuDriveTrainRoll;
 
     private final MotionMagicVoltage _northWestMotionRequest;
     private final MotionMagicVoltage _northEastMotionRequest;
@@ -73,7 +67,6 @@ public class HardwareElevatorIO implements ElevatorIO {
         _northEastElevatorMotor = new TalonFX(northEastMotorID, Constants.Elevator.CANBUS);
         _southWestElevatorMotor = new TalonFX(southEastMotorID, Constants.Elevator.CANBUS);
         _imu = new Pigeon2(imuId, Constants.Elevator.CANBUS);
-        _imuDriveTrain = new Pigeon2(RobotMap.CAN.PIGEON.PIGEON, Constants.DriveTrain.CAN_BUS);
 
         _northWestVelocity = _northWestElevatorMotor.getVelocity();
         _northWestPosition = _northWestElevatorMotor.getPosition();
@@ -96,9 +89,6 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         _imuPitch = _imu.getPitch();
         _imuRoll = _imu.getRoll();
-
-        _imuDriveTrainPitch = _imu.getPitch();
-        _imuDriveTrainRoll = _imu.getRoll();
 
         setSignalFrequency();
         setControlFrequency();
@@ -185,9 +175,7 @@ public class HardwareElevatorIO implements ElevatorIO {
                 _southWestVelocity,
                 _southWestPosition,
                 _imuPitch,
-                _imuRoll,
-                _imuDriveTrainPitch,
-                _imuDriveTrainRoll);
+                _imuRoll);
 
         inputs.stageNorthWestPositionMeters =
                 Units.rotationsToRadians(_northWestPosition.getValueAsDouble())
@@ -292,16 +280,21 @@ public class HardwareElevatorIO implements ElevatorIO {
         // & Math.abs(_platformVelocity) < Constants.Elevator.VELOCITY_TOLERANCE;
     }
 
-    private boolean isAboveBottom(){
+    private boolean isAboveBottom() {
         return _firstStageHeight > Constants.Elevator.BOTTOM_POSITION_CORRECTION;
     }
 
-    private boolean isDriveTrainStable(){
-        // return Units.degreesToRadians(getDriveTrainPitch()) < Constants.Elevator.MAX_DRIVETRAIN_TILT 
+    private boolean isDriveTrainStable() {
+        // return Units.degreesToRadians(getDriveTrainPitch()) < Constants.Elevator.MAX_DRIVETRAIN_TILT
         // && Units.degreesToRadians(getDriveTrainRoll()) < Constants.Elevator.MAX_DRIVETRAIN_TILT;
-
-        return RobotStateManager.DriveTrain.
+        Rotation3d rot =
+                RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE).getRotation();
+        double roll = Units.degreesToRadians(rot.getY());
+        double pitch = Units.degreesToRadians(rot.getX());
+        return pitch < Constants.Elevator.MAX_DRIVETRAIN_TILT
+                && roll < Constants.Elevator.MAX_DRIVETRAIN_TILT;
     }
+
     private void configureMotor(TalonFX motor, boolean isInverted) {
         var config = new TalonFXConfiguration();
 
@@ -361,13 +354,5 @@ public class HardwareElevatorIO implements ElevatorIO {
 
     private double getRoll() {
         return _imuRoll.getValueAsDouble() - _rollOffset;
-    }
-
-    private double getDriveTrainPitch() {
-        return _imuDriveTrainPitch.getValueAsDouble() - _pitchOffset;
-    }
-
-    private double getDriveTrainRoll() {
-        return _imuDriveTrainRoll.getValueAsDouble() - _rollOffset;
     }
 }
