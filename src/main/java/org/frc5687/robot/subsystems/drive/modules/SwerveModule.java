@@ -3,7 +3,6 @@ package org.frc5687.robot.subsystems.drive.modules;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
-import org.frc5687.robot.subsystems.SubsystemIO;
 
 public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveModuleOutputs> {
     private final SwerveModuleConfig _config;
@@ -11,8 +10,7 @@ public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveMo
     private boolean _hasReset = false;
     private boolean _isCharacterization = false;
 
-    public SwerveModule(
-            SwerveModuleConfig config, SubsystemIO<SwerveModuleInputs, SwerveModuleOutputs> io) {
+    public SwerveModule(SwerveModuleConfig config, SwerveModuleIO io) {
         super(io, new SwerveModuleInputs(), new SwerveModuleOutputs());
         _config = config;
         _inputs.setLogRootName(config.moduleName());

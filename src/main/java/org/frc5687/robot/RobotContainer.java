@@ -1,30 +1,22 @@
 package org.frc5687.robot;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.elevator.IdleElevator;
-import org.frc5687.robot.commands.intake.RunIntake;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.algaearm.HardwareAlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.SimAlgaeArmIO;
 import org.frc5687.robot.subsystems.drive.*;
-import org.frc5687.robot.subsystems.drive.modules.CTRESwerveModuleIO;
-import org.frc5687.robot.subsystems.drive.modules.SimSwerveModuleIO;
-import org.frc5687.robot.subsystems.drive.modules.SwerveModule;
-import org.frc5687.robot.subsystems.drive.modules.SwerveModuleIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
-import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
-import org.frc5687.robot.subsystems.intake.IntakeIO;
-import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
 import org.frc5687.robot.util.Helpers;
 
@@ -32,107 +24,30 @@ public class RobotContainer {
 
     private final Robot _robot;
     private final OperatorInterface _oi;
-    //     private final DriveSubsystem _drive;
-    private final SwerveModule[] _modules;
+    private final DriveSubsystem _drive;
 
     private final ElevatorSubsystem _elevator;
     // @Logged
-    private final IntakeSubsystem _intake;
+    //     private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
     //     private final CoralArmSubsystem _coralArm;
 
     private final SuperstructureTracker _superstructureTracker;
+
     private final Field2d _field;
 
     public RobotContainer(Robot robot) {
         _robot = robot;
         _oi = new OperatorInterface();
         _field = new Field2d();
-        _modules = new SwerveModule[Constants.SwerveModule.NUM_MODULES];
 
-        IntakeIO intakeIO = new HardwareIntakeIO(20, 21, 22);
         DriveIO driveIO =
                 RobotBase.isSimulation()
                         ? new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON)
                         : new CTREDriveIO(RobotMap.CAN.PIGEON.PIGEON, Constants.SwerveModule.CAN_BUS);
 
-        SwerveModuleIO northWestIO;
-        SwerveModuleIO northEastIO;
-        SwerveModuleIO southWestIO;
-        SwerveModuleIO southEastIO;
-        if (RobotBase.isReal()) {
-            northWestIO =
-                    new CTRESwerveModuleIO(
-                            Constants.DriveTrain.NW_CONFIG,
-                            RobotMap.CAN.TALONFX.NORTH_WEST_TRANSLATION,
-                            RobotMap.CAN.TALONFX.NORTH_WEST_ROTATION,
-                            RobotMap.CAN.CANCODER.ENCODER_NW,
-                            Constants.DriveTrain.CAN_BUS);
+        _drive = new DriveSubsystem(driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
 
-            northEastIO =
-                    new CTRESwerveModuleIO(
-                            Constants.DriveTrain.NE_CONFIG,
-                            RobotMap.CAN.TALONFX.NORTH_EAST_TRANSLATION,
-                            RobotMap.CAN.TALONFX.NORTH_EAST_ROTATION,
-                            RobotMap.CAN.CANCODER.ENCODER_NE,
-                            Constants.DriveTrain.CAN_BUS);
-
-            southWestIO =
-                    new CTRESwerveModuleIO(
-                            Constants.DriveTrain.SW_CONFIG,
-                            RobotMap.CAN.TALONFX.SOUTH_WEST_TRANSLATION,
-                            RobotMap.CAN.TALONFX.SOUTH_WEST_ROTATION,
-                            RobotMap.CAN.CANCODER.ENCODER_SW,
-                            Constants.DriveTrain.CAN_BUS);
-
-            southEastIO =
-                    new CTRESwerveModuleIO(
-                            Constants.DriveTrain.SE_CONFIG,
-                            RobotMap.CAN.TALONFX.SOUTH_EAST_TRANSLATION,
-                            RobotMap.CAN.TALONFX.SOUTH_EAST_ROTATION,
-                            RobotMap.CAN.CANCODER.ENCODER_SE,
-                            Constants.DriveTrain.CAN_BUS);
-        } else {
-            northWestIO =
-                    new SimSwerveModuleIO(
-                            Constants.DriveTrain.NW_CONFIG,
-                            RobotMap.CAN.TALONFX.NORTH_WEST_TRANSLATION,
-                            RobotMap.CAN.TALONFX.NORTH_WEST_ROTATION,
-                            RobotMap.CAN.CANCODER.ENCODER_NW,
-                            Constants.DriveTrain.CAN_BUS);
-
-            northEastIO =
-                    new SimSwerveModuleIO(
-                            Constants.DriveTrain.NE_CONFIG,
-                            RobotMap.CAN.TALONFX.NORTH_EAST_TRANSLATION,
-                            RobotMap.CAN.TALONFX.NORTH_EAST_ROTATION,
-                            RobotMap.CAN.CANCODER.ENCODER_NE,
-                            Constants.DriveTrain.CAN_BUS);
-
-            southWestIO =
-                    new SimSwerveModuleIO(
-                            Constants.DriveTrain.SW_CONFIG,
-                            RobotMap.CAN.TALONFX.SOUTH_WEST_TRANSLATION,
-                            RobotMap.CAN.TALONFX.SOUTH_WEST_ROTATION,
-                            RobotMap.CAN.CANCODER.ENCODER_SW,
-                            Constants.DriveTrain.CAN_BUS);
-
-            southEastIO =
-                    new SimSwerveModuleIO(
-                            Constants.DriveTrain.SE_CONFIG,
-                            RobotMap.CAN.TALONFX.SOUTH_EAST_TRANSLATION,
-                            RobotMap.CAN.TALONFX.SOUTH_EAST_ROTATION,
-                            RobotMap.CAN.CANCODER.ENCODER_SE,
-                            Constants.DriveTrain.CAN_BUS);
-        }
-        _modules[0] = new SwerveModule(Constants.DriveTrain.NW_CONFIG, northWestIO);
-        _modules[1] = new SwerveModule(Constants.DriveTrain.NE_CONFIG, northEastIO);
-        _modules[2] = new SwerveModule(Constants.DriveTrain.SW_CONFIG, southWestIO);
-        _modules[3] = new SwerveModule(Constants.DriveTrain.SE_CONFIG, southEastIO);
-
-        // _drive = new DriveSubsystem(driveIO, _modules, Constants.DriveTrain.MODULE_LOCATIONS);
-
-        _intake = new IntakeSubsystem(intakeIO);
         if (RobotBase.isSimulation()) {
             SmartDashboard.putData("Field", _field);
         }
@@ -158,6 +73,7 @@ public class RobotContainer {
         // CoralArmIO coralArmIO =
         //         RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
         // _coralArm = new CoralArmSubsystem(coralArmIO);
+        // IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIN
 
         // _intake = new IntakeSubsystem(intakeIO);
         configureDefaultCommands();
@@ -202,16 +118,17 @@ public class RobotContainer {
         // _coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
         // _intake.setDefaultCommand(new IdleIntake(_intake() ->
         // -modifyAxis(_oi.getDriverController().getLeft())));
-        _intake.setDefaultCommand(
-                new RunIntake(
-                        _intake,
-                        0,
-                        0,
-                        () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12, 12)));
+        // _intake.setDefaultCommand(
+        //         new RunIntake(
+        //                 _intake,
+        //                 0,
+        //                 0,
+        //                 () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12,
+        // 12)));
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return new PathPlannerAuto("Test Auto");
     }
 
     public void periodic() {
