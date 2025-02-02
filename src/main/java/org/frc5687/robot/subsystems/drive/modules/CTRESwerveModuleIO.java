@@ -4,8 +4,8 @@ import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -28,7 +28,8 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
     private final StatusSignal<Angle> _steerPosition;
     private final StatusSignal<AngularVelocity> _steerVelocity;
 
-    private final PositionVoltage _steerMotionMagicReq = new PositionVoltage(0).withUpdateFreqHz(1000.0);
+    private final PositionVoltage _steerMotionMagicReq =
+            new PositionVoltage(0).withUpdateFreqHz(1000.0);
     private final VelocityVoltage _driveVelocityReq = new VelocityVoltage(0).withUpdateFreqHz(1000.0);
     private final VoltageOut _driveVoltageReq = new VoltageOut(0);
 
@@ -36,12 +37,11 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
     private final double _couplingRatio;
 
     public CTRESwerveModuleIO(
-        SwerveModuleConfig config,
-        int driveMotorId,
-        int steerMotorId,
-        int cancoderId,
-        String canbus
-    ) {
+            SwerveModuleConfig config,
+            int driveMotorId,
+            int steerMotorId,
+            int cancoderId,
+            String canbus) {
         _driveMotor = new TalonFX(driveMotorId, canbus);
         _steerMotor = new TalonFX(steerMotorId, canbus);
         _cancoder = new CANcoder(cancoderId, canbus);
@@ -60,28 +60,20 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         _couplingRatio = config.couplingRatio();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-            250.0,
-            _drivePosition, _driveVelocity,
-            _steerPosition, _steerVelocity
-        );
+                250.0, _drivePosition, _driveVelocity, _steerPosition, _steerVelocity);
     }
 
     @Override
     public void updateInputs(SwerveModuleInputs inputs) {
         BaseStatusSignal.refreshAll(
-            _drivePosition, _driveVelocity,
-            _steerPosition, _steerVelocity
-        );
+                _drivePosition, _driveVelocity,
+                _steerPosition, _steerVelocity);
 
-        double driveRot = BaseStatusSignal.getLatencyCompensatedValueAsDouble(
-            _drivePosition, 
-            _driveVelocity
-        );
+        double driveRot =
+                BaseStatusSignal.getLatencyCompensatedValueAsDouble(_drivePosition, _driveVelocity);
 
-        double steerRot = BaseStatusSignal.getLatencyCompensatedValueAsDouble(
-            _steerPosition, 
-            _steerVelocity
-        );
+        double steerRot =
+                BaseStatusSignal.getLatencyCompensatedValueAsDouble(_steerPosition, _steerVelocity);
 
         driveRot -= steerRot * _couplingRatio;
 
@@ -97,10 +89,11 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         inputs.steerCurrentAmps = _steerMotor.getStatorCurrent().getValueAsDouble();
         inputs.steerTempCelsius = _steerMotor.getDeviceTemp().getValueAsDouble();
 
-        inputs.absoluteAngle = Rotation2d.fromRotations(_cancoder.getAbsolutePosition().getValueAsDouble());
+        inputs.absoluteAngle =
+                Rotation2d.fromRotations(_cancoder.getAbsolutePosition().getValueAsDouble());
 
-        inputs.faults = _driveMotor.getFaultField().getValue() | 
-                       (_steerMotor.getFaultField().getValue() << 16);
+        inputs.faults =
+                _driveMotor.getFaultField().getValue() | (_steerMotor.getFaultField().getValue() << 16);
     }
 
     @Override
@@ -111,9 +104,8 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
                 break;
             case VELOCITY:
                 double velocitySetpoint = outputs.driveVelocitySetpointMPS * _driveRotationsPerMeter;
-                _driveMotor.setControl(_driveVelocityReq
-                    .withVelocity(velocitySetpoint));
-                    // .withFeedForward(outputs.driveFeedforwardVolts));
+                _driveMotor.setControl(_driveVelocityReq.withVelocity(velocitySetpoint));
+                // .withFeedForward(outputs.driveFeedforwardVolts));
                 break;
             default:
                 _driveMotor.setControl(new VoltageOut(0));
@@ -122,9 +114,9 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
 
         switch (outputs.steerControlMode) {
             case POSITION:
-                _steerMotor.setControl(_steerMotionMagicReq
-                    .withPosition(outputs.steerAngleSetpoint.getRotations()));
-                    // .withFeedForward(outputs.steerFeedforwardVolts));
+                _steerMotor.setControl(
+                        _steerMotionMagicReq.withPosition(outputs.steerAngleSetpoint.getRotations()));
+                // .withFeedForward(outputs.steerFeedforwardVolts));
                 break;
             case VOLTAGE:
                 _steerMotor.setControl(new VoltageOut(outputs.steerVoltage));
@@ -143,48 +135,50 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
     private void configureDriveMotor(SwerveModuleConfig config) {
         var driveConfigs = new TalonFXConfiguration();
         driveConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        driveConfigs.MotorOutput.Inverted = config.driveInverted() ? 
-            InvertedValue.Clockwise_Positive : 
-            InvertedValue.CounterClockwise_Positive;
-        
+        driveConfigs.MotorOutput.Inverted =
+                config.driveInverted()
+                        ? InvertedValue.Clockwise_Positive
+                        : InvertedValue.CounterClockwise_Positive;
+
         driveConfigs.Slot0.kP = config.drivePID().kP();
         driveConfigs.Slot0.kI = config.drivePID().kI();
         driveConfigs.Slot0.kD = config.drivePID().kD();
         driveConfigs.Slot0.kS = config.driveKs();
         driveConfigs.Slot0.kV = config.driveKv();
         driveConfigs.Slot0.kA = config.driveKa();
-        
+
         driveConfigs.CurrentLimits.SupplyCurrentLimit = config.driveCurrentLimit();
         driveConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-        
+
         _driveMotor.getConfigurator().apply(driveConfigs);
     }
 
     private void configureSteerMotor(SwerveModuleConfig config) {
         var steerConfigs = new TalonFXConfiguration();
         steerConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        steerConfigs.MotorOutput.Inverted = config.steerInverted() ? 
-            InvertedValue.Clockwise_Positive : 
-            InvertedValue.CounterClockwise_Positive;
-            
+        steerConfigs.MotorOutput.Inverted =
+                config.steerInverted()
+                        ? InvertedValue.Clockwise_Positive
+                        : InvertedValue.CounterClockwise_Positive;
+
         steerConfigs.Slot0.kP = config.steerPID().kP();
         steerConfigs.Slot0.kI = config.steerPID().kI();
         steerConfigs.Slot0.kD = config.steerPID().kD();
         steerConfigs.Slot0.kS = config.steerKs();
         steerConfigs.Slot0.kV = config.steerKv();
         steerConfigs.Slot0.kA = config.steerKa();
-        
+
         steerConfigs.CurrentLimits.SupplyCurrentLimit = config.steerCurrentLimit();
         steerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
-        
+
         steerConfigs.MotionMagic.MotionMagicCruiseVelocity = config.steerMotionCruiseVelocity();
         steerConfigs.MotionMagic.MotionMagicAcceleration = config.steerMotionAcceleration();
-        
+
         steerConfigs.Feedback.FeedbackRemoteSensorID = _cancoder.getDeviceID();
         steerConfigs.Feedback.RotorToSensorRatio = config.steerGearRatio();
         steerConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         steerConfigs.ClosedLoopGeneral.ContinuousWrap = true;
-        
+
         _steerMotor.getConfigurator().apply(steerConfigs);
     }
 

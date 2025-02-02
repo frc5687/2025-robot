@@ -1,8 +1,9 @@
 package org.frc5687.robot.subsystems.drive;
 
+import edu.wpi.first.epilogue.Logged;
 import org.frc5687.robot.subsystems.SubsystemIO;
 
-import edu.wpi.first.epilogue.Logged;
-
 @Logged
-public interface DriveIO extends SubsystemIO<DriveInputs, DriveOutputs> {}
+public interface DriveIO extends SubsystemIO<DriveInputs, DriveOutputs> {
+    void runCharacterization(double output);
+}
