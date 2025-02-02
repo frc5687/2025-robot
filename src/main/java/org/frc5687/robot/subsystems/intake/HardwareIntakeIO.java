@@ -27,7 +27,7 @@ public class HardwareIntakeIO implements IntakeIO {
 
     private final MotionMagicVoltage _pivotPositionReq = new MotionMagicVoltage(0);
 
-    public HardwareIntakeIO(int rollerMotorID, int intakeMotorID, int pivotMotorID) {
+    public HardwareIntakeIO() {
         _rollerMotor = new TalonFX(17, Constants.Intake.CAN_BUS);
         _intakeMotor = new TalonFX(18, Constants.Intake.CAN_BUS);
         _pivotMotor = new TalonFX(16, Constants.Intake.CAN_BUS);

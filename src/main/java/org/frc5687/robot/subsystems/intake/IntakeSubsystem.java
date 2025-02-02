@@ -10,7 +10,9 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     }
 
     @Override
-    protected void processInputs() {}
+    protected void processInputs() {
+
+    }
 
     @Override
     protected void periodic(IntakeInputs inputs, IntakeOutputs outputs) {}

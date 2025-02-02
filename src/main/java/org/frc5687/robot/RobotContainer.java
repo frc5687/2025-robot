@@ -28,6 +28,10 @@ import org.frc5687.robot.subsystems.elevator.ElevatorIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
+import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
+import org.frc5687.robot.subsystems.intake.IntakeIO;
+import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
+import org.frc5687.robot.subsystems.intake.SimIntakeIO;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
 import org.frc5687.robot.util.Helpers;
 
@@ -38,8 +42,7 @@ public class RobotContainer {
     private final DriveSubsystem _drive;
 
     private final ElevatorSubsystem _elevator;
-    // @Logged
-    //     private final IntakeSubsystem _intake;
+    private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
     private final CoralArmSubsystem _coralArm;
 
@@ -85,7 +88,8 @@ public class RobotContainer {
                 RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
         _coralArm = new CoralArmSubsystem(coralArmIO);
 
-        // _intake = new IntakeSubsystem(intakeIO);
+        IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
+        _intake = new IntakeSubsystem(intakeIO);
         configureDefaultCommands();
 
         _superstructureTracker = new SuperstructureTracker(this);
@@ -150,7 +154,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("Place", SuperstructureFactory.place(this));
     }
 
-    public void periodic() {}
+    public void periodic() {
+        RobotStateManager.getInstance().logComponentPoses();
+    }
 
     public void addElevatorControlLoop() {
         _robot.addPeriodic(

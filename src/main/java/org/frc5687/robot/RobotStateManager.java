@@ -6,8 +6,14 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import java.util.EnumMap;
+import org.frc5687.robot.util.EpilogueLog;
 
-public class RobotStateManager {
+public class RobotStateManager implements EpilogueLog {
+    @Override
+    public String getLogBase() {
+        return "RobotStateManager";
+    }
+
     public enum RobotCoordinate {
         ROBOT_BASE,
         ELEVATOR_BASE,
@@ -47,6 +53,10 @@ public class RobotStateManager {
         public static final double ALGAE_ARM_Y_OFFSET = 0.0762;
         public static final double ALGAE_ARM_Z_OFFSET = 0.178689;
         public static final double ALGAE_ARM_LENGTH = Units.inchesToMeters(12);
+
+        public static final double INTAKE_ARM_X_OFFSET = 0.0;
+        public static final double INTAKE_ARM_Y_OFFSET = 0.0;
+        public static final double INTAKE_ARM_Z_OFFSET = 0.0;
     }
 
     private static final double EPSILON = 1e-6;
@@ -208,5 +218,15 @@ public class RobotStateManager {
 
     public Rotation3d getPlatformRotation() {
         return _currentPlatformRotation;
+    }
+
+    public void logComponentPoses() {
+        Pose3d[] componentPoses = {
+            getPose(RobotCoordinate.ELEVATOR_STAGE),
+            getPose(RobotCoordinate.ELEVATOR_TOP),
+            getPose(RobotCoordinate.CORAL_ARM_BASE),
+            getPose(RobotCoordinate.ALGAE_ARM_BASE)
+        };
+        log("Components", componentPoses, Pose3d.struct);
     }
 }
