@@ -99,6 +99,9 @@ public class RobotMap {
 
             public static final int ELEVATOR_ENCODER_A = 4;
             public static final int ELEVATOR_ENCODER_B = 5;
+
+            public static final int INTAKE_ENCODER_A = 4;
+            public static final int INTAKE_ENCODER_B = 5;
         }
     }
 }

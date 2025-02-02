@@ -100,9 +100,9 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     @Override
     protected void processInputs() {
         // Update odometry
-        _odom.update(_inputs);
-        _inputs.odometryPose = _odom.getPose();
-        // _inputs.odometryPose = _odometry.update(_inputs.yawPosition, _inputs.modulePositions);
+        // _odom.update(_inputs);
+        // _inputs.odometryPose = _odom();
+        _inputs.odometryPose = _odometry.update(_inputs.yawPosition, _inputs.modulePositions);
     }
 
     @Override

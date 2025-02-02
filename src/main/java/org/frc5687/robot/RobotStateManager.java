@@ -94,25 +94,10 @@ public class RobotStateManager {
         updateAlgaeArmTransforms(angleRadians);
     }
 
-    /**
-     * Updates the platform state with height and orientation.
-     *
-     * @param centerHeight The center height of the platform
-     * @param pitch Platform pitch in radians (positive = front up)
-     * @param roll Platform roll in radians (positive = right up)
-     */
     public synchronized void updatePlatform(double centerHeight, double pitch, double roll) {
-        // Create rotation from pitch, roll, and yaw
         _currentPlatformRotation = new Rotation3d(roll, pitch, 0);
-
-        // Calculate corner heights based on rotation and center height
-        double halfWidth = Math.abs(Geometry.NE_Y_OFFSET - Geometry.NW_Y_OFFSET) / 2.0;
-        double halfLength = Math.abs(Geometry.NW_X_OFFSET - Geometry.SW_X_OFFSET) / 2.0;
-
-        // Update elevator transforms with the platform rotation
         updateElevatorTransforms(centerHeight, _currentPlatformRotation);
 
-        // Update dependent mechanisms with adjusted orientations
         Pose3d currentCoralArm = _poses.get(RobotCoordinate.CORAL_ARM_END);
         if (currentCoralArm != null) {
             updateCoralArmTransforms(currentCoralArm.getRotation().getY());

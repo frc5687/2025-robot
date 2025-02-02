@@ -47,7 +47,7 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
     }
 
     public boolean isAtDesiredAngle() {
-        return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.001;
+        return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.01;
     }
 
     public void setCurrentState(AlgaeState state) {

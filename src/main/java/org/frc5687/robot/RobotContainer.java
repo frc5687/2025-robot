@@ -1,5 +1,6 @@
 package org.frc5687.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -7,12 +8,22 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
+import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.elevator.IdleElevator;
+import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.algaearm.HardwareAlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.SimAlgaeArmIO;
+import org.frc5687.robot.subsystems.coralarm.CoralArmIO;
+import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
+import org.frc5687.robot.subsystems.coralarm.HardwareCoralArmIO;
+import org.frc5687.robot.subsystems.coralarm.SimCoralArmIO;
 import org.frc5687.robot.subsystems.drive.*;
+import org.frc5687.robot.subsystems.drive.CTREDriveIO;
+import org.frc5687.robot.subsystems.drive.DriveIO;
+import org.frc5687.robot.subsystems.drive.DriveSubsystem;
+import org.frc5687.robot.subsystems.drive.SimDriveIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
@@ -30,7 +41,7 @@ public class RobotContainer {
     // @Logged
     //     private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
-    //     private final CoralArmSubsystem _coralArm;
+    private final CoralArmSubsystem _coralArm;
 
     private final SuperstructureTracker _superstructureTracker;
 
@@ -70,10 +81,9 @@ public class RobotContainer {
                 RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
         _algaeArm = new AlgaeArmSubsystem(algaeArmIO);
 
-        // CoralArmIO coralArmIO =
-        //         RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
-        // _coralArm = new CoralArmSubsystem(coralArmIO);
-        // IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIN
+        CoralArmIO coralArmIO =
+                RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
+        _coralArm = new CoralArmSubsystem(coralArmIO);
 
         // _intake = new IntakeSubsystem(intakeIO);
         configureDefaultCommands();
@@ -83,6 +93,7 @@ public class RobotContainer {
 
         // Need to control faster due to stabilization
         addElevatorControlLoop();
+        setupNamedCommand();
     }
 
     private void configureDefaultCommands() {
@@ -114,7 +125,7 @@ public class RobotContainer {
                         0,
                         () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12, 12)));
         // _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
-        // _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
+        _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
         // _coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
         // _intake.setDefaultCommand(new IdleIntake(_intake() ->
         // -modifyAxis(_oi.getDriverController().getLeft())));
@@ -128,14 +139,18 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("Test Auto");
+        return new PathPlannerAuto("4 L4");
     }
 
-    public void periodic() {
-        // if (RobotBase.isSimulation()) {
-        //     _field.setRobotPose(_drive.getPose());
-        // }
+    private void setupNamedCommand() {
+        NamedCommands.registerCommand("ReceiveFunnel", SuperstructureFactory.receiveFromFunnel(this));
+        NamedCommands.registerCommand("CoralL4", SuperstructureFactory.placeCoralL4(this, false));
+        NamedCommands.registerCommand("CoralL3", SuperstructureFactory.placeCoralL3(this, false));
+        NamedCommands.registerCommand("CoralL2", SuperstructureFactory.placeCoralL2(this));
+        NamedCommands.registerCommand("Place", SuperstructureFactory.place(this));
     }
+
+    public void periodic() {}
 
     public void addElevatorControlLoop() {
         _robot.addPeriodic(
@@ -152,9 +167,9 @@ public class RobotContainer {
         return value;
     }
 
-    //     public DriveSubsystem getDrivet() {
-    //         return _drive;
-    //     }
+    public DriveSubsystem getDrivet() {
+        return _drive;
+    }
 
     public ElevatorSubsystem getElevator() {
         return _elevator;
@@ -164,9 +179,9 @@ public class RobotContainer {
         return _algaeArm;
     }
 
-    //     public CoralArmSubsystem getCoral() {
-    //         return _coralArm;
-    //     }
+    public CoralArmSubsystem getCoral() {
+        return _coralArm;
+    }
 
     public SuperstructureTracker getSuperstructureTracker() {
         return _superstructureTracker;

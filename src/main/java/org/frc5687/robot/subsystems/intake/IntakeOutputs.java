@@ -14,4 +14,10 @@ public class IntakeOutputs extends BaseOutputs {
 
     @Logged(name = "Pivot Target Angle", importance = Logged.Importance.CRITICAL)
     public double pivotTargetAngle = 0.0;
+
+    @Logged(name = "Desired Angle (rad)", importance = Logged.Importance.CRITICAL)
+    double desiredAngleRad = 0.0;
+
+    @Logged(name = "Controller Output", importance = Logged.Importance.DEBUG)
+    double controllerOutput = 0.0;
 }

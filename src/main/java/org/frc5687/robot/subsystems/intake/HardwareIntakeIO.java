@@ -48,7 +48,7 @@ public class HardwareIntakeIO implements IntakeIO {
         inputs.rollerVelocityRadperSec = Units.rotationsToRadians(_rollerVelocity.getValueAsDouble());
         inputs.rollerTemperatureCelsius = _rollerMotor.getDeviceTemp().getValueAsDouble();
 
-        inputs.intakeVelocityRadperSec = Units.rotationsToRadians(_intakeVelocity.getValueAsDouble());
+        inputs.angularVelocityRadPerSec = Units.rotationsToRadians(_intakeVelocity.getValueAsDouble());
         inputs.intakeTemperatureCelsius = _intakeMotor.getDeviceTemp().getValueAsDouble();
     }
 
