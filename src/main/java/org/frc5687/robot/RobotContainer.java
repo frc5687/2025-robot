@@ -3,10 +3,12 @@ package org.frc5687.robot;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.elevator.IdleElevator;
@@ -33,9 +35,11 @@ import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
+import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.Helpers;
+import org.frc5687.robot.util.QuestNav;
 
-public class RobotContainer {
+public class RobotContainer implements EpilogueLog {
 
     private final Robot _robot;
     private final OperatorInterface _oi;
@@ -48,13 +52,14 @@ public class RobotContainer {
 
     private final SuperstructureTracker _superstructureTracker;
 
+    private final QuestNav _questNav;
     private final Field2d _field;
 
     public RobotContainer(Robot robot) {
         _robot = robot;
         _oi = new OperatorInterface();
         _field = new Field2d();
-
+        _questNav = new QuestNav();
         DriveIO driveIO =
                 RobotBase.isSimulation()
                         ? new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON)
@@ -156,6 +161,11 @@ public class RobotContainer {
 
     public void periodic() {
         RobotStateManager.getInstance().logComponentPoses();
+        RobotStateManager.getInstance().updateQuest(_questNav.getUncorrectedOculusPose3d());
+        log(
+                "Quest Pose",
+                RobotStateManager.getInstance().getPose(RobotCoordinate.QUEST_BASE),
+                Pose3d.struct);
     }
 
     public void addElevatorControlLoop() {
@@ -191,5 +201,10 @@ public class RobotContainer {
 
     public SuperstructureTracker getSuperstructureTracker() {
         return _superstructureTracker;
+    }
+
+    @Override
+    public String getLogBase() {
+        return "RobotContainer";
     }
 }

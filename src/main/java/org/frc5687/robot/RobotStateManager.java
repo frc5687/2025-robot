@@ -24,7 +24,8 @@ public class RobotStateManager implements EpilogueLog {
         ALGAE_ARM_BASE,
         ALGAE_ARM_END,
         INTAKE_ARM_BASE,
-        INTAKE_ARM_END
+        INTAKE_ARM_END,
+        QUEST_BASE
     }
 
     public static final class Geometry {
@@ -113,6 +114,10 @@ public class RobotStateManager implements EpilogueLog {
             return;
         }
         updateIntakeArmTransforms(angleRadians);
+    }
+
+    public synchronized void updateQuest(Pose3d questPose) {
+        _poses.put(RobotCoordinate.QUEST_BASE, questPose);
     }
 
     public synchronized void updatePlatform(double centerHeight, double pitch, double roll) {
