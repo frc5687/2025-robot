@@ -14,7 +14,6 @@ public class RobotMap {
         public static class TALONFX {
 
             // Ordered in order of CAN connection in loop.
-
             public static final int SOUTH_EAST_ROTATION = 0;
             public static final int SOUTH_EAST_TRANSLATION = 1;
             public static final int NORTH_EAST_ROTATION = 2;
@@ -27,6 +26,10 @@ public class RobotMap {
             public static final int NORTH_WEST_ELEVATOR = 10;
             public static final int SOUTH_WEST_ELEVATOR = 11;
             public static final int NORTH_EAST_ELEVATOR = 12;
+
+            public static final int INTAKE_ARM = 16;
+            public static final int INTAKE_ROLLER = 17;
+            public static final int INTAKE_BELT = 18;
         }
 
         public static class CANCODER {
@@ -81,12 +84,10 @@ public class RobotMap {
     public static class DIO {
         // IS THIS A 5687 REFERENCE?!?!?!?!?!?!?
         public static final int CORAL_SENSOR = 9;
-        public static final int CORAL_ENCODER_A = 0;
-        public static final int CORAL_ENCODER_B = 1;
+        public static final int CORAL_ENCODER = 0;
 
         public static final int ALGAE_SENSOR = 8;
-        public static final int ALGAE_ENCODER_A = 2;
-        public static final int ALGAE_ENCODER_B = 3;
+        public static final int ALGAE_ENCODER = 2;
     }
 
     public static class SIM {

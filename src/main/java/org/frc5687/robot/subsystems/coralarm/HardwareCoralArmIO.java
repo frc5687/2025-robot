@@ -1,15 +1,15 @@
 package org.frc5687.robot.subsystems.coralarm;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
 import org.frc5687.robot.util.sensors.ProximitySensor;
+import org.frc5687.robot.util.sensors.RevBoreEncoder;
 
 public class HardwareCoralArmIO implements CoralArmIO {
 
-    private final Encoder _encoder;
+    private final RevBoreEncoder _encoder;
     private final VictorSP _pivotMotor;
     private final VictorSP _wheelMotor;
     private final PIDController _pid;
@@ -18,15 +18,18 @@ public class HardwareCoralArmIO implements CoralArmIO {
     public HardwareCoralArmIO() {
 
         _pid = new PIDController(Constants.AlgaeArm.kP, Constants.AlgaeArm.kI, Constants.AlgaeArm.kD);
-        _encoder = new Encoder(RobotMap.DIO.CORAL_ENCODER_A, RobotMap.DIO.CORAL_ENCODER_B);
+        _encoder = new RevBoreEncoder(RobotMap.DIO.CORAL_ENCODER, 0);
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
         _wheelMotor = new VictorSP(RobotMap.PWM.CORAL_WHEEL_MOTOR);
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
+
+        // Rev
+        _encoder.setDutyCycleRange(1, 1024);
     }
 
     @Override
     public void updateInputs(CoralInputs inputs) {
-        inputs.angleRads = _encoder.getDistance();
+        inputs.angleRads = _encoder.getAngle();
         inputs.isCoralDetected = _coralDetectionSensor.get();
     }
 

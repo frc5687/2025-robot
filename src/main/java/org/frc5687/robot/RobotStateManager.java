@@ -217,8 +217,7 @@ public class RobotStateManager implements EpilogueLog {
     }
 
     private void updateIntakeArmTransforms(double armAngleRadians) {
-        Rotation3d armRotation =
-                new Rotation3d(0, armAngleRadians, 0);
+        Rotation3d armRotation = new Rotation3d(0, armAngleRadians, 0);
         double cosAngle = Math.cos(armAngleRadians);
         double sinAngle = Math.sin(armAngleRadians);
 

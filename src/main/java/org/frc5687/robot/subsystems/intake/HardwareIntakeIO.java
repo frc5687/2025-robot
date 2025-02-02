@@ -11,13 +11,14 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import org.frc5687.robot.RobotMap;
 import org.frc5687.robot.Constants;
 
 public class HardwareIntakeIO implements IntakeIO {
 
     private final TalonFX _pivotMotor;
     private final TalonFX _rollerMotor;
-    private final TalonFX _intakeMotor;
+    private final TalonFX _beltMotor;
 
     private final StatusSignal<AngularVelocity> _rollerVelocity;
     private final StatusSignal<AngularVelocity> _intakeVelocity;
@@ -28,15 +29,15 @@ public class HardwareIntakeIO implements IntakeIO {
     private final MotionMagicVoltage _pivotPositionReq = new MotionMagicVoltage(0);
 
     public HardwareIntakeIO() {
-        _rollerMotor = new TalonFX(17, Constants.Intake.CAN_BUS);
-        _intakeMotor = new TalonFX(18, Constants.Intake.CAN_BUS);
-        _pivotMotor = new TalonFX(16, Constants.Intake.CAN_BUS);
+        _pivotMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ARM, Constants.Intake.CAN_BUS);
+        _rollerMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ROLLER, Constants.Intake.CAN_BUS);
+        _beltMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_BELT, Constants.Intake.CAN_BUS);
 
         _rollerVelocity = _rollerMotor.getVelocity();
-        _intakeVelocity = _intakeMotor.getVelocity();
+        _intakeVelocity = _beltMotor.getVelocity();
 
         configureMotor(_rollerMotor, Constants.Intake.ROLLER_INVERTED);
-        configureMotor(_intakeMotor, Constants.Intake.INTAKE_INVERTED);
+        configureMotor(_beltMotor, Constants.Intake.INTAKE_INVERTED);
         configureMotor(_pivotMotor, Constants.Intake.PIVOT_INVERTED);
     }
 
@@ -49,15 +50,14 @@ public class HardwareIntakeIO implements IntakeIO {
         inputs.rollerTemperatureCelsius = _rollerMotor.getDeviceTemp().getValueAsDouble();
 
         inputs.angularVelocityRadPerSec = Units.rotationsToRadians(_intakeVelocity.getValueAsDouble());
-        inputs.intakeTemperatureCelsius = _intakeMotor.getDeviceTemp().getValueAsDouble();
+        inputs.intakeTemperatureCelsius = _beltMotor.getDeviceTemp().getValueAsDouble();
     }
 
     @Override
     public void writeOutputs(IntakeOutputs Outputs) {
-
         _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
-        _intakeMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
-        // _pivotMotor.setControl(_pivotPositionReq.withPosition(Outputs.pivotTargetAngle));
+        _beltMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
+        _pivotMotor.setControl(_pivotPositionReq.withPosition(Outputs.pivotTargetAngle));
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted) {
