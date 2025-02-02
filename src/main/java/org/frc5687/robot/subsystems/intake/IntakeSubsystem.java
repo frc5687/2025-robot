@@ -18,6 +18,10 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     @Override
     protected void periodic(IntakeInputs inputs, IntakeOutputs outputs) {}
 
+    public void setState(IntakeState state) {
+        _inputs.currentState = state;
+    }
+
     public void setRollerVoltage(double voltage) {
         _outputs.rollerVoltage = voltage;
     }
