@@ -22,7 +22,9 @@ public class RobotStateManager implements EpilogueLog {
         CORAL_ARM_BASE,
         CORAL_ARM_END,
         ALGAE_ARM_BASE,
-        ALGAE_ARM_END
+        ALGAE_ARM_END,
+        INTAKE_ARM_BASE,
+        INTAKE_ARM_END
     }
 
     public static final class Geometry {
@@ -45,18 +47,19 @@ public class RobotStateManager implements EpilogueLog {
         public static final double ELEVATOR_MAX_HEIGHT = 1.459103;
 
         public static final double CORAL_ARM_X_OFFSET = 0.171450;
-        public static final double CORAL_ARM_Y_OFFSET = -0.0762;
+        public static final double CORAL_ARM_Y_OFFSET = -0.115;
         public static final double CORAL_ARM_Z_OFFSET = 0.178689;
         public static final double CORAL_ARM_LENGTH = Units.inchesToMeters(12);
 
         public static final double ALGAE_ARM_X_OFFSET = 0.171450;
-        public static final double ALGAE_ARM_Y_OFFSET = 0.0762;
+        public static final double ALGAE_ARM_Y_OFFSET = 0.065;
         public static final double ALGAE_ARM_Z_OFFSET = 0.178689;
         public static final double ALGAE_ARM_LENGTH = Units.inchesToMeters(12);
 
-        public static final double INTAKE_ARM_X_OFFSET = 0.0;
-        public static final double INTAKE_ARM_Y_OFFSET = 0.0;
-        public static final double INTAKE_ARM_Z_OFFSET = 0.0;
+        public static final double INTAKE_ARM_X_OFFSET = -0.330200;
+        public static final double INTAKE_ARM_Y_OFFSET = 0.03;
+        public static final double INTAKE_ARM_Z_OFFSET = 0.193675;
+        public static final double INTAKE_ARM_LENGTH = Units.inchesToMeters(12);
     }
 
     private static final double EPSILON = 1e-6;
@@ -89,7 +92,7 @@ public class RobotStateManager implements EpilogueLog {
     }
 
     public synchronized void updateCoralArm(double angleRadians) {
-        Pose3d currentArm = _poses.get(RobotCoordinate.CORAL_ARM_END);
+        Pose3d currentArm = _poses.get(RobotCoordinate.CORAL_ARM_BASE);
         if (currentArm != null && Math.abs(currentArm.getRotation().getY() - angleRadians) < EPSILON) {
             return;
         }
@@ -97,11 +100,19 @@ public class RobotStateManager implements EpilogueLog {
     }
 
     public synchronized void updateAlgaeArm(double angleRadians) {
-        Pose3d currentArm = _poses.get(RobotCoordinate.ALGAE_ARM_END);
+        Pose3d currentArm = _poses.get(RobotCoordinate.ALGAE_ARM_BASE);
         if (currentArm != null && Math.abs(currentArm.getRotation().getY() - angleRadians) < EPSILON) {
             return;
         }
         updateAlgaeArmTransforms(angleRadians);
+    }
+
+    public synchronized void updateIntakeArm(double angleRadians) {
+        Pose3d currentArm = _poses.get(RobotCoordinate.INTAKE_ARM_BASE);
+        if (currentArm != null && Math.abs(currentArm.getRotation().getY() - angleRadians) < EPSILON) {
+            return;
+        }
+        updateIntakeArmTransforms(angleRadians);
     }
 
     public synchronized void updatePlatform(double centerHeight, double pitch, double roll) {
@@ -205,6 +216,28 @@ public class RobotStateManager implements EpilogueLog {
                         armRotation));
     }
 
+    private void updateIntakeArmTransforms(double armAngleRadians) {
+        Rotation3d armRotation =
+                new Rotation3d(0, armAngleRadians, 0);
+        double cosAngle = Math.cos(armAngleRadians);
+        double sinAngle = Math.sin(armAngleRadians);
+
+        _poses.put(
+                RobotCoordinate.INTAKE_ARM_BASE,
+                new Pose3d(
+                        Geometry.INTAKE_ARM_X_OFFSET,
+                        Geometry.INTAKE_ARM_Y_OFFSET,
+                        Geometry.INTAKE_ARM_Z_OFFSET,
+                        armRotation));
+        _poses.put(
+                RobotCoordinate.INTAKE_ARM_END,
+                new Pose3d(
+                        Geometry.INTAKE_ARM_X_OFFSET + Geometry.INTAKE_ARM_LENGTH * cosAngle,
+                        Geometry.INTAKE_ARM_Y_OFFSET,
+                        Geometry.INTAKE_ARM_Z_OFFSET + Geometry.INTAKE_ARM_LENGTH * sinAngle,
+                        armRotation));
+    }
+
     public Pose3d getPose(RobotCoordinate coordinate) {
         return _poses.get(coordinate);
     }
@@ -225,7 +258,8 @@ public class RobotStateManager implements EpilogueLog {
             getPose(RobotCoordinate.ELEVATOR_STAGE),
             getPose(RobotCoordinate.ELEVATOR_TOP),
             getPose(RobotCoordinate.CORAL_ARM_BASE),
-            getPose(RobotCoordinate.ALGAE_ARM_BASE)
+            getPose(RobotCoordinate.ALGAE_ARM_BASE),
+            getPose(RobotCoordinate.INTAKE_ARM_BASE)
         };
         log("Components", componentPoses, Pose3d.struct);
     }

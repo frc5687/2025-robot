@@ -1,5 +1,6 @@
 package org.frc5687.robot.subsystems.intake;
 
+import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.subsystems.SubsystemIO;
 
@@ -11,7 +12,7 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
 
     @Override
     protected void processInputs() {
-
+        RobotStateManager.getInstance().updateIntakeArm(_inputs.angleRads);
     }
 
     @Override
