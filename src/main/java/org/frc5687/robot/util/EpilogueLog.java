@@ -2,6 +2,7 @@ package org.frc5687.robot.util;
 
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.util.struct.Struct;
+import java.util.Collection;
 
 public interface EpilogueLog {
     String getLogBase();
@@ -71,6 +72,10 @@ public interface EpilogueLog {
     }
 
     default <S> void log(String identifier, S[] value, Struct<S> struct) {
+        Epilogue.getConfig().backend.log(getLogPath(identifier), value, struct);
+    }
+
+    default <S> void log(String identifier, Collection<S> value, Struct<S> struct) {
         Epilogue.getConfig().backend.log(getLogPath(identifier), value, struct);
     }
 }

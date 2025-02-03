@@ -33,7 +33,7 @@ public class SwerveOdometry {
 
         public void updateState(
                 double newDistance, Rotation2d angle, Rotation2d robotYaw, double currentTime) {
-            double deltaTime = currentTime - _lastTimestamp;
+            double dt = currentTime - _lastTimestamp;
             double deltaDistance = newDistance - _previousDistance;
             Rotation2d globalAngle = angle.rotateBy(robotYaw);
 
@@ -46,7 +46,8 @@ public class SwerveOdometry {
                     new Pose2d(_position, robotYaw)
                             .transformBy(new Transform2d(_offset.unaryMinus(), new Rotation2d()));
 
-            double velocity = deltaTime > 1e-5 ? deltaDistance / deltaTime : 0.0;
+            // TODO: Epsilon
+            double velocity = dt > 1e-5 ? deltaDistance / dt : 0.0;
             updateTrustFactor(velocity);
 
             _previousDistance = newDistance;

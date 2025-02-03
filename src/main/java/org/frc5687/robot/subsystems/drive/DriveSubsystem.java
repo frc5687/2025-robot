@@ -14,6 +14,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -29,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.Optional;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.util.SwerveOdometry;
 
@@ -103,6 +105,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
         // _odom.update(_inputs);
         // _inputs.odometryPose = _odom();
         _inputs.odometryPose = _odometry.update(_inputs.yawPosition, _inputs.modulePositions);
+        RobotStateManager.getInstance().updateRobotBase(_inputs.odometryPose, new Rotation3d(_inputs.rollPosition.getRadians(), _inputs.pitchPosition.getRadians(), _inputs.yawPosition.getRadians()));
     }
 
     @Override

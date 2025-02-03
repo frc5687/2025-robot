@@ -22,9 +22,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
         _wheelMotor = new VictorSP(RobotMap.PWM.CORAL_WHEEL_MOTOR);
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
-
-        // Rev
-        _encoder.setDutyCycleRange(1, 1024);
     }
 
     @Override

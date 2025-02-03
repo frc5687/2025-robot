@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.IdleCoral;
+import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
@@ -21,7 +22,6 @@ import org.frc5687.robot.subsystems.coralarm.CoralArmIO;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
 import org.frc5687.robot.subsystems.coralarm.HardwareCoralArmIO;
 import org.frc5687.robot.subsystems.coralarm.SimCoralArmIO;
-import org.frc5687.robot.subsystems.drive.*;
 import org.frc5687.robot.subsystems.drive.CTREDriveIO;
 import org.frc5687.robot.subsystems.drive.DriveIO;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
@@ -35,6 +35,9 @@ import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
+import org.frc5687.robot.subsystems.vision.SimVisionIO;
+import org.frc5687.robot.subsystems.vision.VisionIO;
+import org.frc5687.robot.subsystems.vision.VisionSubsystem;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.Helpers;
 import org.frc5687.robot.util.QuestNav;
@@ -49,6 +52,8 @@ public class RobotContainer implements EpilogueLog {
     private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
     private final CoralArmSubsystem _coralArm;
+
+    private final VisionSubsystem _vision;
 
     private final SuperstructureTracker _superstructureTracker;
 
@@ -95,6 +100,10 @@ public class RobotContainer implements EpilogueLog {
 
         IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
         _intake = new IntakeSubsystem(intakeIO);
+
+        VisionIO visionIO = new SimVisionIO();
+        _vision = new VisionSubsystem(visionIO);
+
         configureDefaultCommands();
 
         _superstructureTracker = new SuperstructureTracker(this);
@@ -106,16 +115,20 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void configureDefaultCommands() {
-        // _drive.setDefaultCommand(new TeleopDriveCommand(
-        //     _drive,
-        //     () -> -modifyAxis(_oi.getDriverController().getLeftY()) *
-        // Constants.SwerveModule.MAX_LINEAR_SPEED,
-        //     () -> -modifyAxis(_oi.getDriverController().getLeftX()) *
-        // Constants.SwerveModule.MAX_LINEAR_SPEED,
-        //     () -> -modifyAxis(_oi.getDriverController().getRightX()) *
-        // Constants.SwerveModule.MAX_ANGULAR_SPEED,
-        //     () -> true  // Always field relative
-        // ));
+        _drive.setDefaultCommand(
+                new TeleopDriveCommand(
+                        _drive,
+                        () ->
+                                -modifyAxis(_oi.getDriverController().getLeftY())
+                                        * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                        () ->
+                                -modifyAxis(_oi.getDriverController().getLeftX())
+                                        * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                        () ->
+                                -modifyAxis(_oi.getDriverController().getRightX())
+                                        * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                        () -> true // Always field relative
+                        ));
 
         // _drive.setDefaultCommand(
         // new TeleopDriveCommand(
@@ -183,7 +196,7 @@ public class RobotContainer implements EpilogueLog {
         return value;
     }
 
-    public DriveSubsystem getDrivet() {
+    public DriveSubsystem getDrive() {
         return _drive;
     }
 
@@ -201,6 +214,10 @@ public class RobotContainer implements EpilogueLog {
 
     public IntakeSubsystem getIntake() {
         return _intake;
+    }
+
+    public VisionSubsystem getVision() {
+        return _vision;
     }
 
     public SuperstructureTracker getSuperstructureTracker() {

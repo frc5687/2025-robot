@@ -18,6 +18,10 @@ public class SuperstructureTracker {
         _desiredState = state;
     }
 
+    public SuperstructureState getDesiredState() {
+        return _desiredState;
+    }
+
     public boolean needsSafeCoralTransition() {
         // if (_container.getCoral().getArmAngleRads()
         //         < (CoralState.STOWED.getValue() - Units.degreesToRadians(10))) {

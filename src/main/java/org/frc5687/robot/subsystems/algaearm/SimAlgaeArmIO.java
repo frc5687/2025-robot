@@ -3,7 +3,6 @@ package org.frc5687.robot.subsystems.algaearm;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.frc5687.robot.Constants;
@@ -65,8 +64,6 @@ public class SimAlgaeArmIO implements AlgaeArmIO {
 
     @Override
     public void writeOutputs(AlgaeOutputs outputs) {
-        double batteryVoltage = RobotController.getBatteryVoltage();
-
         _controller.setGoal(outputs.desiredAngleRad);
         outputs.controllerOutput = _controller.calculate(_armSim.getAngleRads());
         _armSim.setInputVoltage(outputs.controllerOutput);
