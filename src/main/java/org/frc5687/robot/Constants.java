@@ -2,6 +2,7 @@
 package org.frc5687.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -184,16 +185,8 @@ public class Constants {
         public static final double POSITION_TOLERANCE = 0.01;
         public static final double HEADING_TOLERANCE = 0.04; // rad
 
-        // public static final Translation2d LOCATIONS[] =  {
-        //     Constants.DriveTrain.NORTH_WEST_CONFIG.position,
-        //     Constants.DriveTrain.NORTH_EAST_CONFIG.position,
-        //     Constants.DriveTrain.SOUTH_WEST_CONFIG.position,
-        //     Constants.DriveTrain.SOUTH_EAST_CONFIG.position
-        // };
-
-        // public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
-        //     LOCATIONS
-        // );
+        public static final SwerveDriveKinematics KINEMATICS =
+                new SwerveDriveKinematics(MODULE_LOCATIONS);
     }
 
     public static class Intake {

@@ -105,7 +105,13 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
         // _odom.update(_inputs);
         // _inputs.odometryPose = _odom();
         _inputs.odometryPose = _odometry.update(_inputs.yawPosition, _inputs.modulePositions);
-        RobotStateManager.getInstance().updateRobotBase(_inputs.odometryPose, new Rotation3d(_inputs.rollPosition.getRadians(), _inputs.pitchPosition.getRadians(), _inputs.yawPosition.getRadians()));
+        RobotStateManager.getInstance()
+                .updateRobotBase(
+                        _inputs.odometryPose,
+                        new Rotation3d(
+                                _inputs.rollPosition.getRadians(),
+                                _inputs.pitchPosition.getRadians(),
+                                _inputs.yawPosition.getRadians()));
     }
 
     @Override

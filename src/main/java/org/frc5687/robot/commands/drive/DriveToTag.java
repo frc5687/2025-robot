@@ -42,8 +42,7 @@ public class DriveToTag extends OutliersCommand {
     private long _lastValidTimestamp = 0;
     private static final long MAX_TAG_AGE_MS = 500;
 
-    public DriveToTag(
-            DriveSubsystem drive, VisionSubsystem vision, Transform3d robotToCam) {
+    public DriveToTag(DriveSubsystem drive, VisionSubsystem vision, Transform3d robotToCam) {
         _drive = drive;
         _vision = vision;
         _robotToCam = robotToCam;

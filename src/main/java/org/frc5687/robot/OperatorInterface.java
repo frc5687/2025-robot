@@ -1,11 +1,7 @@
 package org.frc5687.robot;
 
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
-import org.frc5687.robot.commands.drive.DriveToTag;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
-import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.util.Helpers;
 
 public class OperatorInterface {
@@ -16,7 +12,8 @@ public class OperatorInterface {
     }
 
     public void configureCommandMapping(RobotContainer container) {
-        // _driverController.leftBumper().whileTrue(new DriveToTag(container.getDrive(), container.getVision(), SimVisionIO.ROBOT_TO_CENTER_CAMERA));
+        // _driverController.leftBumper().whileTrue(new DriveToTag(container.getDrive(),
+        // container.getVision(), SimVisionIO.ROBOT_TO_CENTER_CAMERA));
         // _driverController
         //         .y()
         //         .onTrue(new ElevatorSetState(container.getElevator(),
@@ -62,5 +59,4 @@ public class OperatorInterface {
     public CommandXboxController getDriverController() {
         return _driverController;
     }
-
 }
