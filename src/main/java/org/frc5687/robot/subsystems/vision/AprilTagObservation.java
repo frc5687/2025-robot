@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import java.nio.ByteBuffer;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+// This is to mimic how WPILib create struct seriablizables Like Pose3d, Pose2d etc
 public class AprilTagObservation implements StructSerializable {
     public static class AprilTagObservationStruct implements Struct<AprilTagObservation> {
         @Override
@@ -101,7 +102,6 @@ public class AprilTagObservation implements StructSerializable {
                 timestamp);
     }
 
-    // Getters
     public int getId() {
         return id;
     }
