@@ -48,7 +48,7 @@ public class SuperstructureFactory {
 
     public static Command ensureClearance(RobotContainer container) {
         return new SequentialCommandGroup(
-                clearIntake(container)/*  , transitionToSafeCoralState(container) */);
+                clearIntake(container) /*  , transitionToSafeCoralState(container) */);
     }
 
     public static Command receiveFromFunnel(RobotContainer container) {

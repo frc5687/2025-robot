@@ -3,7 +3,6 @@ package org.frc5687.robot.subsystems.coralarm;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.frc5687.robot.Constants;
@@ -47,6 +46,14 @@ public class SimCoralArmIO implements CoralArmIO {
                         constraints);
     }
 
+    // https://file.tavsys.net/control/controls-engineering-in-frc.pdf Look up single jointed arm
+    private double calculateFeedForward(double angle) {
+        return ((Constants.CoralArm.ARM_LENGTH / 2.0)
+                        * (Constants.CoralArm.GEARBOX.rOhms * Constants.CoralArm.ARM_MASS * 9.81)
+                        / (Constants.CoralArm.GEAR_RATIO * Constants.CoralArm.GEARBOX.KtNMPerAmp))
+                * Math.cos(angle);
+    }
+
     @Override
     public void updateInputs(CoralInputs inputs) {
         // Update arm sim
@@ -65,10 +72,9 @@ public class SimCoralArmIO implements CoralArmIO {
 
     @Override
     public void writeOutputs(CoralOutputs outputs) {
-        double batteryVoltage = RobotController.getBatteryVoltage();
-
         _controller.setGoal(outputs.desiredAngleRad);
         outputs.controllerOutput = _controller.calculate(_armSim.getAngleRads());
-        _armSim.setInputVoltage(outputs.controllerOutput);
+        outputs.voltageFeedForward = calculateFeedForward(_armSim.getAngleRads());
+        _armSim.setInputVoltage(outputs.controllerOutput + outputs.voltageFeedForward);
     }
 }

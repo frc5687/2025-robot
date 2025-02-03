@@ -20,6 +20,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
+import org.frc5687.robot.util.CTREUtil;
 
 public class HardwareElevatorIO implements ElevatorIO {
 
@@ -338,7 +339,7 @@ public class HardwareElevatorIO implements ElevatorIO {
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = Constants.Elevator.CURRENT_LIMIT;
 
-        motor.getConfigurator().apply(config);
+        CTREUtil.applyConfiguration(motor, config);
     }
 
     public boolean isLevel(double currentPitch, double currentRoll) {

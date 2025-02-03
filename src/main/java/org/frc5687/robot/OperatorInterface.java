@@ -1,9 +1,7 @@
 package org.frc5687.robot;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import org.frc5687.robot.commands.elevator.ElevatorSetState;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
-import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.util.Helpers;
 
 public class OperatorInterface {
@@ -16,13 +14,16 @@ public class OperatorInterface {
     public void configureCommandMapping(RobotContainer container) {
         // _driverController
         //         .y()
-        //         .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L3_CORAL_PLACING));
+        //         .onTrue(new ElevatorSetState(container.getElevator(),
+        // ElevatorState.L3_CORAL_PLACING));
         // _driverController
         //         .x()
-        //         .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L4_CORAL_PLACING));
+        //         .onTrue(new ElevatorSetState(container.getElevator(),
+        // ElevatorState.L4_CORAL_PLACING));
         // _driverController
         //         .b()
-        //         .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L2_CORAL_PLACING));
+        //         .onTrue(new ElevatorSetState(container.getElevator(),
+        // ElevatorState.L2_CORAL_PLACING));
         // _driverController
         //         .a()
         //         .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.STOWED));

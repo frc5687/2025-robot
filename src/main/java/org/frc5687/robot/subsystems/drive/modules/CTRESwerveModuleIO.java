@@ -17,6 +17,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import org.frc5687.robot.util.CTREUtil;
 
 public class CTRESwerveModuleIO implements SwerveModuleIO {
     private final TalonFX _driveMotor;
@@ -48,7 +49,7 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
 
         configureDriveMotor(config);
         configureSteerMotor(config);
-        configure_cancoder(config);
+        configureCancoder(config);
 
         _drivePosition = _driveMotor.getPosition();
         _driveVelocity = _driveMotor.getVelocity();
@@ -150,7 +151,7 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         driveConfigs.CurrentLimits.SupplyCurrentLimit = config.driveCurrentLimit();
         driveConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        _driveMotor.getConfigurator().apply(driveConfigs);
+        CTREUtil.applyConfiguration(_driveMotor, driveConfigs);
     }
 
     private void configureSteerMotor(SwerveModuleConfig config) {
@@ -180,12 +181,13 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         steerConfigs.ClosedLoopGeneral.ContinuousWrap = true;
 
         _steerMotor.getConfigurator().apply(steerConfigs);
+        CTREUtil.applyConfiguration(_steerMotor, steerConfigs);
     }
 
-    private void configure_cancoder(SwerveModuleConfig config) {
+    private void configureCancoder(SwerveModuleConfig config) {
         var _cancoderConfigs = new CANcoderConfiguration();
         _cancoderConfigs.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(0.5));
         _cancoderConfigs.MagnetSensor.MagnetOffset = config.absoluteEncoderOffset();
-        _cancoder.getConfigurator().apply(_cancoderConfigs);
+        CTREUtil.applyConfiguration(_cancoder, _cancoderConfigs);
     }
 }

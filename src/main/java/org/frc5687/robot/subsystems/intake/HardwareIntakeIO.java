@@ -13,6 +13,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
+import org.frc5687.robot.util.CTREUtil;
 
 public class HardwareIntakeIO implements IntakeIO {
 
@@ -79,6 +80,6 @@ public class HardwareIntakeIO implements IntakeIO {
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = Constants.Intake.CURRENT_LIMIT;
 
-        motor.getConfigurator().apply(config);
+        CTREUtil.applyConfiguration(motor, config);
     }
 }
