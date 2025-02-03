@@ -1,6 +1,8 @@
 package org.frc5687.robot.subsystems.superstructure;
 
+import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.RobotContainer;
+import org.frc5687.robot.subsystems.intake.IntakeState;
 
 public class SuperstructureTracker {
     private final RobotContainer _container;
@@ -28,6 +30,14 @@ public class SuperstructureTracker {
         //     return true;
         // }
 
+        return false;
+    }
+
+    public boolean needToClearIntake() {
+        if (_container.getIntake().getPivotArmAngleRads()
+                < IntakeState.IDLE.getValue() + Units.degreesToRadians(10)) {
+            return true;
+        }
         return false;
     }
 }

@@ -64,12 +64,12 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
 
     public void mapToClosestState() {
         CoralState closestState = CoralState.STOWED;
-        double min_dist = Double.MAX_VALUE;
+        double minDist = Double.MAX_VALUE;
         for (CoralState state : CoralState.values()) {
             double dist = Math.abs(getArmAngleRads() - state.getValue());
-            if (dist < min_dist) {
+            if (dist < minDist) {
                 closestState = state;
-                min_dist = dist;
+                minDist = dist;
             }
         }
         _inputs.currentState = closestState;

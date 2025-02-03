@@ -199,6 +199,10 @@ public class RobotContainer implements EpilogueLog {
         return _coralArm;
     }
 
+    public IntakeSubsystem getIntake() {
+        return _intake;
+    }
+
     public SuperstructureTracker getSuperstructureTracker() {
         return _superstructureTracker;
     }

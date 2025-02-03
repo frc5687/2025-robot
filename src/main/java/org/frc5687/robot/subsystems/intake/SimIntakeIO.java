@@ -18,12 +18,12 @@ public class SimIntakeIO implements IntakeIO {
     public SimIntakeIO() {
         _armSim =
                 new SingleJointedArmSim(
-                        Constants.CoralArm.GEARBOX,
-                        Constants.CoralArm.GEAR_RATIO,
-                        Constants.CoralArm.MOI_ARM,
-                        Constants.CoralArm.ARM_LENGTH,
-                        Constants.CoralArm.MIN_ANGLE,
-                        Constants.CoralArm.MAX_ANGLE,
+                        Constants.Intake.GEARBOX,
+                        Constants.Intake.GEAR_RATIO,
+                        Constants.Intake.MOI_ARM,
+                        Constants.Intake.ARM_LENGTH,
+                        Constants.Intake.MIN_ANGLE,
+                        Constants.Intake.MAX_ANGLE,
                         true,
                         0,
                         0.001,
@@ -35,14 +35,14 @@ public class SimIntakeIO implements IntakeIO {
 
         TrapezoidProfile.Constraints constraints =
                 new TrapezoidProfile.Constraints(
-                        Constants.CoralArm.MAX_VELOCITY_RAD_PER_SEC,
-                        Constants.CoralArm.MAX_ACCELERATION_RAD_PER_SEC_SQUARED);
+                        Constants.Intake.MAX_VELOCITY_RAD_PER_SEC,
+                        Constants.Intake.MAX_ACCELERATION_RAD_PER_SEC_SQUARED);
 
         _controller =
                 new ProfiledPIDController(
-                        Constants.CoralArm.SIM_PID_CONSTANTS.kP(),
-                        Constants.CoralArm.SIM_PID_CONSTANTS.kI(),
-                        Constants.CoralArm.SIM_PID_CONSTANTS.kD(),
+                        Constants.Intake.SIM_PID_CONSTANTS.kP(),
+                        Constants.Intake.SIM_PID_CONSTANTS.kI(),
+                        Constants.Intake.SIM_PID_CONSTANTS.kD(),
                         constraints);
     }
 

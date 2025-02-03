@@ -8,6 +8,7 @@ import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.coral.CoralSetState;
 import org.frc5687.robot.commands.elevator.ElevatorSetState;
+import org.frc5687.robot.commands.intake.IntakeSetState;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 
@@ -24,7 +25,16 @@ public class SuperstructureFactory {
         return new ParallelCommandGroup(
                 new ElevatorSetState(container.getElevator(), state.getElevator()),
                 new CoralSetState(container.getCoral(), state.getCoral()),
-                new AlgaeSetState(container.getAlgae(), state.getAlgae()));
+                new AlgaeSetState(container.getAlgae(), state.getAlgae()),
+                new IntakeSetState(container.getIntake(), state.getIntake()));
+    }
+
+    public static Command clearIntake(RobotContainer container) {
+        return withStateTracking(
+                container,
+                SuperstructureGoals.CLEAR_INTAKE,
+                setSuperstructure(container, SuperstructureGoals.CLEAR_INTAKE)
+                        .unless(() -> !container.getSuperstructureTracker().needToClearIntake()));
     }
 
     // I can just make a set state command to remove repetative code :)
@@ -36,12 +46,17 @@ public class SuperstructureFactory {
                         .unless(() -> !container.getSuperstructureTracker().needsSafeCoralTransition()));
     }
 
+    public static Command ensureClearance(RobotContainer container) {
+        return new SequentialCommandGroup(
+                clearIntake(container)/*  , transitionToSafeCoralState(container) */);
+    }
+
     public static Command receiveFromFunnel(RobotContainer container) {
         return withStateTracking(
                 container,
                 SuperstructureGoals.RECEIVE_FROM_FUNNEL,
                 new SequentialCommandGroup(
-                        transitionToSafeCoralState(container),
+                        ensureClearance(container),
                         setSuperstructure(container, SuperstructureGoals.RECEIVE_FROM_FUNNEL)));
     }
 
@@ -50,7 +65,7 @@ public class SuperstructureFactory {
                 container,
                 SuperstructureGoals.RECEIVE_FROM_INTAKE,
                 new SequentialCommandGroup(
-                        transitionToSafeCoralState(container),
+                        ensureClearance(container),
                         setSuperstructure(container, SuperstructureGoals.RECEIVE_FROM_INTAKE)));
     }
 

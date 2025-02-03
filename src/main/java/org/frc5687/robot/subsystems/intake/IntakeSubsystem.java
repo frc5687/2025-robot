@@ -18,7 +18,11 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     @Override
     protected void periodic(IntakeInputs inputs, IntakeOutputs outputs) {}
 
-    public void setState(IntakeState state) {
+    public void setDesiredState(IntakeState state) {
+        _outputs.desiredAngleRad = state.getValue();
+    }
+
+    public void setCurrentState(IntakeState state) {
         _inputs.currentState = state;
     }
 
@@ -32,5 +36,28 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
 
     public void setPivotAngle(double angle) {
         _outputs.pivotTargetAngle = angle;
+    }
+
+    public double getPivotArmAngleRads() {
+        return _inputs.angleRads;
+    }
+
+    public boolean isAtDesiredAngle() {
+        return Math.abs(_inputs.angleRads - _outputs.desiredAngleRad) < 0.01;
+    }
+
+    // This is to map to closest state incase of interrupt.
+    public void mapToClosestState() {
+        IntakeState closestState = IntakeState.STOWED;
+        double minDist = Double.MAX_VALUE;
+
+        for (IntakeState state : IntakeState.values()) {
+            double angleDiff = Math.abs(getPivotArmAngleRads() - state.getValue());
+            if (angleDiff < minDist) {
+                closestState = state;
+                minDist = angleDiff;
+            }
+        }
+        _inputs.currentState = closestState;
     }
 }
