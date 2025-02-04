@@ -14,7 +14,6 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -105,13 +104,6 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
         // _odom.update(_inputs);
         // _inputs.odometryPose = _odom();
         _inputs.odometryPose = _odometry.update(_inputs.yawPosition, _inputs.modulePositions);
-        RobotStateManager.getInstance()
-                .updateRobotBase(
-                        _inputs.odometryPose,
-                        new Rotation3d(
-                                _inputs.rollPosition.getRadians(),
-                                _inputs.pitchPosition.getRadians(),
-                                _inputs.yawPosition.getRadians()));
     }
 
     @Override
@@ -169,6 +161,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     public void resetPose(Pose2d pose) {
         _odometry.resetPosition(_inputs.yawPosition, _inputs.modulePositions, pose);
+        RobotStateManager.getInstance().resetEstimatedPose(pose);
     }
 
     public Translation2d[] getModuleLocations() {
@@ -194,6 +187,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     private void configureAutoBuilder(RobotConfig config) {
+        // FIXME use pose estimator
         AutoBuilder.configure(
                 this::getPose,
                 this::resetPose,

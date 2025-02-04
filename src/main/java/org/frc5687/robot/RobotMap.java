@@ -83,11 +83,11 @@ public class RobotMap {
      */
     public static class DIO {
         // IS THIS A 5687 REFERENCE?!?!?!?!?!?!?
-        public static final int CORAL_SENSOR = 9;
-        public static final int CORAL_ENCODER = 0;
+        public static final int CORAL_SENSOR = 4;
+        public static final int CORAL_ENCODER = 2;
 
-        public static final int ALGAE_SENSOR = 8;
-        public static final int ALGAE_ENCODER = 2;
+        public static final int ALGAE_SENSOR = 5;
+        public static final int ALGAE_ENCODER = 3;
     }
 
     public static class SIM {

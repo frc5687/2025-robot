@@ -30,6 +30,7 @@ public class QuestNav {
     private IntegerPublisher questMosi = nt4Table.getIntegerTopic("mosi").publish();
 
     // Subscribe to the Network Tables questnav data topics
+    private double prevTimestamp = 0;
     private DoubleSubscriber questTimestamp = nt4Table.getDoubleTopic("timestamp").subscribe(0.0f);
     private FloatArraySubscriber questPosition =
             nt4Table.getFloatArrayTopic("position").subscribe(new float[] {0.0f, 0.0f, 0.0f});

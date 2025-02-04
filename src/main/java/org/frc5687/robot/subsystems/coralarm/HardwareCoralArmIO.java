@@ -18,7 +18,8 @@ public class HardwareCoralArmIO implements CoralArmIO {
     public HardwareCoralArmIO() {
 
         _pid = new PIDController(Constants.AlgaeArm.kP, Constants.AlgaeArm.kI, Constants.AlgaeArm.kD);
-        _encoder = new RevBoreEncoder(RobotMap.DIO.CORAL_ENCODER, 0);
+        _encoder = new RevBoreEncoder(RobotMap.DIO.CORAL_ENCODER, 4.17);
+        _encoder.setInverted(true);
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
         _wheelMotor = new VictorSP(RobotMap.PWM.CORAL_WHEEL_MOTOR);
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);

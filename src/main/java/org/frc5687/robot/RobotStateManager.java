@@ -1,12 +1,22 @@
 package org.frc5687.robot;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import java.util.EnumMap;
+import java.util.function.Supplier;
 import org.frc5687.robot.util.EpilogueLog;
+import org.frc5687.robot.util.PoseEstimator;
+import org.frc5687.robot.util.QuestNav;
+import org.frc5687.robot.util.QuestNavOdometrySource;
+import org.frc5687.robot.util.WheelOdometrySource;
+import org.photonvision.EstimatedRobotPose;
 
 public class RobotStateManager implements EpilogueLog {
     @Override
@@ -15,7 +25,9 @@ public class RobotStateManager implements EpilogueLog {
     }
 
     public enum RobotCoordinate {
-        ROBOT_BASE,
+        ROBOT_BASE_SWERVE,
+        ROBOT_BASE_QUESTNAV,
+        ROBOT_BASE_SIM_ODOM,
         ELEVATOR_BASE,
         ELEVATOR_STAGE,
         ELEVATOR_TOP,
@@ -24,8 +36,7 @@ public class RobotStateManager implements EpilogueLog {
         ALGAE_ARM_BASE,
         ALGAE_ARM_END,
         INTAKE_ARM_BASE,
-        INTAKE_ARM_END,
-        QUEST_BASE
+        INTAKE_ARM_END
     }
 
     public static final class Geometry {
@@ -68,9 +79,15 @@ public class RobotStateManager implements EpilogueLog {
     private final EnumMap<RobotCoordinate, Pose3d> _poses;
     private Rotation3d _currentPlatformRotation = new Rotation3d();
 
+    private PoseEstimator _questNavPoseEstimator;
+    private PoseEstimator _swervePoseEstimator;
+    private PoseEstimator _simPoseEstimator;
+
     private RobotStateManager() {
         _poses = new EnumMap<>(RobotCoordinate.class);
-        _poses.put(RobotCoordinate.ROBOT_BASE, new Pose3d());
+        _poses.put(RobotCoordinate.ROBOT_BASE_SWERVE, new Pose3d());
+        _poses.put(RobotCoordinate.ROBOT_BASE_QUESTNAV, new Pose3d());
+        _poses.put(RobotCoordinate.ROBOT_BASE_SIM_ODOM, new Pose3d());
         _poses.put(
                 RobotCoordinate.ELEVATOR_BASE,
                 new Pose3d(
@@ -88,8 +105,73 @@ public class RobotStateManager implements EpilogueLog {
         return _instance;
     }
 
-    public synchronized void updateRobotBase(Pose2d robotPose, Rotation3d rot) {
-        _poses.put(RobotCoordinate.ROBOT_BASE, new Pose3d(robotPose.getX(), robotPose.getY(), 0, rot));
+    public void initEstimators(
+            Supplier<SwerveModulePosition[]> positionSupplier,
+            Supplier<Rotation2d> headingSupplier,
+            QuestNav nav) {
+        _questNavPoseEstimator = new PoseEstimator(new QuestNavOdometrySource(nav));
+        _swervePoseEstimator =
+                new PoseEstimator(new WheelOdometrySource(positionSupplier, headingSupplier));
+        if (RobotBase.isSimulation()) {
+            _simPoseEstimator =
+                    new PoseEstimator(new WheelOdometrySource(positionSupplier, headingSupplier));
+        }
+    }
+
+    public synchronized void updateOdometry() {
+        if (_questNavPoseEstimator != null) {
+            _questNavPoseEstimator.updateOdometry();
+            Pose2d robotPose = _questNavPoseEstimator.getEstimatedPose();
+            _poses.put(
+                    RobotCoordinate.ROBOT_BASE_QUESTNAV,
+                    new Pose3d(
+                            robotPose.getX(),
+                            robotPose.getY(),
+                            0,
+                            new Rotation3d(0, 0, robotPose.getRotation().getRadians())));
+        }
+        if (_swervePoseEstimator != null) {
+            _swervePoseEstimator.updateOdometry();
+            Pose2d robotPose = _swervePoseEstimator.getEstimatedPose();
+            _poses.put(
+                    RobotCoordinate.ROBOT_BASE_SWERVE,
+                    new Pose3d(
+                            robotPose.getX(),
+                            robotPose.getY(),
+                            0,
+                            new Rotation3d(0, 0, robotPose.getRotation().getRadians())));
+        }
+        if (_simPoseEstimator != null) {
+            _simPoseEstimator.updateOdometry();
+            Pose2d robotPose = _simPoseEstimator.getEstimatedPose();
+            _poses.put(
+                    RobotCoordinate.ROBOT_BASE_SIM_ODOM,
+                    new Pose3d(
+                            robotPose.getX(),
+                            robotPose.getY(),
+                            0,
+                            new Rotation3d(0, 0, robotPose.getRotation().getRadians())));
+        }
+    }
+
+    public synchronized void updateVision(EstimatedRobotPose estimatedRobotPose) {
+        if (_questNavPoseEstimator != null) {
+            _questNavPoseEstimator.addVisionMeasurement(
+                    estimatedRobotPose, VecBuilder.fill(0.4, 0.4, 0.4), estimatedRobotPose.timestampSeconds);
+        }
+        if (_swervePoseEstimator != null) {
+            _swervePoseEstimator.addVisionMeasurement(
+                    estimatedRobotPose, VecBuilder.fill(0.4, 0.4, 0.4), estimatedRobotPose.timestampSeconds);
+        }
+    }
+
+    public synchronized void resetEstimatedPose(Pose2d pose) {
+        if (_questNavPoseEstimator != null) {
+            _questNavPoseEstimator.resetPose(pose);
+        }
+        if (_swervePoseEstimator != null) {
+            _swervePoseEstimator.resetPose(pose);
+        }
     }
 
     public synchronized void updateCoralArm(double angleRadians) {
@@ -114,10 +196,6 @@ public class RobotStateManager implements EpilogueLog {
             return;
         }
         updateIntakeArmTransforms(angleRadians);
-    }
-
-    public synchronized void updateQuest(Pose3d questPose) {
-        _poses.put(RobotCoordinate.QUEST_BASE, questPose);
     }
 
     public synchronized void updatePlatform(double centerHeight, double pitch, double roll) {
@@ -266,5 +344,10 @@ public class RobotStateManager implements EpilogueLog {
             getPose(RobotCoordinate.INTAKE_ARM_BASE)
         };
         log("Components", componentPoses, Pose3d.struct);
+    }
+
+    public void logEstimatedPoses() {
+        log("Quest Estimator Pose", getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV), Pose3d.struct);
+        log("Swerve Estimator Pose", getPose(RobotCoordinate.ROBOT_BASE_SWERVE), Pose3d.struct);
     }
 }

@@ -13,13 +13,10 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import org.frc5687.robot.Constants;
-import org.frc5687.robot.RobotStateManager;
-import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.util.CTREUtil;
 
 public class HardwareElevatorIO implements ElevatorIO {
@@ -285,12 +282,13 @@ public class HardwareElevatorIO implements ElevatorIO {
     private boolean isDriveTrainStable() {
         // return Units.degreesToRadians(getDriveTrainPitch()) < Constants.Elevator.MAX_DRIVETRAIN_TILT
         // && Units.degreesToRadians(getDriveTrainRoll()) < Constants.Elevator.MAX_DRIVETRAIN_TILT;
-        Rotation3d rot =
-                RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE).getRotation();
-        double roll = Units.degreesToRadians(rot.getY());
-        double pitch = Units.degreesToRadians(rot.getX());
-        return pitch < Constants.Elevator.MAX_DRIVETRAIN_TILT
-                && roll < Constants.Elevator.MAX_DRIVETRAIN_TILT;
+        // Rotation3d rot =
+        //         RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE).getRotation();
+        // double roll = Units.degreesToRadians(rot.getY());
+        // double pitch = Units.degreesToRadians(rot.getX());
+        // return pitch < Constants.Elevator.MAX_DRIVETRAIN_TILT
+        //         && roll < Constants.Elevator.MAX_DRIVETRAIN_TILT;
+        return true; // FIXME lmfao
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted) {

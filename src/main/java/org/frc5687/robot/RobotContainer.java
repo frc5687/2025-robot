@@ -3,12 +3,10 @@ package org.frc5687.robot;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
@@ -35,6 +33,7 @@ import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
+import org.frc5687.robot.subsystems.vision.PhotonVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.subsystems.vision.VisionIO;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
@@ -72,6 +71,9 @@ public class RobotContainer implements EpilogueLog {
 
         _drive = new DriveSubsystem(driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
 
+        RobotStateManager.getInstance()
+                .initEstimators(_drive::getModulePositions, _drive::getHeading, _questNav);
+
         if (RobotBase.isSimulation()) {
             SmartDashboard.putData("Field", _field);
         }
@@ -101,7 +103,7 @@ public class RobotContainer implements EpilogueLog {
         IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
         _intake = new IntakeSubsystem(intakeIO);
 
-        VisionIO visionIO = new SimVisionIO();
+        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new PhotonVisionIO("");
         _vision = new VisionSubsystem(visionIO);
 
         configureDefaultCommands();
@@ -174,11 +176,8 @@ public class RobotContainer implements EpilogueLog {
 
     public void periodic() {
         RobotStateManager.getInstance().logComponentPoses();
-        RobotStateManager.getInstance().updateQuest(_questNav.getUncorrectedOculusPose3d());
-        log(
-                "Quest Pose",
-                RobotStateManager.getInstance().getPose(RobotCoordinate.QUEST_BASE),
-                Pose3d.struct);
+        RobotStateManager.getInstance().updateOdometry();
+        RobotStateManager.getInstance().logEstimatedPoses();
     }
 
     public void addElevatorControlLoop() {

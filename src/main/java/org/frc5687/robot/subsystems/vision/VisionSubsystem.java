@@ -2,10 +2,11 @@ package org.frc5687.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import java.util.*;
+import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 
 public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutputs> {
-    private static final double MIN_AMBIGUITY = 0.6;
+    private static final double MIN_AMBIGUITY = 0.3;
     private static final double MAX_LATENCY_MS = 100.0;
     private static final double MULTI_TAG_AMBIGUITY_THRESHOLD = 0.1;
 
@@ -36,13 +37,14 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
     @Override
     protected void periodic(VisionInputs inputs, VisionOutputs outputs) {
-        List<Pose3d> esimatedPoses = new ArrayList<>();
+        List<Pose3d> estimatedPoses = new ArrayList<>();
         for (var entry : inputs.estimatedPoses.entrySet()) {
             if (inputs.hasTargets && getValidTags().length > 0) {
-                esimatedPoses.add(entry.getValue().estimatedPose);
+                estimatedPoses.add(entry.getValue().estimatedPose);
+                RobotStateManager.getInstance().updateVision(entry.getValue());
             }
         }
-        log("VisionPoses", esimatedPoses, Pose3d.struct);
+        log("VisionPoses", estimatedPoses, Pose3d.struct);
     }
 
     public boolean hasValidTargets() {

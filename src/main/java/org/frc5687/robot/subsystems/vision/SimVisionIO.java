@@ -85,9 +85,9 @@ public class SimVisionIO implements VisionIO {
         cameraProp.setLatencyStdDevMs(5);
 
         PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraProp);
-        cameraSim.enableDrawWireframe(true);
-        cameraSim.enableProcessedStream(true);
-        cameraSim.enableRawStream(true);
+        cameraSim.enableDrawWireframe(false);
+        cameraSim.enableProcessedStream(false);
+        cameraSim.enableRawStream(false);
         cameraSim.setMaxSightRange(4.0);
 
         PhotonPoseEstimator estimator =
@@ -133,7 +133,7 @@ public class SimVisionIO implements VisionIO {
             }
         }
 
-        _visionSim.update(_robotState.getPose(RobotCoordinate.ROBOT_BASE).toPose2d());
+        _visionSim.update(_robotState.getPose(RobotCoordinate.ROBOT_BASE_SIM_ODOM).toPose2d());
     }
 
     @Override
