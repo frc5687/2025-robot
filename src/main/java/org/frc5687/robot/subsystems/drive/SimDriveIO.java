@@ -42,6 +42,7 @@ public class SimDriveIO implements DriveIO {
         _modules[1] = new SwerveModule(Constants.DriveTrain.NE_CONFIG, northEastIO);
         _modules[2] = new SwerveModule(Constants.DriveTrain.SW_CONFIG, southWestIO);
         _modules[3] = new SwerveModule(Constants.DriveTrain.SE_CONFIG, southEastIO);
+        reset();
     }
 
     @Override

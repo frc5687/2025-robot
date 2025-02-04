@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.Optional;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotStateManager;
+import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.util.SwerveOdometry;
 
@@ -148,7 +149,8 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public Pose2d getPose() {
-        return _inputs.odometryPose;
+        // return _inputs.odometryPose;
+        return RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
     }
 
     public ChassisSpeeds getMeasuredChassisSpeeds() {

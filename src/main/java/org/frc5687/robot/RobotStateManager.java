@@ -168,9 +168,16 @@ public class RobotStateManager implements EpilogueLog {
     public synchronized void resetEstimatedPose(Pose2d pose) {
         if (_questNavPoseEstimator != null) {
             _questNavPoseEstimator.resetPose(pose);
+            _poses.put(RobotCoordinate.ROBOT_BASE_QUESTNAV, new Pose3d(pose));
         }
         if (_swervePoseEstimator != null) {
             _swervePoseEstimator.resetPose(pose);
+            _poses.put(RobotCoordinate.ROBOT_BASE_SWERVE, new Pose3d(pose));
+        }
+
+        if (_simPoseEstimator != null) {
+            _simPoseEstimator.resetPose(pose);
+            _poses.put(RobotCoordinate.ROBOT_BASE_SIM_ODOM, new Pose3d(pose));
         }
     }
 

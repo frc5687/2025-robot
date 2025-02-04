@@ -39,6 +39,7 @@ public class PoseEstimator {
     }
 
     public void resetPose(Pose2d pose) {
+        _odometrySource.resetPose(pose);
         _estimatedPose = pose;
         _odometryPose = pose;
         _poseBuffer.clear();
