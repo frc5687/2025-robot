@@ -231,6 +231,10 @@ public class Constants {
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
         public static final double MIN_HEIGHT = 0.0; // m
         public static final double MAX_HEIGHT = 0.7295515; // m THIS IS THE HEIGHT OF THE FIRST STAGE
+
+        public static final double MIN_PLATFORM_HEIGHT = 0.251333; // m
+        public static final double MAX_PLATFORM_HEIGHT = 1.615; // m
+
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =
                 (MOTOR.freeSpeedRadPerSec / GEAR_RATIO) * DRUM_RADIUS;

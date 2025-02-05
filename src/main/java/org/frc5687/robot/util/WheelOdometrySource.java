@@ -14,7 +14,6 @@ public class WheelOdometrySource extends OdometrySource {
     private SwerveModulePosition[] _lastWheelPositions = new SwerveModulePosition[4];
     private Rotation2d _gyroOffset = new Rotation2d();
 
-
     public WheelOdometrySource(
             Supplier<SwerveModulePosition[]> positionSupplier, Supplier<Rotation2d> headingSupplier) {
         for (int i = 0; i < 4; i++) {
@@ -40,21 +39,17 @@ public class WheelOdometrySource extends OdometrySource {
 
         Rotation2d gyroAngle = _headingSupplier.get();
         if (gyroAngle != null) {
-            _odometryPose = new Pose2d(
-                _odometryPose.getTranslation(), 
-                gyroAngle.plus(_gyroOffset)
-            );
+            _odometryPose = new Pose2d(_odometryPose.getTranslation(), gyroAngle.plus(_gyroOffset));
         }
-
 
         return _odometryPose;
     }
 
-    // This is from WPILib odometry class 
+    // This is from WPILib odometry class
     @Override
     public void resetPose(Pose2d pose) {
         _odometryPose = pose;
-        
+
         Rotation2d currentGyro = _headingSupplier.get();
         if (currentGyro != null) {
             _gyroOffset = pose.getRotation().minus(currentGyro);
@@ -62,11 +57,10 @@ public class WheelOdometrySource extends OdometrySource {
 
         SwerveModulePosition[] currentPositions = _positionSupplier.get();
         for (int i = 0; i < currentPositions.length; i++) {
-            _lastWheelPositions[i] = new SwerveModulePosition(
-                currentPositions[i].distanceMeters,
-                new Rotation2d(currentPositions[i].angle.getRadians())
-            );
+            _lastWheelPositions[i] =
+                    new SwerveModulePosition(
+                            currentPositions[i].distanceMeters,
+                            new Rotation2d(currentPositions[i].angle.getRadians()));
         }
     }
-
 }

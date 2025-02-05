@@ -1,5 +1,7 @@
 package org.frc5687.robot.subsystems.elevator;
 
+import edu.wpi.first.math.MathUtil;
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.Geometry;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
@@ -36,6 +38,11 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     protected void periodic(ElevatorInputs inputs, ElevatorOutputs outputs) {}
 
     public void setDesiredPlatformHeightWorld(double heightMeters) {
+        heightMeters =
+                MathUtil.clamp(
+                        heightMeters,
+                        Constants.Elevator.MIN_PLATFORM_HEIGHT,
+                        Constants.Elevator.MAX_PLATFORM_HEIGHT);
         _outputs.desiredPlatformHeightWorldMeters = heightMeters;
         _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
         _outputs.desiredPlatformPitchRadians = 0.0;

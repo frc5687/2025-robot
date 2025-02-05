@@ -122,4 +122,8 @@ public class SuperstructureFactory {
         return new SuperstructurePlace(
                 container.getElevator(), container.getCoral(), container.getAlgae());
     }
+
+    public static Command placeAndStow(RobotContainer container) {
+        return new SequentialCommandGroup(place(container), receiveFromFunnel(container));
+    }
 }
