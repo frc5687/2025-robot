@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class SimSwerveModuleIO implements SwerveModuleIO {
-    private static final double SIM_DRIVE_KP = 0.52;
+    private static final double SIM_DRIVE_KP = 0.5;
     private static final double SIM_DRIVE_KD = 0.0;
     private static final double SIM_STEER_KP = 8.0;
     private static final double SIM_STEER_KD = 0.0;

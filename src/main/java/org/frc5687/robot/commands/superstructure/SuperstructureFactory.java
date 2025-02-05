@@ -57,7 +57,8 @@ public class SuperstructureFactory {
                 SuperstructureGoals.RECEIVE_FROM_FUNNEL,
                 new SequentialCommandGroup(
                         ensureClearance(container),
-                        setSuperstructure(container, SuperstructureGoals.RECEIVE_FROM_FUNNEL)));
+                        new SuperstructureReceive(container, SuperstructureGoals.RECEIVE_FROM_FUNNEL)
+                ));
     }
 
     public static Command receiveFromIntake(RobotContainer container) {
@@ -79,7 +80,7 @@ public class SuperstructureFactory {
                 container,
                 targetState,
                 new SequentialCommandGroup(
-                        transitionToSafeCoralState(container), setSuperstructure(container, targetState)));
+                       ensureClearance(container), setSuperstructure(container, targetState)));
     }
 
     public static Command placeCoralL3(RobotContainer container, boolean withAlgaeGrab) {
@@ -92,7 +93,7 @@ public class SuperstructureFactory {
                 container,
                 targetState,
                 new SequentialCommandGroup(
-                        transitionToSafeCoralState(container), setSuperstructure(container, targetState)));
+                        ensureClearance(container), setSuperstructure(container, targetState)));
     }
 
     public static Command placeCoralL2(RobotContainer container) {
@@ -100,7 +101,7 @@ public class SuperstructureFactory {
                 container,
                 SuperstructureGoals.PLACE_CORAL_L2,
                 new SequentialCommandGroup(
-                        transitionToSafeCoralState(container),
+                        ensureClearance(container),
                         setSuperstructure(container, SuperstructureGoals.PLACE_CORAL_L2)));
     }
 

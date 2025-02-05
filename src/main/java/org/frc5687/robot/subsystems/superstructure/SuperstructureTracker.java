@@ -39,7 +39,8 @@ public class SuperstructureTracker {
 
     public boolean needToClearIntake() {
         if (_container.getIntake().getPivotArmAngleRads()
-                < IntakeState.IDLE.getValue() + Units.degreesToRadians(10)) {
+                > IntakeState.IDLE.getValue() + Units.degreesToRadians(10)) {
+            // System.out.println("Need to clear intake");
             return true;
         }
         return false;

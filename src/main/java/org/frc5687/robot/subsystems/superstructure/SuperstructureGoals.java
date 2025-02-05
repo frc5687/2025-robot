@@ -12,6 +12,13 @@ public class SuperstructureGoals {
             new SuperstructureState(
                     ElevatorState.STOWED, CoralState.STOWED, AlgaeState.IDLE, IntakeState.IDLE);
 
+    public static final SuperstructureState RECEIVE_FROM_FUNNEL_RUNNING =
+            new SuperstructureState(
+                    ElevatorState.FUNNEL_RECEIVE,
+                    CoralState.RECEIVE_FROM_FUNNEL_RUNNING,
+                    AlgaeState.IDLE,
+                    IntakeState.IDLE);
+
     public static final SuperstructureState RECEIVE_FROM_FUNNEL =
             new SuperstructureState(
                     ElevatorState.FUNNEL_RECEIVE,
