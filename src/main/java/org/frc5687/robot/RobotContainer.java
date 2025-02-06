@@ -167,7 +167,12 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void setupNamedCommand() {
-        NamedCommands.registerCommand("ReceiveFunnel", SuperstructureFactory.receiveFromFunnel(this));
+        if (RobotBase.isSimulation()) {
+            NamedCommands.registerCommand(
+                    "ReceiveFunnel", SuperstructureFactory.receiveFromFunnelSim(this));
+        } else {
+            NamedCommands.registerCommand("ReceiveFunnel", SuperstructureFactory.receiveFromFunnel(this));
+        }
         NamedCommands.registerCommand("CoralL4", SuperstructureFactory.placeCoralL4(this, false));
         NamedCommands.registerCommand("CoralL3", SuperstructureFactory.placeCoralL3(this, false));
         NamedCommands.registerCommand("CoralL2", SuperstructureFactory.placeCoralL2(this));

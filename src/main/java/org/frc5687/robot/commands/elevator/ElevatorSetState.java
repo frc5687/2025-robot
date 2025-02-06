@@ -22,6 +22,7 @@ public class ElevatorSetState extends OutliersCommand {
 
     @Override
     public boolean isFinished() {
+        log("At desired", _elevator.isAtDesiredPosition());
         return _elevator.isAtDesiredPosition();
     }
 

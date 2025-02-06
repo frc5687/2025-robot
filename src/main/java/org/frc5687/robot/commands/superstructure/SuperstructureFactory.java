@@ -57,8 +57,17 @@ public class SuperstructureFactory {
                 SuperstructureGoals.RECEIVE_FROM_FUNNEL,
                 new SequentialCommandGroup(
                         ensureClearance(container),
-                        new SuperstructureReceive(container, SuperstructureGoals.RECEIVE_FROM_FUNNEL)
-                ));
+                        new SuperstructureReceive(container, SuperstructureGoals.RECEIVE_FROM_FUNNEL)));
+    }
+
+    // This bypasses coral detection
+    public static Command receiveFromFunnelSim(RobotContainer container) {
+        return withStateTracking(
+                container,
+                SuperstructureGoals.RECEIVE_FROM_FUNNEL,
+                new SequentialCommandGroup(
+                        ensureClearance(container),
+                        setSuperstructure(container, SuperstructureGoals.RECEIVE_FROM_FUNNEL)));
     }
 
     public static Command receiveFromIntake(RobotContainer container) {
@@ -80,7 +89,7 @@ public class SuperstructureFactory {
                 container,
                 targetState,
                 new SequentialCommandGroup(
-                       ensureClearance(container), setSuperstructure(container, targetState)));
+                        ensureClearance(container), setSuperstructure(container, targetState)));
     }
 
     public static Command placeCoralL3(RobotContainer container, boolean withAlgaeGrab) {

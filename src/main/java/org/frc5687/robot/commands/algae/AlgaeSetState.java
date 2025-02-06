@@ -25,6 +25,7 @@ public class AlgaeSetState extends OutliersCommand {
 
     @Override
     public boolean isFinished() {
+        log("is desired", _algae.isAtDesiredAngle());
         return _algae.isAtDesiredAngle();
     }
 

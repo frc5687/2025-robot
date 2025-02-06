@@ -25,6 +25,7 @@ public class CoralSetState extends OutliersCommand {
 
     @Override
     public boolean isFinished() {
+        log("At desired", _coral.isAtDesiredAngle());
         return _coral.isAtDesiredAngle();
     }
 

@@ -22,6 +22,7 @@ public enum CoralState {
     public double getArmAngle() {
         return _armAngle;
     }
+
     public double getRollerVoltage() {
         return _rollerVoltage;
     }

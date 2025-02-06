@@ -340,6 +340,14 @@ public class HardwareElevatorIO implements ElevatorIO {
         CTREUtil.applyConfiguration(motor, config);
     }
 
+    private void slowDownExpo(TalonFX motor, double kV, double kA) {
+        var config = new TalonFXConfiguration();
+        config.MotionMagic.MotionMagicExpo_kV = kV;
+        config.MotionMagic.MotionMagicExpo_kA = kA;
+
+        CTREUtil.applyConfiguration(motor, config);
+    }
+
     public boolean isLevel(double currentPitch, double currentRoll) {
         return _pitchController.atSetpoint() && _rollController.atSetpoint();
     }

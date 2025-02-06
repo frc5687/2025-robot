@@ -196,7 +196,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                 this::getMeasuredChassisSpeeds,
                 this::setDesiredChassisSpeeds,
                 new PPHolonomicDriveController(
-                        new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+                        new PIDConstants(6.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
                 config,
                 () -> {
                     Optional<Alliance> alliance = DriverStation.getAlliance();

@@ -8,7 +8,7 @@ import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 
-public class SuperstructureReceive extends OutliersCommand{
+public class SuperstructureReceive extends OutliersCommand {
     private final ElevatorSubsystem _elevator;
     private final CoralArmSubsystem _coral;
     private final AlgaeArmSubsystem _algae;
@@ -21,7 +21,7 @@ public class SuperstructureReceive extends OutliersCommand{
         _algae = container.getAlgae();
         _intake = container.getIntake();
         _goal = goal;
-        
+
         addRequirements(_elevator, _coral, _algae, _intake);
     }
 

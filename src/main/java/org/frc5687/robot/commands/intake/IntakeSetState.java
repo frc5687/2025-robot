@@ -29,6 +29,8 @@ public class IntakeSetState extends OutliersCommand {
 
     @Override
     public boolean isFinished() {
+        log("is at desired", _intake.isAtDesiredAngle());
+
         return _intake.isAtDesiredAngle();
     }
 
