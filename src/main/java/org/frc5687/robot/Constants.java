@@ -26,7 +26,7 @@ public class Constants {
         // Physical Configuration
         public static final double WHEEL_RADIUS = 0.0508; // 11/15/2024 test (meters)
         public static final double GEAR_RATIO_DRIVE = (54.0 / 14.0) * (18.0 / 34.0) * (45.0 / 15.0);
-        public static final double GEAR_RATIO_STEER = (48.0 / 18.0) * (96.0 / 16.0);
+        public static final double GEAR_RATIO_STEER = (42.0 / 12.0) * (96.0 / 16.0);
 
         // Drive Motor Configuration
         public static final PIDConstants DRIVE_PID = new PIDConstants(0.01, 0.0, 0.0); // 10.0 kp
@@ -192,6 +192,13 @@ public class Constants {
                 new SwerveDriveKinematics(MODULE_LOCATIONS);
     }
 
+    public static class Motors {
+        public static DCMotor getKrakenX44(int numMotors) {
+            return new DCMotor(
+                    12.0, 4.05, 275, 1.4, Units.rotationsPerMinuteToRadiansPerSecond(7530), numMotors);
+        }
+    }
+
     public static class Intake {
 
         public static final String CAN_BUS = "CANivore";
@@ -228,8 +235,9 @@ public class Constants {
         public static final String CANBUS = "CANivore";
 
         public static final int NUM_MOTORS = 1;
-        public static final DCMotor MOTOR = DCMotor.getKrakenX60Foc(NUM_MOTORS);
-        public static final double GEAR_RATIO = 9;
+        public static final DCMotor MOTOR = Motors.getKrakenX44(NUM_MOTORS);
+        public static final double GEAR_RATIO_SOUTH = 9;
+        public static final double GEAR_RATIO_NORTH = 9.3;
         public static final double MASS = 13.6078; // kg
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
         public static final double MIN_HEIGHT = 0.0; // m
@@ -239,8 +247,10 @@ public class Constants {
         public static final double MAX_PLATFORM_HEIGHT = 1.615; // m
 
         public static final double EFFICIENCY = 0.85;
-        public static final double MAX_VELOCITY_MPS =
-                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO) * DRUM_RADIUS;
+        public static final double MAX_VELOCITY_MPS_NORTH =
+                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO_NORTH) * DRUM_RADIUS;
+        public static final double MAX_VELOCITY_MPS_SOUTH =
+                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO_SOUTH) * DRUM_RADIUS;
         public static final double MAX_ACCELERATION_MPSS = 5;
         public static final double MAX_JERK_MPSSS = 40;
 

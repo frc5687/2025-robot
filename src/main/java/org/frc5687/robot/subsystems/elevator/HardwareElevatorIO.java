@@ -88,9 +88,9 @@ public class HardwareElevatorIO implements ElevatorIO {
         setSignalFrequency();
         setControlFrequency();
 
-        configureMotor(_northEastElevatorMotor, Constants.Elevator.NORTH_EAST_INVERTED);
-        configureMotor(_northWestElevatorMotor, Constants.Elevator.NORTH_WEST_INVERTED);
-        configureMotor(_southWestElevatorMotor, Constants.Elevator.SOUTH_EAST_INVERTED);
+        configureMotor(_northEastElevatorMotor, Constants.Elevator.NORTH_EAST_INVERTED, true);
+        configureMotor(_northWestElevatorMotor, Constants.Elevator.NORTH_WEST_INVERTED, true);
+        configureMotor(_southWestElevatorMotor, Constants.Elevator.SOUTH_EAST_INVERTED, false);
 
         _northWestElevatorMotor.setPosition(0);
         _northEastElevatorMotor.setPosition(0);
@@ -175,15 +175,15 @@ public class HardwareElevatorIO implements ElevatorIO {
         inputs.stageNorthWestPositionMeters =
                 Units.rotationsToRadians(_northWestPosition.getValueAsDouble())
                         * Constants.Elevator.DRUM_RADIUS
-                        / Constants.Elevator.GEAR_RATIO;
+                        / Constants.Elevator.GEAR_RATIO_NORTH;
         inputs.stageNorthEastPositionMeters =
                 Units.rotationsToRadians(_northEastPosition.getValueAsDouble())
                         * Constants.Elevator.DRUM_RADIUS
-                        / Constants.Elevator.GEAR_RATIO;
+                        / Constants.Elevator.GEAR_RATIO_NORTH;
         inputs.stageSouthWestPositionMeters =
                 Units.rotationsToRadians(_southWestPosition.getValueAsDouble())
                         * Constants.Elevator.DRUM_RADIUS
-                        / Constants.Elevator.GEAR_RATIO;
+                        / Constants.Elevator.GEAR_RATIO_SOUTH;
 
         inputs.firstStagePositionMeters =
                 (inputs.stageNorthWestPositionMeters
@@ -202,7 +202,7 @@ public class HardwareElevatorIO implements ElevatorIO {
                                 + _northWestVelocity.getValueAsDouble()
                                 + _southWestVelocity.getValueAsDouble() / 3.0)
                         * (2 * Math.PI * Constants.Elevator.DRUM_RADIUS)
-                        / Constants.Elevator.GEAR_RATIO;
+                        / Constants.Elevator.GEAR_RATIO_NORTH;
         inputs.platformVelocityMPS = _platformVelocity;
         inputs.platformMotorCurrents =
                 new double[] {
@@ -228,18 +228,22 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         double nwRotations =
                 Units.radiansToRotations(correctedHeights[0] / Constants.Elevator.DRUM_RADIUS)
-                        * Constants.Elevator.GEAR_RATIO;
+                        * Constants.Elevator.GEAR_RATIO_NORTH;
         double neRotations =
                 Units.radiansToRotations(correctedHeights[1] / Constants.Elevator.DRUM_RADIUS)
-                        * Constants.Elevator.GEAR_RATIO;
+                        * Constants.Elevator.GEAR_RATIO_NORTH;
         double swRotations =
                 Units.radiansToRotations(correctedHeights[2] / Constants.Elevator.DRUM_RADIUS)
-                        * Constants.Elevator.GEAR_RATIO;
+                        * Constants.Elevator.GEAR_RATIO_SOUTH;
 
-        double desiredRotations =
+        double desiredRotationsNorth =
                 Units.radiansToRotations(desiredHeight)
                         / Constants.Elevator.DRUM_RADIUS
-                        * Constants.Elevator.GEAR_RATIO;
+                        * Constants.Elevator.GEAR_RATIO_NORTH;
+        double desiredRotationsSouth =
+                Units.radiansToRotations(desiredHeight)
+                        / Constants.Elevator.DRUM_RADIUS
+                        * Constants.Elevator.GEAR_RATIO_SOUTH;
 
         // If we are looking to hold a position, use the more aggressive holding pid including using the
         // pitch controller
@@ -252,15 +256,18 @@ public class HardwareElevatorIO implements ElevatorIO {
         // Otherwise use motion magic
         outputs.usingPositionHolding = false;
         //
-        // _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(desiredRotations));
+        // _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(desiredRotationsNorth));
         //
-        // _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotations));
+        // _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotationsNorth));
         //
-        // _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotations));
+        // _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotationsSouth));
 
-        _northWestElevatorMotor.setControl(_northWestExpoMotionRequest.withPosition(desiredRotations));
-        _northEastElevatorMotor.setControl(_northEastExpoMotionRequest.withPosition(desiredRotations));
-        _southWestElevatorMotor.setControl(_southWestExpoMotionRequest.withPosition(desiredRotations));
+        _northWestElevatorMotor.setControl(
+                _northWestExpoMotionRequest.withPosition(desiredRotationsNorth));
+        _northEastElevatorMotor.setControl(
+                _northEastExpoMotionRequest.withPosition(desiredRotationsNorth));
+        _southWestElevatorMotor.setControl(
+                _southWestExpoMotionRequest.withPosition(desiredRotationsSouth));
         // }
         outputs.voltageCommandNorthEast =
                 _northEastElevatorMotor.getClosedLoopOutput().getValueAsDouble();
@@ -291,7 +298,7 @@ public class HardwareElevatorIO implements ElevatorIO {
         return true; // FIXME lmfao
     }
 
-    private void configureMotor(TalonFX motor, boolean isInverted) {
+    private void configureMotor(TalonFX motor, boolean isInverted, boolean isNorth) {
         var config = new TalonFXConfiguration();
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -299,9 +306,9 @@ public class HardwareElevatorIO implements ElevatorIO {
                 isInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
 
         config.Voltage.withPeakForwardVoltage(Volts.of(12)).withPeakReverseVoltage(Volts.of(-12));
-
-        double metersToRotations =
-                (1.0 / (Constants.Elevator.DRUM_RADIUS)) * Constants.Elevator.GEAR_RATIO;
+        double gearRatio =
+                isNorth ? Constants.Elevator.GEAR_RATIO_NORTH : Constants.Elevator.GEAR_RATIO_SOUTH;
+        double metersToRotations = (1.0 / (Constants.Elevator.DRUM_RADIUS)) * gearRatio;
         // config.MotionMagic.MotionMagicCruiseVelocity = Constants.Elevator.MAX_VELOCITY_MPS *
         // metersToRotations;
         // config.MotionMagic.MotionMagicAcceleration = Constants.Elevator.MAX_ACCELERATION_MPSS *

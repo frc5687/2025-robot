@@ -35,7 +35,8 @@ public class SimElevatorIO implements ElevatorIO {
     public SimElevatorIO() {
         TrapezoidProfile.Constraints constraints =
                 new TrapezoidProfile.Constraints(
-                        Constants.Elevator.MAX_VELOCITY_MPS, Constants.Elevator.MAX_ACCELERATION_MPSS);
+                        Constants.Elevator.MAX_VELOCITY_MPS_NORTH,
+                        Constants.Elevator.MAX_ACCELERATION_MPSS); // using slower
 
         _northWestPIDController = new ProfiledPIDController(kP, kI, kD, constraints);
         _northEastPIDController = new ProfiledPIDController(kP, kI, kD, constraints);
@@ -49,7 +50,7 @@ public class SimElevatorIO implements ElevatorIO {
         _platformNorthEastSim =
                 new ElevatorSim(
                         _gearBox,
-                        Constants.Elevator.GEAR_RATIO,
+                        Constants.Elevator.GEAR_RATIO_NORTH,
                         platformMass,
                         Constants.Elevator.DRUM_RADIUS,
                         0,
@@ -60,7 +61,7 @@ public class SimElevatorIO implements ElevatorIO {
         _platformNorthWestSim =
                 new ElevatorSim(
                         _gearBox,
-                        Constants.Elevator.GEAR_RATIO,
+                        Constants.Elevator.GEAR_RATIO_NORTH,
                         platformMass,
                         Constants.Elevator.DRUM_RADIUS,
                         0,
@@ -71,7 +72,7 @@ public class SimElevatorIO implements ElevatorIO {
         _platformSouthWestSim =
                 new ElevatorSim(
                         _gearBox,
-                        Constants.Elevator.GEAR_RATIO,
+                        Constants.Elevator.GEAR_RATIO_SOUTH,
                         platformMass,
                         Constants.Elevator.DRUM_RADIUS,
                         0,
