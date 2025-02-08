@@ -181,8 +181,8 @@ public class RobotContainer implements EpilogueLog {
 
     public void periodic() {
         RobotStateManager.getInstance().logComponentPoses();
-        RobotStateManager.getInstance().updateOdometry();
-        RobotStateManager.getInstance().logEstimatedPoses();
+        // RobotStateManager.getInstance().updateOdometry();
+        // RobotStateManager.getInstance().logEstimatedPoses();
     }
 
     public void addElevatorControlLoop() {

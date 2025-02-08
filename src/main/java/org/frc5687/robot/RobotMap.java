@@ -30,6 +30,8 @@ public class RobotMap {
             public static final int INTAKE_ARM = 16;
             public static final int INTAKE_ROLLER = 17;
             public static final int INTAKE_BELT = 18;
+
+            public static final int CLIMBER_WINCH = 19;
         }
 
         public static class CANCODER {

@@ -50,15 +50,15 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
     @Override
     public void writeOutputs(CoralOutputs outputs) {
-        double safeAngle = processSafeAngle(outputs.desiredAngleRad);
+        // double safeAngle = processSafeAngle(outputs.desiredAngleRad);
 
-        double pidOutput = _pid.calculate(_encoder.getAngle(), safeAngle);
+        // double pidOutput = _pid.calculate(_encoder.getAngle(), safeAngle);
 
-        double ffOutput = calculateFeedForward(_encoder.getAngle());
+        // double ffOutput = calculateFeedForward(_encoder.getAngle());
 
-        double totalVoltage = MathUtil.clamp(pidOutput + ffOutput, -12, 12);
+        // double totalVoltage = MathUtil.clamp(pidOutput + ffOutput, -12, 12);
 
-        _pivotMotor.setVoltage(totalVoltage);
-        _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+        // _pivotMotor.setVoltage(totalVoltage);
+        // _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
     }
 }

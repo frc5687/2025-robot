@@ -56,9 +56,9 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void writeOutputs(IntakeOutputs Outputs) {
-        _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
-        _beltMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
-        _pivotMotor.setControl(_pivotPositionReq.withPosition(Outputs.pivotTargetAngle));
+        // _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
+        // _beltMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
+        // _pivotMotor.setControl(_pivotPositionReq.withPosition(Outputs.pivotTargetAngle));
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted) {

@@ -17,7 +17,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import org.frc5687.robot.util.CTREUtil;
 
 public class CTRESwerveModuleIO implements SwerveModuleIO {
     private final TalonFX _driveMotor;
@@ -61,14 +60,12 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         _couplingRatio = config.couplingRatio();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-                250.0, _drivePosition, _driveVelocity, _steerPosition, _steerVelocity);
+                100.0, _drivePosition, _driveVelocity, _steerPosition, _steerVelocity);
     }
 
     @Override
     public void updateInputs(SwerveModuleInputs inputs) {
-        BaseStatusSignal.refreshAll(
-                _drivePosition, _driveVelocity,
-                _steerPosition, _steerVelocity);
+        BaseStatusSignal.refreshAll(_drivePosition, _driveVelocity, _steerPosition, _steerVelocity);
 
         double driveRot =
                 BaseStatusSignal.getLatencyCompensatedValueAsDouble(_drivePosition, _driveVelocity);
@@ -86,7 +83,7 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
 
         inputs.steerAngle = Rotation2d.fromRotations(steerRot);
         inputs.steerVelocityRadPerSec = _steerVelocity.getValueAsDouble() * 2.0 * Math.PI;
-        inputs.steerAppliedVolts = _steerMotor.getMotorVoltage().getValueAsDouble();
+        inputs.steerAppliedVolts = _steerMotor.getMotorVoltage().refresh().getValueAsDouble();
         inputs.steerCurrentAmps = _steerMotor.getStatorCurrent().getValueAsDouble();
         inputs.steerTempCelsius = _steerMotor.getDeviceTemp().getValueAsDouble();
 
@@ -151,7 +148,8 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         driveConfigs.CurrentLimits.SupplyCurrentLimit = config.driveCurrentLimit();
         driveConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        CTREUtil.applyConfiguration(_driveMotor, driveConfigs);
+        _driveMotor.getConfigurator().apply(driveConfigs);
+        // CTREUtil.applyConfiguration(_driveMotor, driveConfigs);
     }
 
     private void configureSteerMotor(SwerveModuleConfig config) {
@@ -181,13 +179,14 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         steerConfigs.ClosedLoopGeneral.ContinuousWrap = true;
 
         _steerMotor.getConfigurator().apply(steerConfigs);
-        CTREUtil.applyConfiguration(_steerMotor, steerConfigs);
+        // CTREUtil.applyConfiguration(_steerMotor, steerConfigs);
     }
 
     private void configureCancoder(SwerveModuleConfig config) {
         var _cancoderConfigs = new CANcoderConfiguration();
         _cancoderConfigs.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(0.5));
         _cancoderConfigs.MagnetSensor.MagnetOffset = config.absoluteEncoderOffset();
-        CTREUtil.applyConfiguration(_cancoder, _cancoderConfigs);
+        _cancoder.getConfigurator().apply(_cancoderConfigs);
+        // CTREUtil.applyConfiguration(_cancoder, _cancoderConfigs);
     }
 }

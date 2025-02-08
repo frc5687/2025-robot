@@ -29,7 +29,7 @@ public class Constants {
         public static final double GEAR_RATIO_STEER = (42.0 / 12.0) * (96.0 / 16.0);
 
         // Drive Motor Configuration
-        public static final PIDConstants DRIVE_PID = new PIDConstants(0.01, 0.0, 0.0); // 10.0 kp
+        public static final PIDConstants DRIVE_PID = new PIDConstants(0.00, 0.0, 0.0); // 10.0 kp
         public static final double DRIVE_KS =
                 0.032292; // 3 // This is the voltage to overcome static friction taken from sysid 0.0032292
         public static final double DRIVE_KV = 0.15; // 0.15 taken from sysid 2.24
@@ -146,13 +146,13 @@ public class Constants {
          *
          */
         public static final SwerveModuleConfig NW_CONFIG =
-                SwerveModule.createModuleConfig("NW", -0.41650390625, false, false);
+                SwerveModule.createModuleConfig("NW", -0.4836426, false, false);
         public static final SwerveModuleConfig NE_CONFIG =
-                SwerveModule.createModuleConfig("NE", 1.0966796875, false, false);
+                SwerveModule.createModuleConfig("NE", 0.181396484375, false, false);
         public static final SwerveModuleConfig SW_CONFIG =
-                SwerveModule.createModuleConfig("SW", 0.361875, false, false);
+                SwerveModule.createModuleConfig("SW", -0.055909, false, false);
         public static final SwerveModuleConfig SE_CONFIG =
-                SwerveModule.createModuleConfig("SE", 0.4208985, false, false);
+                SwerveModule.createModuleConfig("SE", 0.3525390625, false, false);
 
         public static final SwerveModuleConfig[] MODULE_CONFIGS = {
             NW_CONFIG, NE_CONFIG, SW_CONFIG, SE_CONFIG

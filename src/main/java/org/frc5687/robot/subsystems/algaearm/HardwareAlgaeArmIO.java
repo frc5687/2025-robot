@@ -31,8 +31,8 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
 
     @Override
     public void writeOutputs(AlgaeOutputs outputs) {
-        double voltage = _pid.calculate(_encoder.getAngle(), outputs.desiredAngleRad);
-        // _pivotMotor.setVoltage(voltage);
-        _wheelMotor.setVoltage(outputs.voltageCommand);
+        // double voltage = _pid.calculate(_encoder.getAngle(), outputs.desiredAngleRad);
+        // // _pivotMotor.setVoltage(voltage);
+        // _wheelMotor.setVoltage(outputs.voltageCommand);
     }
 }
