@@ -306,6 +306,7 @@ public class Constants {
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
+        public static final boolean PIVOT_MOTOR_INVERTED = false;
         public static final int NUM_MOTORS = 1;
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
@@ -335,7 +336,7 @@ public class Constants {
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
         public static final double GEAR_RATIO = 120; // From Amory
         public static final double ARM_LENGTH = Units.inchesToMeters(12.0);
-        public static final double ARM_MASS = Units.lbsToKilograms(7);
+        public static final double ARM_MASS = Units.lbsToKilograms(5);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
         public static final double MAX_ANGLE = Units.degreesToRadians(180);
