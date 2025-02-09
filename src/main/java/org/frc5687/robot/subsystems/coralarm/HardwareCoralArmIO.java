@@ -16,8 +16,8 @@ public class HardwareCoralArmIO implements CoralArmIO {
     private final ProximitySensor _coralDetectionSensor;
 
     public HardwareCoralArmIO() {
-        _pid = new PIDController(Constants.AlgaeArm.kP, Constants.AlgaeArm.kI, Constants.AlgaeArm.kD);
-        _encoder = new RevBoreEncoder(RobotMap.DIO.CORAL_ENCODER, 4.17);
+        _pid = new PIDController(Constants.CoralArm.kP, Constants.CoralArm.kI, Constants.CoralArm.kD);
+        _encoder = new RevBoreEncoder(RobotMap.DIO.CORAL_ENCODER, -1.03);
         _encoder.setInverted(true);
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
         _wheelMotor = new VictorSP(RobotMap.PWM.CORAL_WHEEL_MOTOR);
@@ -26,6 +26,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _pid.enableContinuousInput(0, 2 * Math.PI);
 
         _pid.setTolerance(0.01);
+        _pivotMotor.setInverted(Constants.CoralArm.PIVOT_MOTOR_INVERTED);
     }
 
     private double processSafeAngle(double desiredAngle) {
@@ -50,15 +51,16 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
     @Override
     public void writeOutputs(CoralOutputs outputs) {
-        // double safeAngle = processSafeAngle(outputs.desiredAngleRad);
+        double safeAngle = processSafeAngle(outputs.desiredAngleRad);
 
-        // double pidOutput = _pid.calculate(_encoder.getAngle(), safeAngle);
+        double pidOutput = _pid.calculate(_encoder.getAngle(), safeAngle);
 
         // double ffOutput = calculateFeedForward(_encoder.getAngle());
 
-        // double totalVoltage = MathUtil.clamp(pidOutput + ffOutput, -12, 12);
-
-        // _pivotMotor.setVoltage(totalVoltage);
-        // _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+        double totalVoltage = MathUtil.clamp(pidOutput, -12, 12);
+        outputs.voltageCommand = totalVoltage;
+        outputs.controllerOutput = pidOutput;
+        _pivotMotor.setVoltage(totalVoltage);
+        _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
     }
 }

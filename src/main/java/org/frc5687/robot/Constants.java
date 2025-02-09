@@ -254,10 +254,13 @@ public class Constants {
         public static final double MAX_ACCELERATION_MPSS = 5;
         public static final double MAX_JERK_MPSSS = 40;
 
-        public static final double MOTION_MAGIC_EXPO_KV = .09;
-        public static final double MOTION_MAGIC_EXPO_KA = .02;
+        // public static final double MOTION_MAGIC_EXPO_KV = .09;
+        // public static final double MOTION_MAGIC_EXPO_KA = .02;
 
-        public static final double HOLD_kP = 2.5; // 2.5
+        public static final double MOTION_MAGIC_EXPO_KV = 0.09;
+        public static final double MOTION_MAGIC_EXPO_KA = 0.05;
+
+        public static final double HOLD_kP = 3.0; // 2.5
         public static final double HOLD_kI = 0.0;
         public static final double HOLD_kD = 0.025;
         public static final double HOLD_kS = 0.0;
@@ -271,10 +274,10 @@ public class Constants {
         public static final double MOTION_kV = 0.0;
         public static final double MOTION_kA = 0.0;
 
-        public static final double EXPO_MOTION_kP = 7.5;
+        public static final double EXPO_MOTION_kP = 9.0;
         public static final double EXPO_MOTION_kI = 0.0;
         public static final double EXPO_MOTION_kD = 0.0;
-        public static final double EXPO_MOTION_kS = 0.37;
+        public static final double EXPO_MOTION_kS = 0.7;
         public static final double EXPO_MOTION_kV = 0.0;
         public static final double EXPO_MOTION_kA = 0.0;
         public static final double EXPO_MOTION_kG = 0.0;
@@ -284,8 +287,8 @@ public class Constants {
         public static final double ROLL_kP = 0.1;
         public static final double ROLL_kD = 0.01;
 
-        public static final boolean NORTH_WEST_INVERTED = true;
-        public static final boolean NORTH_EAST_INVERTED = false;
+        public static final boolean NORTH_WEST_INVERTED = false;
+        public static final boolean NORTH_EAST_INVERTED = true;
         public static final boolean SOUTH_EAST_INVERTED = false;
 
         public static final double CURRENT_LIMIT = 60.0;
@@ -321,9 +324,11 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 0.0;
+        public static final double kP = 10.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
+
+        public static final boolean PIVOT_MOTOR_INVERTED = false;
 
         public static final int NUM_MOTORS = 1;
 

@@ -17,7 +17,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import org.frc5687.robot.Constants;
-import org.frc5687.robot.util.CTREUtil;
+
+// import org.frc5687.robot.util.CTREUtil;
 
 public class HardwareElevatorIO implements ElevatorIO {
 
@@ -247,28 +248,28 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         // If we are looking to hold a position, use the more aggressive holding pid including using the
         // pitch controller
-        // if (isWithinPositionTolerance(desiredHeight) && isAboveBottom() && isDriveTrainStable) {
-        //     outputs.usingPositionHolding = true;
-        //     _northWestElevatorMotor.setControl(_northWestPositionRequest.withPosition(nwRotations));
-        //     _northEastElevatorMotor.setControl(_northEastPositionRequest.withPosition(neRotations));
-        //     _southWestElevatorMotor.setControl(_southWestPositionRequest.withPosition(swRotations));
-        // } else {
-        // Otherwise use motion magic
-        outputs.usingPositionHolding = false;
-        //
-        // _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(desiredRotationsNorth));
-        //
-        // _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotationsNorth));
-        //
-        // _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotationsSouth));
+        if (isWithinPositionTolerance(desiredHeight)) {
+            outputs.usingPositionHolding = true;
+            _northWestElevatorMotor.setControl(_northWestPositionRequest.withPosition(nwRotations));
+            _northEastElevatorMotor.setControl(_northEastPositionRequest.withPosition(neRotations));
+            _southWestElevatorMotor.setControl(_southWestPositionRequest.withPosition(swRotations));
+        } else {
+            // Otherwise use motion magic
+            outputs.usingPositionHolding = false;
+            //
+            // _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(desiredRotationsNorth));
+            //
+            // _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotationsNorth));
+            //
+            // _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotationsSouth));
 
-        _northWestElevatorMotor.setControl(
-                _northWestExpoMotionRequest.withPosition(desiredRotationsNorth));
-        _northEastElevatorMotor.setControl(
-                _northEastExpoMotionRequest.withPosition(desiredRotationsNorth));
-        _southWestElevatorMotor.setControl(
-                _southWestExpoMotionRequest.withPosition(desiredRotationsSouth));
-        // }
+            _northWestElevatorMotor.setControl(
+                    _northWestExpoMotionRequest.withPosition(desiredRotationsNorth));
+            _northEastElevatorMotor.setControl(
+                    _northEastExpoMotionRequest.withPosition(desiredRotationsNorth));
+            _southWestElevatorMotor.setControl(
+                    _southWestExpoMotionRequest.withPosition(desiredRotationsSouth));
+        }
         outputs.voltageCommandNorthEast =
                 _northEastElevatorMotor.getClosedLoopOutput().getValueAsDouble();
         outputs.voltageCommandNorthWest =
@@ -286,17 +287,20 @@ public class HardwareElevatorIO implements ElevatorIO {
         return _firstStageHeight > Constants.Elevator.BOTTOM_POSITION_CORRECTION;
     }
 
-    private boolean isDriveTrainStable() {
-        // return Units.degreesToRadians(getDriveTrainPitch()) < Constants.Elevator.MAX_DRIVETRAIN_TILT
-        // && Units.degreesToRadians(getDriveTrainRoll()) < Constants.Elevator.MAX_DRIVETRAIN_TILT;
-        // Rotation3d rot =
-        //         RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE).getRotation();
-        // double roll = Units.degreesToRadians(rot.getY());
-        // double pitch = Units.degreesToRadians(rot.getX());
-        // return pitch < Constants.Elevator.MAX_DRIVETRAIN_TILT
-        //         && roll < Constants.Elevator.MAX_DRIVETRAIN_TILT;
-        return true; // FIXME lmfao
-    }
+    //     private boolean isDriveTrainStable() {
+    //         // return Units.degreesToRadians(getDriveTrainPitch()) <
+    // Constants.Elevator.MAX_DRIVETRAIN_TILT
+    //         // && Units.degreesToRadians(getDriveTrainRoll()) <
+    // Constants.Elevator.MAX_DRIVETRAIN_TILT;
+    //         // Rotation3d rot =
+    //         //
+    // RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE).getRotation();
+    //         // double roll = Units.degreesToRadians(rot.getY());
+    //         // double pitch = Units.degreesToRadians(rot.getX());
+    //         // return pitch < Constants.Elevator.MAX_DRIVETRAIN_TILT
+    //         //         && roll < Constants.Elevator.MAX_DRIVETRAIN_TILT;
+    //         return true; // FIXME lmfao
+    //     }
 
     private void configureMotor(TalonFX motor, boolean isInverted, boolean isNorth) {
         var config = new TalonFXConfiguration();
@@ -344,7 +348,8 @@ public class HardwareElevatorIO implements ElevatorIO {
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = Constants.Elevator.CURRENT_LIMIT;
 
-        CTREUtil.applyConfiguration(motor, config);
+        motor.getConfigurator().apply(config);
+        // CTREUtil.applyConfiguration(motor, config);
     }
 
     private void slowDownExpo(TalonFX motor, double kV, double kA) {
@@ -352,7 +357,7 @@ public class HardwareElevatorIO implements ElevatorIO {
         config.MotionMagic.MotionMagicExpo_kV = kV;
         config.MotionMagic.MotionMagicExpo_kA = kA;
 
-        CTREUtil.applyConfiguration(motor, config);
+        // CTREUtil.applyConfiguration(motor, config);
     }
 
     public boolean isLevel(double currentPitch, double currentRoll) {

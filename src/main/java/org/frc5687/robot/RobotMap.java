@@ -54,8 +54,8 @@ public class RobotMap {
      * PWM only one device can connect to each port, so the numbers should be unique.
      */
     public static class PWM {
-        public static final int CORAL_PIVOT_MOTOR = 8;
-        public static final int CORAL_WHEEL_MOTOR = 9;
+        public static final int CORAL_PIVOT_MOTOR = 9;
+        public static final int CORAL_WHEEL_MOTOR = 8;
 
         public static final int ALGAE_PIVOT_MOTOR = 7;
         public static final int ALGAE_WHEEL_MOTOR = 6;
@@ -85,11 +85,11 @@ public class RobotMap {
      */
     public static class DIO {
         // IS THIS A 5687 REFERENCE?!?!?!?!?!?!?
-        public static final int CORAL_SENSOR = 4;
-        public static final int CORAL_ENCODER = 2;
+        public static final int CORAL_SENSOR = 3;
+        public static final int CORAL_ENCODER = 1;
 
-        public static final int ALGAE_SENSOR = 5;
-        public static final int ALGAE_ENCODER = 3;
+        public static final int ALGAE_SENSOR = 2;
+        public static final int ALGAE_ENCODER = 0;
     }
 
     public static class SIM {

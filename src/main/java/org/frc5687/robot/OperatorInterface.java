@@ -1,7 +1,9 @@
 package org.frc5687.robot;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import org.frc5687.robot.commands.coral.CoralSetState;
 import org.frc5687.robot.commands.elevator.ElevatorSetState;
+import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.util.Helpers;
 
@@ -28,6 +30,12 @@ public class OperatorInterface {
                 .a()
                 .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.STOWED));
 
+        _driverController
+                .leftBumper()
+                .onTrue(new CoralSetState(container.getCoral(), CoralState.IDLE_WITH_CORAL));
+        _driverController
+                .rightBumper()
+                .onTrue(new CoralSetState(container.getCoral(), CoralState.PLACING));
         // _driverController.y().onTrue(SuperstructureFactory.placeCoralL4(container, false));
         // _driverController.x().onTrue(SuperstructureFactory.receiveFromFunnel(container));
         // _driverController.a().onTrue(SuperstructureFactory.placeCoralL3(container, true));
