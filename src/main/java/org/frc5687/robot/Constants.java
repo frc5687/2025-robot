@@ -260,9 +260,9 @@ public class Constants {
         public static final double MOTION_MAGIC_EXPO_KV = 0.09;
         public static final double MOTION_MAGIC_EXPO_KA = 0.05;
 
-        public static final double HOLD_kP = 0.0; // 3.0
+        public static final double HOLD_kP = 2.0;
         public static final double HOLD_kI = 0.0;
-        public static final double HOLD_kD = 0.0; // 0.025
+        public static final double HOLD_kD = 0.02;
         public static final double HOLD_kS = 0.0;
         public static final double HOLD_kV = 0.0;
         public static final double HOLD_kA = 0.0;
@@ -321,6 +321,8 @@ public class Constants {
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20.0 * Math.PI;
+
+        public static final double FILTER_TIME_CONSTANT = 0.04;
     }
 
     public static class CoralArm {

@@ -67,10 +67,10 @@ public class CTREDriveIO implements DriveIO {
                         RobotMap.CAN.TALONFX.SOUTH_EAST_ROTATION,
                         RobotMap.CAN.CANCODER.ENCODER_SE,
                         Constants.DriveTrain.CAN_BUS);
-        _modules[0] = new SwerveModule(Constants.DriveTrain.NW_CONFIG, northWestIO);
-        _modules[1] = new SwerveModule(Constants.DriveTrain.NE_CONFIG, northEastIO);
-        _modules[2] = new SwerveModule(Constants.DriveTrain.SW_CONFIG, southWestIO);
-        _modules[3] = new SwerveModule(Constants.DriveTrain.SE_CONFIG, southEastIO);
+        _modules[0] = new SwerveModule(null, Constants.DriveTrain.NW_CONFIG, northWestIO);
+        _modules[1] = new SwerveModule(null, Constants.DriveTrain.NE_CONFIG, northEastIO);
+        _modules[2] = new SwerveModule(null, Constants.DriveTrain.SW_CONFIG, southWestIO);
+        _modules[3] = new SwerveModule(null, Constants.DriveTrain.SE_CONFIG, southEastIO);
 
         // Set up synchronized signals
         BaseStatusSignal.setUpdateFrequencyForAll(
