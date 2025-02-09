@@ -1,7 +1,9 @@
 package org.frc5687.robot.subsystems.coralarm;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
@@ -12,21 +14,38 @@ public class HardwareCoralArmIO implements CoralArmIO {
     private final RevBoreEncoder _encoder;
     private final VictorSP _pivotMotor;
     private final VictorSP _wheelMotor;
-    private final PIDController _pid;
+    private final ProfiledPIDController _controller;
     private final ProximitySensor _coralDetectionSensor;
 
     public HardwareCoralArmIO() {
-        _pid = new PIDController(Constants.CoralArm.kP, Constants.CoralArm.kI, Constants.CoralArm.kD);
         _encoder = new RevBoreEncoder(RobotMap.DIO.CORAL_ENCODER, -1.03);
         _encoder.setInverted(true);
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
         _wheelMotor = new VictorSP(RobotMap.PWM.CORAL_WHEEL_MOTOR);
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
 
-        _pid.enableContinuousInput(0, 2 * Math.PI);
-        _pid.setTolerance(0.01);
-        
+        TrapezoidProfile.Constraints constraints =
+                new TrapezoidProfile.Constraints(
+                        Constants.CoralArm.MAX_VELOCITY_RAD_PER_SEC,
+                        Constants.CoralArm.MAX_ACCELERATION_RAD_PER_SEC_SQUARED);
+
+        _controller =
+                new ProfiledPIDController(
+                        Constants.CoralArm.kP, Constants.CoralArm.kI, Constants.CoralArm.kD, constraints);
+
+        _controller.setTolerance(0.01);
+
         _pivotMotor.setInverted(Constants.CoralArm.PIVOT_MOTOR_INVERTED);
+    }
+
+    private double calculateShortestPath(double currentAngle, double targetAngle) {
+        if (currentAngle >= Units.degreesToRadians(270)) {
+            double errorBound = (Constants.CoralArm.MAX_ANGLE - Constants.CoralArm.MIN_ANGLE) / 2.0;
+            double minDistance =
+                    MathUtil.inputModulus(targetAngle - currentAngle, -errorBound, errorBound);
+            return minDistance + currentAngle;
+        }
+        return targetAngle;
     }
 
     private double processSafeAngle(double desiredAngle) {
@@ -34,7 +53,10 @@ public class HardwareCoralArmIO implements CoralArmIO {
     }
 
     private double calculateFeedForward(double angle) {
-        return (Constants.CoralArm.ARM_LENGTH / 2.0) * (Constants.CoralArm.ARM_MASS * 9.81) * Math.cos(angle);
+        return ((Constants.CoralArm.ARM_LENGTH / 2.0)
+                        * (Constants.CoralArm.GEARBOX.rOhms * Constants.CoralArm.ARM_MASS * 9.81)
+                        / (Constants.CoralArm.GEAR_RATIO * Constants.CoralArm.GEARBOX.KtNMPerAmp))
+                * Math.cos(angle);
     }
 
     @Override
@@ -46,17 +68,21 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
     @Override
     public void writeOutputs(CoralOutputs outputs) {
+        double currentAngle = _encoder.getAngle();
         double safeAngle = processSafeAngle(outputs.desiredAngleRad);
+        double targetAngle = calculateShortestPath(currentAngle, safeAngle);
 
-        double pidOutput = _pid.calculate(_encoder.getAngle(), safeAngle);
-        double ffOutput = calculateFeedForward(safeAngle); 
-        
+        _controller.setGoal(targetAngle);
+
+        double pidOutput = _controller.calculate(currentAngle);
+        double ffOutput = calculateFeedForward(currentAngle);
+
         double totalVoltage = MathUtil.clamp(pidOutput + ffOutput, -12.0, 12.0);
-        
+
         outputs.voltageCommand = totalVoltage;
         outputs.controllerOutput = pidOutput;
-        
-        // _pivotMotor.setVoltage(totalVoltage);
-        // _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+
+        _pivotMotor.setVoltage(totalVoltage);
+        _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
     }
 }
