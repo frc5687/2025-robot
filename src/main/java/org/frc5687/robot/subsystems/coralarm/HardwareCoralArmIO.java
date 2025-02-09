@@ -35,7 +35,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.CoralArm.PIVOT_MOTOR_INVERTED);
-
+        _wheelMotor.setInverted(Constants.CoralArm.WHEEL_MOTOR_INVERTED);
         _controller.reset(_encoder.getAngle());
     }
 

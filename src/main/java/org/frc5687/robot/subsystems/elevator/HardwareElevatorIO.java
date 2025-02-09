@@ -248,28 +248,28 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         // If we are looking to hold a position, use the more aggressive holding pid including using the
         // pitch controller
-        if (isWithinPositionTolerance(desiredHeight)) {
-            outputs.usingPositionHolding = true;
-            _northWestElevatorMotor.setControl(_northWestPositionRequest.withPosition(nwRotations));
-            _northEastElevatorMotor.setControl(_northEastPositionRequest.withPosition(neRotations));
-            _southWestElevatorMotor.setControl(_southWestPositionRequest.withPosition(swRotations));
-        } else {
-            // Otherwise use motion magic
-            outputs.usingPositionHolding = false;
-            //
-            // _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(desiredRotationsNorth));
-            //
-            // _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotationsNorth));
-            //
-            // _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotationsSouth));
+        // if (isWithinPositionTolerance(desiredHeight)) {
+        //     outputs.usingPositionHolding = true;
+        //     _northWestElevatorMotor.setControl(_northWestPositionRequest.withPosition(nwRotations));
+        //     _northEastElevatorMotor.setControl(_northEastPositionRequest.withPosition(neRotations));
+        //     _southWestElevatorMotor.setControl(_southWestPositionRequest.withPosition(swRotations));
+        // } else {
+        // Otherwise use motion magic
+        outputs.usingPositionHolding = false;
+        //
+        // _northWestElevatorMotor.setControl(_northWestMotionRequest.withPosition(desiredRotationsNorth));
+        //
+        // _northEastElevatorMotor.setControl(_northEastMotionRequest.withPosition(desiredRotationsNorth));
+        //
+        // _southWestElevatorMotor.setControl(_southWestMotionRequest.withPosition(desiredRotationsSouth));
 
-            _northWestElevatorMotor.setControl(
-                    _northWestExpoMotionRequest.withPosition(desiredRotationsNorth));
-            _northEastElevatorMotor.setControl(
-                    _northEastExpoMotionRequest.withPosition(desiredRotationsNorth));
-            _southWestElevatorMotor.setControl(
-                    _southWestExpoMotionRequest.withPosition(desiredRotationsSouth));
-        }
+        _northWestElevatorMotor.setControl(
+                _northWestExpoMotionRequest.withPosition(desiredRotationsNorth));
+        _northEastElevatorMotor.setControl(
+                _northEastExpoMotionRequest.withPosition(desiredRotationsNorth));
+        _southWestElevatorMotor.setControl(
+                _southWestExpoMotionRequest.withPosition(desiredRotationsSouth));
+        // }
         outputs.voltageCommandNorthEast =
                 _northEastElevatorMotor.getClosedLoopOutput().getValueAsDouble();
         outputs.voltageCommandNorthWest =

@@ -331,7 +331,7 @@ public class Constants {
         public static final double kD = 0.0;
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
-
+        public static final boolean WHEEL_MOTOR_INVERTED = true;
         public static final int NUM_MOTORS = 1;
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);

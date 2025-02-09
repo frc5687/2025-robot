@@ -14,7 +14,8 @@ public class SuperstructureReceive extends OutliersCommand {
     private final AlgaeArmSubsystem _algae;
     private final IntakeSubsystem _intake;
     private final SuperstructureState _goal;
-
+    private boolean isCoralIndexed = false;
+    private boolean coralFirstDetection = false;
     public SuperstructureReceive(RobotContainer container, SuperstructureState goal) {
         _elevator = container.getElevator();
         _coral = container.getCoral();
@@ -35,16 +36,22 @@ public class SuperstructureReceive extends OutliersCommand {
 
     @Override
     public void execute(double timestamp) {
-        _coral.setCoralMotorVoltage(6.0);
+        
+        if(!_coral.isCoralDetected() && !coralFirstDetection){
+            _coral.setCoralWheelMotorVoltage(6.0);
+        } 
+        if(_coral.isCoralDetected() && !coralFirstDetection) {
+            coralFirstDetection = true;
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return _coral.isCoralDetected();
+        return isCoralIndexed;
     }
 
     @Override
     public void end(boolean interrupted) {
-        _coral.setCoralMotorVoltage(0.0);
+        _coral.setCoralWheelMotorVoltage(0.0);
     }
 }
