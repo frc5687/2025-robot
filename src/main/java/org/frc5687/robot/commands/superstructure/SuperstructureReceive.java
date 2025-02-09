@@ -14,8 +14,9 @@ public class SuperstructureReceive extends OutliersCommand {
     private final AlgaeArmSubsystem _algae;
     private final IntakeSubsystem _intake;
     private final SuperstructureState _goal;
-    private boolean isCoralIndexed = false;
-    private boolean coralFirstDetection = false;
+    private SuperstructureReceiveState _state;
+    private double timer;
+
     public SuperstructureReceive(RobotContainer container, SuperstructureState goal) {
         _elevator = container.getElevator();
         _coral = container.getCoral();
@@ -32,26 +33,57 @@ public class SuperstructureReceive extends OutliersCommand {
         _coral.setDesiredState(_goal.getCoral());
         _algae.setDesiredState(_goal.getAlgae());
         _intake.setDesiredState(_goal.getIntake());
+        _state = SuperstructureReceiveState.INTAKING;
     }
 
     @Override
     public void execute(double timestamp) {
-        
-        if(!_coral.isCoralDetected() && !coralFirstDetection){
+        if (_state == SuperstructureReceiveState.INTAKING) {
             _coral.setCoralWheelMotorVoltage(6.0);
-        } 
-        if(_coral.isCoralDetected() && !coralFirstDetection) {
-            coralFirstDetection = true;
+            if (_coral.isCoralDetected()) {
+                _state = SuperstructureReceiveState.SAW_IT;
+            }
+        }
+
+        if (_state == SuperstructureReceiveState.SAW_IT) {
+            if (!_coral.isCoralDetected()) {
+                _state = SuperstructureReceiveState.OUTTAKING;
+                timer = timestamp;
+            }
+        }
+
+        if (_state == SuperstructureReceiveState.OUTTAKING) {
+            _coral.setCoralWheelMotorVoltage(-6.0);
+            if (Math.abs(timer - timestamp) >= 0.30) {
+                _state = SuperstructureReceiveState.DONE;
+            }
         }
     }
 
     @Override
     public boolean isFinished() {
-        return isCoralIndexed;
+        return _state == SuperstructureReceiveState.DONE;
     }
 
     @Override
     public void end(boolean interrupted) {
         _coral.setCoralWheelMotorVoltage(0.0);
+    }
+
+    public enum SuperstructureReceiveState {
+        INTAKING(0),
+        SAW_IT(1),
+        OUTTAKING(2),
+        DONE(3);
+
+        private final double _value;
+
+        SuperstructureReceiveState(double value) {
+            _value = value;
+        }
+
+        public double getValue() {
+            return _value;
+        }
     }
 }

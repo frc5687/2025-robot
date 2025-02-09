@@ -274,7 +274,8 @@ public class Constants {
         public static final double MOTION_kV = 0.0;
         public static final double MOTION_kA = 0.0;
 
-        public static final double EXPO_MOTION_kP = 9.0;
+        // public static final double EXPO_MOTION_kP = 9.0;
+        public static final double EXPO_MOTION_kP = 4.0;
         public static final double EXPO_MOTION_kI = 0.0;
         public static final double EXPO_MOTION_kD = 0.0;
         public static final double EXPO_MOTION_kS = 0.7;

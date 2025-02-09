@@ -2,6 +2,7 @@ package org.frc5687.robot.subsystems.coralarm;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
@@ -16,6 +17,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
     private final VictorSP _wheelMotor;
     private final ProfiledPIDController _controller;
     private final ProximitySensor _coralDetectionSensor;
+    private final Debouncer _debouncer;
 
     public HardwareCoralArmIO() {
         _encoder = new RevBoreEncoder(RobotMap.DIO.CORAL_ENCODER, -1.03);
@@ -23,7 +25,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
         _wheelMotor = new VictorSP(RobotMap.PWM.CORAL_WHEEL_MOTOR);
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
-
+        _debouncer = new Debouncer(.1, Debouncer.DebounceType.kRising);
         TrapezoidProfile.Constraints constraints =
                 new TrapezoidProfile.Constraints(
                         Constants.CoralArm.MAX_VELOCITY_RAD_PER_SEC,
@@ -61,7 +63,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
     @Override
     public void updateInputs(CoralInputs inputs) {
         inputs.angleRads = _encoder.getAngle();
-        inputs.isCoralDetected = _coralDetectionSensor.get();
+        inputs.isCoralDetected = _debouncer.calculate(_coralDetectionSensor.get());
         inputs.motorCurrent = 0.0;
     }
 
