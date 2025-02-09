@@ -69,7 +69,7 @@ public class RobotContainer implements EpilogueLog {
                         ? new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON)
                         : new CTREDriveIO(RobotMap.CAN.PIGEON.PIGEON, Constants.SwerveModule.CAN_BUS);
 
-        _drive = new DriveSubsystem(driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
+        _drive = new DriveSubsystem(this, driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
 
         RobotStateManager.getInstance()
                 .initEstimators(_drive::getModulePositions, _drive::getHeading, _questNav);
@@ -84,27 +84,28 @@ public class RobotContainer implements EpilogueLog {
         } else {
             elevatorIO =
                     new HardwareElevatorIO(
+                            this,
                             RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR,
                             RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR,
                             RobotMap.CAN.TALONFX.SOUTH_WEST_ELEVATOR,
                             RobotMap.CAN.PIGEON.ELEVATOR);
         }
 
-        _elevator = new ElevatorSubsystem(elevatorIO);
+        _elevator = new ElevatorSubsystem(this, elevatorIO);
 
         AlgaeArmIO algaeArmIO =
                 RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
-        _algaeArm = new AlgaeArmSubsystem(algaeArmIO);
+        _algaeArm = new AlgaeArmSubsystem(this, algaeArmIO);
 
         CoralArmIO coralArmIO =
                 RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
-        _coralArm = new CoralArmSubsystem(coralArmIO);
+        _coralArm = new CoralArmSubsystem(this, coralArmIO);
 
         IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
-        _intake = new IntakeSubsystem(intakeIO);
+        _intake = new IntakeSubsystem(this, intakeIO);
 
         VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new PhotonVisionIO("");
-        _vision = new VisionSubsystem(visionIO);
+        _vision = new VisionSubsystem(this, visionIO);
 
         configureDefaultCommands();
 

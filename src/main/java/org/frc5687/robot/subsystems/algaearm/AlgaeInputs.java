@@ -29,4 +29,7 @@ public class AlgaeInputs extends BaseInputs {
 
     @Logged(name = "Algae Detected", importance = Logged.Importance.CRITICAL)
     public boolean isAlgaeDetected = false;
+
+    @Logged(name = "Encoder Connected", importance = Logged.Importance.CRITICAL)
+    public boolean isEncoderConnected = false;
 }

@@ -2,6 +2,7 @@ package org.frc5687.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import java.util.*;
+import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 
@@ -10,8 +11,8 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     private static final double MAX_LATENCY_MS = 100.0;
     private static final double MULTI_TAG_AMBIGUITY_THRESHOLD = 0.1;
 
-    public VisionSubsystem(VisionIO io) {
-        super(io, new VisionInputs(), new VisionOutputs());
+    public VisionSubsystem(RobotContainer container, VisionIO io) {
+        super(container, io, new VisionInputs(), new VisionOutputs());
     }
 
     public void setPipeline(int index) {

@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.Optional;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
@@ -51,8 +52,8 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     // I think I want to move Module creating into the IO classes as they can be considered as
     // "Hardware"
-    public DriveSubsystem(DriveIO io, Translation2d[] moduleLocations) {
-        super(io, new DriveInputs(), new DriveOutputs());
+    public DriveSubsystem(RobotContainer container, DriveIO io, Translation2d[] moduleLocations) {
+        super(container, io, new DriveInputs(), new DriveOutputs());
         _driveIO = io;
         _moduleLocations = moduleLocations;
 

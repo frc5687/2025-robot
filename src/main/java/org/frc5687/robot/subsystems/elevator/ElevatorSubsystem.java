@@ -2,6 +2,7 @@ package org.frc5687.robot.subsystems.elevator;
 
 import edu.wpi.first.math.MathUtil;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.Geometry;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
@@ -10,8 +11,8 @@ import org.frc5687.robot.subsystems.OutliersSubsystem;
 public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, ElevatorOutputs> {
     private final RobotStateManager _robotState = RobotStateManager.getInstance();
 
-    public ElevatorSubsystem(ElevatorIO io) {
-        super(io, new ElevatorInputs(), new ElevatorOutputs());
+    public ElevatorSubsystem(RobotContainer container, ElevatorIO io) {
+        super(container, io, new ElevatorInputs(), new ElevatorOutputs());
         this.setToSeparateControl(true);
     }
 

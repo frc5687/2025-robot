@@ -1,5 +1,6 @@
 package org.frc5687.robot.subsystems.coralarm;
 
+import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
@@ -8,8 +9,8 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
 
     private final RobotStateManager _stateManger = RobotStateManager.getInstance();
 
-    public CoralArmSubsystem(CoralArmIO io) {
-        super(io, new CoralInputs(), new CoralOutputs());
+    public CoralArmSubsystem(RobotContainer container, CoralArmIO io) {
+        super(container, io, new CoralInputs(), new CoralOutputs());
         setDesiredState(_inputs.currentState);
     }
 

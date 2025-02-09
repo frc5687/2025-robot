@@ -17,6 +17,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.RobotContainer;
+import org.frc5687.robot.subsystems.algaearm.AlgaeInputs;
 
 // import org.frc5687.robot.util.CTREUtil;
 
@@ -57,8 +59,15 @@ public class HardwareElevatorIO implements ElevatorIO {
     private double _pitchOffset = 0.0;
     private double _platformVelocity = 0.0;
 
+    private final RobotContainer _robotContainer;
+
     public HardwareElevatorIO(
-            int northWestMotorID, int northEastMotorID, int southEastMotorID, int imuId) {
+            RobotContainer container,
+            int northWestMotorID,
+            int northEastMotorID,
+            int southEastMotorID,
+            int imuId) {
+        _robotContainer = container;
         _northWestElevatorMotor = new TalonFX(northWestMotorID, Constants.Elevator.CANBUS);
         _northEastElevatorMotor = new TalonFX(northEastMotorID, Constants.Elevator.CANBUS);
         _southWestElevatorMotor = new TalonFX(southEastMotorID, Constants.Elevator.CANBUS);
@@ -139,7 +148,10 @@ public class HardwareElevatorIO implements ElevatorIO {
 
     public double[] calculateHeightCorrections(
             double baseHeight, double currentPitch, double currentRoll) {
-        double pitchCorrection = _pitchController.calculate(currentPitch);
+        AlgaeInputs algaeArmInputs = _robotContainer.getAlgae().getInputs();
+        double pitchCorrection =
+                _pitchController.calculate(currentPitch)
+                        + 0.0 * algaeArmInputs.armTorque /*TODO cosine of arm pos?>>? */;
         double rollCorrection = _rollController.calculate(currentRoll);
 
         pitchCorrection =

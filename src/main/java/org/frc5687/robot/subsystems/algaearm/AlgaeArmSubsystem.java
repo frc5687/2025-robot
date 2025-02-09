@@ -1,5 +1,6 @@
 package org.frc5687.robot.subsystems.algaearm;
 
+import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
@@ -8,8 +9,8 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
 
     private final RobotStateManager _stateManger = RobotStateManager.getInstance();
 
-    public AlgaeArmSubsystem(AlgaeArmIO io) {
-        super(io, new AlgaeInputs(), new AlgaeOutputs());
+    public AlgaeArmSubsystem(RobotContainer container, AlgaeArmIO io) {
+        super(container, io, new AlgaeInputs(), new AlgaeOutputs());
         setDesiredState(_inputs.algaeState);
     }
 

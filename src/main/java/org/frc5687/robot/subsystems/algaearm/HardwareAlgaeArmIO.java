@@ -2,6 +2,9 @@ package org.frc5687.robot.subsystems.algaearm;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
@@ -16,6 +19,9 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
     private final VictorSP _wheelMotor;
     private final ProfiledPIDController _controller;
     private final ProximitySensor _algaeDetectionSensor;
+    private final LinearFilter _angularVelocityFilter;
+    private static final DCMotor BAG = DCMotor.getBag(1);
+    private double _voltageCommand;
 
     public HardwareAlgaeArmIO() {
         _encoder = new RevBoreEncoder(RobotMap.DIO.ALGAE_ENCODER, 4.63);
@@ -36,6 +42,10 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         _encoder.setInverted(Constants.AlgaeArm.PIVOT_ENCODER_INVERTED);
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.AlgaeArm.PIVOT_MOTOR_INVERTED);
+        _angularVelocityFilter =
+                LinearFilter.singlePoleIIR(
+                        Constants.AlgaeArm.FILTER_TIME_CONSTANT, Constants.UPDATE_PERIOD);
+        _voltageCommand = 0;
 
         _controller.reset(_encoder.getAngle());
     }
@@ -61,9 +71,23 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
 
     @Override
     public void updateInputs(AlgaeInputs inputs) {
+        double radiansPerSecond =
+                new Rotation2d(inputs.angleRads)
+                        .minus(new Rotation2d(_encoder.getAngle()))
+                        .div(Constants.UPDATE_PERIOD)
+                        .getRadians();
         inputs.angleRads = _encoder.getAngle();
         inputs.isAlgaeDetected = _algaeDetectionSensor.get();
-        inputs.motorCurrent = 0.0;
+        inputs.angularVelocityRadPerSec = _angularVelocityFilter.calculate(radiansPerSecond);
+        inputs.motorCurrent =
+                BAG.getCurrent(
+                        /* FIXME should there be a negative here because of encoder flipping? this actually matters i think - xavier */ inputs
+                                        .angularVelocityRadPerSec
+                                * Constants.AlgaeArm.GEAR_RATIO,
+                        _voltageCommand);
+        inputs.motorTorque = BAG.getTorque(inputs.motorCurrent);
+        inputs.armTorque = inputs.motorTorque * Constants.AlgaeArm.GEAR_RATIO;
+        inputs.isEncoderConnected = _encoder.isConnected();
     }
 
     @Override
@@ -83,6 +107,8 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         outputs.controllerOutput = pidOutput;
 
         _pivotMotor.setVoltage(totalVoltage);
-        _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+        _voltageCommand = totalVoltage;
+        // _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+        _wheelMotor.set(-0.5);
     }
 }

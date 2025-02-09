@@ -3,6 +3,7 @@ package org.frc5687.robot.subsystems;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.util.BaseInputs;
 import org.frc5687.robot.util.BaseOutputs;
 import org.frc5687.robot.util.EpilogueLog;
@@ -12,6 +13,7 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
     protected final SubsystemIO<Inputs, Outputs> _io;
     protected final Inputs _inputs;
     protected final Outputs _outputs;
+    protected final RobotContainer _robotContainer;
 
     private final Object inputLogger;
     private final Object outputLogger;
@@ -22,7 +24,9 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
         return this.getName();
     }
 
-    public OutliersSubsystem(SubsystemIO<Inputs, Outputs> io, Inputs inputs, Outputs outputs) {
+    public OutliersSubsystem(
+            RobotContainer container, SubsystemIO<Inputs, Outputs> io, Inputs inputs, Outputs outputs) {
+        _robotContainer = container;
         _io = io;
         _inputs = inputs;
         _outputs = outputs;
@@ -44,6 +48,10 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
             throw new RuntimeException("Failed to get loggers", e);
         }
         System.out.println(inputLoggerName);
+    }
+
+    public Inputs getInputs() {
+        return _inputs;
     }
 
     protected abstract void processInputs();

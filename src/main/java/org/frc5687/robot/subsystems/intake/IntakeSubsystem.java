@@ -1,13 +1,14 @@
 package org.frc5687.robot.subsystems.intake;
 
+import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.subsystems.SubsystemIO;
 
 public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutputs> {
 
-    public IntakeSubsystem(SubsystemIO<IntakeInputs, IntakeOutputs> io) {
-        super(io, new IntakeInputs(), new IntakeOutputs());
+    public IntakeSubsystem(RobotContainer container, SubsystemIO<IntakeInputs, IntakeOutputs> io) {
+        super(container, io, new IntakeInputs(), new IntakeOutputs());
     }
 
     @Override
