@@ -260,9 +260,9 @@ public class Constants {
         public static final double MOTION_MAGIC_EXPO_KV = 0.09;
         public static final double MOTION_MAGIC_EXPO_KA = 0.05;
 
-        public static final double HOLD_kP = 3.0; // 2.5
+        public static final double HOLD_kP = 0.0; // 3.0
         public static final double HOLD_kI = 0.0;
-        public static final double HOLD_kD = 0.025;
+        public static final double HOLD_kD = 0.0; // 0.025
         public static final double HOLD_kS = 0.0;
         public static final double HOLD_kV = 0.0;
         public static final double HOLD_kA = 0.0;
@@ -335,8 +335,8 @@ public class Constants {
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
         public static final double GEAR_RATIO = 120; // From Amory
-        public static final double ARM_LENGTH = Units.inchesToMeters(12.0);
-        public static final double ARM_MASS = Units.lbsToKilograms(5);
+        public static final double ARM_LENGTH = Units.inchesToMeters(14.0);
+        public static final double ARM_MASS = Units.lbsToKilograms(7);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
         public static final double MAX_ANGLE = Units.degreesToRadians(180);

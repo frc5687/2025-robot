@@ -34,18 +34,15 @@ public class HardwareCoralArmIO implements CoralArmIO {
                         Constants.CoralArm.kP, Constants.CoralArm.kI, Constants.CoralArm.kD, constraints);
 
         _controller.setTolerance(0.01);
-
         _pivotMotor.setInverted(Constants.CoralArm.PIVOT_MOTOR_INVERTED);
     }
 
-    private double calculateShortestPath(double currentAngle, double targetAngle) {
-        if (currentAngle >= Units.degreesToRadians(270)) {
-            double errorBound = (Constants.CoralArm.MAX_ANGLE - Constants.CoralArm.MIN_ANGLE) / 2.0;
-            double minDistance =
-                    MathUtil.inputModulus(targetAngle - currentAngle, -errorBound, errorBound);
-            return minDistance + currentAngle;
+    private void calculateShortestPath(double currentAngle) {
+        if (currentAngle < Units.degreesToRadians(90) || currentAngle >= Units.degreesToRadians(270)) {
+            _controller.enableContinuousInput(0, 2.0 * Math.PI);
+        } else {
+            _controller.disableContinuousInput();
         }
-        return targetAngle;
     }
 
     private double processSafeAngle(double desiredAngle) {
@@ -70,9 +67,9 @@ public class HardwareCoralArmIO implements CoralArmIO {
     public void writeOutputs(CoralOutputs outputs) {
         double currentAngle = _encoder.getAngle();
         double safeAngle = processSafeAngle(outputs.desiredAngleRad);
-        double targetAngle = calculateShortestPath(currentAngle, safeAngle);
+        calculateShortestPath(currentAngle);
 
-        _controller.setGoal(targetAngle);
+        _controller.setGoal(safeAngle);
 
         double pidOutput = _controller.calculate(currentAngle);
         double ffOutput = calculateFeedForward(currentAngle);
@@ -81,6 +78,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
         outputs.voltageCommand = totalVoltage;
         outputs.controllerOutput = pidOutput;
+        outputs.voltageFeedForward = ffOutput;
 
         _pivotMotor.setVoltage(totalVoltage);
         _wheelMotor.setVoltage(outputs.wheelVoltageCommand);

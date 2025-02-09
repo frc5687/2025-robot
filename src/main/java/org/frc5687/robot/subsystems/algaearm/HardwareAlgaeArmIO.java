@@ -37,14 +37,12 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         _pivotMotor.setInverted(Constants.AlgaeArm.PIVOT_MOTOR_INVERTED);
     }
 
-    private double calculateShortestPath(double currentAngle, double targetAngle) {
-        if (currentAngle >= Units.degreesToRadians(270)) {
-            double errorBound = (Constants.AlgaeArm.MAX_ANGLE - Constants.AlgaeArm.MIN_ANGLE) / 2.0;
-            double minDistance =
-                    MathUtil.inputModulus(targetAngle - currentAngle, -errorBound, errorBound);
-            return minDistance + currentAngle;
+    private void calculateShortestPath(double currentAngle) {
+        if (currentAngle < Units.degreesToRadians(90) || currentAngle >= Units.degreesToRadians(270)) {
+            _controller.enableContinuousInput(0, 2.0 * Math.PI);
+        } else {
+            _controller.disableContinuousInput();
         }
-        return targetAngle;
     }
 
     private double processSafeAngle(double desiredAngle) {
@@ -69,9 +67,9 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
     public void writeOutputs(AlgaeOutputs outputs) {
         double currentAngle = _encoder.getAngle();
         double safeAngle = processSafeAngle(outputs.desiredAngleRad);
-        double targetAngle = calculateShortestPath(currentAngle, safeAngle);
+        calculateShortestPath(currentAngle);
 
-        _controller.setGoal(targetAngle);
+        _controller.setGoal(safeAngle);
 
         double pidOutput = _controller.calculate(currentAngle);
         double ffOutput = calculateFeedForward(currentAngle);
