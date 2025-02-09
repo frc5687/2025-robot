@@ -10,6 +10,7 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
 
     public CoralArmSubsystem(CoralArmIO io) {
         super(io, new CoralInputs(), new CoralOutputs());
+        setDesiredState(_inputs.currentState);
     }
 
     @Override

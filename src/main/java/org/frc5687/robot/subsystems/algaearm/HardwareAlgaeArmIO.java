@@ -18,7 +18,7 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
     private final ProximitySensor _algaeDetectionSensor;
 
     public HardwareAlgaeArmIO() {
-        _encoder = new RevBoreEncoder(RobotMap.DIO.ALGAE_ENCODER, 0.0);
+        _encoder = new RevBoreEncoder(RobotMap.DIO.ALGAE_ENCODER, 4.63);
         _encoder.setInverted(true);
         _pivotMotor = new VictorSP(RobotMap.PWM.ALGAE_PIVOT_MOTOR);
         _wheelMotor = new VictorSP(RobotMap.PWM.ALGAE_WHEEL_MOTOR);
@@ -33,8 +33,11 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
                 new ProfiledPIDController(
                         Constants.AlgaeArm.kP, Constants.AlgaeArm.kI, Constants.AlgaeArm.kD, constraints);
 
+        _encoder.setInverted(Constants.AlgaeArm.PIVOT_ENCODER_INVERTED);
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.AlgaeArm.PIVOT_MOTOR_INVERTED);
+
+        _controller.reset(_encoder.getAngle());
     }
 
     private void calculateShortestPath(double currentAngle) {
@@ -73,13 +76,13 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
 
         double pidOutput = _controller.calculate(currentAngle);
         double ffOutput = calculateFeedForward(currentAngle);
-
+        System.out.println(ffOutput);
         double totalVoltage = MathUtil.clamp(pidOutput + ffOutput, -12.0, 12.0);
 
         outputs.voltageCommand = totalVoltage;
         outputs.controllerOutput = pidOutput;
 
-        // _pivotMotor.setVoltage(totalVoltage);
-        // _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+        _pivotMotor.setVoltage(totalVoltage);
+        _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
     }
 }

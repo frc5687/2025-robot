@@ -10,6 +10,7 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
 
     public AlgaeArmSubsystem(AlgaeArmIO io) {
         super(io, new AlgaeInputs(), new AlgaeOutputs());
+        setDesiredState(_inputs.algaeState);
     }
 
     @Override

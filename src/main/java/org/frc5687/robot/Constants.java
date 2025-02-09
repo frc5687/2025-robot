@@ -302,19 +302,20 @@ public class Constants {
     public static class AlgaeArm {
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 0.0;
+        public static final double kP = 13.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-        public static final boolean PIVOT_MOTOR_INVERTED = false;
+        public static final boolean PIVOT_MOTOR_INVERTED = true;
+        public static final boolean PIVOT_ENCODER_INVERTED = false;
         public static final int NUM_MOTORS = 1;
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
         public static final double GEAR_RATIO = 315; // From Amory
         public static final double ARM_LENGTH = 0.589;
-        public static final double ARM_MASS = Units.lbsToKilograms(10);
+        public static final double ARM_MASS = Units.lbsToKilograms(8);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
-        public static final double MIN_ANGLE = 0.0;
+        public static final double MIN_ANGLE = Units.degreesToRadians(90);
         public static final double MAX_ANGLE = Units.degreesToRadians(270.0);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
@@ -325,7 +326,7 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 10.0;
+        public static final double kP = 11.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
@@ -336,7 +337,7 @@ public class Constants {
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
         public static final double GEAR_RATIO = 120; // From Amory
         public static final double ARM_LENGTH = Units.inchesToMeters(14.0);
-        public static final double ARM_MASS = Units.lbsToKilograms(7);
+        public static final double ARM_MASS = Units.lbsToKilograms(9);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
         public static final double MAX_ANGLE = Units.degreesToRadians(180);
