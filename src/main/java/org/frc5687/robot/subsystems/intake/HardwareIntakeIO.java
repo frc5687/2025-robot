@@ -13,6 +13,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
+import org.frc5687.robot.util.sensors.RevBoreEncoder;
 
 // import org.frc5687.robot.util.CTREUtil;
 
@@ -22,6 +23,7 @@ public class HardwareIntakeIO implements IntakeIO {
     private final TalonFX _rollerMotor;
     private final TalonFX _beltMotor;
 
+    private final RevBoreEncoder _encoder;
     private final StatusSignal<AngularVelocity> _rollerVelocity;
     private final StatusSignal<AngularVelocity> _intakeVelocity;
 
@@ -35,9 +37,11 @@ public class HardwareIntakeIO implements IntakeIO {
         _rollerMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ROLLER, Constants.Intake.CAN_BUS);
         _beltMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_BELT, Constants.Intake.CAN_BUS);
 
+        _encoder = new RevBoreEncoder(RobotMap.DIO.INTAKE_ENCODER, 0);
         _rollerVelocity = _rollerMotor.getVelocity();
         _intakeVelocity = _beltMotor.getVelocity();
 
+        _pivotMotor.setPosition(_encoder.getAngle() * Constants.Intake.GEAR_RATIO);
         configureMotor(_rollerMotor, Constants.Intake.ROLLER_INVERTED);
         configureMotor(_beltMotor, Constants.Intake.INTAKE_INVERTED);
         configureMotor(_pivotMotor, Constants.Intake.PIVOT_INVERTED);
@@ -57,9 +61,9 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void writeOutputs(IntakeOutputs Outputs) {
-        // _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
-        // _beltMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
-        // _pivotMotor.setControl(_pivotPositionReq.withPosition(Outputs.pivotTargetAngle));
+        _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
+        _beltMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
+        _pivotMotor.setControl(_pivotPositionReq.withPosition(Outputs.pivotTargetAngle));
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted) {

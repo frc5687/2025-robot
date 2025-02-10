@@ -1,5 +1,11 @@
 package org.frc5687.robot.subsystems.algaearm;
 
+import static edu.wpi.first.units.Units.Rotations;
+
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.LinearFilter;
@@ -7,14 +13,14 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
 import org.frc5687.robot.util.sensors.ProximitySensor;
-import org.frc5687.robot.util.sensors.RevBoreEncoder;
 
 public class HardwareAlgaeArmIO implements AlgaeArmIO {
-    private final RevBoreEncoder _encoder;
+    private final CANcoder _cancoder;
     private final VictorSP _pivotMotor;
     private final VictorSP _wheelMotor;
     private final ProfiledPIDController _controller;
@@ -22,10 +28,10 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
     private final LinearFilter _angularVelocityFilter;
     private static final DCMotor BAG = DCMotor.getBag(1);
     private double _voltageCommand;
+    private final StatusSignal<Angle> _absoluteAngle;
 
     public HardwareAlgaeArmIO() {
-        _encoder = new RevBoreEncoder(RobotMap.DIO.ALGAE_ENCODER, 4.63);
-        _encoder.setInverted(true);
+        _cancoder = new CANcoder(RobotMap.CAN.CANCODER.ALGAE_ENCODER, "CANivore");
         _pivotMotor = new VictorSP(RobotMap.PWM.ALGAE_PIVOT_MOTOR);
         _wheelMotor = new VictorSP(RobotMap.PWM.ALGAE_WHEEL_MOTOR);
         _algaeDetectionSensor = new ProximitySensor(RobotMap.DIO.ALGAE_SENSOR);
@@ -39,7 +45,6 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
                 new ProfiledPIDController(
                         Constants.AlgaeArm.kP, Constants.AlgaeArm.kI, Constants.AlgaeArm.kD, constraints);
 
-        _encoder.setInverted(Constants.AlgaeArm.PIVOT_ENCODER_INVERTED);
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.AlgaeArm.PIVOT_MOTOR_INVERTED);
         _angularVelocityFilter =
@@ -47,7 +52,9 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
                         Constants.AlgaeArm.FILTER_TIME_CONSTANT, Constants.UPDATE_PERIOD);
         _voltageCommand = 0;
 
-        _controller.reset(_encoder.getAngle());
+        configureCancoder();
+        _absoluteAngle = _cancoder.getAbsolutePosition();
+        _controller.reset(getAngleRads());
     }
 
     private void calculateShortestPath(double currentAngle) {
@@ -71,12 +78,13 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
 
     @Override
     public void updateInputs(AlgaeInputs inputs) {
+        StatusSignal.refreshAll(_absoluteAngle);
         double radiansPerSecond =
                 new Rotation2d(inputs.angleRads)
-                        .minus(new Rotation2d(_encoder.getAngle()))
+                        .minus(new Rotation2d(getAngleRads()))
                         .div(Constants.UPDATE_PERIOD)
                         .getRadians();
-        inputs.angleRads = _encoder.getAngle();
+        inputs.angleRads = getAngleRads();
         inputs.isAlgaeDetected = _algaeDetectionSensor.get();
         inputs.angularVelocityRadPerSec = _angularVelocityFilter.calculate(radiansPerSecond);
         inputs.motorCurrent =
@@ -87,12 +95,12 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
                         _voltageCommand);
         inputs.motorTorque = BAG.getTorque(inputs.motorCurrent);
         inputs.armTorque = inputs.motorTorque * Constants.AlgaeArm.GEAR_RATIO;
-        inputs.isEncoderConnected = _encoder.isConnected();
+        inputs.isEncoderConnected = _cancoder.isConnected();
     }
 
     @Override
     public void writeOutputs(AlgaeOutputs outputs) {
-        double currentAngle = _encoder.getAngle();
+        double currentAngle = getAngleRads();
         double safeAngle = processSafeAngle(outputs.desiredAngleRad);
         calculateShortestPath(currentAngle);
 
@@ -109,6 +117,19 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         _pivotMotor.setVoltage(totalVoltage);
         _voltageCommand = totalVoltage;
         // _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
-        _wheelMotor.set(-0.5);
+        // _wheelMotor.set(-0.5);
+    }
+
+    private double getAngleRads() {
+        return _absoluteAngle.getValueAsDouble() * 2.0 * Math.PI;
+    }
+
+    private void configureCancoder() {
+        var _cancoderConfigs = new CANcoderConfiguration();
+        _cancoderConfigs.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(1));
+        _cancoderConfigs.MagnetSensor.MagnetOffset = Constants.AlgaeArm.ENCODER_OFFSET;
+        _cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        _cancoder.getConfigurator().apply(_cancoderConfigs);
+        // CTREUtil.applyConfiguration(_cancoder, _cancoderConfigs);
     }
 }

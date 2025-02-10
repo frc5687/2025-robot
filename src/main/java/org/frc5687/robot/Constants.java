@@ -275,7 +275,7 @@ public class Constants {
         public static final double MOTION_kA = 0.0;
 
         // public static final double EXPO_MOTION_kP = 9.0;
-        public static final double EXPO_MOTION_kP = 4.0;
+        public static final double EXPO_MOTION_kP = 10.0;
         public static final double EXPO_MOTION_kI = 0.0;
         public static final double EXPO_MOTION_kD = 0.0;
         public static final double EXPO_MOTION_kS = 0.7;
@@ -303,18 +303,20 @@ public class Constants {
     public static class AlgaeArm {
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 13.0;
+        public static final double kP = 25.0; // 13
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
         public static final boolean PIVOT_MOTOR_INVERTED = true;
-        public static final boolean PIVOT_ENCODER_INVERTED = false;
         public static final int NUM_MOTORS = 1;
+
+        public static final double ENCODER_OFFSET = -0.2785;
+        public static final boolean ENCODER_INVERTED = true;
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
         public static final double GEAR_RATIO = 315; // From Amory
         public static final double ARM_LENGTH = 0.589;
-        public static final double ARM_MASS = Units.lbsToKilograms(8);
+        public static final double ARM_MASS = Units.lbsToKilograms(9);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = Units.degreesToRadians(90);
         public static final double MAX_ANGLE = Units.degreesToRadians(270.0);
@@ -329,7 +331,7 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 11.0;
+        public static final double kP = 11.0; // 11
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
@@ -337,10 +339,13 @@ public class Constants {
         public static final boolean WHEEL_MOTOR_INVERTED = true;
         public static final int NUM_MOTORS = 1;
 
+        public static final double ENCODER_OFFSET = -0.389404;
+        public static final boolean ENCODER_INVERTED = true;
+
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
         public static final double GEAR_RATIO = 120; // From Amory
         public static final double ARM_LENGTH = Units.inchesToMeters(14.0);
-        public static final double ARM_MASS = Units.lbsToKilograms(9);
+        public static final double ARM_MASS = Units.lbsToKilograms(5.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
         public static final double MAX_ANGLE = Units.degreesToRadians(180);

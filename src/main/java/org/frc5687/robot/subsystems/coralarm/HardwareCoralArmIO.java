@@ -1,27 +1,35 @@
 package org.frc5687.robot.subsystems.coralarm;
 
+import static edu.wpi.first.units.Units.Rotations;
+
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
 import org.frc5687.robot.util.sensors.ProximitySensor;
-import org.frc5687.robot.util.sensors.RevBoreEncoder;
 
 public class HardwareCoralArmIO implements CoralArmIO {
-    private final RevBoreEncoder _encoder;
+    private final CANcoder _cancoder;
     private final VictorSP _pivotMotor;
     private final VictorSP _wheelMotor;
     private final ProfiledPIDController _controller;
     private final ProximitySensor _coralDetectionSensor;
     private final Debouncer _debouncer;
 
+    private final StatusSignal<Angle> _absoluteAngle;
+
     public HardwareCoralArmIO() {
-        _encoder = new RevBoreEncoder(RobotMap.DIO.CORAL_ENCODER, -1.03);
-        _encoder.setInverted(true);
+        _cancoder = new CANcoder(RobotMap.CAN.CANCODER.CORAL_ENCODER, "CANivore");
+
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
         _wheelMotor = new VictorSP(RobotMap.PWM.CORAL_WHEEL_MOTOR);
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
@@ -38,7 +46,10 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.CoralArm.PIVOT_MOTOR_INVERTED);
         _wheelMotor.setInverted(Constants.CoralArm.WHEEL_MOTOR_INVERTED);
-        _controller.reset(_encoder.getAngle());
+
+        configureCancoder();
+        _absoluteAngle = _cancoder.getAbsolutePosition();
+        _controller.reset(getAngleRads());
     }
 
     private void calculateShortestPath(double currentAngle) {
@@ -62,14 +73,15 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
     @Override
     public void updateInputs(CoralInputs inputs) {
-        inputs.angleRads = _encoder.getAngle();
+        StatusSignal.refreshAll(_absoluteAngle);
+        inputs.angleRads = getAngleRads();
         inputs.isCoralDetected = _debouncer.calculate(_coralDetectionSensor.get());
         inputs.motorCurrent = 0.0;
     }
 
     @Override
     public void writeOutputs(CoralOutputs outputs) {
-        double currentAngle = _encoder.getAngle();
+        double currentAngle = getAngleRads();
         double safeAngle = processSafeAngle(outputs.desiredAngleRad);
         calculateShortestPath(currentAngle);
 
@@ -86,5 +98,19 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
         _pivotMotor.setVoltage(totalVoltage);
         _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+    }
+
+    private double getAngleRads() {
+        return _absoluteAngle.getValueAsDouble() * 2.0 * Math.PI;
+    }
+
+    private void configureCancoder() {
+        var _cancoderConfigs = new CANcoderConfiguration();
+        _cancoderConfigs.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(1));
+        _cancoderConfigs.MagnetSensor.MagnetOffset = Constants.CoralArm.ENCODER_OFFSET;
+        _cancoderConfigs.MagnetSensor.SensorDirection =
+                SensorDirectionValue.Clockwise_Positive; // FIXME
+        _cancoder.getConfigurator().apply(_cancoderConfigs);
+        // CTREUtil.applyConfiguration(_cancoder, _cancoderConfigs);
     }
 }
