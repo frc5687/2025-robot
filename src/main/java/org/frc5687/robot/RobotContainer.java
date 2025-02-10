@@ -11,6 +11,7 @@ import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
+import org.frc5687.robot.commands.intake.IdleIntake;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
@@ -152,8 +153,7 @@ public class RobotContainer implements EpilogueLog {
         // _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
         _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
         // _coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
-        // _intake.setDefaultCommand(new IdleIntake(_intake() ->
-        // -modifyAxis(_oi.getDriverController().getLeft())));
+        _intake.setDefaultCommand(new IdleIntake(_intake));
         // _intake.setDefaultCommand(
         //         new RunIntake(
         //                 _intake,
