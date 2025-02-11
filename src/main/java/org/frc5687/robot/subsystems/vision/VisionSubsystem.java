@@ -29,23 +29,28 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     }
 
     public AprilTagObservation[] getValidTags() {
-        if (_inputs.centerCameraObservations == null) return new AprilTagObservation[0];
-
-        return _inputs.centerCameraObservations.stream()
-                .filter(this::hasValidTag)
-                .toArray(AprilTagObservation[]::new);
+        List<AprilTagObservation> res = new ArrayList<>();
+        for (List<AprilTagObservation> observations : _inputs.cameraObservations.values()) {
+            res.addAll(observations);
+        }
+        return (AprilTagObservation[]) res.toArray();
     }
 
     @Override
     protected void periodic(VisionInputs inputs, VisionOutputs outputs) {
         List<Pose3d> estimatedPoses = new ArrayList<>();
-        for (var entry : inputs.estimatedPoses.entrySet()) {
-            if (inputs.hasTargets && getValidTags().length > 0) {
-                estimatedPoses.add(entry.getValue().estimatedPose);
-                RobotStateManager.getInstance().updateVision(entry.getValue());
-            }
+        for (var robotPose : inputs.estimatedPoses.values()) {
+            estimatedPoses.add(robotPose.estimatedPose);
+            RobotStateManager.getInstance().updateVision(robotPose);
         }
+        List<AprilTagObservation> northEastTags =
+                inputs.cameraObservations.getOrDefault("North_East_Camera", new ArrayList<>());
+        List<AprilTagObservation> northWestTags =
+                inputs.cameraObservations.getOrDefault("North_West_Camera", new ArrayList<>());
+
         log("VisionPoses", estimatedPoses, Pose3d.struct);
+        log("NorthEastTags", northEastTags, AprilTagObservation.struct);
+        log("NorthWestTags", northWestTags, AprilTagObservation.struct);
     }
 
     public boolean hasValidTargets() {

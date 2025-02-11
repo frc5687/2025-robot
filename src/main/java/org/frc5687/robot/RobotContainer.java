@@ -104,7 +104,7 @@ public class RobotContainer implements EpilogueLog {
         IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
         _intake = new IntakeSubsystem(this, intakeIO);
 
-        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new PhotonVisionIO("");
+        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new PhotonVisionIO();
         _vision = new VisionSubsystem(this, visionIO);
 
         configureDefaultCommands();

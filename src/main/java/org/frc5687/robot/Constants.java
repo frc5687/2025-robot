@@ -1,6 +1,7 @@
 /* Team 5687 (C)2020-2022 */
 package org.frc5687.robot;
 
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -353,6 +354,9 @@ public class Constants {
         public static final double VISION_kI = 0.0;
         public static final double VISION_kD = 0.2;
         public static final double AMBIGUITY_TOLERANCE = 0.4;
+
+        public static final Transform3d ROBOT_TO_NE_CAM = new Transform3d();
+        public static final Transform3d ROBOT_TO_NW_CAM = new Transform3d();
     }
 
     public static class VisionConfig {

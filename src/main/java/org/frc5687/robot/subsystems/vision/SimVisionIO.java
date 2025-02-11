@@ -16,6 +16,7 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class SimVisionIO implements VisionIO {
     private static class CameraConfig {
@@ -42,20 +43,15 @@ public class SimVisionIO implements VisionIO {
     private final RobotStateManager _robotState = RobotStateManager.getInstance();
 
     // Not real for robot yet, just was testing.
-    public static final Transform3d ROBOT_TO_CENTER_CAMERA =
+    public static final Transform3d ROBOT_TO_NE_CAMERA =
             new Transform3d(
                     new Translation3d(0.281, 0.038, 0.217),
                     new Rotation3d(0, Units.degreesToRadians(-15), 0));
 
-    private static final Transform3d ROBOT_TO_RIGHT_CAMERA =
+    private static final Transform3d ROBOT_TO_NW_CAMERA =
             new Transform3d(
                     new Translation3d(0.281, -0.200, 0.217),
                     new Rotation3d(0, Units.degreesToRadians(-15), 0));
-
-    private static final Transform3d ROBOT_TO_LEFT_CAMERA =
-            new Transform3d(
-                    new Translation3d(-0.281, 0.200, 0.217),
-                    new Rotation3d(0, Units.degreesToRadians(-15), Math.PI));
 
     public SimVisionIO() {
         _visionSim = new VisionSystemSim("MainVision");
@@ -69,9 +65,8 @@ public class SimVisionIO implements VisionIO {
             return;
         }
 
-        addCamera("CenterCamera", ROBOT_TO_CENTER_CAMERA, layout);
-        addCamera("RightCamera", ROBOT_TO_RIGHT_CAMERA, layout);
-        addCamera("LeftCamera", ROBOT_TO_LEFT_CAMERA, layout);
+        addCamera("North_East_Camera", ROBOT_TO_NE_CAMERA, layout);
+        addCamera("North_West_Camera", ROBOT_TO_NW_CAMERA, layout);
     }
 
     private void addCamera(String name, Transform3d robotToCamera, AprilTagFieldLayout layout) {
@@ -101,39 +96,30 @@ public class SimVisionIO implements VisionIO {
     // TODO: make a queue for time as well and drop old tags
     @Override
     public void updateInputs(VisionInputs inputs) {
-        inputs.visionTimestamp = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
+        updateCameraInputs(inputs, "North_East_Cam");
+        updateCameraInputs(inputs, "North_West_Cam");
+        _visionSim.update(_robotState.getPose(RobotCoordinate.ROBOT_BASE_SIM_ODOM).toPose2d());
+    }
 
-        for (var entry : _cameras.entrySet()) {
-            String cameraName = entry.getKey();
-            CameraConfig config = entry.getValue();
-
-            List<PhotonPipelineResult> results = config.camera.getAllUnreadResults();
-            if (!results.isEmpty()) {
-                PhotonPipelineResult result = results.get(results.size() - 1);
-
-                if (result.hasTargets()) {
-                    AprilTagObservation[] observations = new AprilTagObservation[result.targets.size()];
-                    for (int i = 0; i < result.targets.size(); i++) {
-                        observations[i] =
+    private void updateCameraInputs(VisionInputs inputs, String cameraName) {
+        inputs.cameraObservations.put(cameraName, new ArrayList<>());
+        CameraConfig cam = _cameras.get(cameraName);
+        List<PhotonPipelineResult> results = cam.camera.getAllUnreadResults();
+        if (!results.isEmpty()) {
+            PhotonPipelineResult mostRecentResult = results.get(results.size() - 1);
+            Optional<EstimatedRobotPose> estimatedPose = cam.estimator.update(mostRecentResult);
+            if (estimatedPose.isPresent()) {
+                inputs.estimatedPoses.put(cameraName, estimatedPose.get());
+            }
+            for (PhotonTrackedTarget target : mostRecentResult.targets) {
+                inputs
+                        .cameraObservations
+                        .get(cameraName)
+                        .add(
                                 AprilTagObservation.fromPhotonVision(
-                                        result.targets.get(i), result.getTimestampSeconds());
-                    }
-
-                    if (cameraName.equals("CenterCamera")) {
-                        inputs.centerCameraObservations = Arrays.asList(observations);
-                        inputs.hasTargets = true;
-                        inputs.numTags = observations.length;
-                    }
-
-                    Optional<EstimatedRobotPose> poseEstimate = config.estimator.update(result);
-                    if (poseEstimate.isPresent()) {
-                        inputs.estimatedPoses.put(cameraName, poseEstimate.get());
-                    }
-                }
+                                        target, mostRecentResult.getTimestampSeconds()));
             }
         }
-
-        _visionSim.update(_robotState.getPose(RobotCoordinate.ROBOT_BASE_SIM_ODOM).toPose2d());
     }
 
     @Override
