@@ -263,7 +263,7 @@ public class Constants {
         public static final double HOLD_kP = 2.0;
         public static final double HOLD_kI = 0.0;
         public static final double HOLD_kD = 0.02;
-        public static final double HOLD_kS = 0.0;
+        public static final double HOLD_kS = 0.7;
         public static final double HOLD_kV = 0.0;
         public static final double HOLD_kA = 0.0;
 

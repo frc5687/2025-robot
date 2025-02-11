@@ -1,13 +1,13 @@
 package org.frc5687.robot.subsystems.elevator;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.Constants.Motors;
 import org.frc5687.robot.RobotStateManager.Geometry;
 
 public class SimElevatorIO implements ElevatorIO {
@@ -15,10 +15,11 @@ public class SimElevatorIO implements ElevatorIO {
     private static final double kI = 0.0;
     private static final double kD = 0.0;
 
-    private final DCMotor _gearBox = DCMotor.getKrakenX60Foc(1);
-    private final ProfiledPIDController _northWestPIDController;
-    private final ProfiledPIDController _northEastPIDController;
-    private final ProfiledPIDController _southWestPIDController;
+    private final DCMotor _gearBox = Motors.getKrakenX44(1);
+
+    private final PIDController _northWestPIDController;
+    private final PIDController _northEastPIDController;
+    private final PIDController _southWestPIDController;
 
     private final ElevatorSim _platformNorthEastSim;
     private final ElevatorSim _platformNorthWestSim;
@@ -33,14 +34,9 @@ public class SimElevatorIO implements ElevatorIO {
     private final EncoderSim _southWestEncoderSim;
 
     public SimElevatorIO() {
-        TrapezoidProfile.Constraints constraints =
-                new TrapezoidProfile.Constraints(
-                        Constants.Elevator.MAX_VELOCITY_MPS_NORTH,
-                        Constants.Elevator.MAX_ACCELERATION_MPSS); // using slower
-
-        _northWestPIDController = new ProfiledPIDController(kP, kI, kD, constraints);
-        _northEastPIDController = new ProfiledPIDController(kP, kI, kD, constraints);
-        _southWestPIDController = new ProfiledPIDController(kP, kI, kD, constraints);
+        _northWestPIDController = new PIDController(kP, kI, kD);
+        _northEastPIDController = new PIDController(kP, kI, kD);
+        _southWestPIDController = new PIDController(kP, kI, kD);
 
         _northWestPIDController.setTolerance(0.001);
         _northEastPIDController.setTolerance(0.001);
@@ -57,7 +53,6 @@ public class SimElevatorIO implements ElevatorIO {
                         Geometry.ELEVATOR_MAX_HEIGHT,
                         true,
                         0);
-
         _platformNorthWestSim =
                 new ElevatorSim(
                         _gearBox,
@@ -68,7 +63,6 @@ public class SimElevatorIO implements ElevatorIO {
                         Geometry.ELEVATOR_MAX_HEIGHT,
                         true,
                         0);
-
         _platformSouthWestSim =
                 new ElevatorSim(
                         _gearBox,
@@ -99,27 +93,24 @@ public class SimElevatorIO implements ElevatorIO {
         _platformNorthWestSim.update(Constants.Elevator.PERIOD);
         _platformSouthWestSim.update(Constants.Elevator.PERIOD);
 
-        // Get raw stage positions from simulation
         inputs.stageNorthEastPositionMeters = _platformNorthEastSim.getPositionMeters();
         inputs.stageNorthWestPositionMeters = _platformNorthWestSim.getPositionMeters();
         inputs.stageSouthWestPositionMeters = _platformSouthWestSim.getPositionMeters();
 
-        // Update encoders with stage positions
         _northEastEncoderSim.setDistance(inputs.stageNorthEastPositionMeters);
         _northWestEncoderSim.setDistance(inputs.stageNorthWestPositionMeters);
         _southWestEncoderSim.setDistance(inputs.stageSouthWestPositionMeters);
 
-        // Update encoder velocities
-        _northWestEncoderSim.setRate(_platformNorthWestSim.getVelocityMetersPerSecond());
         _northEastEncoderSim.setRate(_platformNorthEastSim.getVelocityMetersPerSecond());
+        _northWestEncoderSim.setRate(_platformNorthWestSim.getVelocityMetersPerSecond());
         _southWestEncoderSim.setRate(_platformSouthWestSim.getVelocityMetersPerSecond());
-        inputs.platformVelocityMPS =
-                ((_platformNorthWestSim.getVelocityMetersPerSecond()
-                                + _platformNorthEastSim.getVelocityMetersPerSecond()
-                                + _platformSouthWestSim.getVelocityMetersPerSecond())
-                        / 3);
 
-        // Set motor currents
+        inputs.platformVelocityMPS =
+                ((_platformNorthEastSim.getVelocityMetersPerSecond()
+                                + _platformNorthWestSim.getVelocityMetersPerSecond()
+                                + _platformSouthWestSim.getVelocityMetersPerSecond())
+                        / 3.0);
+
         inputs.platformMotorCurrents[0] = _platformNorthEastSim.getCurrentDrawAmps();
         inputs.platformMotorCurrents[1] = _platformNorthWestSim.getCurrentDrawAmps();
         inputs.platformMotorCurrents[2] = _platformSouthWestSim.getCurrentDrawAmps();
@@ -129,30 +120,34 @@ public class SimElevatorIO implements ElevatorIO {
     public void writeOutputs(ElevatorOutputs outputs) {
         double batteryVoltage = RobotController.getBatteryVoltage();
 
-        double desiredStageHeight = outputs.desiredStageHeight;
+        double setpointNE = outputs.northEastStageHeight;
+        double setpointNW = outputs.northWestStageHeight;
+        double setpointSW = outputs.southWestStageHeight;
 
-        _northWestPIDController.setGoal(desiredStageHeight);
-        _northEastPIDController.setGoal(desiredStageHeight);
-        _southWestPIDController.setGoal(desiredStageHeight);
+        _northEastPIDController.setSetpoint(setpointNE);
+        _northWestPIDController.setSetpoint(setpointNW);
+        _southWestPIDController.setSetpoint(setpointSW);
 
-        double northWestVoltage =
-                _northWestPIDController.calculate(_platformNorthWestSim.getPositionMeters());
         double northEastVoltage =
                 _northEastPIDController.calculate(_platformNorthEastSim.getPositionMeters());
+        double northWestVoltage =
+                _northWestPIDController.calculate(_platformNorthWestSim.getPositionMeters());
         double southWestVoltage =
                 _southWestPIDController.calculate(_platformSouthWestSim.getPositionMeters());
 
-        double ffVolts =
-                Constants.Elevator.MOTION_kS
-                        * Math.signum(desiredStageHeight - _platformNorthWestSim.getPositionMeters());
+        double ffVoltsNE = 0.5 * Math.signum(setpointNE - _platformNorthEastSim.getPositionMeters());
+        double ffVoltsNW = 0.5
+                        * Math.signum(setpointNW - _platformNorthWestSim.getPositionMeters());
+        double ffVoltsSW = 0.5
+                        * Math.signum(setpointSW - _platformSouthWestSim.getPositionMeters());
 
         outputs.voltageCommandNorthEast = northEastVoltage;
         outputs.voltageCommandNorthWest = northWestVoltage;
         outputs.voltageCommandSouthWest = southWestVoltage;
-        outputs.voltageFeedForwards = new double[] {ffVolts, ffVolts, ffVolts};
+        outputs.voltageFeedForwards = new double[] {ffVoltsNE, ffVoltsNW, ffVoltsSW};
 
-        _platformNorthEastSim.setInputVoltage(Math.min(batteryVoltage, northEastVoltage + ffVolts));
-        _platformNorthWestSim.setInputVoltage(Math.min(batteryVoltage, northWestVoltage + ffVolts));
-        _platformSouthWestSim.setInputVoltage(Math.min(batteryVoltage, southWestVoltage + ffVolts));
+        _platformNorthEastSim.setInputVoltage(Math.min(batteryVoltage, northEastVoltage + ffVoltsNE));
+        _platformNorthWestSim.setInputVoltage(Math.min(batteryVoltage, northWestVoltage + ffVoltsNW));
+        _platformSouthWestSim.setInputVoltage(Math.min(batteryVoltage, southWestVoltage + ffVoltsSW));
     }
 }

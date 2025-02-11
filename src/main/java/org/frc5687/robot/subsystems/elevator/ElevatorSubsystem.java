@@ -1,6 +1,11 @@
 package org.frc5687.robot.subsystems.elevator;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
@@ -10,10 +15,37 @@ import org.frc5687.robot.subsystems.OutliersSubsystem;
 
 public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, ElevatorOutputs> {
     private final RobotStateManager _robotState = RobotStateManager.getInstance();
+    private final RobotContainer _container;
+
+    private final PIDController _pitchController;
+    private final PIDController _rollController;
+
+    private final Constraints _profileConstraints;
+    private State _profileSetpoint;
+    private State _profileGoal;
+    private TrapezoidProfile profile;
 
     public ElevatorSubsystem(RobotContainer container, ElevatorIO io) {
         super(container, io, new ElevatorInputs(), new ElevatorOutputs());
         this.setToSeparateControl(true);
+        _container = container;
+
+        _pitchController =
+                new PIDController(Constants.Elevator.PITCH_kP, 0.0, Constants.Elevator.PITCH_kD);
+        _rollController =
+                new PIDController(Constants.Elevator.ROLL_kP, 0.0, Constants.Elevator.ROLL_kD);
+        _pitchController.setSetpoint(0.0);
+        _rollController.setSetpoint(0.0);
+        _pitchController.setTolerance(Units.degreesToRadians(0.1));
+        _rollController.setTolerance(Units.degreesToRadians(0.1));
+
+        _profileConstraints =
+                new Constraints(
+                        Constants.Elevator.MAX_VELOCITY_MPS_NORTH, Constants.Elevator.MAX_ACCELERATION_MPSS);
+
+        profile = new TrapezoidProfile(_profileConstraints);
+        _profileSetpoint = null;
+        _profileGoal = new State(0.0, 0.0);
     }
 
     @Override
@@ -27,16 +59,46 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         _robotState.updatePlatform(
                 _inputs.firstStagePositionMeters,
                 _inputs.platformPitchRadians,
-                _inputs.platformPitchRadians);
+                _inputs.platformRollRadians);
 
         _inputs.platformHeightMeters = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP).getZ();
-
         _inputs.stagePose = _robotState.getPose(RobotCoordinate.ELEVATOR_STAGE);
         _inputs.platformPose = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP);
     }
 
     @Override
-    protected void periodic(ElevatorInputs inputs, ElevatorOutputs outputs) {}
+    protected void periodic(ElevatorInputs inputs, ElevatorOutputs outputs) {
+        if (_profileSetpoint == null) {
+            _profileSetpoint = new State(inputs.firstStagePositionMeters, inputs.platformVelocityMPS);
+        }
+
+        _profileGoal = new State(outputs.desiredStageHeight, 0.0);
+
+        State newSetpoint =
+                profile.calculate(Constants.Elevator.PERIOD, _profileGoal, _profileSetpoint);
+        _profileSetpoint = newSetpoint;
+
+        double baseHeight = newSetpoint.position;
+        outputs.desiredStageHeight = baseHeight;
+
+        double pitchCorrection = _pitchController.calculate(inputs.platformPitchRadians, 0.0);
+        double rollCorrection = _rollController.calculate(inputs.platformRollRadians, 0.0);
+
+        pitchCorrection =
+                MathUtil.clamp(
+                        pitchCorrection,
+                        -Constants.Elevator.MAX_POSITION_CORRECTION,
+                        Constants.Elevator.MAX_POSITION_CORRECTION);
+        rollCorrection =
+                MathUtil.clamp(
+                        rollCorrection,
+                        -Constants.Elevator.MAX_POSITION_CORRECTION,
+                        Constants.Elevator.MAX_POSITION_CORRECTION);
+
+        outputs.northWestStageHeight = baseHeight - pitchCorrection + rollCorrection;
+        outputs.northEastStageHeight = baseHeight - pitchCorrection - rollCorrection;
+        outputs.southWestStageHeight = baseHeight + pitchCorrection + rollCorrection;
+    }
 
     public void setDesiredPlatformHeightWorld(double heightMeters) {
         heightMeters =
@@ -45,7 +107,9 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
                         Constants.Elevator.MIN_PLATFORM_HEIGHT,
                         Constants.Elevator.MAX_PLATFORM_HEIGHT);
         _outputs.desiredPlatformHeightWorldMeters = heightMeters;
+
         _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
+
         _outputs.desiredPlatformPitchRadians = 0.0;
         _outputs.desiredPlatformRollRadians = 0.0;
     }
@@ -78,7 +142,6 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     public void mapToClosestState() {
         ElevatorState closestState = ElevatorState.STOWED;
         double minDist = Double.MAX_VALUE;
-
         for (ElevatorState state : ElevatorState.values()) {
             double heightDiff = Math.abs(getPlatformWorldHeight() - state.getValue());
             if (heightDiff < minDist) {

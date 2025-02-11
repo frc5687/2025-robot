@@ -22,7 +22,7 @@ public class SuperstructurePlace extends OutliersCommand {
     @Override
     public void initialize() {
         super.initialize();
-        _elevator.setDesiredPlatformHeightWorld(_elevator.getCurrentState().getValue() - 0.2);
+        _elevator.setDesiredPlatformHeightWorld(_elevator.getPlatformWorldHeight() - 0.2);
         _algae.setDesiredState(AlgaeState.IDLE);
     }
 
