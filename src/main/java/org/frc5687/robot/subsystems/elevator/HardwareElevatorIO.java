@@ -202,7 +202,7 @@ public class HardwareElevatorIO implements ElevatorIO {
         double gearRatio =
                 isNorth ? Constants.Elevator.GEAR_RATIO_NORTH : Constants.Elevator.GEAR_RATIO_SOUTH;
         double metersToRotations = (1.0 / (Constants.Elevator.DRUM_RADIUS)) * gearRatio;
-        // Retain the configuration for motion magic/expo (only slot1 is used for position hold)
+
         config.MotionMagic.MotionMagicCruiseVelocity = 0;
         config.MotionMagic.MotionMagicExpo_kA = Constants.Elevator.MOTION_MAGIC_EXPO_KA;
         config.MotionMagic.MotionMagicExpo_kV = Constants.Elevator.MOTION_MAGIC_EXPO_KV;
