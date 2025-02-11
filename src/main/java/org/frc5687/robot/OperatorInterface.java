@@ -34,7 +34,7 @@ public class OperatorInterface {
 
         _driverController.a().onTrue(SuperstructureFactory.receiveFromFunnel(container));
         _driverController.b().onTrue(SuperstructureFactory.placeCoralL2(container));
-        _driverController.x().onTrue(SuperstructureFactory.receiveFromIntake(container));
+        _driverController.x().onTrue(SuperstructureFactory.placeCoralL4(container, false));
         _driverController.y().onTrue(SuperstructureFactory.placeAndStow(container));
         _driverController
                 .leftBumper()

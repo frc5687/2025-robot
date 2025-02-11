@@ -5,7 +5,7 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -33,9 +33,9 @@ public class HardwareElevatorIO implements ElevatorIO {
     private final StatusSignal<Angle> _imuPitch;
     private final StatusSignal<Angle> _imuRoll;
 
-    private final PositionVoltage _northWestPositionTorqueRequest;
-    private final PositionVoltage _northEastPositionTorqueRequest;
-    private final PositionVoltage _southWestPositionTorqueRequest;
+    private final MotionMagicExpoTorqueCurrentFOC _northWestPositionTorqueRequest;
+    private final MotionMagicExpoTorqueCurrentFOC _northEastPositionTorqueRequest;
+    private final MotionMagicExpoTorqueCurrentFOC _southWestPositionTorqueRequest;
 
     private double _firstStageHeight = 0.0;
     private double _rollOffset = 0.0;
@@ -56,9 +56,9 @@ public class HardwareElevatorIO implements ElevatorIO {
         _southWestVelocity = _southWestElevatorMotor.getVelocity();
         _southWestPosition = _southWestElevatorMotor.getPosition();
 
-        _northWestPositionTorqueRequest = new PositionVoltage(0).withSlot(0).withEnableFOC(true);
-        _northEastPositionTorqueRequest = new PositionVoltage(0).withSlot(0).withEnableFOC(true);
-        _southWestPositionTorqueRequest = new PositionVoltage(0).withSlot(0).withEnableFOC(true);
+        _northWestPositionTorqueRequest = new MotionMagicExpoTorqueCurrentFOC(0).withSlot(0);
+        _northEastPositionTorqueRequest = new MotionMagicExpoTorqueCurrentFOC(0).withSlot(0);
+        _southWestPositionTorqueRequest = new MotionMagicExpoTorqueCurrentFOC(0).withSlot(0);
 
         _imuPitch = _imu.getPitch();
         _imuRoll = _imu.getRoll();
@@ -156,29 +156,16 @@ public class HardwareElevatorIO implements ElevatorIO {
     @Override
     public void writeOutputs(ElevatorOutputs outputs) {
         double nwRotations =
-                Units.radiansToRotations(outputs.northWestStageHeight / Constants.Elevator.DRUM_RADIUS)
+                Units.radiansToRotations(outputs.desiredStageHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO_NORTH;
 
         System.out.println(nwRotations);
         double neRotations =
-                Units.radiansToRotations(outputs.northEastStageHeight / Constants.Elevator.DRUM_RADIUS)
+                Units.radiansToRotations(outputs.desiredStageHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO_NORTH;
         double swRotations =
-                Units.radiansToRotations(outputs.southWestStageHeight / Constants.Elevator.DRUM_RADIUS)
+                Units.radiansToRotations(outputs.desiredStageHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO_SOUTH;
-
-        double nwRotationsVel =
-                outputs.northWestStageVel
-                        * Constants.Elevator.GEAR_RATIO_NORTH
-                        / Constants.Elevator.DRUM_RADIUS;
-        double neRotationsVel =
-                outputs.northEastStageVel
-                        * Constants.Elevator.GEAR_RATIO_NORTH
-                        / Constants.Elevator.DRUM_RADIUS;
-        double swRotationsVel =
-                outputs.southWestStageVel
-                        * Constants.Elevator.GEAR_RATIO_SOUTH
-                        / Constants.Elevator.DRUM_RADIUS;
 
         outputs.usingPositionHolding = true;
         _northWestElevatorMotor.setControl(_northWestPositionTorqueRequest.withPosition(nwRotations));
@@ -215,6 +202,7 @@ public class HardwareElevatorIO implements ElevatorIO {
         config.Slot0.kS = Constants.Elevator.HOLD_kS;
         config.Slot0.kV = Constants.Elevator.HOLD_kV;
         config.Slot0.kA = Constants.Elevator.HOLD_kA;
+        config.Slot0.kG = Constants.Elevator.HOLD_kG;
 
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = Constants.Elevator.CURRENT_LIMIT;

@@ -37,11 +37,10 @@ public class TunableDouble {
         return _value;
     }
 
-
     public boolean hasChanged() {
         get();
         boolean changed = _hasChanged;
-        _hasChanged = false; 
+        _hasChanged = false;
         return changed;
     }
 
