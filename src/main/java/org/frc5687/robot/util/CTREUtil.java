@@ -1,51 +1,68 @@
-// package org.frc5687.robot.util;
+package org.frc5687.robot.util;
 
-// import com.ctre.phoenix6.StatusCode;
-// import com.ctre.phoenix6.configs.CANcoderConfiguration;
-// import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-// import com.ctre.phoenix6.configs.TalonFXConfiguration;
-// import com.ctre.phoenix6.hardware.CANcoder;
-// import com.ctre.phoenix6.hardware.TalonFX;
-// import edu.wpi.first.wpilibj.DriverStation;
-// import java.util.function.Supplier;
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import edu.wpi.first.wpilibj.DriverStation;
+import java.util.function.Supplier;
 
-// // Yoink 254 retry confuration logic
-// public class CTREUtil {
-//     private static final int MAX_RETRIES = 10;
+public class CTREUtil {
+    private static final int MAX_RETRIES = 5;
 
-//     private static StatusCode tryUntilOK(Supplier<StatusCode> function, int deviceId) {
-//         StatusCode statusCode = StatusCode.OK;
+    private static StatusCode retryConfiguration(
+            Supplier<StatusCode> function, int deviceId, String deviceType) {
+        StatusCode status = StatusCode.StatusCodeNotInitialized;
 
-//         for (int i = 0; i < MAX_RETRIES && statusCode != StatusCode.OK; i++) {
-//             statusCode = function.get();
-//         }
+        for (int i = 0; i < MAX_RETRIES; ++i) {
+            status = function.get();
+            if (status.isOK()) {
+                return status;
+            }
+            try {
+                Thread.sleep(20); // Small delay between retries
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
 
-//         if (statusCode != StatusCode.OK) {
-//             String errorMsg =
-//                     String.format(
-//                             "Error calling %s on CTRE device ID %d: %s", function, deviceId,
-// statusCode);
-//             DriverStation.reportError(errorMsg, true);
-//         }
+        if (!status.isOK()) {
+            String errorMsg =
+                    String.format(
+                            "Failed to configure %s (ID %d) after %d attempts. Error: %s",
+                            deviceType, deviceId, MAX_RETRIES, status.toString());
+            DriverStation.reportError(errorMsg, true);
+        }
 
-//         return statusCode;
-//     }
+        return status;
+    }
 
-//     public static StatusCode applyConfiguration(TalonFX motor, TalonFXConfiguration config) {
-//         return tryUntilOK(() -> motor.getConfigurator().apply(config), motor.getDeviceID());
-//     }
+    public static StatusCode applyConfiguration(TalonFX motor, TalonFXConfiguration config) {
+        return retryConfiguration(
+                () -> motor.getConfigurator().apply(config), motor.getDeviceID(), "TalonFX");
+    }
 
-//     public static StatusCode applyConfiguration(TalonFX motor, CurrentLimitsConfigs config) {
-//         return tryUntilOK(() -> motor.getConfigurator().apply(config), motor.getDeviceID());
-//     }
+    public static StatusCode applyConfiguration(TalonFX motor, CurrentLimitsConfigs config) {
+        return retryConfiguration(
+                () -> motor.getConfigurator().apply(config), motor.getDeviceID(), "TalonFX");
+    }
 
-//     public static StatusCode applyConfiguration(CANcoder cancoder, CANcoderConfiguration config)
-// {
-//         return tryUntilOK(() -> cancoder.getConfigurator().apply(config),
-// cancoder.getDeviceID());
-//     }
+    public static StatusCode applyConfiguration(TalonFX motor, Slot0Configs config) {
+        return retryConfiguration(
+                () -> motor.getConfigurator().apply(config), motor.getDeviceID(), "TalonFX");
+    }
 
-//     public static StatusCode refreshConfiguration(TalonFX motor, TalonFXConfiguration config) {
-//         return tryUntilOK(() -> motor.getConfigurator().refresh(config), motor.getDeviceID());
-//     }
-// }
+    public static StatusCode applyConfiguration(CANcoder cancoder, CANcoderConfiguration config) {
+        return retryConfiguration(
+                () -> cancoder.getConfigurator().apply(config), cancoder.getDeviceID(), "CANcoder");
+    }
+
+    public static StatusCode refreshConfiguration(TalonFX motor, TalonFXConfiguration config) {
+        return retryConfiguration(
+                () -> motor.getConfigurator().refresh(config), motor.getDeviceID(), "TalonFX");
+    }
+}

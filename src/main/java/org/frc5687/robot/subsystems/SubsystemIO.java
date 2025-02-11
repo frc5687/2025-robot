@@ -12,4 +12,7 @@ public interface SubsystemIO<Inputs extends BaseInputs, Outputs extends BaseOutp
 
     /* This is only really for zeroing sensors */
     default void reset() {}
+
+    default void setPID(
+            double kP, double kI, double kD, double kV, double kS, double kA, double kG) {}
 }

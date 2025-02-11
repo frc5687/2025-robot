@@ -20,6 +20,15 @@ public class ElevatorOutputs extends BaseOutputs {
     @Logged(name = "Desired South West Stage Height (m)", importance = Logged.Importance.CRITICAL)
     public double southWestStageHeight = 0.0;
 
+    @Logged(name = "Desired North West Stage Velocity (mps)", importance = Logged.Importance.CRITICAL)
+    public double northWestStageVel = 0.0;
+
+    @Logged(name = "Desired North East Stage Velocity (mps)", importance = Logged.Importance.CRITICAL)
+    public double northEastStageVel = 0.0;
+
+    @Logged(name = "Desired South West Stage Velocty (mps)", importance = Logged.Importance.CRITICAL)
+    public double southWestStageVel = 0.0;
+
     @Logged(name = "Desired Platform Height World(m)", importance = Logged.Importance.CRITICAL)
     public double desiredPlatformHeightWorldMeters = 0.0;
 

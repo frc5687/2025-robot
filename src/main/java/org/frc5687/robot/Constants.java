@@ -268,7 +268,6 @@ public class Constants {
         public static final double HOLD_kV = 0.0;
         public static final double HOLD_kA = 0.0;
 
-
         // public static final double EXPO_MOTION_kP = 9.0;
         // public static final double EXPO_MOTION_kP = 10.0;
         // public static final double EXPO_MOTION_kI = 0.0;

@@ -136,10 +136,8 @@ public class SimElevatorIO implements ElevatorIO {
                 _southWestPIDController.calculate(_platformSouthWestSim.getPositionMeters());
 
         double ffVoltsNE = 0.5 * Math.signum(setpointNE - _platformNorthEastSim.getPositionMeters());
-        double ffVoltsNW = 0.5
-                        * Math.signum(setpointNW - _platformNorthWestSim.getPositionMeters());
-        double ffVoltsSW = 0.5
-                        * Math.signum(setpointSW - _platformSouthWestSim.getPositionMeters());
+        double ffVoltsNW = 0.5 * Math.signum(setpointNW - _platformNorthWestSim.getPositionMeters());
+        double ffVoltsSW = 0.5 * Math.signum(setpointSW - _platformSouthWestSim.getPositionMeters());
 
         outputs.voltageCommandNorthEast = northEastVoltage;
         outputs.voltageCommandNorthWest = northWestVoltage;
@@ -150,4 +148,6 @@ public class SimElevatorIO implements ElevatorIO {
         _platformNorthWestSim.setInputVoltage(Math.min(batteryVoltage, northWestVoltage + ffVoltsNW));
         _platformSouthWestSim.setInputVoltage(Math.min(batteryVoltage, southWestVoltage + ffVoltsSW));
     }
+
+    public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {}
 }

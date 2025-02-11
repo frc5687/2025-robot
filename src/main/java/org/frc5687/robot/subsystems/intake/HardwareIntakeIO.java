@@ -61,7 +61,7 @@ public class HardwareIntakeIO implements IntakeIO {
         inputs.encoderAngleRads = _encoder.getAngle();
         inputs.angleRads =
                 Units.rotationsToRadians(_armAngle.getValueAsDouble() / Constants.Intake.GEAR_RATIO);
-        System.out.println(_armAngle.getValueAsDouble());
+        // System.out.println(_armAngle.getValueAsDouble());
         inputs.rollerVelocityRadperSec = Units.rotationsToRadians(_rollerVelocity.getValueAsDouble());
         inputs.rollerTemperatureCelsius = _rollerMotor.getDeviceTemp().getValueAsDouble();
 
@@ -71,18 +71,19 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void writeOutputs(IntakeOutputs Outputs) {
-        _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
-        _beltMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
+        // _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
+        // _beltMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
         // _pivotMotor.setControl(
         //         _pivotPositionReq.withPosition(
         //                 Units.radiansToRotations(Outputs.desiredAngleRad) *
         // Constants.Intake.GEAR_RATIO));
-        _pivotMotor.setControl(
-                _pivotPosition.withPosition(
-                        Units.radiansToRotations(Outputs.desiredAngleRad) * Constants.Intake.GEAR_RATIO));
-        System.out.println(
-                Units.radiansToRotations(Outputs.desiredAngleRad) * Constants.Intake.GEAR_RATIO);
-        System.out.println(_pivotMotor.getClosedLoopReference());
+        // _pivotMotor.setControl(
+        //         _pivotPosition.withPosition(
+        //                 Units.radiansToRotations(Outputs.desiredAngleRad) *
+        // Constants.Intake.GEAR_RATIO));
+        // System.out.println(
+        //         Units.radiansToRotations(Outputs.desiredAngleRad) * Constants.Intake.GEAR_RATIO);
+        // System.out.println(_pivotMotor.getClosedLoopReference());
         // _pivotMotor.setControl(new VoltageOut(3));
     }
 

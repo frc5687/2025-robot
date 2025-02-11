@@ -12,6 +12,7 @@ import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.Geometry;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
+import org.frc5687.robot.util.TunableDouble;
 
 public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, ElevatorOutputs> {
     private final RobotStateManager _robotState = RobotStateManager.getInstance();
@@ -21,9 +22,17 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     private final PIDController _rollController;
 
     private final Constraints _profileConstraints;
-    private State _profileSetpoint;
-    private State _profileGoal;
     private TrapezoidProfile profile;
+    private State _setpoint = new State(0, 0); // Current profile state
+    private State _goal = new State(0, 0); // Desired goal state
+
+    private TunableDouble elevatorP = new TunableDouble("Elevator", "kP", 0);
+    private TunableDouble elevatorI = new TunableDouble("Elevator", "kI", 0);
+    private TunableDouble elevatorD = new TunableDouble("Elevator", "kD", 0);
+    private TunableDouble elevatorA = new TunableDouble("Elevator", "kA", 0);
+    private TunableDouble elevatorS = new TunableDouble("Elevator", "kS", 0);
+    private TunableDouble elevatorG = new TunableDouble("Elevator", "kG", 0);
+    private TunableDouble elevatorV = new TunableDouble("Elevator", "kv", 0);
 
     public ElevatorSubsystem(RobotContainer container, ElevatorIO io) {
         super(container, io, new ElevatorInputs(), new ElevatorOutputs());
@@ -41,11 +50,10 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
 
         _profileConstraints =
                 new Constraints(
-                        Constants.Elevator.MAX_VELOCITY_MPS_NORTH, Constants.Elevator.MAX_ACCELERATION_MPSS);
+                        Constants.Elevator.MAX_VELOCITY_MPS_NORTH / 2,
+                        Constants.Elevator.MAX_ACCELERATION_MPSS / 2);
 
         profile = new TrapezoidProfile(_profileConstraints);
-        _profileSetpoint = null;
-        _profileGoal = new State(0.0, 0.0);
     }
 
     @Override
@@ -68,21 +76,36 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
 
     @Override
     protected void periodic(ElevatorInputs inputs, ElevatorOutputs outputs) {
-        if (_profileSetpoint == null) {
-            _profileSetpoint = new State(inputs.firstStagePositionMeters, inputs.platformVelocityMPS);
+        // Update PID if needed
+        if (elevatorP.hasChanged()
+                || elevatorI.hasChanged()
+                || elevatorD.hasChanged()
+                || elevatorV.hasChanged()
+                || elevatorA.hasChanged()
+                || elevatorS.hasChanged()
+                || elevatorG.hasChanged()) {
+            _io.setPID(
+                    elevatorP.get(),
+                    elevatorI.get(),
+                    elevatorD.get(),
+                    elevatorV.get(),
+                    elevatorS.get(),
+                    elevatorA.get(),
+                    elevatorG.get());
         }
 
-        _profileGoal = new State(outputs.desiredStageHeight, 0.0);
+        _goal = new State(_outputs.desiredStageHeight, 0);
+        _setpoint = profile.calculate(Constants.Elevator.PERIOD, _setpoint, _goal);
+        System.out.println(_setpoint.position);
+        System.out.println(_goal.position);
 
-        State newSetpoint =
-                profile.calculate(Constants.Elevator.PERIOD, _profileGoal, _profileSetpoint);
-        _profileSetpoint = newSetpoint;
+        outputs.desiredStageHeight = _setpoint.position;
+        outputs.northWestStageVel = _setpoint.velocity;
+        outputs.northEastStageVel = _setpoint.velocity;
+        outputs.southWestStageVel = _setpoint.velocity;
 
-        double baseHeight = newSetpoint.position;
-        outputs.desiredStageHeight = baseHeight;
-
-        double pitchCorrection = _pitchController.calculate(inputs.platformPitchRadians, 0.0);
-        double rollCorrection = _rollController.calculate(inputs.platformRollRadians, 0.0);
+        double pitchCorrection = _pitchController.calculate(inputs.platformPitchRadians);
+        double rollCorrection = _rollController.calculate(inputs.platformRollRadians);
 
         pitchCorrection =
                 MathUtil.clamp(
@@ -95,9 +118,9 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
                         -Constants.Elevator.MAX_POSITION_CORRECTION,
                         Constants.Elevator.MAX_POSITION_CORRECTION);
 
-        outputs.northWestStageHeight = baseHeight - pitchCorrection + rollCorrection;
-        outputs.northEastStageHeight = baseHeight - pitchCorrection - rollCorrection;
-        outputs.southWestStageHeight = baseHeight + pitchCorrection + rollCorrection;
+        outputs.northWestStageHeight = _setpoint.position;
+        outputs.northEastStageHeight = _setpoint.position;
+        outputs.southWestStageHeight = _setpoint.position;
     }
 
     public void setDesiredPlatformHeightWorld(double heightMeters) {
@@ -106,13 +129,29 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
                         heightMeters,
                         Constants.Elevator.MIN_PLATFORM_HEIGHT,
                         Constants.Elevator.MAX_PLATFORM_HEIGHT);
+
         _outputs.desiredPlatformHeightWorldMeters = heightMeters;
 
-        _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
+        double stageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
+        _outputs.desiredStageHeight = stageHeight;
 
         _outputs.desiredPlatformPitchRadians = 0.0;
         _outputs.desiredPlatformRollRadians = 0.0;
     }
+
+    // public void setDesiredPlatformHeightWorld(double heightMeters) {
+    //     heightMeters =
+    //             MathUtil.clamp(
+    //                     heightMeters,
+    //                     Constants.Elevator.MIN_PLATFORM_HEIGHT,
+    //                     Constants.Elevator.MAX_PLATFORM_HEIGHT);
+    //     _outputs.desiredPlatformHeightWorldMeters = heightMeters;
+
+    //     _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
+
+    //     _outputs.desiredPlatformPitchRadians = 0.0;
+    //     _outputs.desiredPlatformRollRadians = 0.0;
+    // }
 
     public void setDesiredState(ElevatorState state) {
         setDesiredPlatformHeightWorld(state.getValue());
