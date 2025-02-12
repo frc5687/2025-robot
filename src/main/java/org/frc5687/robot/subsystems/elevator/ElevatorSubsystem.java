@@ -3,6 +3,7 @@ package org.frc5687.robot.subsystems.elevator;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
+import java.util.Optional;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
@@ -26,6 +27,8 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     private TunableDouble elevatorG = new TunableDouble("Elevator", "kG", Constants.Elevator.HOLD_kG);
     private TunableDouble elevatorV = new TunableDouble("Elevator", "kv", Constants.Elevator.HOLD_kA);
 
+    private Optional<Double> _newDesiredPlatformHeight;
+
     public ElevatorSubsystem(RobotContainer container, ElevatorIO io) {
         super(container, io, new ElevatorInputs(), new ElevatorOutputs());
         this.setToSeparateControl(true);
@@ -39,6 +42,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         _rollController.setSetpoint(0.0);
         _pitchController.setTolerance(Units.degreesToRadians(0.1));
         _rollController.setTolerance(Units.degreesToRadians(0.1));
+        _newDesiredPlatformHeight = Optional.empty();
     }
 
     @Override
@@ -92,6 +96,17 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
                         rollCorrection,
                         -Constants.Elevator.MAX_POSITION_CORRECTION,
                         Constants.Elevator.MAX_POSITION_CORRECTION);
+
+        if (_newDesiredPlatformHeight.isPresent()) {
+            double heightMeters = _newDesiredPlatformHeight.get();
+            _outputs.desiredPlatformHeightWorldMeters = heightMeters;
+            _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
+            _newDesiredPlatformHeight = Optional.empty();
+        }
+
+        outputs.northEastStageHeight = outputs.desiredStageHeight;
+        outputs.northWestStageHeight = outputs.desiredStageHeight;
+        outputs.southWestStageHeight = outputs.desiredStageHeight;
     }
 
     public void setDesiredPlatformHeightWorld(double heightMeters) {
@@ -100,12 +115,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
                         heightMeters,
                         Constants.Elevator.MIN_PLATFORM_HEIGHT,
                         Constants.Elevator.MAX_PLATFORM_HEIGHT);
-        _outputs.desiredPlatformHeightWorldMeters = heightMeters;
-
-        _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
-
-        _outputs.desiredPlatformPitchRadians = 0.0;
-        _outputs.desiredPlatformRollRadians = 0.0;
+        _newDesiredPlatformHeight = Optional.of(heightMeters);
     }
 
     public void setDesiredState(ElevatorState state) {
