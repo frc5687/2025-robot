@@ -52,6 +52,7 @@ public class DriveToPose extends OutliersCommand {
     public void execute(double timestamp) {
         Pose2d currentPose = _drive.getPose();
         Pose2d targetPose = _poseSupplier.get();
+        log("DriveToPose Target", targetPose, Pose2d.struct);
 
         double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
         double ffScaler =
