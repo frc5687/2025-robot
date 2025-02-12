@@ -1,10 +1,11 @@
 package org.frc5687.robot;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import org.frc5687.robot.commands.algae.AlgaeSetState;
+import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
-import org.frc5687.robot.subsystems.algaearm.AlgaeState;
+import org.frc5687.robot.util.FieldConstants.ReefHeight;
 import org.frc5687.robot.util.Helpers;
+import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class OperatorInterface {
     private final CommandXboxController _driverController;
@@ -36,12 +37,21 @@ public class OperatorInterface {
         _driverController.b().onTrue(SuperstructureFactory.placeCoralL2(container));
         _driverController.x().onTrue(SuperstructureFactory.placeCoralL4(container, false));
         _driverController.y().onTrue(SuperstructureFactory.placeAndStow(container));
-        _driverController
-                .leftBumper()
-                .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.REEF_PICKUP));
+        // _driverController
+        //         .leftBumper()
+        //         .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.REEF_PICKUP));
+        // _driverController
+        //         .rightBumper()
+        //         .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.IDLE_WITH_ALGAE));
         _driverController
                 .rightBumper()
-                .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.IDLE_WITH_ALGAE));
+                .whileTrue(
+                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT, ReefHeight.L4));
+        _driverController
+                .leftBumper()
+                .whileTrue(
+                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT, ReefHeight.L4));
+
         // _driverController
         //         .leftTrigger()
         //         .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.GROUND_PICKUP));

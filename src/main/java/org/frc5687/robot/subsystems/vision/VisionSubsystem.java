@@ -10,6 +10,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     private static final double MIN_AMBIGUITY = 0.3;
     private static final double MAX_LATENCY_MS = 100.0;
     private static final double MULTI_TAG_AMBIGUITY_THRESHOLD = 0.1;
+    private static final double MAX_DISTANCE = 4;
 
     public VisionSubsystem(RobotContainer container, VisionIO io) {
         super(container, io, new VisionInputs(), new VisionOutputs());
@@ -25,7 +26,9 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         double ambiguityThreshold = MIN_AMBIGUITY;
         double latencyMs = observation.getLatency() * 1000.0;
 
-        return observation.getAmbiguity() < ambiguityThreshold && latencyMs < MAX_LATENCY_MS;
+        return observation.getAmbiguity() < ambiguityThreshold
+                && latencyMs < MAX_LATENCY_MS
+                && observation.get2dDistance() < MAX_DISTANCE;
     }
 
     public AprilTagObservation[] getValidTags() {

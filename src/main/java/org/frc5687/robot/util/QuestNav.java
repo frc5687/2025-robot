@@ -1,7 +1,5 @@
 package org.frc5687.robot.util;
 
-import static edu.wpi.first.math.util.Units.inchesToMeters;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
@@ -49,14 +47,14 @@ public class QuestNav {
 
     // Position of the quest on the robot (6" forward, centered side-to-side, pointed forward))
     private final Transform2d robotToQuest =
-            new Transform2d(inchesToMeters(6), 0.0, new Rotation2d());
+            new Transform2d(-0.14, -0.34, new Rotation2d(-Math.PI / 2.0));
 
     /* Constructor */
     public QuestNav() {
         // Zero the absolute 3D position of the robot (similar to long-pressing the quest logo)
-        if (questMiso.get() != 99) {
-            questMosi.set(1);
-        }
+        // if (questMiso.get() != 99) {
+        //     questMosi.set(1);
+        // }
     }
 
     /**

@@ -159,7 +159,6 @@ public class HardwareElevatorIO implements ElevatorIO {
                 Units.radiansToRotations(outputs.desiredStageHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO_NORTH;
 
-        System.out.println(nwRotations);
         double neRotations =
                 Units.radiansToRotations(outputs.desiredStageHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO_NORTH;
