@@ -273,6 +273,14 @@ public class Constants {
         public static final double HOLD_kV = 0.09;
         public static final double HOLD_kA = 0.05;
 
+        public static final double STAB_kP = 4.0; // 2.5
+        public static final double STAB_kI = 0.0;
+        public static final double STAB_kD = 0.04;
+        public static final double STAB_kS = 0.0;
+        public static final double STAB_kV = 0.0;
+        public static final double STAB_kA = 0.0;
+        public static final double STAB_kG = 0.0;
+
         // public static final double EXPO_MOTION_kP = 9.0;
         // public static final double EXPO_MOTION_kP = 10.0;
         // public static final double EXPO_MOTION_kI = 0.0;
@@ -284,8 +292,8 @@ public class Constants {
 
         public static final double PITCH_kP = 0.9;
         public static final double PITCH_kD = 0.09;
-        public static final double ROLL_kP = 0.1;
-        public static final double ROLL_kD = 0.01;
+        public static final double ROLL_kP = 0.2;
+        public static final double ROLL_kD = 0.02;
 
         public static final boolean NORTH_WEST_INVERTED = false;
         public static final boolean NORTH_EAST_INVERTED = true;

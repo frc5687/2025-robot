@@ -4,6 +4,7 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -52,6 +53,11 @@ public class CTREUtil {
     }
 
     public static StatusCode applyConfiguration(TalonFX motor, Slot0Configs config) {
+        return retryConfiguration(
+                () -> motor.getConfigurator().apply(config), motor.getDeviceID(), "TalonFX");
+    }
+
+    public static StatusCode applyConfiguration(TalonFX motor, Slot1Configs config) {
         return retryConfiguration(
                 () -> motor.getConfigurator().apply(config), motor.getDeviceID(), "TalonFX");
     }

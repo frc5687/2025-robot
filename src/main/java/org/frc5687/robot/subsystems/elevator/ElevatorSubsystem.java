@@ -19,13 +19,24 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     private final PIDController _pitchController;
     private final PIDController _rollController;
 
-    private TunableDouble elevatorP = new TunableDouble("Elevator", "kP", Constants.Elevator.HOLD_kP);
-    private TunableDouble elevatorI = new TunableDouble("Elevator", "kI", Constants.Elevator.HOLD_kI);
-    private TunableDouble elevatorD = new TunableDouble("Elevator", "kD", Constants.Elevator.HOLD_kD);
-    private TunableDouble elevatorA = new TunableDouble("Elevator", "kA", Constants.Elevator.HOLD_kA);
-    private TunableDouble elevatorS = new TunableDouble("Elevator", "kS", Constants.Elevator.HOLD_kS);
-    private TunableDouble elevatorG = new TunableDouble("Elevator", "kG", Constants.Elevator.HOLD_kG);
-    private TunableDouble elevatorV = new TunableDouble("Elevator", "kv", Constants.Elevator.HOLD_kA);
+    private TunableDouble elevatorP = new TunableDouble("Elevator", "kP", Constants.Elevator.STAB_kP);
+    private TunableDouble elevatorI = new TunableDouble("Elevator", "kI", Constants.Elevator.STAB_kI);
+    private TunableDouble elevatorD = new TunableDouble("Elevator", "kD", Constants.Elevator.STAB_kD);
+    private TunableDouble elevatorA = new TunableDouble("Elevator", "kA", Constants.Elevator.STAB_kA);
+    private TunableDouble elevatorS = new TunableDouble("Elevator", "kS", Constants.Elevator.STAB_kS);
+    private TunableDouble elevatorG = new TunableDouble("Elevator", "kG", Constants.Elevator.STAB_kG);
+    private TunableDouble elevatorV = new TunableDouble("Elevator", "kv", Constants.Elevator.STAB_kA);
+
+    private TunableDouble PITCH_kP =
+            new TunableDouble("Elevator", "Pitch kP", Constants.Elevator.PITCH_kP);
+    private TunableDouble PITCH_kD =
+            new TunableDouble("Elevator", "Pitch kD", Constants.Elevator.PITCH_kD);
+    private TunableDouble ROLL_kP =
+            new TunableDouble("Elevator", "Roll kP", Constants.Elevator.ROLL_kP);
+    private TunableDouble ROLL_kD =
+            new TunableDouble("Elevator", "Roll kD", Constants.Elevator.ROLL_kD);
+
+    private TunableDouble backlashOffset = new TunableDouble("ElevatorHardware", "backlash", 0.012);
 
     private Optional<Double> _newDesiredPlatformHeight;
 
@@ -34,10 +45,8 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         this.setToSeparateControl(true);
         _container = container;
 
-        _pitchController =
-                new PIDController(Constants.Elevator.PITCH_kP, 0.0, Constants.Elevator.PITCH_kD);
-        _rollController =
-                new PIDController(Constants.Elevator.ROLL_kP, 0.0, Constants.Elevator.ROLL_kD);
+        _pitchController = new PIDController(PITCH_kP.get(), 0.0, PITCH_kD.get());
+        _rollController = new PIDController(ROLL_kP.get(), 0.0, ROLL_kD.get());
         _pitchController.setSetpoint(0.0);
         _rollController.setSetpoint(0.0);
         _pitchController.setTolerance(Units.degreesToRadians(0.1));
@@ -83,6 +92,11 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
                     elevatorG.get());
         }
 
+        _pitchController.setP(PITCH_kP.get());
+        _pitchController.setD(PITCH_kD.get());
+        _pitchController.setP(ROLL_kP.get());
+        _pitchController.setD(ROLL_kD.get());
+
         double pitchCorrection = _pitchController.calculate(inputs.platformPitchRadians);
         double rollCorrection = _rollController.calculate(inputs.platformRollRadians);
 
@@ -104,9 +118,21 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
             _newDesiredPlatformHeight = Optional.empty();
         }
 
-        outputs.northEastStageHeight = outputs.desiredStageHeight;
-        outputs.northWestStageHeight = outputs.desiredStageHeight;
-        outputs.southWestStageHeight = outputs.desiredStageHeight;
+        outputs.northEastStageHeight =
+                outputs.desiredStageHeight
+                        + (outputs.desiredStageHeight * backlashOffset.get())
+                        - pitchCorrection
+                        - rollCorrection;
+        outputs.northWestStageHeight =
+                outputs.desiredStageHeight
+                        + (outputs.desiredStageHeight * backlashOffset.get())
+                        - pitchCorrection
+                        + rollCorrection;
+        outputs.southWestStageHeight =
+                outputs.desiredStageHeight
+                        - (outputs.desiredStageHeight * backlashOffset.get())
+                        + pitchCorrection
+                        + rollCorrection;
     }
 
     public void setDesiredPlatformHeightWorld(double heightMeters) {
