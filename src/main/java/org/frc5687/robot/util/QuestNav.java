@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -15,6 +14,7 @@ import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
+import org.frc5687.robot.Constants;
 
 /**
  * Interface with the QuestNav on VR headset for pose estimation. See
@@ -45,10 +45,6 @@ public class QuestNav {
     // Pose of the robot when the pose was reset
     private Pose2d resetPoseRobot = new Pose2d();
 
-    // Position of the quest on the robot (6" forward, centered side-to-side, pointed forward))
-    private final Transform2d robotToQuest =
-            new Transform2d(-0.14, -0.34, new Rotation2d(-Math.PI / 2.0));
-
     /* Constructor */
     public QuestNav() {
         // Zero the absolute 3D position of the robot (similar to long-pressing the quest logo)
@@ -63,7 +59,7 @@ public class QuestNav {
      * @return pose of the robot
      */
     public Pose2d getRobotPose() {
-        return getQuestPose().transformBy(robotToQuest.inverse());
+        return getQuestPose().transformBy(Constants.Vision.ROBOT_TO_QUEST.inverse());
     }
 
     /**

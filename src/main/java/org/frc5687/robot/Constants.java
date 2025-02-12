@@ -1,7 +1,9 @@
 /* Team 5687 (C)2020-2022 */
 package org.frc5687.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -352,11 +354,6 @@ public class Constants {
     }
 
     public static class Vision {
-        public static final double VISION_kP = 3.0;
-        public static final double VISION_kI = 0.0;
-        public static final double VISION_kD = 0.2;
-        public static final double AMBIGUITY_TOLERANCE = 0.4;
-
         public static final Transform3d ROBOT_TO_NE_CAM =
                 new Transform3d(
                         0.291,
@@ -369,38 +366,7 @@ public class Constants {
                         0.284,
                         0.213,
                         new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(-10)));
-    }
-
-    public static class VisionConfig {
-        public static double STATE_STD_DEV_X = 0.01;
-        public static double STATE_STD_DEV_Y = 0.01;
-        public static double STATE_STD_DEV_ANGLE =
-                Units.degreesToRadians(0.5); // imu deviations lower number to trust
-
-        // more
-
-        // we can't change the odometry stddev easily,,,, just change the vision stddev
-        // --xavier bradford 02/25/24
-        public static class Auto {
-            public static double VISION_STD_DEV_X = 0.35;
-            public static double VISION_STD_DEV_Y = 0.35;
-            public static double VISION_STD_DEV_ANGLE =
-                    Units.degreesToRadians(900); // imu deviations lower number to
-            // trust
-        }
-
-        public static class Teleop {
-            public static double VISION_STD_DEV_X = 0.15;
-            public static double VISION_STD_DEV_Y = 0.15;
-            public static double VISION_STD_DEV_ANGLE =
-                    Units.degreesToRadians(900); // imu deviations lower number to
-            // trust
-        }
-    }
-
-    public static class RobotState {
-        public static final double VISION_TIMESTAMP_FUDGE = -0.00;
-
-        public static double VISION_AIMING_TOLERANCE = Units.degreesToRadians(2);
+        public static final Transform2d ROBOT_TO_QUEST =
+                new Transform2d(-0.14, -0.34, new Rotation2d(-Math.PI / 2.0));
     }
 }
