@@ -26,7 +26,7 @@ public class DriveToPose extends OutliersCommand {
         _poseSupplier = poseSupplier;
 
         _driveController =
-                new ProfiledPIDController(5, 0.0, 0.0, new TrapezoidProfile.Constraints(4.0, 5.0));
+                new ProfiledPIDController(4, 0.0, 0.0, new TrapezoidProfile.Constraints(3.0, 5.0));
 
         _thetaController =
                 new ProfiledPIDController(

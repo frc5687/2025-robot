@@ -151,7 +151,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     public Pose2d getPose() {
         // return _inputs.odometryPose;
-        return RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
+        return RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV).toPose2d();
     }
 
     public ChassisSpeeds getMeasuredChassisSpeeds() {

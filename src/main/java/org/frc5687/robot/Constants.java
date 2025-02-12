@@ -33,8 +33,8 @@ public class Constants {
         // Drive Motor Configuration
         public static final PIDConstants DRIVE_PID = new PIDConstants(0.00, 0.0, 0.0); // 10.0 kp
         public static final double DRIVE_KS =
-                0.032292; // 3 // This is the voltage to overcome static friction taken from sysid 0.0032292
-        public static final double DRIVE_KV = 0.15; // 0.15 taken from sysid 2.24
+                0.035; // 3 // This is the voltage to overcome static friction taken from sysid 0.0032292
+        public static final double DRIVE_KV = 0.13; // 0.15 taken from sysid 2.24
         public static final double DRIVE_KA = 0; // sysid 0.131
 
         // public static final PIDConstants DRIVE_PID = new PIDConstants(0.0, 0.0, 0.0); //10.0 kp
@@ -44,7 +44,7 @@ public class Constants {
         // public static final double DRIVE_KA = 0; // sysid 0.131
         public static final double DRIVE_CURRENT_LIMIT = 80.0;
 
-        public static final PIDConstants STEER_PID = new PIDConstants(30, 0.0, 0.0); // 10 kp
+        public static final PIDConstants STEER_PID = new PIDConstants(50, 0.0, 0.0); // 10 kp
         public static final double STEER_KS = 0.0;
         public static final double STEER_KV = 0.0;
         public static final double STEER_KA = 0.0;
@@ -113,7 +113,7 @@ public class Constants {
     public static class DriveTrain {
         public static final String CAN_BUS = "DriveTrain";
         public static final int NUM_MODULES = 4;
-        public static final double ROBOT_WEIGHT = Units.lbsToKilograms(120.0);
+        public static final double ROBOT_WEIGHT = Units.lbsToKilograms(140.0);
 
         // Size of the wheelbase in meters
         public static final double WIDTH = 0.5842; // meters
