@@ -47,6 +47,10 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
         return Math.abs(_inputs.angleRads - _outputs.desiredAngleRad) < 0.01;
     }
 
+    public boolean isIntakeCoralDetected() {
+        return _inputs.isCoralDetected;
+    }
+
     // This is to map to closest state incase of interrupt.
     public void mapToClosestState() {
         IntakeState closestState = IntakeState.STOWED;

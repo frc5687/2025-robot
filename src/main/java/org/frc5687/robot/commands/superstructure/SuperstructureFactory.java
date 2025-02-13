@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.coral.CoralSetState;
+import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.elevator.ElevatorSetState;
 import org.frc5687.robot.commands.intake.IntakeSetState;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
@@ -76,7 +77,7 @@ public class SuperstructureFactory {
                 SuperstructureGoals.RECEIVE_FROM_INTAKE,
                 new SequentialCommandGroup(
                         ensureClearance(container),
-                        setSuperstructure(container, SuperstructureGoals.RECEIVE_FROM_INTAKE)));
+                        new SuperstructureIntake(container, SuperstructureGoals.RECEIVE_FROM_INTAKE)));
     }
 
     public static Command placeCoralL4(RobotContainer container, boolean withAlgaeGrab) {
@@ -129,8 +130,8 @@ public class SuperstructureFactory {
     }
 
     public static Command place(RobotContainer container) {
-        return new SuperstructurePlace(
-                container.getElevator(), container.getCoral(), container.getAlgae());
+        return new SequentialCommandGroup(new EjectCoral(container.getCoral()), new SuperstructurePlace(
+                container.getElevator(), container.getCoral(), container.getAlgae()));
     }
 
     public static Command placeAndStow(RobotContainer container) {

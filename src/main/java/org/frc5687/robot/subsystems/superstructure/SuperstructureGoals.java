@@ -39,11 +39,11 @@ public class SuperstructureGoals {
 
     public static final SuperstructureState PLACE_CORAL_L4 =
             new SuperstructureState(
-                    ElevatorState.L4_CORAL_PLACING, CoralState.PLACING, AlgaeState.IDLE, IntakeState.IDLE);
+                    ElevatorState.L4_CORAL_PLACING, CoralState.PLACING_L4, AlgaeState.IDLE, IntakeState.IDLE);
     public static final SuperstructureState PLACE_CORAL_L4_ALGAE_GRAB =
             new SuperstructureState(
                     ElevatorState.L4_CORAL_PLACING,
-                    CoralState.PLACING,
+                    CoralState.PLACING_L4,
                     AlgaeState.REEF_PICKUP,
                     IntakeState.IDLE);
 

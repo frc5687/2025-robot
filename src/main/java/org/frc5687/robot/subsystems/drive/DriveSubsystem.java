@@ -70,7 +70,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
         _robotConfig =
                 new RobotConfig(
-                        Units.Pound.of(115),
+                        Units.Kilograms.of(Constants.DriveTrain.ROBOT_WEIGHT),
                         Units.KilogramSquareMeters.of(8.085),
                         new ModuleConfig(
                                 Constants.SwerveModule.WHEEL_RADIUS,

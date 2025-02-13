@@ -26,7 +26,7 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     public void setDesiredState(CoralState state) {
         _outputs.desiredState = state;
         setDesiredAngleRadians(state.getArmAngle());
-        setCoralWheelMotorVoltage(state.getRollerVoltage());
+        setWheelVoltageCommand(state.getRollerVoltage());
     }
 
     public void setWheelVoltageCommand(double voltage) {
@@ -50,15 +50,11 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     }
 
     public boolean isAtDesiredAngle() {
-        return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.01;
+        return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.05;
     }
 
     public boolean isCoralDetected() {
         return _inputs.isCoralDetected;
-    }
-
-    public void setCoralWheelMotorVoltage(double voltage) {
-        _outputs.wheelVoltageCommand = voltage;
     }
 
     public void setCurrentState(CoralState state) {

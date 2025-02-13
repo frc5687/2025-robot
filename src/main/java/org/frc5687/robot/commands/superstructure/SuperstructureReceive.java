@@ -39,7 +39,7 @@ public class SuperstructureReceive extends OutliersCommand {
     @Override
     public void execute(double timestamp) {
         if (_state == SuperstructureReceiveState.INTAKING) {
-            _coral.setCoralWheelMotorVoltage(6.0);
+            _coral.setWheelVoltageCommand(12.0);
             if (_coral.isCoralDetected()) {
                 _state = SuperstructureReceiveState.SAW_IT;
             }
@@ -53,8 +53,10 @@ public class SuperstructureReceive extends OutliersCommand {
         }
 
         if (_state == SuperstructureReceiveState.OUTTAKING) {
-            _coral.setCoralWheelMotorVoltage(-6.0);
-            if (Math.abs(timer - timestamp) >= 0.30) {
+            _coral.setWheelVoltageCommand(-12.0);
+            _coral.setArmAngle(45);
+            if (Math.abs(timer - timestamp) >= 0.075) {
+
                 _state = SuperstructureReceiveState.DONE;
             }
         }
@@ -67,7 +69,7 @@ public class SuperstructureReceive extends OutliersCommand {
 
     @Override
     public void end(boolean interrupted) {
-        _coral.setCoralWheelMotorVoltage(0.0);
+        _coral.setWheelVoltageCommand(0.0);
     }
 
     public enum SuperstructureReceiveState {

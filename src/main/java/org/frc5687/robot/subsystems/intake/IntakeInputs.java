@@ -28,4 +28,7 @@ public class IntakeInputs extends BaseInputs {
 
     @Logged(name = "Intake Temperature C", importance = Logged.Importance.DEBUG)
     public double intakeTemperatureCelsius = 0;
+
+    @Logged(name = "Is Coral Detected", importance = Logged.Importance.CRITICAL)
+    public boolean isCoralDetected = false;
 }

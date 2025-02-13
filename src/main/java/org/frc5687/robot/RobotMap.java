@@ -93,7 +93,7 @@ public class RobotMap {
         public static final int ALGAE_SENSOR = 2;
         public static final int ALGAE_ENCODER = 0;
 
-        public static final int INTAKE_ENCODER = 6;
+        public static final int INTAKE_ENCODER = 9;
         public static final int INTAKE_SENSOR = 7;
     }
 

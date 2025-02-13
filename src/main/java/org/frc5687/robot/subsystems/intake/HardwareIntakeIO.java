@@ -15,6 +15,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
+import org.frc5687.robot.util.sensors.ProximitySensor;
 import org.frc5687.robot.util.sensors.RevBoreEncoder;
 
 // import org.frc5687.robot.util.CTREUtil;
@@ -33,13 +34,14 @@ public class HardwareIntakeIO implements IntakeIO {
     private final VoltageOut _intakeVoltageReq = new VoltageOut(0);
     private final PositionVoltage _pivotPosition;
     private final MotionMagicVoltage _pivotPositionReq;
+    private final ProximitySensor _coralDetectionSensor;
 
     public HardwareIntakeIO() {
         _pivotMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ARM, Constants.Intake.CAN_BUS);
         _rollerMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ROLLER, Constants.Intake.CAN_BUS);
         _beltMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_BELT, Constants.Intake.CAN_BUS);
-
-        _encoder = new RevBoreEncoder(RobotMap.DIO.INTAKE_ENCODER, 6.497);
+        _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.INTAKE_SENSOR);
+        _encoder = new RevBoreEncoder(RobotMap.DIO.INTAKE_ENCODER, 2.131);
         _rollerVelocity = _rollerMotor.getVelocity();
         _intakeVelocity = _beltMotor.getVelocity();
         _encoder.setInverted(true);
@@ -58,6 +60,7 @@ public class HardwareIntakeIO implements IntakeIO {
         _rollerVelocity.refresh();
         _intakeVelocity.refresh();
         _armAngle.refresh();
+        inputs.isCoralDetected = _coralDetectionSensor.get();
         inputs.encoderAngleRads = _encoder.getAngle();
         inputs.angleRads =
                 Units.rotationsToRadians(_armAngle.getValueAsDouble() / Constants.Intake.GEAR_RATIO);
