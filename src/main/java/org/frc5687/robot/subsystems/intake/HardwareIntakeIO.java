@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -32,7 +31,6 @@ public class HardwareIntakeIO implements IntakeIO {
     private final StatusSignal<Angle> _armAngle;
     private final VoltageOut _rollerVoltageReq = new VoltageOut(0);
     private final VoltageOut _intakeVoltageReq = new VoltageOut(0);
-    private final PositionVoltage _pivotPosition;
     private final MotionMagicVoltage _pivotPositionReq;
     private final ProximitySensor _coralDetectionSensor;
 
@@ -41,14 +39,12 @@ public class HardwareIntakeIO implements IntakeIO {
         _rollerMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ROLLER, Constants.Intake.CAN_BUS);
         _beltMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_BELT, Constants.Intake.CAN_BUS);
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.INTAKE_SENSOR);
-        _encoder = new RevBoreEncoder(RobotMap.DIO.INTAKE_ENCODER, 2.131);
+        _encoder = new RevBoreEncoder(RobotMap.DIO.INTAKE_ENCODER, 4.033);
         _rollerVelocity = _rollerMotor.getVelocity();
         _intakeVelocity = _beltMotor.getVelocity();
         _encoder.setInverted(true);
         _pivotPositionReq = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
-        _pivotPosition = new PositionVoltage(0).withSlot(0).withEnableFOC(true);
-        _pivotMotor.setPosition(
-                Units.radiansToRotations(_encoder.getAngle() * Constants.Intake.GEAR_RATIO));
+        _pivotMotor.setPosition(Units.radiansToRotations(_encoder.get() * Constants.Intake.GEAR_RATIO));
         _armAngle = _pivotMotor.getPosition();
         configureMotor(_rollerMotor, Constants.Intake.ROLLER_INVERTED);
         configureMotor(_beltMotor, Constants.Intake.INTAKE_INVERTED);
@@ -74,20 +70,12 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void writeOutputs(IntakeOutputs Outputs) {
-        // _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
-        // _beltMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
-        // _pivotMotor.setControl(
-        //         _pivotPositionReq.withPosition(
-        //                 Units.radiansToRotations(Outputs.desiredAngleRad) *
-        // Constants.Intake.GEAR_RATIO));
-        // _pivotMotor.setControl(
-        //         _pivotPosition.withPosition(
-        //                 Units.radiansToRotations(Outputs.desiredAngleRad) *
-        // Constants.Intake.GEAR_RATIO));
-        // System.out.println(
-        //         Units.radiansToRotations(Outputs.desiredAngleRad) * Constants.Intake.GEAR_RATIO);
-        // System.out.println(_pivotMotor.getClosedLoopReference());
-        // _pivotMotor.setControl(new VoltageOut(3));
+
+        _rollerMotor.setControl(_rollerVoltageReq.withOutput(Outputs.rollerVoltage));
+        _beltMotor.setControl(_intakeVoltageReq.withOutput(Outputs.intakeVoltage));
+        _pivotMotor.setControl(
+                _pivotPositionReq.withPosition(
+                        Units.radiansToRotations(Outputs.desiredAngleRad) * Constants.Intake.GEAR_RATIO));
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted) {
@@ -99,19 +87,16 @@ public class HardwareIntakeIO implements IntakeIO {
 
         config.Voltage.withPeakForwardVoltage(Volts.of(12)).withPeakReverseVoltage(Volts.of(-12));
 
-        config.MotionMagic.MotionMagicCruiseVelocity =
-                Units.radiansToRotations(
-                        Constants.Intake.MAX_VELOCITY_RAD_PER_SEC * Constants.Intake.GEAR_RATIO);
-        config.MotionMagic.MotionMagicJerk =
-                Units.radiansToRotations(
-                        Constants.Intake.MAX_ACCELERATION_RAD_PER_SEC_SQUARED * Constants.Intake.GEAR_RATIO);
+        config.MotionMagic.MotionMagicCruiseVelocity = 110;
+        config.MotionMagic.MotionMagicAcceleration = 500;
+        config.MotionMagic.MotionMagicJerk = 1000;
         config.Slot0.kP = Constants.Intake.kP;
         config.Slot0.kI = Constants.Intake.kI;
         config.Slot0.kD = Constants.Intake.kD;
         config.Slot0.kS = Constants.Intake.kS;
         config.Slot0.kV = Constants.Intake.kV;
         config.Slot0.kA = Constants.Intake.kA;
-
+        config.ClosedLoopGeneral.ContinuousWrap = false;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = Constants.Intake.CURRENT_LIMIT;
 

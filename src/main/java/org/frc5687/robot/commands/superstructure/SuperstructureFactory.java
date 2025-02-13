@@ -71,14 +71,15 @@ public class SuperstructureFactory {
                         setSuperstructure(container, SuperstructureGoals.RECEIVE_FROM_FUNNEL)));
     }
 
-    public static Command receiveFromIntake(RobotContainer container) {
-        return withStateTracking(
-                container,
-                SuperstructureGoals.RECEIVE_FROM_INTAKE,
-                new SequentialCommandGroup(
-                        ensureClearance(container),
-                        new SuperstructureIntake(container, SuperstructureGoals.RECEIVE_FROM_INTAKE)));
-    }
+    //     public static Command receiveFromIntake(RobotContainer container) {
+    //         return withStateTracking(
+    //                 container,
+    //                 SuperstructureGoals.RECEIVE_FROM_INTAKE,
+    //                 new SequentialCommandGroup(
+    //                         ensureClearance(container),
+    //                         new SuperstructureIntake(container,
+    // SuperstructureGoals.RECEIVE_FROM_INTAKE)));
+    //     }
 
     public static Command placeCoralL4(RobotContainer container, boolean withAlgaeGrab) {
         SuperstructureState targetState =
@@ -129,9 +130,34 @@ public class SuperstructureFactory {
                 setSuperstructure(container, SuperstructureGoals.L2_ALGAE_GRAB));
     }
 
+    public static Command processorDropoff(RobotContainer container) {
+        return withStateTracking(
+                container,
+                SuperstructureGoals.PROCESSOR_DROPOFF,
+                setSuperstructure(container, SuperstructureGoals.PROCESSOR_DROPOFF));
+    }
+
+    public static Command groundPickup(RobotContainer container) {
+        return withStateTracking(
+                container,
+                SuperstructureGoals.GROUND_PICKUP,
+                setSuperstructure(container, SuperstructureGoals.GROUND_PICKUP));
+    }
+
     public static Command place(RobotContainer container) {
-        return new SequentialCommandGroup(new EjectCoral(container.getCoral()), new SuperstructurePlace(
-                container.getElevator(), container.getCoral(), container.getAlgae()));
+        return new SequentialCommandGroup(
+                new EjectCoral(container.getCoral()),
+                new SuperstructurePlace(
+                        container.getElevator(), container.getCoral(), container.getAlgae()));
+    }
+
+    public static Command groundIntakeHandoff(RobotContainer container) {
+        return new SequentialCommandGroup(
+                new SuperstructureIntake(
+                        container.getElevator(),
+                        container.getCoral(),
+                        container.getAlgae(),
+                        container.getIntake()));
     }
 
     public static Command placeAndStow(RobotContainer container) {

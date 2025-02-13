@@ -1,14 +1,14 @@
 package org.frc5687.robot.commands.superstructure;
 
-import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
+import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
 import org.frc5687.robot.subsystems.coralarm.CoralState;
+import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.intake.IntakeState;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
-import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 
 public class SuperstructureIntake extends OutliersCommand {
 
@@ -16,25 +16,27 @@ public class SuperstructureIntake extends OutliersCommand {
     private final CoralArmSubsystem _coral;
     private final AlgaeArmSubsystem _algae;
     private final IntakeSubsystem _intake;
-    private final SuperstructureState _goal;
     private SuperstructureIntakeState _state;
 
-    public SuperstructureIntake(RobotContainer container, SuperstructureState goal) {
-        _elevator = container.getElevator();
-        _coral = container.getCoral();
-        _algae = container.getAlgae();
-        _intake = container.getIntake();
-        _goal = goal;
+    public SuperstructureIntake(
+            ElevatorSubsystem elevator,
+            CoralArmSubsystem coral,
+            AlgaeArmSubsystem algae,
+            IntakeSubsystem intake) {
+        _elevator = elevator;
+        _coral = coral;
+        _algae = algae;
+        _intake = intake;
 
         addRequirements(_elevator, _coral, _algae, _intake);
     }
 
     @Override
     public void initialize() {
-        _elevator.setDesiredState(_goal.getElevator());
-        _coral.setDesiredState(_goal.getCoral());
-        _algae.setDesiredState(_goal.getAlgae());
-        _intake.setDesiredState(_goal.getIntake());
+        _elevator.setDesiredState(ElevatorState.STOWED);
+        _coral.setDesiredState(CoralState.RECEIVE_FROM_INTAKE);
+        _algae.setDesiredState(AlgaeState.IDLE);
+        _intake.setDesiredState(IntakeState.DEPLOYED);
         _state = SuperstructureIntakeState.INTAKING;
     }
 
@@ -43,7 +45,7 @@ public class SuperstructureIntake extends OutliersCommand {
         if (_state == SuperstructureIntakeState.INTAKING) {
             _intake.setDesiredState(IntakeState.DEPLOYED);
             _intake.setRollerVoltage(12);
-            _intake.setIntakeVoltage(12);
+            _intake.setIntakeVoltage(-12);
             if (_intake.isIntakeCoralDetected()) {
                 _intake.setRollerVoltage(0);
                 _intake.setIntakeVoltage(0);
@@ -62,9 +64,9 @@ public class SuperstructureIntake extends OutliersCommand {
 
         if (_state == SuperstructureIntakeState.HANDOFF) {
             if (!_coral.isCoralDetected()) {
-                _intake.setRollerVoltage(-12);
-                _intake.setIntakeVoltage(-12);
-                _coral.setWheelVoltageCommand(12);
+                _intake.setRollerVoltage(0);
+                _intake.setIntakeVoltage(6);
+                _coral.setWheelVoltageCommand(-12);
             }
             if (_coral.isCoralDetected()) {
                 _intake.setRollerVoltage(0);

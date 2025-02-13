@@ -4,7 +4,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
+import org.frc5687.robot.commands.intake.IntakeSetState;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
+import org.frc5687.robot.subsystems.intake.IntakeState;
 import org.frc5687.robot.util.FieldConstants.ReefHeight;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
@@ -23,7 +25,7 @@ public class OperatorInterface {
                 .onTrue(
                         new InstantCommand(
                                 () -> {
-                                    container.getDrive().enableHeadingController(Units.degreesToRadians(180 + 60));
+                                    container.getDrive().enableHeadingController(Units.degreesToRadians(180 - 60));
                                 }));
         _driverController.x().onTrue(SuperstructureFactory.receiveFromFunnel(container));
         _driverController
@@ -31,10 +33,18 @@ public class OperatorInterface {
                 .onTrue(
                         new InstantCommand(
                                 () -> {
-                                    container.getDrive().enableHeadingController(Units.degreesToRadians(180 - 60));
+                                    container.getDrive().enableHeadingController(Units.degreesToRadians(180 + 60));
                                 }));
         _driverController.b().onTrue(SuperstructureFactory.receiveFromFunnel(container));
 
+        _driverController
+                .leftBumper()
+                .whileTrue(
+                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT, ReefHeight.L4));
+        _driverController
+                .rightBumper()
+                .whileTrue(
+                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT, ReefHeight.L4));
         _driverController
                 .leftBumper()
                 .whileTrue(
@@ -47,6 +57,10 @@ public class OperatorInterface {
         _driverController
                 .leftTrigger()
                 .onTrue(SuperstructureFactory.place(container)); // TODO place based on held
+        _driverController
+                .rightTrigger()
+                .onTrue(new IntakeSetState(container.getIntake(), IntakeState.DEPLOYED));
+        _driverController.rightTrigger().onTrue(SuperstructureFactory.groundIntakeHandoff(container));
         // _driverController
         //         .rightTrigger()
         //         .whileTrue(new ConditionalCommand(null, null, false)); // TODO intake based on mode

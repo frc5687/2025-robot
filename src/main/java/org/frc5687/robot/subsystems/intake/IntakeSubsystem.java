@@ -1,5 +1,7 @@
 package org.frc5687.robot.subsystems.intake;
 
+import edu.wpi.first.math.MathUtil;
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
@@ -20,7 +22,14 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     protected void periodic(IntakeInputs inputs, IntakeOutputs outputs) {}
 
     public void setDesiredState(IntakeState state) {
-        _outputs.desiredAngleRad = state.getValue();
+        _outputs.desiredState = state;
+        setDesiredPivotAngle(state.getValue());
+    }
+
+    public void setDesiredPivotAngle(double angle) {
+        double desiredAngleClamped =
+                MathUtil.clamp(angle, Constants.Intake.MIN_ANGLE, Constants.Intake.MAX_ANGLE);
+        _outputs.desiredAngleRad = desiredAngleClamped;
     }
 
     public void setCurrentState(IntakeState state) {
@@ -33,10 +42,6 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
 
     public void setIntakeVoltage(double voltage) {
         _outputs.intakeVoltage = voltage;
-    }
-
-    public void setPivotAngle(double angle) {
-        _outputs.pivotTargetAngle = angle;
     }
 
     public double getPivotArmAngleRads() {
@@ -63,6 +68,6 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
                 minDist = angleDiff;
             }
         }
-        _inputs.currentState = closestState;
+        setCurrentState(closestState);
     }
 }

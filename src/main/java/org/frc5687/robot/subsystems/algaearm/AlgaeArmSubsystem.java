@@ -48,6 +48,10 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
         _outputs.voltageCommand = voltage;
     }
 
+    public void setWheelMotorVoltage(double voltage) {
+        _outputs.wheelVoltageCommand = voltage;
+    }
+
     // TODO: Make tolerance for all subsystems
     public boolean isAtDesiredAngle() {
         return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.04;

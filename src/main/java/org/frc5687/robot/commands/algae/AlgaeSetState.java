@@ -31,6 +31,7 @@ public class AlgaeSetState extends OutliersCommand {
 
     @Override
     public void end(boolean interrupted) {
+        _algae.setWheelMotorVoltage(_desiredState.getWheelVoltage());
         if (!interrupted) {
             _algae.setCurrentState(_desiredState);
         } else {

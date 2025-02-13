@@ -6,6 +6,9 @@ import org.frc5687.robot.util.BaseOutputs;
 @Logged
 public class IntakeOutputs extends BaseOutputs {
 
+    @Logged(name = "Intake Desired State", importance = Logged.Importance.CRITICAL)
+    public IntakeState desiredState = IntakeState.IDLE;
+
     @Logged(name = "Roller Voltage Command (V)", importance = Logged.Importance.CRITICAL)
     public double rollerVoltage = 0.0;
 

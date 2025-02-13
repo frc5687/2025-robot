@@ -203,18 +203,18 @@ public class Constants {
         public static final String CAN_BUS = "CANivore";
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(1);
+        public static final DCMotor GEARBOX = Motors.getKrakenX44(1);
         public static final double GEAR_RATIO = 5.0 * 9.0 * 4.0;
         public static final double ARM_LENGTH = Units.inchesToMeters(16);
         public static final double ARM_MASS = Units.lbsToKilograms(13);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = Units.degreesToRadians(270.0);
+        public static final double MAX_ANGLE = Units.degreesToRadians(120);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 5 * Math.PI;
 
-        public static final boolean PIVOT_INVERTED = false;
+        public static final boolean PIVOT_INVERTED = true;
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
@@ -224,8 +224,8 @@ public class Constants {
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double kS = 0.0;
-        public static final double kV = 2.0;
-        public static final double kA = 1.0;
+        public static final double kV = 0.0;
+        public static final double kA = 0.0;
     }
 
     public static class Elevator {
@@ -333,7 +333,7 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 15.0; // 11
+        public static final double kP = 13.0; // 15
         public static final double kI = 0.0;
         public static final double kD = 0.2;
 

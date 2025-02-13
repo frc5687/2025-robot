@@ -96,8 +96,8 @@ public class SimVisionIO implements VisionIO {
     // TODO: make a queue for time as well and drop old tags
     @Override
     public void updateInputs(VisionInputs inputs) {
-        updateCameraInputs(inputs, "North_East_Cam");
-        updateCameraInputs(inputs, "North_West_Cam");
+        updateCameraInputs(inputs, "North_East_Camera");
+        updateCameraInputs(inputs, "North_West_Camera");
         _visionSim.update(_robotState.getPose(RobotCoordinate.ROBOT_BASE_SIM_ODOM).toPose2d());
     }
 

@@ -47,7 +47,6 @@ public class RobotContainer implements EpilogueLog {
     private final Robot _robot;
     private final OperatorInterface _oi;
     private final DriveSubsystem _drive;
-
     private final ElevatorSubsystem _elevator;
     private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
@@ -59,6 +58,7 @@ public class RobotContainer implements EpilogueLog {
 
     private final QuestNav _questNav;
     private final Field2d _field;
+    private boolean _isCoralMode;
 
     public RobotContainer(Robot robot) {
         _robot = robot;
@@ -112,6 +112,7 @@ public class RobotContainer implements EpilogueLog {
         _superstructureTracker = new SuperstructureTracker(this);
         _oi.configureCommandMapping(this);
 
+        _isCoralMode = true;
         // Need to control faster due to stabilization
         addElevatorControlLoop();
         setupNamedCommand();
@@ -222,6 +223,14 @@ public class RobotContainer implements EpilogueLog {
 
     public VisionSubsystem getVision() {
         return _vision;
+    }
+
+    public void setIntakeMode() {
+        _isCoralMode = !_isCoralMode;
+    }
+
+    public boolean getIntakeMode() {
+        return _isCoralMode;
     }
 
     public SuperstructureTracker getSuperstructureTracker() {

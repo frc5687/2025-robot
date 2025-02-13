@@ -29,7 +29,7 @@ public class RunIntake extends OutliersCommand {
 
         _intake.setRollerVoltage(_rollerVoltage);
         _intake.setIntakeVoltage(_intakeVoltage);
-        _intake.setPivotAngle(targetAngle);
+        // _intake.setPivotAngle(targetAngle);
     }
 
     @Override
