@@ -92,11 +92,6 @@ public class Constants {
         }
     }
 
-    public static class FieldConstants {
-        public static final double FIELD_LENGTH = 16.54175;
-        public static final double FIELD_WIDTH = 8.0137;
-    }
-
     /**
      * Coordinate System
      *
@@ -209,7 +204,7 @@ public class Constants {
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
         public static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(1);
-        public static final double GEAR_RATIO = 45.0 * (50.0 / 18.0); // From Amory
+        public static final double GEAR_RATIO = 5.0 * 9.0 * 4.0;
         public static final double ARM_LENGTH = Units.inchesToMeters(16);
         public static final double ARM_MASS = Units.lbsToKilograms(13);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
@@ -338,9 +333,9 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 11.0; // 11
+        public static final double kP = 15.0; // 11
         public static final double kI = 0.0;
-        public static final double kD = 0.0;
+        public static final double kD = 0.2;
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
         public static final boolean WHEEL_MOTOR_INVERTED = true;
@@ -358,7 +353,7 @@ public class Constants {
         public static final double MAX_ANGLE = Units.degreesToRadians(180);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 15.0 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 3.0 * Math.PI;
     }
 
     public static class Vision {
