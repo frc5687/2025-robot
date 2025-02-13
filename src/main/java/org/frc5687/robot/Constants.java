@@ -209,7 +209,7 @@ public class Constants {
         public static final double ARM_MASS = Units.lbsToKilograms(13);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = Units.degreesToRadians(120);
+        public static final double MAX_ANGLE = Units.degreesToRadians(135);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 5 * Math.PI;

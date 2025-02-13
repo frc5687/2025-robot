@@ -64,7 +64,7 @@ public class SuperstructureIntake extends OutliersCommand {
 
         if (_state == SuperstructureIntakeState.HANDOFF) {
             if (!_coral.isCoralDetected()) {
-                _intake.setRollerVoltage(0);
+                _intake.setRollerVoltage(-2);
                 _intake.setIntakeVoltage(6);
                 _coral.setWheelVoltageCommand(-12);
             }

@@ -49,7 +49,7 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     }
 
     public boolean isAtDesiredAngle() {
-        return Math.abs(_inputs.angleRads - _outputs.desiredAngleRad) < 0.01;
+        return Math.abs(_inputs.angleRads - _outputs.desiredAngleRad) < 0.05;
     }
 
     public boolean isIntakeCoralDetected() {
