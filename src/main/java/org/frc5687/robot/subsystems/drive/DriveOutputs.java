@@ -7,7 +7,9 @@ import org.frc5687.robot.util.BaseOutputs;
 
 @Logged
 public class DriveOutputs extends BaseOutputs {
-    @Logged(name = "Desired Chassis Speeds", importance = Logged.Importance.CRITICAL)
+    @Logged(
+            name = "Desired Chassis Speeds (not including heading controller)",
+            importance = Logged.Importance.CRITICAL)
     public ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
 
     @Logged(name = "Modules/Desired States", importance = Logged.Importance.CRITICAL)

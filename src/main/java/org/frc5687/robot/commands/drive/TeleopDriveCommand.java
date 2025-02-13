@@ -5,6 +5,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
+import org.frc5687.robot.util.TunableDouble;
 
 public class TeleopDriveCommand extends OutliersCommand {
     private final DriveSubsystem _drive;
@@ -12,6 +13,8 @@ public class TeleopDriveCommand extends OutliersCommand {
     private final DoubleSupplier _ySupplier;
     private final DoubleSupplier _rotationSupplier;
     private final BooleanSupplier _fieldRelativeSupplier;
+
+    private boolean _rightStickCentered;
 
     public TeleopDriveCommand(
             DriveSubsystem drive,
@@ -24,6 +27,7 @@ public class TeleopDriveCommand extends OutliersCommand {
         _ySupplier = ySupplier;
         _rotationSupplier = rotationSupplier;
         _fieldRelativeSupplier = fieldRelativeSupplier;
+        _rightStickCentered = true;
         addRequirements(drive);
     }
 
@@ -43,6 +47,22 @@ public class TeleopDriveCommand extends OutliersCommand {
                                 _rotationSupplier.getAsDouble());
 
         // Set desired chassis speeds
+        if (Math.abs(_rotationSupplier.getAsDouble()) < 0.05) {
+            if (!_rightStickCentered) {
+                _rightStickCentered = true;
+                double rad =
+                        _drive.getHeading().getRadians()
+                                + _drive.getAngularVelocityYaw() * 0.25;
+                System.out.println("Enabling Heading Controller at " + rad + " rad");
+                _drive.enableHeadingController(rad);
+            }
+        } else {
+            if (_rightStickCentered) {
+                _rightStickCentered = false;
+                _drive.disableHeadingController();
+                System.out.println("Disabling Heading Controller");
+            }
+        }
         _drive.setDesiredChassisSpeeds(chassisSpeeds);
     }
 

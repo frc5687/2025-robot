@@ -12,6 +12,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -49,6 +50,9 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     private final RobotConfig _robotConfig;
     private final SwerveOdometry _odom;
+
+    private final PIDController _headingController;
+    private Optional<Double> _headingControllerSetpoint;
 
     // I think I want to move Module creating into the IO classes as they can be considered as
     // "Hardware"
@@ -97,6 +101,14 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                         _inputs.measuredStates,
                         DriveFeedforwards.zeros(_robotConfig.numModules));
 
+        _headingController =
+                new PIDController(
+                        Constants.DriveTrain.HEADING_kP,
+                        Constants.DriveTrain.HEADING_kI,
+                        Constants.DriveTrain.HEADING_kD);
+        _headingController.enableContinuousInput(-Math.PI, Math.PI);
+        _headingControllerSetpoint = Optional.of(0.0);
+
         configureAutoBuilder(_robotConfig);
     }
 
@@ -125,12 +137,18 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     private void updateSetpoint() {
+        double headingControllerOutput = 0.0;
+        if (_headingControllerSetpoint.isPresent()) {
+            headingControllerOutput =
+                    _headingController.calculate(getHeading().getRadians(), _headingControllerSetpoint.get());
+        }
         Pose2d robotPoseVel =
                 new Pose2d(
                         _outputs.desiredSpeeds.vxMetersPerSecond * Constants.UPDATE_PERIOD,
                         _outputs.desiredSpeeds.vyMetersPerSecond * Constants.UPDATE_PERIOD,
                         Rotation2d.fromRadians(
-                                _outputs.desiredSpeeds.omegaRadiansPerSecond * Constants.UPDATE_PERIOD));
+                                (_outputs.desiredSpeeds.omegaRadiansPerSecond + headingControllerOutput)
+                                        * Constants.UPDATE_PERIOD));
 
         Twist2d twistVel = new Pose2d().log(robotPoseVel);
         ChassisSpeeds updatedSpeeds =
@@ -147,6 +165,10 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     public Rotation2d getHeading() {
         return _inputs.yawPosition;
+    }
+
+    public double getAngularVelocityYaw() {
+        return _inputs.yawVelocityRadPerSec;
     }
 
     public Pose2d getPose() {
@@ -173,6 +195,14 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     public SwerveModulePosition[] getModulePositions() {
         return _inputs.modulePositions;
+    }
+
+    public void disableHeadingController() {
+        _headingControllerSetpoint = Optional.empty();
+    }
+
+    public void enableHeadingController(double angle) {
+        _headingControllerSetpoint = Optional.of(angle);
     }
 
     public void runCharacterization(double output) {
