@@ -161,7 +161,7 @@ public class RobotStateManager implements EpilogueLog {
         }
         if (_swervePoseEstimator != null) {
             _swervePoseEstimator.addVisionMeasurement(
-                    estimatedRobotPose, VecBuilder.fill(0.4, 0.4, 0.4), estimatedRobotPose.timestampSeconds);
+                    estimatedRobotPose, VecBuilder.fill(0.2, 0.2, 0.2), estimatedRobotPose.timestampSeconds);
         }
     }
 

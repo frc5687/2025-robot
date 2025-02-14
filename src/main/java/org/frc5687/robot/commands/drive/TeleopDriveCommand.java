@@ -50,14 +50,12 @@ public class TeleopDriveCommand extends OutliersCommand {
             if (!_rightStickCentered) {
                 _rightStickCentered = true;
                 double rad = _drive.getHeading().getRadians() + _drive.getAngularVelocityYaw() * 0.25;
-                System.out.println("Enabling Heading Controller at " + rad + " rad");
                 _drive.enableHeadingController(rad);
             }
         } else {
             if (_rightStickCentered) {
                 _rightStickCentered = false;
                 _drive.disableHeadingController();
-                System.out.println("Disabling Heading Controller");
             }
         }
         _drive.setDesiredChassisSpeeds(chassisSpeeds);

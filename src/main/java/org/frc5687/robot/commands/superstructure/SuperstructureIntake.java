@@ -69,6 +69,7 @@ public class SuperstructureIntake extends OutliersCommand {
                 _coral.setWheelVoltageCommand(-12);
             }
             if (_coral.isCoralDetected()) {
+                _intake.setDesiredState(IntakeState.STOWED);
                 _intake.setRollerVoltage(0);
                 _intake.setIntakeVoltage(0);
                 _coral.setWheelVoltageCommand(0);

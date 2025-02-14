@@ -39,12 +39,14 @@ public class HardwareIntakeIO implements IntakeIO {
         _rollerMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ROLLER, Constants.Intake.CAN_BUS);
         _beltMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_BELT, Constants.Intake.CAN_BUS);
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.INTAKE_SENSOR);
-        _encoder = new RevBoreEncoder(RobotMap.DIO.INTAKE_ENCODER, 4.033);
+        _encoder = new RevBoreEncoder(RobotMap.DIO.INTAKE_ENCODER, 4.033 + 0.3);
         _rollerVelocity = _rollerMotor.getVelocity();
         _intakeVelocity = _beltMotor.getVelocity();
         _encoder.setInverted(true);
         _pivotPositionReq = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
-        _pivotMotor.setPosition(Units.radiansToRotations(_encoder.get() * Constants.Intake.GEAR_RATIO));
+        double encoderVal = _encoder.get();
+        encoderVal = (encoderVal + 1) % (2 * Math.PI) - 1;
+        _pivotMotor.setPosition(Units.radiansToRotations(encoderVal * Constants.Intake.GEAR_RATIO));
         _armAngle = _pivotMotor.getPosition();
         configureMotor(_rollerMotor, Constants.Intake.ROLLER_INVERTED);
         configureMotor(_beltMotor, Constants.Intake.INTAKE_INVERTED);

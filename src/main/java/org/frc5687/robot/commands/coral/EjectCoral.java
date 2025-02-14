@@ -15,7 +15,7 @@ public class EjectCoral extends OutliersCommand {
     @Override
     public void initialize() {
         super.initialize();
-        _coral.setDesiredAngleRadians(_coral.getArmAngleRads() + Units.degreesToRadians(40));
+        _coral.setArmAngle(_coral.getArmAngleRads() + Units.degreesToRadians(40));
         _coral.setWheelVoltageCommand(-12);
     }
 

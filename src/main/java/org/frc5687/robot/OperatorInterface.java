@@ -3,10 +3,10 @@ package org.frc5687.robot;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
-import org.frc5687.robot.commands.intake.IntakeSetState;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
-import org.frc5687.robot.subsystems.intake.IntakeState;
+import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.util.FieldConstants.ReefHeight;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
@@ -25,7 +25,7 @@ public class OperatorInterface {
                 .onTrue(
                         new InstantCommand(
                                 () -> {
-                                    container.getDrive().enableHeadingController(Units.degreesToRadians(180 - 60));
+                                    container.getDrive().enableHeadingController(Units.degreesToRadians(-60));
                                 }));
         _driverController.x().onTrue(SuperstructureFactory.receiveFromFunnel(container));
         _driverController
@@ -33,7 +33,7 @@ public class OperatorInterface {
                 .onTrue(
                         new InstantCommand(
                                 () -> {
-                                    container.getDrive().enableHeadingController(Units.degreesToRadians(180 + 60));
+                                    container.getDrive().enableHeadingController(Units.degreesToRadians(60));
                                 }));
         _driverController.b().onTrue(SuperstructureFactory.receiveFromFunnel(container));
 
@@ -54,18 +54,27 @@ public class OperatorInterface {
                 .whileTrue(
                         new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT, ReefHeight.L4));
 
-        _driverController
-                .leftTrigger()
-                .onTrue(SuperstructureFactory.place(container)); // TODO place based on held
+        _driverController.leftTrigger().whileTrue(SuperstructureFactory.groundIntakeHandoff(container));
         _driverController
                 .rightTrigger()
-                .onTrue(new IntakeSetState(container.getIntake(), IntakeState.DEPLOYED));
-        _driverController.rightTrigger().onTrue(SuperstructureFactory.groundIntakeHandoff(container));
+                .onTrue(SuperstructureFactory.placeAndStow(container)); // TODO place based on held
+
         // _driverController
         //         .rightTrigger()
         //         .whileTrue(new ConditionalCommand(null, null, false)); // TODO intake based on mode
 
+        _driverController.button(8).onTrue(new InstantCommand(container.getDrive()::zeroIMU));
+
         /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
+        _operatorController.b().onTrue(SuperstructureFactory.placeCoralL2(container));
+        _operatorController.x().onTrue(SuperstructureFactory.placeCoralL3(container, false));
+        _operatorController.y().onTrue(SuperstructureFactory.placeCoralL4(container, false));
+        _operatorController.leftBumper().onTrue(SuperstructureFactory.grabAlgaeL2(container));
+        _operatorController.rightBumper().onTrue(SuperstructureFactory.grabAlgaeL1(container));
+        _operatorController.rightTrigger().onTrue(SuperstructureFactory.processorDropoff(container));
+        _operatorController
+                .leftTrigger()
+                .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.PROCESSOR_DROPOFF_WHEEL));
     }
 
     public CommandXboxController getDriverController() {

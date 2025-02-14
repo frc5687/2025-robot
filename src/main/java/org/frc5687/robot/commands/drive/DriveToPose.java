@@ -43,6 +43,7 @@ public class DriveToPose extends OutliersCommand {
     @Override
     public void initialize() {
         Pose2d currentPose = _drive.getPose();
+        _drive.disableHeadingController();
         _driveController.reset(0, 0);
         _thetaController.reset(currentPose.getRotation().getRadians(), 0);
         _lastSetpointTranslation = currentPose.getTranslation();
@@ -112,6 +113,7 @@ public class DriveToPose extends OutliersCommand {
 
     @Override
     public void end(boolean interrupted) {
+        _drive.enableHeadingController(_drive.getHeading().getRadians());
         _drive.setDesiredChassisSpeeds(new ChassisSpeeds());
     }
 }

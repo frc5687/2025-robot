@@ -225,6 +225,10 @@ public class RobotContainer implements EpilogueLog {
         return _vision;
     }
 
+    public QuestNav getQuestNav() {
+        return _questNav;
+    }
+
     public void setIntakeMode() {
         _isCoralMode = !_isCoralMode;
     }

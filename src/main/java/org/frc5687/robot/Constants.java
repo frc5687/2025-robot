@@ -57,7 +57,7 @@ public class Constants {
 
         public static final double COUPLING_RATIO =
                 (45.0 / 15.0); // Inverse of the last stage, where we link to the bevel gear
-        public static final double COEFFICIENT_OF_FRICTION = 1.6;
+        public static final double COEFFICIENT_OF_FRICTION = 80.0 / 140.0;
 
         public static final double MAX_LINEAR_SPEED =
                 DCMotor.getKrakenX60Foc(1)
@@ -239,11 +239,13 @@ public class Constants {
         public static final double GEAR_RATIO_NORTH = 9.3;
         public static final double MASS = 13.6078; // kg
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
-        public static final double MIN_HEIGHT = 0.0; // m
-        public static final double MAX_HEIGHT = 0.7295515; // m THIS IS THE HEIGHT OF THE FIRST STAGE
 
         public static final double MIN_PLATFORM_HEIGHT = 0.251333; // m
-        public static final double MAX_PLATFORM_HEIGHT = 1.615; // m
+        public static final double MAX_PLATFORM_HEIGHT = 1.68; // m
+
+        public static final double MIN_HEIGHT = 0.0; // m
+        public static final double MAX_HEIGHT =
+                MAX_PLATFORM_HEIGHT / 2.0; // m THIS IS THE HEIGHT OF THE FIRST STAGE
 
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS_NORTH =
@@ -271,7 +273,7 @@ public class Constants {
         public static final double STAB_kP = 4.0; // 2.5
         public static final double STAB_kI = 0.0;
         public static final double STAB_kD = 0.04;
-        public static final double STAB_kS = 0.0;
+        public static final double STAB_kS = 0;
         public static final double STAB_kV = 0.0;
         public static final double STAB_kA = 0.0;
         public static final double STAB_kG = 0.0;

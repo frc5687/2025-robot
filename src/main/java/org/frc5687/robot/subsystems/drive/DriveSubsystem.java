@@ -107,7 +107,8 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                         Constants.DriveTrain.HEADING_kI,
                         Constants.DriveTrain.HEADING_kD);
         _headingController.enableContinuousInput(-Math.PI, Math.PI);
-        _headingControllerSetpoint = Optional.of(0.0);
+        
+        zeroIMU();
 
         configureAutoBuilder(_robotConfig);
     }
@@ -167,13 +168,26 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
         return _inputs.yawPosition;
     }
 
+    public void zeroIMU() {
+        _driveIO.reset();
+        if (_headingControllerSetpoint.isPresent()) {
+            _headingControllerSetpoint = Optional.of(0.0);
+        }
+    }
+
     public double getAngularVelocityYaw() {
         return _inputs.yawVelocityRadPerSec;
     }
 
     public Pose2d getPose() {
         // return _inputs.odometryPose;
-        return RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV).toPose2d();
+        if (_robotContainer.getQuestNav().timeSinceLastUpdate() < 0.040) {
+            return RobotStateManager.getInstance()
+                    .getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV)
+                    .toPose2d();
+        } else {
+            return RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
+        }
     }
 
     public ChassisSpeeds getMeasuredChassisSpeeds() {

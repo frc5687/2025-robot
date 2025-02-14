@@ -14,13 +14,14 @@ import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import org.frc5687.robot.Constants;
 
 /**
  * Interface with the QuestNav on VR headset for pose estimation. See
  * https://www.chiefdelphi.com/t/questnav-the-best-robot-pose-tracking-system-in-frc/
  */
-public class QuestNav {
+public class QuestNav implements EpilogueLog {
     // Configure Network Tables topics (questnav/...) to communicate with the Quest HMD
     NetworkTableInstance nt4Instance = NetworkTableInstance.getDefault();
     NetworkTable nt4Table = nt4Instance.getTable("questnav");
@@ -153,5 +154,20 @@ public class QuestNav {
                 new Translation3d(questnavPosition[2], -questnavPosition[0], questnavPosition[1]);
 
         return new Pose3d(translation, getQuaternion());
+    }
+
+    @Override
+    public String getLogBase() {
+        return "QuestNav (java edition)";
+    }
+
+    /**
+     * @return time since last data from quest (seconds)
+     */
+    public double timeSinceLastUpdate() {
+        double questUpdateTimestamp = questTimestamp.getLastChange() / 1e6;
+        double timeSinceLastUpdate = Timer.getFPGATimestamp() - questUpdateTimestamp;
+        log("Time Since Quest Update (s)", timeSinceLastUpdate);
+        return timeSinceLastUpdate;
     }
 }
