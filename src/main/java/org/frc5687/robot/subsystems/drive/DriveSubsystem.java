@@ -34,7 +34,6 @@ import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
-import org.frc5687.robot.util.SwerveOdometry;
 
 public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs> {
     private final DriveIO _driveIO;
@@ -49,7 +48,6 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
             new SwerveSetpoint(new ChassisSpeeds(), new SwerveModuleState[4], DriveFeedforwards.zeros(4));
 
     private final RobotConfig _robotConfig;
-    private final SwerveOdometry _odom;
 
     private final PIDController _headingController;
     private Optional<Double> _headingControllerSetpoint;
@@ -63,7 +61,6 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
         _kinematics = new SwerveDriveKinematics(moduleLocations);
         _odometry = new SwerveDriveOdometry(_kinematics, _inputs.yawPosition, _inputs.modulePositions);
-        _odom = new SwerveOdometry(moduleLocations);
 
         _sysId =
                 new SysIdRoutine(
@@ -115,20 +112,11 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     @Override
     protected void processInputs() {
-        // Update odometry
-        // _odom.update(_inputs);
-        // _inputs.odometryPose = _odom();
         _inputs.odometryPose = _odometry.update(_inputs.yawPosition, _inputs.modulePositions);
     }
 
     @Override
     protected void periodic(DriveInputs inputs, DriveOutputs outputs) {
-        // outputs.desiredStates = _kinematics.toSwerveModuleStates(outputs.desiredSpeeds);
-
-        // SwerveDriveKinematics.desaturateWheelSpeeds(
-        //         outputs.desiredStates,
-        //         Constants.DriveTrain.MAX_MPS);
-
         updateSetpoint();
         outputs.desiredStates = _currentSetpoint.moduleStates();
     }
@@ -180,7 +168,6 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public Pose2d getPose() {
-        // return _inputs.odometryPose;
         if (_robotContainer.getQuestNav().timeSinceLastUpdate() < 0.040) {
             return RobotStateManager.getInstance()
                     .getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV)
