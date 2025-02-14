@@ -75,25 +75,18 @@ public class OperatorInterface {
         _operatorController
                 .a()
                 .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.STOWED));
-        _operatorController
-                .b()
-                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L2_CORAL_PLACING));
-        _operatorController
-                .y()
-                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L3_CORAL_PLACING));
-        _operatorController
-                .x()
-                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L4_CORAL_PLACING));
 
-        // _operatorController.b().onTrue(SuperstructureFactory.placeCoralL2(container));
-        // _operatorController.x().onTrue(SuperstructureFactory.placeCoralL3(container, false));
-        // _operatorController.y().onTrue(SuperstructureFactory.placeCoralL4(container, false));
-        // _operatorController.leftBumper().onTrue(SuperstructureFactory.grabAlgaeL2(container));
-        // _operatorController.rightBumper().onTrue(SuperstructureFactory.grabAlgaeL1(container));
-        // _operatorController.rightTrigger().onTrue(SuperstructureFactory.processorDropoff(container));
+        _operatorController.b().onTrue(SuperstructureFactory.placeCoralL2(container));
+        _operatorController.x().onTrue(SuperstructureFactory.placeCoralL3(container, false));
+        _operatorController.y().onTrue(SuperstructureFactory.placeCoralL4(container, false));
+        _operatorController.leftBumper().onTrue(SuperstructureFactory.grabAlgaeL2(container));
+        _operatorController.rightBumper().onTrue(SuperstructureFactory.grabAlgaeL1(container));
+        _operatorController.rightTrigger().onTrue(SuperstructureFactory.processorDropoff(container));
         _operatorController
                 .leftTrigger()
                 .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.PROCESSOR_DROPOFF_WHEEL));
+
+        _operatorController.a().whileTrue(SuperstructureFactory.intakeEject(container));
     }
 
     public CommandXboxController getDriverController() {

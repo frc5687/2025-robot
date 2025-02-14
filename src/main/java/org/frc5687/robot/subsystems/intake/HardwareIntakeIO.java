@@ -39,7 +39,7 @@ public class HardwareIntakeIO implements IntakeIO {
         _rollerMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ROLLER, Constants.Intake.CAN_BUS);
         _beltMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_BELT, Constants.Intake.CAN_BUS);
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.INTAKE_SENSOR);
-        _encoder = new RevBoreEncoder(RobotMap.DIO.INTAKE_ENCODER, 4.033 + 0.3);
+        _encoder = new RevBoreEncoder(RobotMap.DIO.INTAKE_ENCODER, 4.033 + 0.3 + 0.09);
         _rollerVelocity = _rollerMotor.getVelocity();
         _intakeVelocity = _beltMotor.getVelocity();
         _encoder.setInverted(true);

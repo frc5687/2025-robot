@@ -33,6 +33,9 @@ public class SuperstructureGoals {
                     AlgaeState.IDLE,
                     IntakeState.PASSOFF_TO_CORAL);
 
+    public static final SuperstructureState EJECT_INTAKE =
+            new SuperstructureState(
+                    ElevatorState.STOWED, CoralState.IDLE_NO_CORAL, AlgaeState.IDLE, IntakeState.DEPLOYED);
     public static final SuperstructureState CLEAR_INTAKE =
             new SuperstructureState(
                     ElevatorState.STOWED, CoralState.STOWED, AlgaeState.IDLE, IntakeState.IDLE);

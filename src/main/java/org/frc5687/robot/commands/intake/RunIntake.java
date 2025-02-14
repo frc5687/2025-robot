@@ -25,7 +25,7 @@ public class RunIntake extends OutliersCommand {
 
     @Override
     protected void execute(double timestamp) {
-        double targetAngle = Math.atan2(0, _angleSupplier.getAsDouble());
+        // double targetAngle = Math.atan2(0, _angleSupplier.getAsDouble());
 
         _intake.setRollerVoltage(_rollerVoltage);
         _intake.setIntakeVoltage(_intakeVoltage);

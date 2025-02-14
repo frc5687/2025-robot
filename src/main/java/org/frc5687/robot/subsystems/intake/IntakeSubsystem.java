@@ -11,6 +11,7 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
 
     public IntakeSubsystem(RobotContainer container, SubsystemIO<IntakeInputs, IntakeOutputs> io) {
         super(container, io, new IntakeInputs(), new IntakeOutputs());
+        setDesiredState(IntakeState.IDLE);
     }
 
     @Override

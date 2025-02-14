@@ -15,7 +15,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
-import org.frc5687.robot.util.TunableDouble;
 import org.frc5687.robot.util.sensors.ProximitySensor;
 
 public class HardwareCoralArmIO implements CoralArmIO {
@@ -27,9 +26,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
     private final Debouncer _debouncer;
 
     private final StatusSignal<Angle> _absoluteAngle;
-
-    private final TunableDouble kP = new TunableDouble("Coral", "kP", Constants.CoralArm.kP);
-    private final TunableDouble kD = new TunableDouble("Coral", "kD", Constants.CoralArm.kD);
 
     public HardwareCoralArmIO() {
         _cancoder = new CANcoder(RobotMap.CAN.CANCODER.CORAL_ENCODER, "CANivore");
@@ -43,7 +39,9 @@ public class HardwareCoralArmIO implements CoralArmIO {
                         Constants.CoralArm.MAX_VELOCITY_RAD_PER_SEC,
                         Constants.CoralArm.MAX_ACCELERATION_RAD_PER_SEC_SQUARED);
 
-        _controller = new ProfiledPIDController(kP.get(), Constants.CoralArm.kI, kD.get(), constraints);
+        _controller =
+                new ProfiledPIDController(
+                        Constants.CoralArm.kP, Constants.CoralArm.kI, Constants.CoralArm.kD, constraints);
 
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.CoralArm.PIVOT_MOTOR_INVERTED);
@@ -86,9 +84,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
         double currentAngle = getAngleRads();
         double safeAngle = processSafeAngle(outputs.desiredAngleRad);
         calculateShortestPath(currentAngle);
-
-        _controller.setP(kP.get());
-        _controller.setD(kD.get());
 
         _controller.setGoal(safeAngle);
 

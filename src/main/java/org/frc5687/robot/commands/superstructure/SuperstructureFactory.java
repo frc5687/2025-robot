@@ -10,6 +10,7 @@ import org.frc5687.robot.commands.coral.CoralSetState;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.elevator.ElevatorSetState;
 import org.frc5687.robot.commands.intake.IntakeSetState;
+import org.frc5687.robot.commands.intake.RunIntake;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 
@@ -140,6 +141,14 @@ public class SuperstructureFactory {
                                 container,
                                 SuperstructureGoals.PROCESSOR_DROPOFF_WHEEL,
                                 setSuperstructure(container, SuperstructureGoals.PROCESSOR_DROPOFF_WHEEL)));
+    }
+
+    public static Command intakeEject(RobotContainer container) {
+        return withStateTracking(
+                        container,
+                        SuperstructureGoals.EJECT_INTAKE,
+                        setSuperstructure(container, SuperstructureGoals.EJECT_INTAKE))
+                .andThen(new RunIntake(container.getIntake(), -12, 12, null));
     }
 
     public static Command groundPickup(RobotContainer container) {

@@ -272,7 +272,7 @@ public class Constants {
 
         public static final double STAB_kP = 3.0; // 4.0
         public static final double STAB_kI = 0.0;
-        public static final double STAB_kD = 0.07; // 0.04
+        public static final double STAB_kD = 0.03; // 0.04
         public static final double STAB_kS = 0;
         public static final double STAB_kV = 0.0;
         public static final double STAB_kA = 0.0;
@@ -335,9 +335,9 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 13.0; // 15
+        public static final double kP = 10.0;
         public static final double kI = 0.0;
-        public static final double kD = 0.2;
+        public static final double kD = 0.0;
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
         public static final boolean WHEEL_MOTOR_INVERTED = true;
