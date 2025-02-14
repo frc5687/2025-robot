@@ -104,7 +104,8 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                         Constants.DriveTrain.HEADING_kI,
                         Constants.DriveTrain.HEADING_kD);
         _headingController.enableContinuousInput(-Math.PI, Math.PI);
-        
+        enableHeadingController(0);
+
         zeroIMU();
 
         configureAutoBuilder(_robotConfig);
