@@ -258,8 +258,8 @@ public class Constants {
         // public static final double MOTION_MAGIC_EXPO_KV = .09;
         // public static final double MOTION_MAGIC_EXPO_KA = .02;
 
-        public static final double MOTION_MAGIC_EXPO_KV = 0.09;
-        public static final double MOTION_MAGIC_EXPO_KA = 0.05;
+        public static final double MOTION_MAGIC_EXPO_KV = 0.08;
+        public static final double MOTION_MAGIC_EXPO_KA = 0.03;
 
         // This needs to be tuned with real PID values
         public static final double HOLD_kP = 80.0;
@@ -270,9 +270,9 @@ public class Constants {
         public static final double HOLD_kV = 0.09;
         public static final double HOLD_kA = 0.05;
 
-        public static final double STAB_kP = 4.0; // 2.5
+        public static final double STAB_kP = 3.0; // 4.0
         public static final double STAB_kI = 0.0;
-        public static final double STAB_kD = 0.04;
+        public static final double STAB_kD = 0.07; // 0.04
         public static final double STAB_kS = 0;
         public static final double STAB_kV = 0.0;
         public static final double STAB_kA = 0.0;
@@ -287,10 +287,10 @@ public class Constants {
         // public static final double EXPO_MOTION_kA = 0.0;
         // public static final double EXPO_MOTION_kG = 0.0;
 
-        public static final double PITCH_kP = 0.9;
-        public static final double PITCH_kD = 0.09;
-        public static final double ROLL_kP = 0.2;
-        public static final double ROLL_kD = 0.02;
+        public static final double PITCH_kP = 1.2; // .9
+        public static final double PITCH_kD = 0.12; // .09
+        public static final double ROLL_kP = 0.3; // .2
+        public static final double ROLL_kD = 0.04; // .02
 
         public static final boolean NORTH_WEST_INVERTED = false;
         public static final boolean NORTH_EAST_INVERTED = true;

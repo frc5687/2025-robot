@@ -5,8 +5,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
+import org.frc5687.robot.commands.elevator.ElevatorSetState;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
+import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.util.FieldConstants.ReefHeight;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
@@ -70,12 +72,25 @@ public class OperatorInterface {
                 .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
 
         /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
-        _operatorController.b().onTrue(SuperstructureFactory.placeCoralL2(container));
-        _operatorController.x().onTrue(SuperstructureFactory.placeCoralL3(container, false));
-        _operatorController.y().onTrue(SuperstructureFactory.placeCoralL4(container, false));
-        _operatorController.leftBumper().onTrue(SuperstructureFactory.grabAlgaeL2(container));
-        _operatorController.rightBumper().onTrue(SuperstructureFactory.grabAlgaeL1(container));
-        _operatorController.rightTrigger().onTrue(SuperstructureFactory.processorDropoff(container));
+        _operatorController
+                .a()
+                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.STOWED));
+        _operatorController
+                .b()
+                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L2_CORAL_PLACING));
+        _operatorController
+                .y()
+                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L3_CORAL_PLACING));
+        _operatorController
+                .x()
+                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L4_CORAL_PLACING));
+
+        // _operatorController.b().onTrue(SuperstructureFactory.placeCoralL2(container));
+        // _operatorController.x().onTrue(SuperstructureFactory.placeCoralL3(container, false));
+        // _operatorController.y().onTrue(SuperstructureFactory.placeCoralL4(container, false));
+        // _operatorController.leftBumper().onTrue(SuperstructureFactory.grabAlgaeL2(container));
+        // _operatorController.rightBumper().onTrue(SuperstructureFactory.grabAlgaeL1(container));
+        // _operatorController.rightTrigger().onTrue(SuperstructureFactory.processorDropoff(container));
         _operatorController
                 .leftTrigger()
                 .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.PROCESSOR_DROPOFF_WHEEL));
