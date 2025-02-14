@@ -49,7 +49,7 @@ public class TeleopDriveCommand extends OutliersCommand {
         if (Math.abs(_rotationSupplier.getAsDouble()) < 0.05) {
             if (!_rightStickCentered) {
                 _rightStickCentered = true;
-                double rad = _drive.getHeading().getRadians() + _drive.getAngularVelocityYaw() * 0.25;
+                double rad = _drive.getHeading().getRadians() + _drive.getAngularVelocityYaw() * 0.15;
                 _drive.enableHeadingController(rad);
             }
         } else {

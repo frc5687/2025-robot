@@ -36,7 +36,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     private TunableDouble ROLL_kD =
             new TunableDouble("Elevator", "Roll kD", Constants.Elevator.ROLL_kD);
 
-    private TunableDouble backlashOffset = new TunableDouble("ElevatorHardware", "backlash", 0.00);
+    private TunableDouble backlashOffset = new TunableDouble("ElevatorHardware", "backlash", 0.05);
 
     private Optional<Double> _newDesiredPlatformHeight;
 
