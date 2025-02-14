@@ -80,6 +80,13 @@ public class SuperstructureGoals {
                     AlgaeState.PROCESSOR_DROPOFF,
                     IntakeState.IDLE);
 
+    public static final SuperstructureState PROCESSOR_DROPOFF_WHEEL =
+            new SuperstructureState(
+                    ElevatorState.L1_CORAL_PLACING,
+                    CoralState.IDLE_NO_CORAL,
+                    AlgaeState.PROCESSOR_DROPOFF_WHEEL,
+                    IntakeState.IDLE);
+
     public static final SuperstructureState GROUND_PICKUP =
             new SuperstructureState(
                     ElevatorState.FUNNEL_RECEIVE,

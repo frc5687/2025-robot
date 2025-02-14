@@ -132,9 +132,14 @@ public class SuperstructureFactory {
 
     public static Command processorDropoff(RobotContainer container) {
         return withStateTracking(
-                container,
-                SuperstructureGoals.PROCESSOR_DROPOFF,
-                setSuperstructure(container, SuperstructureGoals.PROCESSOR_DROPOFF));
+                        container,
+                        SuperstructureGoals.PROCESSOR_DROPOFF,
+                        setSuperstructure(container, SuperstructureGoals.PROCESSOR_DROPOFF))
+                .andThen(
+                        withStateTracking(
+                                container,
+                                SuperstructureGoals.PROCESSOR_DROPOFF_WHEEL,
+                                setSuperstructure(container, SuperstructureGoals.PROCESSOR_DROPOFF_WHEEL)));
     }
 
     public static Command groundPickup(RobotContainer container) {
