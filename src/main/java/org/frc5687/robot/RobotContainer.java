@@ -17,6 +17,10 @@ import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.algaearm.HardwareAlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.SimAlgaeArmIO;
+import org.frc5687.robot.subsystems.climber.ClimberIO;
+import org.frc5687.robot.subsystems.climber.ClimberSubsystem;
+import org.frc5687.robot.subsystems.climber.HardwareClimberArmIO;
+import org.frc5687.robot.subsystems.climber.SimClimberIO;
 import org.frc5687.robot.subsystems.coralarm.CoralArmIO;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
 import org.frc5687.robot.subsystems.coralarm.HardwareCoralArmIO;
@@ -51,6 +55,7 @@ public class RobotContainer implements EpilogueLog {
     private final IntakeSubsystem _intake;
     private final AlgaeArmSubsystem _algaeArm;
     private final CoralArmSubsystem _coralArm;
+    private final ClimberSubsystem _climber;
 
     private final VisionSubsystem _vision;
 
@@ -103,6 +108,10 @@ public class RobotContainer implements EpilogueLog {
 
         IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
         _intake = new IntakeSubsystem(this, intakeIO);
+
+        ClimberIO climberIO =
+                RobotBase.isSimulation() ? new SimClimberIO() : new HardwareClimberArmIO();
+        _climber = new ClimberSubsystem(this, climberIO);
 
         VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new PhotonVisionIO();
         _vision = new VisionSubsystem(this, visionIO);
@@ -220,6 +229,10 @@ public class RobotContainer implements EpilogueLog {
 
     public IntakeSubsystem getIntake() {
         return _intake;
+    }
+
+    public ClimberSubsystem getClimber() {
+        return _climber;
     }
 
     public VisionSubsystem getVision() {

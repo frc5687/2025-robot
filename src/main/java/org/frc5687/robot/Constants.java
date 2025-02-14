@@ -358,6 +358,14 @@ public class Constants {
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 3.0 * Math.PI;
     }
 
+    public static class Climber {
+        public static final String CAN_BUS = "CANivore";
+        public static final double CLIMBER_DOWN_RADS = 0.0;
+        public static final double CLIMBER_UP_RADS = Units.rotationsToRadians(180);
+        public static final double kP = 6.0;
+        public static final double kD = 0.3;
+    }
+
     public static class Vision {
         public static final Transform3d ROBOT_TO_NE_CAM =
                 new Transform3d(

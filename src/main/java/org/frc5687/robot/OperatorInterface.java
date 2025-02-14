@@ -65,6 +65,10 @@ public class OperatorInterface {
 
         _driverController.button(8).onTrue(new InstantCommand(container.getDrive()::zeroIMU));
 
+        _driverController
+                .button(8)
+                .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
+
         /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
         _operatorController.b().onTrue(SuperstructureFactory.placeCoralL2(container));
         _operatorController.x().onTrue(SuperstructureFactory.placeCoralL3(container, false));
