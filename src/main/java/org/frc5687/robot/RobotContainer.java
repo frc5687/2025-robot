@@ -173,7 +173,7 @@ public class RobotContainer implements EpilogueLog {
     }
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("4 L4");
+        return new PathPlannerAuto("New Auto 123123");
     }
 
     private void setupNamedCommand() {

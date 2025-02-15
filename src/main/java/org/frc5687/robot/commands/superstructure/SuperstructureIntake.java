@@ -49,7 +49,6 @@ public class SuperstructureIntake extends OutliersCommand {
             _intake.setIntakeVoltage(-12);
             if (_intake.isIntakeCoralDetected()) {
                 _intake.setRollerVoltage(0);
-                _intake.setIntakeVoltage(0);
                 _state = SuperstructureIntakeState.HANDOFF_ANGLE;
             }
         }
@@ -57,19 +56,23 @@ public class SuperstructureIntake extends OutliersCommand {
         if (_state == SuperstructureIntakeState.HANDOFF_ANGLE) {
             _intake.setDesiredState(IntakeState.PASSOFF_TO_CORAL);
             _coral.setDesiredState(CoralState.RECEIVE_FROM_INTAKE);
+            System.out.println(_coral.isAtDesiredAngle() + "coral desired angle");
+            System.out.println(_intake.isAtDesiredAngle() + "intake desired angle");
+
             if (_coral.isAtDesiredAngle() && _intake.isAtDesiredAngle()) {
+                _intake.setIntakeVoltage(0);
                 _timer = timestamp;
                 _state = SuperstructureIntakeState.HANDOFF;
             }
         }
 
         if (_state == SuperstructureIntakeState.HANDOFF) {
-            if (Math.abs(_timer - timestamp) >= 1) {
-
+            if (Math.abs(_timer - timestamp) >= .5) {
                 if (!_coral.isCoralDetected()) {
                     _intake.setRollerVoltage(-1);
                     _intake.setIntakeVoltage(3);
                     _coral.setWheelVoltageCommand(-12);
+                    _timer = timestamp;
                 }
                 if (_coral.isCoralDetected()) {
                     _intake.setDesiredState(IntakeState.IDLE);

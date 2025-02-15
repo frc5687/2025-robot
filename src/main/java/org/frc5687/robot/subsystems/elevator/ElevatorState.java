@@ -11,7 +11,7 @@ public enum ElevatorState {
     L3_CORAL_PLACING(1.066800),
     L4_CORAL_PLACING(Constants.Elevator.MAX_PLATFORM_HEIGHT), // 1.7018
     BARGE_PLACING(Constants.Elevator.MAX_PLATFORM_HEIGHT),
-    FUNNEL_RECEIVE(0.327928);
+    FUNNEL_RECEIVE(0.34);
 
     private final double _value;
 

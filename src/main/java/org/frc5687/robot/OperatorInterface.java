@@ -47,15 +47,6 @@ public class OperatorInterface {
                 .rightBumper()
                 .whileTrue(
                         new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT, ReefHeight.L4));
-        _driverController
-                .leftBumper()
-                .whileTrue(
-                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT, ReefHeight.L4));
-        _driverController
-                .rightBumper()
-                .whileTrue(
-                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT, ReefHeight.L4));
-
         _driverController.leftTrigger().whileTrue(SuperstructureFactory.groundIntakeHandoff(container));
         _driverController
                 .rightTrigger()
@@ -85,8 +76,7 @@ public class OperatorInterface {
         _operatorController
                 .leftTrigger()
                 .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.PROCESSOR_DROPOFF_WHEEL));
-
-        _operatorController.a().whileTrue(SuperstructureFactory.intakeEject(container));
+        _operatorController.povDown().whileTrue(SuperstructureFactory.intakeEject(container));
     }
 
     public CommandXboxController getDriverController() {

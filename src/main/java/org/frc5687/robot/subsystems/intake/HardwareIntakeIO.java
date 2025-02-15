@@ -95,9 +95,9 @@ public class HardwareIntakeIO implements IntakeIO {
 
         config.Voltage.withPeakForwardVoltage(Volts.of(12)).withPeakReverseVoltage(Volts.of(-12));
 
-        config.MotionMagic.MotionMagicCruiseVelocity = 110 * 2.0 * Math.PI;
-        config.MotionMagic.MotionMagicAcceleration = 500 * 2.0 * Math.PI;
-        config.MotionMagic.MotionMagicJerk = 1000 * 2.0 * Math.PI;
+        config.MotionMagic.MotionMagicCruiseVelocity = 110;
+        config.MotionMagic.MotionMagicAcceleration = 600;
+        config.MotionMagic.MotionMagicJerk = 700;
         config.Slot0.kP = Constants.Intake.kP;
         config.Slot0.kI = Constants.Intake.kI;
         config.Slot0.kD = Constants.Intake.kD;

@@ -8,7 +8,7 @@ import org.frc5687.robot.util.FieldConstants.ReefHeight;
 public class ReefAlignmentHelpers {
     public static final double LEFT_OFFSET = 0.275;
     public static final double RIGHT_OFFSET = 0.05;
-    public static final double SAFE_APPROACH_DISTANCE = 0.5;
+    public static final double SAFE_APPROACH_DISTANCE = 0.6;
 
     public enum ReefSide {
         LEFT,
