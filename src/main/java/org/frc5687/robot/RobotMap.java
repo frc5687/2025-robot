@@ -41,6 +41,7 @@ public class RobotMap {
             public static final int ENCODER_SW = 3;
             public static final int CORAL_ENCODER = 5;
             public static final int ALGAE_ENCODER = 4;
+            public static final int INTAKE_ENCODER = 6;
         }
 
         public static class PIGEON {
@@ -61,6 +62,8 @@ public class RobotMap {
 
         public static final int ALGAE_PIVOT_MOTOR = 7;
         public static final int ALGAE_WHEEL_MOTOR = 6;
+
+        public static final int CLIMBER_SERVO = 5;
     }
 
     /**

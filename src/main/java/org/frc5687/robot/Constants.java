@@ -203,6 +203,8 @@ public class Constants {
         public static final String CAN_BUS = "CANivore";
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
+        public static final double ENCODER_OFFSET = -0.62;
+
         public static final DCMotor GEARBOX = Motors.getKrakenX44(1);
         public static final double GEAR_RATIO = 5.0 * 9.0 * 4.0;
         public static final double ARM_LENGTH = Units.inchesToMeters(16);
@@ -335,7 +337,7 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 10.0;
+        public static final double kP = 15.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
@@ -343,7 +345,7 @@ public class Constants {
         public static final boolean WHEEL_MOTOR_INVERTED = true;
         public static final int NUM_MOTORS = 1;
 
-        public static final double ENCODER_OFFSET = -0.389404;
+        public static final double ENCODER_OFFSET = -0.2209;
         public static final boolean ENCODER_INVERTED = true;
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);

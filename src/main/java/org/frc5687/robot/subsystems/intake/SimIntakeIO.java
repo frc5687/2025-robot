@@ -52,9 +52,9 @@ public class SimIntakeIO implements IntakeIO {
         _armSim.update(Constants.UPDATE_PERIOD);
 
         // Update the raw encoders with the sim positoin
-        inputs.angleRads = _armSim.getAngleRads();
+        inputs.armAngleRads = _armSim.getAngleRads();
         inputs.angularVelocityRadPerSec = _armSim.getVelocityRadPerSec();
-        _armEncoderSim.setDistance(inputs.angleRads);
+        _armEncoderSim.setDistance(inputs.armAngleRads);
         _armEncoderSim.setRate(inputs.angularVelocityRadPerSec);
 
         inputs.intakeCurrentDraw = _armSim.getCurrentDrawAmps();

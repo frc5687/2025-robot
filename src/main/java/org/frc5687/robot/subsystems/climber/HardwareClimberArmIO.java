@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.wpilibj.Servo;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
 
@@ -20,9 +21,11 @@ public class HardwareClimberArmIO implements ClimberIO {
     private final StatusSignal<Current> _supplyCurrent;
     private final StatusSignal<Current> _statorCurrent;
     private final PositionVoltage _winchPositionRequest;
+    private final Servo _servo;
 
     public HardwareClimberArmIO() {
         _winchMotor = new TalonFX(RobotMap.CAN.TALONFX.CLIMBER_WINCH, Constants.Climber.CAN_BUS);
+        _servo = new Servo(RobotMap.PWM.CLIMBER_SERVO);
         _winchAngle = _winchMotor.getPosition();
         _supplyCurrent = _winchMotor.getSupplyCurrent();
         _statorCurrent = _winchMotor.getStatorCurrent();
@@ -49,5 +52,6 @@ public class HardwareClimberArmIO implements ClimberIO {
     public void writeOutputs(ClimberOutputs outputs) {
         _winchMotor.setControl(
                 _winchPositionRequest.withPosition(Radians.of(outputs.motorSetpointRads)));
+        _servo.set(outputs.servoSetpoint);
     }
 }

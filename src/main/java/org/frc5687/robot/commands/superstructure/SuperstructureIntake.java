@@ -17,6 +17,7 @@ public class SuperstructureIntake extends OutliersCommand {
     private final AlgaeArmSubsystem _algae;
     private final IntakeSubsystem _intake;
     private SuperstructureIntakeState _state;
+    private double _timer;
 
     public SuperstructureIntake(
             ElevatorSubsystem elevator,
@@ -57,22 +58,25 @@ public class SuperstructureIntake extends OutliersCommand {
             _intake.setDesiredState(IntakeState.PASSOFF_TO_CORAL);
             _coral.setDesiredState(CoralState.RECEIVE_FROM_INTAKE);
             if (_coral.isAtDesiredAngle() && _intake.isAtDesiredAngle()) {
-
+                _timer = timestamp;
                 _state = SuperstructureIntakeState.HANDOFF;
             }
         }
 
         if (_state == SuperstructureIntakeState.HANDOFF) {
-            if (!_coral.isCoralDetected()) {
-                _intake.setRollerVoltage(-2);
-                _intake.setIntakeVoltage(6);
-                _coral.setWheelVoltageCommand(-12);
-            }
-            if (_coral.isCoralDetected()) {
-                _intake.setDesiredState(IntakeState.IDLE);
-                _intake.setRollerVoltage(0);
-                _intake.setIntakeVoltage(0);
-                _coral.setWheelVoltageCommand(0);
+            if (Math.abs(_timer - timestamp) >= 1) {
+
+                if (!_coral.isCoralDetected()) {
+                    _intake.setRollerVoltage(-1);
+                    _intake.setIntakeVoltage(3);
+                    _coral.setWheelVoltageCommand(-12);
+                }
+                if (_coral.isCoralDetected()) {
+                    _intake.setDesiredState(IntakeState.IDLE);
+                    _intake.setRollerVoltage(0);
+                    _intake.setIntakeVoltage(0);
+                    _coral.setWheelVoltageCommand(0);
+                }
             }
         }
     }

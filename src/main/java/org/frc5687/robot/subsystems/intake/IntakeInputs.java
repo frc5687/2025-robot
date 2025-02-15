@@ -14,11 +14,11 @@ public class IntakeInputs extends BaseInputs {
     @Logged(name = "Roller Temperature C", importance = Logged.Importance.DEBUG)
     public double rollerTemperatureCelsius = 0;
 
-    @Logged(name = "Intake Arm Angle (Rads)", importance = Logged.Importance.CRITICAL)
-    public double angleRads = 0;
+    @Logged(name = "Absolute Encoder Angle(Rads)", importance = Logged.Importance.CRITICAL)
+    public double absoluteEncoderAngleRads = 0;
 
-    @Logged(name = "Absolute Encoder Angle(Rads)", importance = Logged.Importance.DEBUG)
-    public double encoderAngleRads = 0;
+    @Logged(name = "Arm Angle(Rads)", importance = Logged.Importance.CRITICAL)
+    public double armAngleRads = 0;
 
     @Logged(name = "Intake Velocity (RadsPS)", importance = Logged.Importance.CRITICAL)
     public double angularVelocityRadPerSec = 0;

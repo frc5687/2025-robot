@@ -46,7 +46,7 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     }
 
     public boolean isAtDesiredAngle() {
-        return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.05;
+        return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.08;
     }
 
     public boolean isCoralDetected() {

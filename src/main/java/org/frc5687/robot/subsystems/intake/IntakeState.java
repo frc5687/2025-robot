@@ -3,7 +3,7 @@ package org.frc5687.robot.subsystems.intake;
 public enum IntakeState {
     DEPLOYED(0, 0, 0), // 180 deg
     STOWED(Math.PI / 4.0, 0, 0),
-    PASSOFF_TO_CORAL(2.15, 0, 0), // 135 deg
+    PASSOFF_TO_CORAL(2.22, -12, 12), // 130 deg
     IDLE(Math.PI / 2.0, 0, 0),
     EJECT(0, 12, -12); // 90 deg
 
