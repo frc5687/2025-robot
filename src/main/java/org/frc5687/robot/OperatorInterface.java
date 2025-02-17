@@ -77,6 +77,9 @@ public class OperatorInterface {
                 .leftTrigger()
                 .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.PROCESSOR_DROPOFF_WHEEL));
         _operatorController.povDown().whileTrue(SuperstructureFactory.intakeEject(container));
+        _operatorController
+                .povUp()
+                .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.GROUND_PICKUP));
     }
 
     public CommandXboxController getDriverController() {

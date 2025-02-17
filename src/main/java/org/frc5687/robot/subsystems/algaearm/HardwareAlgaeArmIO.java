@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -22,7 +23,7 @@ import org.frc5687.robot.util.sensors.ProximitySensor;
 public class HardwareAlgaeArmIO implements AlgaeArmIO {
     private final CANcoder _cancoder;
     private final VictorSP _pivotMotor;
-    private final VictorSP _wheelMotor;
+    private final TalonFX _wheelMotor;
     private final ProfiledPIDController _controller;
     private final ProximitySensor _algaeDetectionSensor;
     private final LinearFilter _angularVelocityFilter;
@@ -33,7 +34,7 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
     public HardwareAlgaeArmIO() {
         _cancoder = new CANcoder(RobotMap.CAN.CANCODER.ALGAE_ENCODER, "CANivore");
         _pivotMotor = new VictorSP(RobotMap.PWM.ALGAE_PIVOT_MOTOR);
-        _wheelMotor = new VictorSP(RobotMap.PWM.ALGAE_WHEEL_MOTOR);
+        _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.ALGAE_WHEEL);
         _algaeDetectionSensor = new ProximitySensor(RobotMap.DIO.ALGAE_SENSOR);
 
         TrapezoidProfile.Constraints constraints =
