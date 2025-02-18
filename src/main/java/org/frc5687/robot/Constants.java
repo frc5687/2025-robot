@@ -33,11 +33,11 @@ public class Constants {
         public static final double GEAR_RATIO_STEER = (42.0 / 12.0) * (96.0 / 16.0);
 
         // Drive Motor Configuration
-        public static final PIDConstants DRIVE_PID = new PIDConstants(0.00, 0.0, 0.0); // 10.0 kp
+        public static final PIDConstants DRIVE_PID = new PIDConstants(12.00, 0.0, 0.000); // 10.0 kp
         public static final double DRIVE_KS =
-                0.035; // 3 // This is the voltage to overcome static friction taken from sysid 0.0032292
-        public static final double DRIVE_KV = 0.13; // 0.15 taken from sysid 2.24
-        public static final double DRIVE_KA = 0; // sysid 0.131
+                6; // 3 // This is the voltage to overcome static friction taken from sysid 0.0032292
+        public static final double DRIVE_KV = 0.0; // 0.15 taken from sysid 2.24
+        public static final double DRIVE_KA = 0.0; // sysid 0.131
 
         // public static final PIDConstants DRIVE_PID = new PIDConstants(0.0, 0.0, 0.0); //10.0 kp
         // public static final double DRIVE_KS = 0.0; //3 // This is the voltage to overcome static
@@ -46,11 +46,11 @@ public class Constants {
         // public static final double DRIVE_KA = 0; // sysid 0.131
         public static final double DRIVE_CURRENT_LIMIT = 80.0;
 
-        public static final PIDConstants STEER_PID = new PIDConstants(50, 0.0, 0.0); // 10 kp
+        public static final PIDConstants STEER_PID = new PIDConstants(4000, 0.0, 50.0); // 4000 kp, 50kd
         public static final double STEER_KS = 0.0;
         public static final double STEER_KV = 0.0;
         public static final double STEER_KA = 0.0;
-        public static final double STEER_CURRENT_LIMIT = 30.0;
+        public static final double STEER_CURRENT_LIMIT = 40.0;
 
         public static final double STEER_MOTION_CRUISE_VELOCITY = 100.0; // rad/s
         public static final double STEER_MOTION_ACCELERATION = 200.0; // rad/s^2
@@ -145,13 +145,13 @@ public class Constants {
          *
          */
         public static final SwerveModuleConfig NW_CONFIG =
-                SwerveModule.createModuleConfig("NW", -0.4836426, false, false);
+                SwerveModule.createModuleConfig("NW", -0.474609375, false, false);
         public static final SwerveModuleConfig NE_CONFIG =
-                SwerveModule.createModuleConfig("NE", 0.181396484375, false, false);
+                SwerveModule.createModuleConfig("NE", 0.1811524, false, false);
         public static final SwerveModuleConfig SW_CONFIG =
-                SwerveModule.createModuleConfig("SW", -0.055909, false, false);
+                SwerveModule.createModuleConfig("SW", -0.0573731, false, false);
         public static final SwerveModuleConfig SE_CONFIG =
-                SwerveModule.createModuleConfig("SE", 0.3525390625, false, false);
+                SwerveModule.createModuleConfig("SE", 0.3584248, false, false);
 
         public static final SwerveModuleConfig[] MODULE_CONFIGS = {
             NW_CONFIG, NE_CONFIG, SW_CONFIG, SE_CONFIG
@@ -172,7 +172,7 @@ public class Constants {
         public static final double POLE_THRESHOLD = Units.degreesToRadians(5.0);
 
         // PID controller settings
-        public static final double HEADING_kP = 4.0;
+        public static final double HEADING_kP = 0.0;
         public static final double HEADING_kI = 0.0;
         public static final double HEADING_kD = 0.0;
 
@@ -180,9 +180,9 @@ public class Constants {
         public static final double TARGET_TOLERANCE = Units.degreesToRadians(1);
 
         // AutoAlignDriveController PID
-        public static final double kP = 3.3;
+        public static final double kP = 0;
         public static final double kI = 0.0;
-        public static final double kD = 0.05;
+        public static final double kD = 0.00;
 
         public static final double POSITION_TOLERANCE = 0.01;
         public static final double HEADING_TOLERANCE = 0.04; // rad

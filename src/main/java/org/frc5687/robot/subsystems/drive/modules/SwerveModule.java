@@ -80,4 +80,8 @@ public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveMo
         _isCharacterization = false;
         _outputs.driveVoltage = 0.0;
     }
+
+    public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {
+        _io.setPID(kP, kI, kD, kV, kS, kA, kG);
+    }
 }

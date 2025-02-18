@@ -3,6 +3,7 @@ package org.frc5687.robot;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.elevator.ElevatorSetState;
@@ -55,6 +56,11 @@ public class OperatorInterface {
         // _driverController
         //         .rightTrigger()
         //         .whileTrue(new ConditionalCommand(null, null, false)); // TODO intake based on mode
+        _driverController.povLeft().onTrue(container.getDrive().sysIdQuasistatic(Direction.kForward));
+        _driverController.povRight().onTrue(container.getDrive().sysIdQuasistatic(Direction.kReverse));
+
+        _driverController.povUp().onTrue(container.getDrive().sysIdDynamic(Direction.kForward));
+        _driverController.povDown().onTrue(container.getDrive().sysIdDynamic(Direction.kReverse));
 
         _driverController.button(8).onTrue(new InstantCommand(container.getDrive()::zeroIMU));
 

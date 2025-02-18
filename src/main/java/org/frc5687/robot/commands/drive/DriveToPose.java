@@ -26,7 +26,7 @@ public class DriveToPose extends OutliersCommand {
         _poseSupplier = poseSupplier;
 
         _driveController =
-                new ProfiledPIDController(4, 0.0, 0.0, new TrapezoidProfile.Constraints(3.0, 3.0));
+                new ProfiledPIDController(3, 0.0, 0.001, new TrapezoidProfile.Constraints(3.0, 3.0));
 
         _thetaController =
                 new ProfiledPIDController(
@@ -34,8 +34,8 @@ public class DriveToPose extends OutliersCommand {
 
         _thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        _driveController.setTolerance(0.001);
-        _thetaController.setTolerance(0.001);
+        _driveController.setTolerance(0.005);
+        _thetaController.setTolerance(0.02);
 
         addRequirements(drive);
     }

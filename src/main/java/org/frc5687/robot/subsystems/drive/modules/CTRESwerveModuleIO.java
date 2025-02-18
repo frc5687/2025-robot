@@ -5,9 +5,10 @@ import static edu.wpi.first.units.Units.Rotations;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -17,6 +18,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import org.frc5687.robot.util.CTREUtil;
 
 public class CTRESwerveModuleIO implements SwerveModuleIO {
     private final TalonFX _driveMotor;
@@ -28,9 +30,10 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
     private final StatusSignal<Angle> _steerPosition;
     private final StatusSignal<AngularVelocity> _steerVelocity;
 
-    private final PositionVoltage _steerMotionMagicReq =
-            new PositionVoltage(0).withUpdateFreqHz(1000.0);
-    private final VelocityVoltage _driveVelocityReq = new VelocityVoltage(0).withUpdateFreqHz(1000.0);
+    private final PositionTorqueCurrentFOC _steerMotionMagicReq =
+            new PositionTorqueCurrentFOC(0).withUpdateFreqHz(1000.0).withSlot(0);
+    private final VelocityTorqueCurrentFOC _driveVelocityReq =
+            new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(1000.0);
     private final VoltageOut _driveVoltageReq = new VoltageOut(0);
 
     private final double _driveRotationsPerMeter;
@@ -60,7 +63,12 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         _couplingRatio = config.couplingRatio();
 
         BaseStatusSignal.setUpdateFrequencyForAll(
-                100.0, _drivePosition, _driveVelocity, _steerPosition, _steerVelocity);
+                250.0, _drivePosition, _driveVelocity, _steerPosition);
+
+        BaseStatusSignal.setUpdateFrequencyForAll(50, _steerVelocity);
+
+        _driveMotor.optimizeBusUtilization();
+        _steerMotor.optimizeBusUtilization();
     }
 
     @Override
@@ -145,9 +153,14 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         driveConfigs.Slot0.kV = config.driveKv();
         driveConfigs.Slot0.kA = config.driveKa();
 
-        driveConfigs.CurrentLimits.SupplyCurrentLimit = config.driveCurrentLimit();
-        driveConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        driveConfigs.TorqueCurrent.TorqueNeutralDeadband = 0.7;
+        driveConfigs.CurrentLimits.StatorCurrentLimit = config.driveCurrentLimit();
+        driveConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
+        driveConfigs.TorqueCurrent.PeakForwardTorqueCurrent = config.driveCurrentLimit();
+        driveConfigs.TorqueCurrent.PeakReverseTorqueCurrent = -config.driveCurrentLimit();
+
+        driveConfigs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.02;
         _driveMotor.getConfigurator().apply(driveConfigs);
         // CTREUtil.applyConfiguration(_driveMotor, driveConfigs);
     }
@@ -167,8 +180,8 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         steerConfigs.Slot0.kV = config.steerKv();
         steerConfigs.Slot0.kA = config.steerKa();
 
-        steerConfigs.CurrentLimits.SupplyCurrentLimit = config.steerCurrentLimit();
-        steerConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        steerConfigs.CurrentLimits.StatorCurrentLimit = config.steerCurrentLimit();
+        steerConfigs.CurrentLimits.StatorCurrentLimitEnable = true;
 
         steerConfigs.MotionMagic.MotionMagicCruiseVelocity = config.steerMotionCruiseVelocity();
         steerConfigs.MotionMagic.MotionMagicAcceleration = config.steerMotionAcceleration();
@@ -177,6 +190,10 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         steerConfigs.Feedback.RotorToSensorRatio = config.steerGearRatio();
         steerConfigs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         steerConfigs.ClosedLoopGeneral.ContinuousWrap = true;
+
+        steerConfigs.TorqueCurrent.PeakForwardTorqueCurrent = config.steerCurrentLimit();
+        steerConfigs.TorqueCurrent.PeakReverseTorqueCurrent = -config.steerCurrentLimit();
+        // steerConfigs.CurrentLimits.SupplyCurrentLimit = config.steerCurrentLimit();
 
         _steerMotor.getConfigurator().apply(steerConfigs);
         // CTREUtil.applyConfiguration(_steerMotor, steerConfigs);
@@ -188,5 +205,19 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         _cancoderConfigs.MagnetSensor.MagnetOffset = config.absoluteEncoderOffset();
         _cancoder.getConfigurator().apply(_cancoderConfigs);
         // CTREUtil.applyConfiguration(_cancoder, _cancoderConfigs);
+    }
+
+    @Override
+    public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {
+        Slot0Configs config = new Slot0Configs();
+        config.kP = kP;
+        config.kI = kI;
+        config.kD = kD;
+        config.kV = kV;
+        config.kA = kA;
+        config.kS = kS;
+        config.kG = kG;
+
+        CTREUtil.applyConfiguration(_driveMotor, config);
     }
 }

@@ -3,7 +3,6 @@ package org.frc5687.robot.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Preferences;
 
 public class TunableDouble {
     private final String _key;
@@ -17,7 +16,8 @@ public class TunableDouble {
         _key = table + "/" + key;
         _defaultValue = defaultValue;
 
-        _value = Preferences.getDouble(_key, defaultValue);
+        // _value = Preferences.getDouble(_key, defaultValue);
+        _value = defaultValue;
         _lastValue = _value;
 
         NetworkTable networkTable = NetworkTableInstance.getDefault().getTable(table);
@@ -32,7 +32,7 @@ public class TunableDouble {
         if (networkValue != _value) {
             _value = networkValue;
             _hasChanged = true;
-            Preferences.setDouble(_key, _value);
+            // Preferences.setDouble(_key, _value);
         }
         return _value;
     }
@@ -54,7 +54,7 @@ public class TunableDouble {
             _value = value;
             _hasChanged = true;
             _entry.setDouble(value);
-            Preferences.setDouble(_key, value);
+            // Preferences.setDouble(_key, value);
         }
     }
 

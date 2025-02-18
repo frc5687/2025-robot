@@ -115,4 +115,11 @@ public class CTREDriveIO implements DriveIO {
             _modules[i].runCharacterization(output);
         }
     }
+
+    @Override
+    public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {
+        for (var module : _modules) {
+            module.setPID(kP, kI, kD, kV, kS, kA, kG);
+        }
+    }
 }

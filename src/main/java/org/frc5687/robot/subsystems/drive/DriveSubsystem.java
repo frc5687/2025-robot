@@ -34,6 +34,7 @@ import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
+import org.frc5687.robot.util.TunableDouble;
 
 public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs> {
     private final DriveIO _driveIO;
@@ -41,6 +42,11 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     @NotLogged private final SwerveDriveOdometry _odometry;
     private final SysIdRoutine _sysId;
     @Logged private String _sysIdStateString = "";
+
+    private TunableDouble p = new TunableDouble("Drive", "kP", 0);
+    private TunableDouble i = new TunableDouble("Drive", "kI", 0);
+    private TunableDouble d = new TunableDouble("Drive", "kD", 0);
+    private TunableDouble s = new TunableDouble("Drive", "kS", 0);
 
     private final Translation2d[] _moduleLocations;
     private final SwerveSetpointGenerator _setpointGenerator;
@@ -104,6 +110,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                         Constants.DriveTrain.HEADING_kI,
                         Constants.DriveTrain.HEADING_kD);
         _headingController.enableContinuousInput(-Math.PI, Math.PI);
+        _headingController.setTolerance(0.0175 * 2);
         enableHeadingController(0);
 
         zeroIMU();
@@ -118,6 +125,10 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     @Override
     protected void periodic(DriveInputs inputs, DriveOutputs outputs) {
+        // Update PID if needed
+        if (p.hasChanged() || i.hasChanged() || d.hasChanged() || s.hasChanged()) {
+            _io.setPID(p.get(), i.get(), d.get(), 0, s.get(), 0, 0);
+        }
         updateSetpoint();
         outputs.desiredStates = _currentSetpoint.moduleStates();
     }
@@ -212,12 +223,14 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        log("state", _sysIdStateString);
         return run(() -> runCharacterization(0.0))
                 .withTimeout(1.0)
                 .andThen(_sysId.quasistatic(direction));
     }
 
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        log("state", _sysIdStateString);
         return run(() -> runCharacterization(0.0)).withTimeout(1.0).andThen(_sysId.dynamic(direction));
     }
 

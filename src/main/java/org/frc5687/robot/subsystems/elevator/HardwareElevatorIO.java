@@ -172,36 +172,42 @@ public class HardwareElevatorIO implements ElevatorIO {
         // double swPos = outputs.desiredStageHeight - (outputs.desiredStageHeight *
         // backlashOffset.get());
 
-        double nwRotations =
-                Units.radiansToRotations(outputs.northWestStageHeight / Constants.Elevator.DRUM_RADIUS)
-                        * Constants.Elevator.GEAR_RATIO_NORTH;
+        // double nwRotations =
+        //         Units.radiansToRotations(outputs.northWestStageHeight /
+        // Constants.Elevator.DRUM_RADIUS)
+        //                 * Constants.Elevator.GEAR_RATIO_NORTH;
 
-        double neRotations =
-                Units.radiansToRotations(outputs.northEastStageHeight / Constants.Elevator.DRUM_RADIUS)
-                        * Constants.Elevator.GEAR_RATIO_NORTH;
-        double swRotations =
-                Units.radiansToRotations(outputs.southWestStageHeight / Constants.Elevator.DRUM_RADIUS)
-                        * Constants.Elevator.GEAR_RATIO_SOUTH;
+        // double neRotations =
+        //         Units.radiansToRotations(outputs.northEastStageHeight /
+        // Constants.Elevator.DRUM_RADIUS)
+        //                 * Constants.Elevator.GEAR_RATIO_NORTH;
+        // double swRotations =
+        //         Units.radiansToRotations(outputs.southWestStageHeight /
+        // Constants.Elevator.DRUM_RADIUS)
+        //                 * Constants.Elevator.GEAR_RATIO_SOUTH;
 
-        if (isWithinPositionTolerance(outputs.desiredStageHeight)) {
-            outputs.usingPositionHolding = true;
-            _northWestElevatorMotor.setControl(_northWestPositionRequest.withPosition(nwRotations));
-            _northEastElevatorMotor.setControl(_northEastPositionRequest.withPosition(neRotations));
-            _southWestElevatorMotor.setControl(_southWestPositionRequest.withPosition(swRotations));
-        } else {
+        // if (isWithinPositionTolerance(outputs.desiredStageHeight)) {
+        //     outputs.usingPositionHolding = true;
+        //     _northWestElevatorMotor.setControl(_northWestPositionRequest.withPosition(nwRotations));
+        //     _northEastElevatorMotor.setControl(_northEastPositionRequest.withPosition(neRotations));
+        //     _southWestElevatorMotor.setControl(_southWestPositionRequest.withPosition(swRotations));
+        // } else {
 
-            outputs.usingPositionHolding = false;
+        //     outputs.usingPositionHolding = false;
 
-            _northWestElevatorMotor.setControl(_northWestPositionTorqueRequest.withPosition(nwRotations));
-            _northEastElevatorMotor.setControl(_northEastPositionTorqueRequest.withPosition(neRotations));
-            _southWestElevatorMotor.setControl(_southWestPositionTorqueRequest.withPosition(swRotations));
-        }
-        outputs.voltageCommandNorthEast =
-                _northEastElevatorMotor.getClosedLoopOutput().getValueAsDouble();
-        outputs.voltageCommandNorthWest =
-                _northWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
-        outputs.voltageCommandSouthWest =
-                _southWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
+        //
+        // _northWestElevatorMotor.setControl(_northWestPositionTorqueRequest.withPosition(nwRotations));
+        //
+        // _northEastElevatorMotor.setControl(_northEastPositionTorqueRequest.withPosition(neRotations));
+        //
+        // _southWestElevatorMotor.setControl(_southWestPositionTorqueRequest.withPosition(swRotations));
+        // }
+        // outputs.voltageCommandNorthEast =
+        //         _northEastElevatorMotor.getClosedLoopOutput().getValueAsDouble();
+        // outputs.voltageCommandNorthWest =
+        //         _northWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
+        // outputs.voltageCommandSouthWest =
+        //         _southWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
     }
 
     private boolean isWithinPositionTolerance(double desiredHeight) {
