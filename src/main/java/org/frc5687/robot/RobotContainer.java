@@ -1,10 +1,11 @@
 package org.frc5687.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
@@ -60,6 +61,8 @@ public class RobotContainer implements EpilogueLog {
     private final VisionSubsystem _vision;
 
     private final SuperstructureTracker _superstructureTracker;
+
+    private SendableChooser<Command> _autoChooser;
 
     private final QuestNav _questNav;
     private final Field2d _field;
@@ -170,10 +173,12 @@ public class RobotContainer implements EpilogueLog {
         //                 0,
         //                 () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12,
         // 12)));
+        _autoChooser = AutoBuilder.buildAutoChooser("test");
+        SmartDashboard.putData("Auto Chooser", _autoChooser);
     }
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("New Auto 123123");
+        return _autoChooser.getSelected();
     }
 
     private void setupNamedCommand() {
