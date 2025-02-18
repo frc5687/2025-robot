@@ -1,8 +1,6 @@
 package org.frc5687.robot.subsystems.elevator;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
 import java.util.Optional;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
@@ -16,57 +14,25 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     private final RobotStateManager _robotState = RobotStateManager.getInstance();
     private final RobotContainer _container;
 
-    private final PIDController _pitchController;
-    private final PIDController _rollController;
-
-    private TunableDouble elevatorP = new TunableDouble("Elevator", "kP", Constants.Elevator.STAB_kP);
-    private TunableDouble elevatorI = new TunableDouble("Elevator", "kI", Constants.Elevator.STAB_kI);
-    private TunableDouble elevatorD = new TunableDouble("Elevator", "kD", Constants.Elevator.STAB_kD);
-    private TunableDouble elevatorA = new TunableDouble("Elevator", "kA", Constants.Elevator.STAB_kA);
-    private TunableDouble elevatorS = new TunableDouble("Elevator", "kS", Constants.Elevator.STAB_kS);
-    private TunableDouble elevatorG = new TunableDouble("Elevator", "kG", Constants.Elevator.STAB_kG);
-    private TunableDouble elevatorV = new TunableDouble("Elevator", "kv", Constants.Elevator.STAB_kA);
-
-    private TunableDouble PITCH_kP =
-            new TunableDouble("Elevator", "Pitch kP", Constants.Elevator.PITCH_kP);
-    private TunableDouble PITCH_kD =
-            new TunableDouble("Elevator", "Pitch kD", Constants.Elevator.PITCH_kD);
-    private TunableDouble ROLL_kP =
-            new TunableDouble("Elevator", "Roll kP", Constants.Elevator.ROLL_kP);
-    private TunableDouble ROLL_kD =
-            new TunableDouble("Elevator", "Roll kD", Constants.Elevator.ROLL_kD);
-
-    private TunableDouble backlashOffset = new TunableDouble("ElevatorHardware", "backlash", 0.05);
+    private TunableDouble elevatorP = new TunableDouble("Elevator", "kP", Constants.Elevator.kP);
+    private TunableDouble elevatorI = new TunableDouble("Elevator", "kI", Constants.Elevator.kI);
+    private TunableDouble elevatorD = new TunableDouble("Elevator", "kD", Constants.Elevator.kD);
+    private TunableDouble elevatorA = new TunableDouble("Elevator", "kA", Constants.Elevator.kA);
+    private TunableDouble elevatorS = new TunableDouble("Elevator", "kS", Constants.Elevator.kS);
+    private TunableDouble elevatorG = new TunableDouble("Elevator", "kG", Constants.Elevator.kG);
+    private TunableDouble elevatorV = new TunableDouble("Elevator", "kV", Constants.Elevator.kV);
 
     private Optional<Double> _newDesiredPlatformHeight;
 
     public ElevatorSubsystem(RobotContainer container, ElevatorIO io) {
         super(container, io, new ElevatorInputs(), new ElevatorOutputs());
-        this.setToSeparateControl(true);
         _container = container;
-
-        _pitchController = new PIDController(PITCH_kP.get(), 0.0, PITCH_kD.get());
-        _rollController = new PIDController(ROLL_kP.get(), 0.0, ROLL_kD.get());
-        _pitchController.setSetpoint(0.0);
-        _rollController.setSetpoint(0.0);
-        _pitchController.setTolerance(Units.degreesToRadians(0.1));
-        _rollController.setTolerance(Units.degreesToRadians(0.1));
         _newDesiredPlatformHeight = Optional.empty();
     }
 
     @Override
     protected void processInputs() {
-        _inputs.firstStagePositionMeters =
-                (_inputs.stageNorthWestPositionMeters
-                                + _inputs.stageNorthEastPositionMeters
-                                + _inputs.stageSouthWestPositionMeters)
-                        / 3.0;
-
-        _robotState.updatePlatform(
-                _inputs.firstStagePositionMeters,
-                _inputs.platformPitchRadians,
-                _inputs.platformRollRadians);
-
+        _robotState.updatePlatform(_inputs.firstStagePositionMeters);
         _inputs.platformHeightMeters = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP).getZ();
         _inputs.stagePose = _robotState.getPose(RobotCoordinate.ELEVATOR_STAGE);
         _inputs.platformPose = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP);
@@ -92,47 +58,12 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
                     elevatorG.get());
         }
 
-        _pitchController.setP(PITCH_kP.get());
-        _pitchController.setD(PITCH_kD.get());
-        _pitchController.setP(ROLL_kP.get());
-        _pitchController.setD(ROLL_kD.get());
-
-        double pitchCorrection = _pitchController.calculate(inputs.platformPitchRadians);
-        double rollCorrection = _rollController.calculate(inputs.platformRollRadians);
-
-        pitchCorrection =
-                MathUtil.clamp(
-                        pitchCorrection,
-                        -Constants.Elevator.MAX_POSITION_CORRECTION,
-                        Constants.Elevator.MAX_POSITION_CORRECTION);
-        rollCorrection =
-                MathUtil.clamp(
-                        rollCorrection,
-                        -Constants.Elevator.MAX_POSITION_CORRECTION,
-                        Constants.Elevator.MAX_POSITION_CORRECTION);
-
         if (_newDesiredPlatformHeight.isPresent()) {
             double heightMeters = _newDesiredPlatformHeight.get();
             _outputs.desiredPlatformHeightWorldMeters = heightMeters;
             _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
             _newDesiredPlatformHeight = Optional.empty();
         }
-
-        outputs.northEastStageHeight =
-                outputs.desiredStageHeight
-                        + (outputs.desiredStageHeight * backlashOffset.get())
-                        - pitchCorrection
-                        - rollCorrection;
-        outputs.northWestStageHeight =
-                outputs.desiredStageHeight
-                        + (outputs.desiredStageHeight * backlashOffset.get())
-                        - pitchCorrection
-                        + rollCorrection;
-        outputs.southWestStageHeight =
-                outputs.desiredStageHeight
-                        - (outputs.desiredStageHeight * backlashOffset.get())
-                        + pitchCorrection
-                        + rollCorrection;
     }
 
     public void setDesiredPlatformHeightWorld(double heightMeters) {
@@ -180,12 +111,5 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
             }
         }
         _inputs.elevatorState = closestState;
-    }
-
-    public void processWithSeparateControl() {
-        if (!this.isSeparateControl()) {
-            throw new IllegalStateException("Cannot call when separate control is disabled");
-        }
-        process();
     }
 }

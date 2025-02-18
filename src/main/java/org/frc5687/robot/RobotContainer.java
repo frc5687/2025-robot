@@ -93,10 +93,7 @@ public class RobotContainer implements EpilogueLog {
         } else {
             elevatorIO =
                     new HardwareElevatorIO(
-                            RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR,
-                            RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR,
-                            RobotMap.CAN.TALONFX.SOUTH_WEST_ELEVATOR,
-                            RobotMap.CAN.PIGEON.ELEVATOR);
+                            RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR, RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR);
         }
 
         _elevator = new ElevatorSubsystem(this, elevatorIO);
@@ -126,7 +123,6 @@ public class RobotContainer implements EpilogueLog {
 
         _isCoralMode = true;
         // Need to control faster due to stabilization
-        addElevatorControlLoop();
         setupNamedCommand();
     }
 
@@ -199,13 +195,6 @@ public class RobotContainer implements EpilogueLog {
         RobotStateManager.getInstance().logComponentPoses();
         RobotStateManager.getInstance().updateOdometry();
         RobotStateManager.getInstance().logEstimatedPoses();
-    }
-
-    public void addElevatorControlLoop() {
-        _robot.addPeriodic(
-                _elevator::processWithSeparateControl,
-                Constants.Elevator.PERIOD,
-                Constants.Elevator.PERIOD / 2.0);
     }
 
     // for not be lazy and just square input TODO: DONT

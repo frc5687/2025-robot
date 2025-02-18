@@ -268,14 +268,11 @@ public class Constants {
     }
 
     public static class Elevator {
-
-        public static final double PERIOD = 0.004;
         public static final String CANBUS = "CANivore";
 
-        public static final int NUM_MOTORS = 1;
-        public static final DCMotor MOTOR = Motors.getKrakenX44(NUM_MOTORS);
-        public static final double GEAR_RATIO_SOUTH = 9;
-        public static final double GEAR_RATIO_NORTH = 9.3;
+        public static final int NUM_MOTORS = 2;
+        public static final DCMotor MOTOR = DCMotor.getKrakenX60Foc(NUM_MOTORS);
+        public static final double GEAR_RATIO = (84.0 / 9.0);
         public static final double MASS = 13.6078; // kg
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
@@ -287,10 +284,8 @@ public class Constants {
                 MAX_PLATFORM_HEIGHT / 2.0; // m THIS IS THE HEIGHT OF THE FIRST STAGE
 
         public static final double EFFICIENCY = 0.85;
-        public static final double MAX_VELOCITY_MPS_NORTH =
-                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO_NORTH) * DRUM_RADIUS;
-        public static final double MAX_VELOCITY_MPS_SOUTH =
-                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO_SOUTH) * DRUM_RADIUS;
+        public static final double MAX_VELOCITY_MPS =
+                (MOTOR.freeSpeedRadPerSec / GEAR_RATIO) * DRUM_RADIUS;
         public static final double MAX_ACCELERATION_MPSS = 5;
         public static final double MAX_JERK_MPSSS = 40;
 
@@ -301,45 +296,21 @@ public class Constants {
         public static final double MOTION_MAGIC_EXPO_KA = 0.03;
 
         // This needs to be tuned with real PID values
-        public static final double HOLD_kP = 80.0;
-        public static final double HOLD_kI = 0.0;
-        public static final double HOLD_kD = 2.0;
-        public static final double HOLD_kS = 2.0;
-        public static final double HOLD_kG = 0.0;
-        public static final double HOLD_kV = 0.09;
-        public static final double HOLD_kA = 0.05;
+        public static final double kP = 80.0;
+        public static final double kI = 0.0;
+        public static final double kD = 2.0;
+        public static final double kS = 2.0;
+        public static final double kG = 0.0;
+        public static final double kV = 0.09;
+        public static final double kA = 0.05;
 
-        public static final double STAB_kP = 3.0; // 4.0
-        public static final double STAB_kI = 0.0;
-        public static final double STAB_kD = 0.03; // 0.04
-        public static final double STAB_kS = 0;
-        public static final double STAB_kV = 0.0;
-        public static final double STAB_kA = 0.0;
-        public static final double STAB_kG = 0.0;
-
-        // public static final double EXPO_MOTION_kP = 9.0;
-        // public static final double EXPO_MOTION_kP = 10.0;
-        // public static final double EXPO_MOTION_kI = 0.0;
-        // public static final double EXPO_MOTION_kD = 0.0;
-        // public static final double EXPO_MOTION_kS = 0.7;
-        // public static final double EXPO_MOTION_kV = 0.0;
-        // public static final double EXPO_MOTION_kA = 0.0;
-        // public static final double EXPO_MOTION_kG = 0.0;
-
-        public static final double PITCH_kP = 1.2; // .9
-        public static final double PITCH_kD = 0.12; // .09
-        public static final double ROLL_kP = 0.3; // .2
-        public static final double ROLL_kD = 0.04; // .02
-
-        public static final boolean NORTH_WEST_INVERTED = false;
-        public static final boolean NORTH_EAST_INVERTED = true;
-        public static final boolean SOUTH_EAST_INVERTED = false;
+        public static final boolean EAST_INVERTED = true;
+        public static final boolean WEST_INVERTED = false;
 
         public static final double CURRENT_LIMIT = 60.0;
 
         public static final double MAX_POSITION_CORRECTION = 0.02;
         public static final double VELOCITY_TOLERANCE = 0.02;
-        public static final double MAX_DRIVETRAIN_TILT = 0.05;
         public static final double BOTTOM_POSITION_CORRECTION = 0.254;
     }
 

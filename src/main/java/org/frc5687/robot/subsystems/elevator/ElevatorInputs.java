@@ -12,14 +12,8 @@ public class ElevatorInputs extends BaseInputs {
     @Logged(name = "First Stage Position (m)", importance = Logged.Importance.CRITICAL)
     public double firstStagePositionMeters = 0.0;
 
-    @Logged(name = "Stage North East Position (m)", importance = Logged.Importance.CRITICAL)
-    public double stageNorthEastPositionMeters = 0.0;
-
-    @Logged(name = "Stage North West Position (m)", importance = Logged.Importance.CRITICAL)
-    public double stageNorthWestPositionMeters = 0.0;
-
-    @Logged(name = "Stage South West Position (m)", importance = Logged.Importance.CRITICAL)
-    public double stageSouthWestPositionMeters = 0.0;
+    @Logged(name = "First Stage Velocity (mps)", importance = Logged.Importance.CRITICAL)
+    public double firstStageVelocityMPS = 0.0;
 
     @Logged(name = "Platform Height (m)", importance = Logged.Importance.CRITICAL)
     public double platformHeightMeters = 0.0;
@@ -27,20 +21,8 @@ public class ElevatorInputs extends BaseInputs {
     @Logged(name = "Platform Velocity (mps)")
     public double platformVelocityMPS = 0.0;
 
-    @Logged(name = "Platform Roll (rad)", importance = Logged.Importance.CRITICAL)
-    public double platformRollRadians = 0.0;
-
-    @Logged(name = "Platform Pitch (rad)", importance = Logged.Importance.CRITICAL)
-    public double platformPitchRadians = 0.0;
-
-    @Logged(name = "DriveTrain Pitch (rad)", importance = Logged.Importance.CRITICAL)
-    public double driveTrainPitchRadians = 0.0;
-
-    @Logged(name = "DriveTrain Roll (rad)", importance = Logged.Importance.CRITICAL)
-    public double driveTrainRollRadians = 0.0;
-
     @Logged(name = "Platform Motors Current (A)", importance = Logged.Importance.CRITICAL)
-    public double[] platformMotorCurrents = new double[3];
+    public double[] platformMotorCurrents = new double[2];
 
     @Logged(name = "Stage 3D Pose", importance = Logged.Importance.DEBUG)
     public Pose3d stagePose = new Pose3d();

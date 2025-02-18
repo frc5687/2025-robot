@@ -94,7 +94,7 @@ public class RobotStateManager implements EpilogueLog {
                         Geometry.ELEVATOR_Y_OFFSET,
                         Geometry.ELEVATOR_STAGE_ONE_HEIGHT,
                         new Rotation3d()));
-        updatePlatform(0.0, 0.0, 0.0);
+        updatePlatform(0.0);
     }
 
     public static synchronized RobotStateManager getInstance() {
@@ -204,9 +204,8 @@ public class RobotStateManager implements EpilogueLog {
         updateIntakeArmTransforms(angleRadians);
     }
 
-    public synchronized void updatePlatform(double centerHeight, double pitch, double roll) {
-        _currentPlatformRotation = new Rotation3d(roll, pitch, 0);
-        updateElevatorTransforms(centerHeight, _currentPlatformRotation);
+    public synchronized void updatePlatform(double centerHeight) {
+        updateElevatorTransforms(centerHeight);
 
         Pose3d currentCoralArm = _poses.get(RobotCoordinate.CORAL_ARM_END);
         if (currentCoralArm != null) {
@@ -219,7 +218,7 @@ public class RobotStateManager implements EpilogueLog {
         }
     }
 
-    private void updateElevatorTransforms(double heightMeters, Rotation3d platformRotation) {
+    private void updateElevatorTransforms(double heightMeters) {
         // Update stage position with platform rotation
         _poses.put(
                 RobotCoordinate.ELEVATOR_STAGE,
@@ -227,7 +226,7 @@ public class RobotStateManager implements EpilogueLog {
                         Geometry.ELEVATOR_X_OFFSET,
                         Geometry.ELEVATOR_Y_OFFSET,
                         Geometry.ELEVATOR_STAGE_ONE_HEIGHT + heightMeters,
-                        platformRotation));
+                        new Rotation3d()));
 
         // Update top position, maintaining platform rotation
         _poses.put(
@@ -236,7 +235,7 @@ public class RobotStateManager implements EpilogueLog {
                         Geometry.ELEVATOR_X_OFFSET,
                         Geometry.ELEVATOR_Y_OFFSET,
                         Geometry.ELEVATOR_STAGE_TWO_HEIGHT + (heightMeters * 2.0),
-                        platformRotation));
+                        new Rotation3d()));
     }
 
     private void updateCoralArmTransforms(double armAngleRadians) {
