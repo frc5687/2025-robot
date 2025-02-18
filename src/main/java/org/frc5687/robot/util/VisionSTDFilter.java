@@ -25,8 +25,7 @@ public class VisionSTDFilter {
     private static final double TIME_SCALE_FACTOR = 0.1;
     private static final double VELOCITY_SCALE_FACTOR = 0.15;
 
-
-    private static final double MIN_TAG_AREA_PERCENT = 1.0;  // % of image
+    private static final double MIN_TAG_AREA_PERCENT = 1.0; // % of image
     private static final double GOOD_TAG_AREA_PERCENT = 5.0; // % of image
     private static final double MAX_TAG_SKEW = 0.8; // ratio
 
@@ -73,9 +72,9 @@ public class VisionSTDFilter {
                         * velocityMultiplier
                         * qualityMultiplier;
 
-        // If out pose jumps a lot we want to trust less 
+        // If out pose jumps a lot we want to trust less
         if (detectPoseJump(visionPose.estimatedPose.toPose2d())) {
-            xyStd *= 2.0; 
+            xyStd *= 2.0;
             thetaStd *= 2.0;
         }
 
@@ -94,18 +93,20 @@ public class VisionSTDFilter {
 
     private double calculateTagQuality(List<PhotonTrackedTarget> targets) {
         if (targets.isEmpty()) return 0.0;
-        
+
         double totalQuality = 0.0;
         for (PhotonTrackedTarget target : targets) {
-            double areaQuality = Math.min(1.0, 
-                (target.getArea() - MIN_TAG_AREA_PERCENT) / 
-                (GOOD_TAG_AREA_PERCENT - MIN_TAG_AREA_PERCENT));
-            
+            double areaQuality =
+                    Math.min(
+                            1.0,
+                            (target.getArea() - MIN_TAG_AREA_PERCENT)
+                                    / (GOOD_TAG_AREA_PERCENT - MIN_TAG_AREA_PERCENT));
+
             double skewQuality = 1.0 - (target.getSkew() / MAX_TAG_SKEW);
             double poseAmbiguity = 1.0 - Math.min(1.0, target.getPoseAmbiguity());
             totalQuality += (areaQuality + skewQuality + poseAmbiguity) / 3.0;
         }
-        
+
         return totalQuality / targets.size();
     }
 

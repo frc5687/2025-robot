@@ -48,7 +48,8 @@ public class Constants {
         public static final double DRIVE_CURRENT_LIMIT = 80.0;
 
         public static final PIDConstants STEER_PID = new PIDConstants(4000, 0.0, 50.0); // 4000 kp, 50kd
-        public static final PIDConstants SIM_STEER_PID = new PIDConstants(10, 0.0, 0.0); // 4000 kp, 50kd
+        public static final PIDConstants SIM_STEER_PID =
+                new PIDConstants(10, 0.0, 0.0); // 4000 kp, 50kd
         public static final double STEER_KS = 0.0;
         public static final double STEER_KV = 0.0;
         public static final double STEER_KA = 0.0;

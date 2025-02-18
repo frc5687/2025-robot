@@ -2,12 +2,12 @@
 package org.frc5687.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import java.util.*;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
+import org.frc5687.robot.util.FieldConstants;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -58,7 +58,7 @@ public class SimVisionIO implements VisionIO {
 
         AprilTagFieldLayout layout = null;
         try {
-            layout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2025Reefscape.m_resourceFile);
+            layout = FieldConstants.aprilTagLayout;
             _visionSim.addAprilTags(layout);
         } catch (Exception e) {
             System.err.println("Failed to load AprilTag layout: " + e.getMessage());

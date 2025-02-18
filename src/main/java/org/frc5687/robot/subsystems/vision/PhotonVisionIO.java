@@ -1,7 +1,5 @@
 package org.frc5687.robot.subsystems.vision;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Transform3d;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.util.FieldConstants;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -26,7 +25,7 @@ public class PhotonVisionIO implements VisionIO {
             this.camera = new PhotonCamera(name);
             this.estimator =
                     new PhotonPoseEstimator(
-                            AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape),
+                            FieldConstants.aprilTagLayout,
                             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                             robotToCamera);
             estimator.setMultiTagFallbackStrategy(PoseStrategy.AVERAGE_BEST_TARGETS);

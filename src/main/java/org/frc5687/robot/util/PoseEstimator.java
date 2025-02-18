@@ -103,12 +103,13 @@ public class PoseEstimator {
 
         Transform2d measurementTransform = new Transform2d(estimateAtTime, measurementPose); // diff
 
-        // Calculate Kalman gain (6328) and now https://github.com/wpilibsuite/allwpilib/blob/main/wpimath/algorithms.md#closed-form-kalman-gain-for-continuous-kalman-filter-with-a--0-and-c--i
+        // Calculate Kalman gain (6328) and now
+        // https://github.com/wpilibsuite/allwpilib/blob/main/wpimath/algorithms.md#closed-form-kalman-gain-for-continuous-kalman-filter-with-a--0-and-c--i
         Matrix<N3, N3> kalmanGain = new Matrix<>(Nat.N3(), Nat.N3());
         for (int i = 0; i < 3; i++) {
             double q = _qStdDevs.get(i, 0);
-            double r = stdDevs.get(i, 0); 
-            
+            double r = stdDevs.get(i, 0);
+
             // edge cases from derivation
             if (q == 0 && r != 0) {
                 kalmanGain.set(i, i, 0.0);
@@ -118,7 +119,6 @@ public class PoseEstimator {
                 kalmanGain.set(i, i, q / (q + Math.sqrt(q * r)));
             }
         }
-   
 
         // Scaled correction
         Matrix<N3, N1> kTimesTransform =
