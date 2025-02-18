@@ -1,6 +1,5 @@
 package org.frc5687.robot;
 
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -157,11 +156,11 @@ public class RobotStateManager implements EpilogueLog {
     public synchronized void updateVision(EstimatedRobotPose estimatedRobotPose) {
         if (_questNavPoseEstimator != null) {
             _questNavPoseEstimator.addVisionMeasurement(
-                    estimatedRobotPose, VecBuilder.fill(0.4, 0.4, 0.4), estimatedRobotPose.timestampSeconds);
+                    estimatedRobotPose, estimatedRobotPose.timestampSeconds);
         }
         if (_swervePoseEstimator != null) {
             _swervePoseEstimator.addVisionMeasurement(
-                    estimatedRobotPose, VecBuilder.fill(0.2, 0.2, 0.2), estimatedRobotPose.timestampSeconds);
+                    estimatedRobotPose, estimatedRobotPose.timestampSeconds);
         }
     }
 

@@ -29,19 +29,19 @@ public class SimDriveIO implements DriveIO {
         _kinematics = new SwerveDriveKinematics(Constants.DriveTrain.MODULE_LOCATIONS);
         _modules = new SwerveModule[Constants.SwerveModule.NUM_MODULES];
 
-        SwerveModuleIO northWestIO = new SimSwerveModuleIO(Constants.DriveTrain.NW_CONFIG);
+        SwerveModuleIO northWestIO = new SimSwerveModuleIO(Constants.DriveTrain.SIM_NW_CONFIG);
 
-        SwerveModuleIO northEastIO = new SimSwerveModuleIO(Constants.DriveTrain.NE_CONFIG);
+        SwerveModuleIO northEastIO = new SimSwerveModuleIO(Constants.DriveTrain.SIM_NE_CONFIG);
 
-        SwerveModuleIO southWestIO = new SimSwerveModuleIO(Constants.DriveTrain.SW_CONFIG);
+        SwerveModuleIO southWestIO = new SimSwerveModuleIO(Constants.DriveTrain.SIM_SW_CONFIG);
 
-        SwerveModuleIO southEastIO = new SimSwerveModuleIO(Constants.DriveTrain.SE_CONFIG);
+        SwerveModuleIO southEastIO = new SimSwerveModuleIO(Constants.DriveTrain.SIM_SE_CONFIG);
 
         // This is ok. We should make this enforced as a part of DriveIO
-        _modules[0] = new SwerveModule(null, Constants.DriveTrain.NW_CONFIG, northWestIO);
-        _modules[1] = new SwerveModule(null, Constants.DriveTrain.NE_CONFIG, northEastIO);
-        _modules[2] = new SwerveModule(null, Constants.DriveTrain.SW_CONFIG, southWestIO);
-        _modules[3] = new SwerveModule(null, Constants.DriveTrain.SE_CONFIG, southEastIO);
+        _modules[0] = new SwerveModule(null, Constants.DriveTrain.SIM_NW_CONFIG, northWestIO);
+        _modules[1] = new SwerveModule(null, Constants.DriveTrain.SIM_NE_CONFIG, northEastIO);
+        _modules[2] = new SwerveModule(null, Constants.DriveTrain.SIM_SW_CONFIG, southWestIO);
+        _modules[3] = new SwerveModule(null, Constants.DriveTrain.SIM_SE_CONFIG, southEastIO);
         reset();
     }
 

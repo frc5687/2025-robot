@@ -83,7 +83,7 @@ public class SimVisionIO implements VisionIO {
         cameraSim.enableDrawWireframe(false);
         cameraSim.enableProcessedStream(false);
         cameraSim.enableRawStream(false);
-        cameraSim.setMaxSightRange(1.0);
+        cameraSim.setMaxSightRange(5.0);
 
         PhotonPoseEstimator estimator =
                 new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);

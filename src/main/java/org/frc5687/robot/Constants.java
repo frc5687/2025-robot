@@ -34,6 +34,7 @@ public class Constants {
 
         // Drive Motor Configuration
         public static final PIDConstants DRIVE_PID = new PIDConstants(12.00, 0.0, 0.000); // 10.0 kp
+        public static final PIDConstants SIM_DRIVE_PID = new PIDConstants(12.00, 0.0, 0.000); // 10.0 kp
         public static final double DRIVE_KS =
                 6; // 3 // This is the voltage to overcome static friction taken from sysid 0.0032292
         public static final double DRIVE_KV = 0.0; // 0.15 taken from sysid 2.24
@@ -47,6 +48,7 @@ public class Constants {
         public static final double DRIVE_CURRENT_LIMIT = 80.0;
 
         public static final PIDConstants STEER_PID = new PIDConstants(4000, 0.0, 50.0); // 4000 kp, 50kd
+        public static final PIDConstants SIM_STEER_PID = new PIDConstants(10, 0.0, 0.0); // 4000 kp, 50kd
         public static final double STEER_KS = 0.0;
         public static final double STEER_KV = 0.0;
         public static final double STEER_KA = 0.0;
@@ -83,6 +85,31 @@ public class Constants {
                     STEER_KS,
                     STEER_KV,
                     STEER_KA,
+                    STEER_CURRENT_LIMIT,
+                    STEER_MOTION_CRUISE_VELOCITY,
+                    STEER_MOTION_ACCELERATION,
+                    offset,
+                    driveInverted,
+                    steerInverted);
+        }
+
+        public static SwerveModuleConfig createSimModuleConfig(
+                String name, double offset, boolean driveInverted, boolean steerInverted) {
+            return new SwerveModuleConfig(
+                    name,
+                    WHEEL_RADIUS,
+                    GEAR_RATIO_DRIVE,
+                    GEAR_RATIO_STEER,
+                    COUPLING_RATIO,
+                    SIM_DRIVE_PID,
+                    0,
+                    0,
+                    0,
+                    DRIVE_CURRENT_LIMIT,
+                    SIM_STEER_PID,
+                    0,
+                    0,
+                    0,
                     STEER_CURRENT_LIMIT,
                     STEER_MOTION_CRUISE_VELOCITY,
                     STEER_MOTION_ACCELERATION,
@@ -152,6 +179,15 @@ public class Constants {
                 SwerveModule.createModuleConfig("SW", -0.0573731, false, false);
         public static final SwerveModuleConfig SE_CONFIG =
                 SwerveModule.createModuleConfig("SE", 0.3584248, false, false);
+
+        public static final SwerveModuleConfig SIM_NW_CONFIG =
+                SwerveModule.createSimModuleConfig("NW", -0.474609375, false, false);
+        public static final SwerveModuleConfig SIM_NE_CONFIG =
+                SwerveModule.createSimModuleConfig("NE", 0.1811524, false, false);
+        public static final SwerveModuleConfig SIM_SW_CONFIG =
+                SwerveModule.createSimModuleConfig("SW", -0.0573731, false, false);
+        public static final SwerveModuleConfig SIM_SE_CONFIG =
+                SwerveModule.createSimModuleConfig("SE", 0.3584248, false, false);
 
         public static final SwerveModuleConfig[] MODULE_CONFIGS = {
             NW_CONFIG, NE_CONFIG, SW_CONFIG, SE_CONFIG
