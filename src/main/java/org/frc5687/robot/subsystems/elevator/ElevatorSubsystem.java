@@ -32,7 +32,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
 
     @Override
     protected void processInputs() {
-        _robotState.updatePlatform(_inputs.firstStagePositionMeters);
+        _robotState.updatePlatform(_inputs.heightPositionMeters);
         _inputs.platformHeightMeters = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP).getZ();
         _inputs.stagePose = _robotState.getPose(RobotCoordinate.ELEVATOR_STAGE);
         _inputs.platformPose = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP);
@@ -61,9 +61,12 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         if (_newDesiredPlatformHeight.isPresent()) {
             double heightMeters = _newDesiredPlatformHeight.get();
             _outputs.desiredPlatformHeightWorldMeters = heightMeters;
-            _outputs.desiredStageHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
+            _outputs.desiredHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
+            
             _newDesiredPlatformHeight = Optional.empty();
         }
+
+
     }
 
     public void setDesiredPlatformHeightWorld(double heightMeters) {

@@ -41,21 +41,13 @@ public class RobotStateManager implements EpilogueLog {
     public static final class Geometry {
         private Geometry() {}
 
-        public static final double ELEVATOR_X_OFFSET = 0.0;
+        public static final double ELEVATOR_X_OFFSET = 0.127000;
         public static final double ELEVATOR_Y_OFFSET = 0.0;
 
-        public static final double NW_Y_OFFSET = 0.247650;
-        public static final double NW_X_OFFSET = 0.184150;
-
-        public static final double SW_Y_OFFSET = 0.247650;
-        public static final double SW_X_OFFSET = -0.184150;
-
-        public static final double NE_Y_OFFSET = -0.247650;
-        public static final double NE_X_OFFSET = 0.184150;
-
-        public static final double ELEVATOR_STAGE_ONE_HEIGHT = 0.193675; // m
-        public static final double ELEVATOR_STAGE_TWO_HEIGHT = 0.253429; // m
-        public static final double ELEVATOR_MAX_HEIGHT = 1.459103;
+        public static final double ELEVATOR_STAGE_ONE_HEIGHT = 0.165639;
+        public static final double ELEVATOR_STAGE_ONE_MAX_HEIGHT = 0.851439;
+        public static final double ELEVATOR_STAGE_TWO_HEIGHT = 0.191039; // m
+        public static final double ELEVATOR_STAGE_TWO_OFFSET = Units.inchesToMeters(6.0);
 
         public static final double CORAL_ARM_X_OFFSET = 0.171450;
         public static final double CORAL_ARM_Y_OFFSET = -0.115;
@@ -227,8 +219,6 @@ public class RobotStateManager implements EpilogueLog {
                         Geometry.ELEVATOR_Y_OFFSET,
                         Geometry.ELEVATOR_STAGE_ONE_HEIGHT + heightMeters,
                         new Rotation3d()));
-
-        // Update top position, maintaining platform rotation
         _poses.put(
                 RobotCoordinate.ELEVATOR_TOP,
                 new Pose3d(

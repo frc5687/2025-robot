@@ -276,8 +276,8 @@ public class Constants {
         public static final double MASS = 13.6078; // kg
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
-        public static final double MIN_PLATFORM_HEIGHT = 0.251333; // m
-        public static final double MAX_PLATFORM_HEIGHT = 1.68; // m
+        public static final double MIN_PLATFORM_HEIGHT = 0.191039; // m
+        public static final double MAX_PLATFORM_HEIGHT = 1.562639; // m
 
         public static final double MIN_HEIGHT = 0.0; // m
         public static final double MAX_HEIGHT =
@@ -286,7 +286,7 @@ public class Constants {
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =
                 (MOTOR.freeSpeedRadPerSec / GEAR_RATIO) * DRUM_RADIUS;
-        public static final double MAX_ACCELERATION_MPSS = 5;
+        public static final double MAX_ACCELERATION_MPSS = (MOTOR.stallTorqueNewtonMeters / GEAR_RATIO * DRUM_RADIUS) / (MASS * DRUM_RADIUS * DRUM_RADIUS);
         public static final double MAX_JERK_MPSSS = 40;
 
         // public static final double MOTION_MAGIC_EXPO_KV = .09;

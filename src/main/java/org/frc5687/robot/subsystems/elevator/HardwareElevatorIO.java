@@ -76,7 +76,7 @@ public class HardwareElevatorIO implements ElevatorIO {
                         * Constants.Elevator.DRUM_RADIUS
                         / Constants.Elevator.GEAR_RATIO;
 
-        inputs.firstStagePositionMeters = (eastPosition + westPosition) / 2.0;
+        inputs.heightPositionMeters = (eastPosition + westPosition) / 2.0;
 
         _platformVelocity =
                 (_eastVelocity.getValueAsDouble() + _westVelocity.getValueAsDouble() / 2.0)
