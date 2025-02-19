@@ -49,9 +49,9 @@ public class RobotStateManager implements EpilogueLog {
         public static final double ELEVATOR_STAGE_TWO_HEIGHT = 0.191039; // m
         public static final double ELEVATOR_STAGE_TWO_OFFSET = Units.inchesToMeters(6.0);
 
-        public static final double CORAL_ARM_X_OFFSET = 0.171450;
-        public static final double CORAL_ARM_Y_OFFSET = -0.115;
-        public static final double CORAL_ARM_Z_OFFSET = 0.178689;
+        public static final double CORAL_ARM_X_OFFSET = 0.260350;
+        public static final double CORAL_ARM_Y_OFFSET = 0.145;
+        public static final double CORAL_ARM_Z_OFFSET = 0.381000;
         public static final double CORAL_ARM_LENGTH = Units.inchesToMeters(12);
 
         public static final double ALGAE_ARM_X_OFFSET = 0.171450;
@@ -244,8 +244,8 @@ public class RobotStateManager implements EpilogueLog {
         _poses.put(
                 RobotCoordinate.CORAL_ARM_BASE,
                 new Pose3d(
-                        Geometry.ELEVATOR_X_OFFSET + Geometry.CORAL_ARM_X_OFFSET,
-                        Geometry.ELEVATOR_Y_OFFSET + Geometry.CORAL_ARM_Y_OFFSET,
+                        Geometry.CORAL_ARM_X_OFFSET,
+                        Geometry.CORAL_ARM_Y_OFFSET,
                         elevatorZ + Geometry.CORAL_ARM_Z_OFFSET,
                         armRotation));
 
