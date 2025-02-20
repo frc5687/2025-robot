@@ -77,6 +77,5 @@ public class SimCoralArmIO implements CoralArmIO {
         outputs.controllerOutput = _controller.calculate(_armSim.getAngleRads());
         outputs.voltageFeedForward = calculateFeedForward(_armSim.getAngleRads());
         _armSim.setInputVoltage(outputs.controllerOutput + outputs.voltageFeedForward);
-        System.out.println(outputs.controllerOutput);
     }
 }
