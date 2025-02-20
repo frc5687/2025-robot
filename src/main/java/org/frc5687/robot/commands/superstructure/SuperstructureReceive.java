@@ -56,10 +56,7 @@ public class SuperstructureReceive extends OutliersCommand {
         if (_state == SuperstructureReceiveState.OUTTAKING) {
             _coral.setWheelVoltageCommand(-12.0);
             _coral.setArmAngle(Units.degreesToRadians(45));
-            if (Math.abs(timer - timestamp) >= 0.075) {
-
-                _state = SuperstructureReceiveState.DONE;
-            }
+            
         }
     }
 
