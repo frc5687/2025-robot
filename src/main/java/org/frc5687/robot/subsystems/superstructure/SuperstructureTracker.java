@@ -29,8 +29,10 @@ public class SuperstructureTracker {
 
         // Check if arm is too far extended
         if (currentArmAngle > stowedAngleThreshold) {
-            System.out.println("Arm angle is too far extended, need to stow: " + 
-                             Units.radiansToDegrees(currentArmAngle) + " degrees");
+            System.out.println(
+                    "Arm angle is too far extended, need to stow: "
+                            + Units.radiansToDegrees(currentArmAngle)
+                            + " degrees");
             return true;
         }
 
@@ -42,7 +44,6 @@ public class SuperstructureTracker {
 
         return false;
     }
-
 
     public boolean needToClearIntake() {
         if (_container.getIntake().getPivotArmAngleRads()

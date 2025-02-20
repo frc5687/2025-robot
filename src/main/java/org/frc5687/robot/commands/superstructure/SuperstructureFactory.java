@@ -33,17 +33,17 @@ public class SuperstructureFactory {
 
     public static Command clearIntake(RobotContainer container) {
         return setSuperstructure(container, SuperstructureGoals.CLEAR_INTAKE)
-                        .unless(() -> !container.getSuperstructureTracker().needToClearIntake());
+                .unless(() -> !container.getSuperstructureTracker().needToClearIntake());
     }
 
     public static Command transitionToSafeCoralState(RobotContainer container) {
         return setSuperstructure(container, SuperstructureGoals.SAFE_CORAL_TRANSITION)
-                        .unless(() -> !container.getSuperstructureTracker().needsSafeCoralTransition());
+                .unless(() -> !container.getSuperstructureTracker().needsSafeCoralTransition());
     }
 
     public static Command ensureClearance(RobotContainer container) {
         return new SequentialCommandGroup(
-                clearIntake(container)/* , transitionToSafeCoralState(container)*/);
+                clearIntake(container) /* , transitionToSafeCoralState(container)*/);
     }
 
     public static Command receiveFromFunnel(RobotContainer container) {

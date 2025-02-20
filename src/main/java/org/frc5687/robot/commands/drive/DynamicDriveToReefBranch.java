@@ -9,7 +9,7 @@ import org.frc5687.robot.util.FieldConstants.ReefHeight;
 import org.frc5687.robot.util.ReefAlignmentHelpers;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
-public class DynamicDriveToReefBranch extends DriveToPose {
+public class DynamicDriveToReefBranch extends DriveToPoseSmooth {
 
     public DynamicDriveToReefBranch(DriveSubsystem drive, ReefSide side, ReefHeight height) {
         super(

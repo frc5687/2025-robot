@@ -34,7 +34,7 @@ public class Constants {
 
         // Drive Motor Configuration
         public static final PIDConstants DRIVE_PID = new PIDConstants(12.00, 0.0, 0.000); // 10.0 kp
-        public static final PIDConstants SIM_DRIVE_PID = new PIDConstants(12.00, 0.0, 0.000); // 10.0 kp
+        public static final PIDConstants SIM_DRIVE_PID = new PIDConstants(0.1, 0.0, 0.0); // 10.0 kp
         public static final double DRIVE_KS =
                 6; // 3 // This is the voltage to overcome static friction taken from sysid 0.0032292
         public static final double DRIVE_KV = 0.0; // 0.15 taken from sysid 2.24
@@ -48,8 +48,8 @@ public class Constants {
         public static final double DRIVE_CURRENT_LIMIT = 80.0;
 
         public static final PIDConstants STEER_PID = new PIDConstants(4000, 0.0, 50.0); // 4000 kp, 50kd
-        public static final PIDConstants SIM_STEER_PID =
-                new PIDConstants(10, 0.0, 0.0); // 4000 kp, 50kd
+        public static final PIDConstants SIM_STEER_PID = new PIDConstants(10, 0.0, 0.0); // 4000 kp, 50
+
         public static final double STEER_KS = 0.0;
         public static final double STEER_KV = 0.0;
         public static final double STEER_KA = 0.0;
@@ -60,7 +60,9 @@ public class Constants {
 
         public static final double COUPLING_RATIO =
                 (45.0 / 15.0); // Inverse of the last stage, where we link to the bevel gear
-        public static final double COEFFICIENT_OF_FRICTION = 80.0 / 140.0;
+        // public static final double COEFFICIENT_OF_FRICTION = 80.0 / 140.0;
+
+        public static final double COEFFICIENT_OF_FRICTION = 1.1;
 
         public static final double MAX_LINEAR_SPEED =
                 DCMotor.getKrakenX60Foc(1)
@@ -103,8 +105,8 @@ public class Constants {
                     GEAR_RATIO_STEER,
                     COUPLING_RATIO,
                     SIM_DRIVE_PID,
-                    0,
-                    0,
+                    0.014,
+                    0.134,
                     0,
                     DRIVE_CURRENT_LIMIT,
                     SIM_STEER_PID,
