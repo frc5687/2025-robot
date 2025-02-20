@@ -32,25 +32,18 @@ public class SuperstructureFactory {
     }
 
     public static Command clearIntake(RobotContainer container) {
-        return withStateTracking(
-                container,
-                SuperstructureGoals.CLEAR_INTAKE,
-                setSuperstructure(container, SuperstructureGoals.CLEAR_INTAKE)
-                        .unless(() -> !container.getSuperstructureTracker().needToClearIntake()));
+        return setSuperstructure(container, SuperstructureGoals.CLEAR_INTAKE)
+                        .unless(() -> !container.getSuperstructureTracker().needToClearIntake());
     }
 
-    // I can just make a set state command to remove repetative code :)
     public static Command transitionToSafeCoralState(RobotContainer container) {
-        return withStateTracking(
-                container,
-                SuperstructureGoals.SAFE_CORAL_TRANSITION,
-                setSuperstructure(container, SuperstructureGoals.SAFE_CORAL_TRANSITION)
-                        .unless(() -> !container.getSuperstructureTracker().needsSafeCoralTransition()));
+        return setSuperstructure(container, SuperstructureGoals.SAFE_CORAL_TRANSITION)
+                        .unless(() -> !container.getSuperstructureTracker().needsSafeCoralTransition());
     }
 
     public static Command ensureClearance(RobotContainer container) {
         return new SequentialCommandGroup(
-                clearIntake(container) /*  , transitionToSafeCoralState(container) */);
+                clearIntake(container)/* , transitionToSafeCoralState(container)*/);
     }
 
     public static Command receiveFromFunnel(RobotContainer container) {
@@ -115,6 +108,15 @@ public class SuperstructureFactory {
                 new SequentialCommandGroup(
                         ensureClearance(container),
                         setSuperstructure(container, SuperstructureGoals.PLACE_CORAL_L2)));
+    }
+
+    public static Command placeCoralL1(RobotContainer container) {
+        return withStateTracking(
+                container,
+                SuperstructureGoals.PLACE_CORAL_L1,
+                new SequentialCommandGroup(
+                        ensureClearance(container),
+                        setSuperstructure(container, SuperstructureGoals.PLACE_CORAL_L1)));
     }
 
     public static Command grabAlgaeL1(RobotContainer container) {

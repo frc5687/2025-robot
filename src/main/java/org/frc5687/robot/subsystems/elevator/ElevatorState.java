@@ -4,7 +4,7 @@ import org.frc5687.robot.Constants;
 
 public enum ElevatorState {
     STOWED(Constants.Elevator.MIN_PLATFORM_HEIGHT),
-    L1_CORAL_PLACING(0.5),
+    L1_CORAL_PLACING(Constants.Elevator.MIN_PLATFORM_HEIGHT),
     L1_ALGAE_GRAB(1.219200),
     L2_CORAL_PLACING(0.460400),
     L2_ALGAE_GRAB(1.066800), // Is this real?

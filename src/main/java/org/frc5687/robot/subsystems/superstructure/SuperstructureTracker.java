@@ -2,6 +2,7 @@ package org.frc5687.robot.subsystems.superstructure;
 
 import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.RobotContainer;
+import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.subsystems.intake.IntakeState;
 
 public class SuperstructureTracker {
@@ -23,19 +24,25 @@ public class SuperstructureTracker {
     }
 
     public boolean needsSafeCoralTransition() {
-        // if (_container.getCoral().getArmAngleRads()
-        //         < (CoralState.STOWED.getValue() - Units.degreesToRadians(10))) {
-        //     System.out.println("Arm angle is to far in need to stow");
-        //     return true;
-        // }
+        double currentArmAngle = _container.getCoral().getArmAngleRads();
+        double stowedAngleThreshold = CoralState.STOWED.getArmAngle() + Units.degreesToRadians(10);
 
-        // if (_desiredState.getCoral() == CoralState.RECEIVE_FROM_FUNNEL) {
-        //     System.out.println("Going to receive from funnel need to stow");
-        //     return true;
-        // }
+        // Check if arm is too far extended
+        if (currentArmAngle > stowedAngleThreshold) {
+            System.out.println("Arm angle is too far extended, need to stow: " + 
+                             Units.radiansToDegrees(currentArmAngle) + " degrees");
+            return true;
+        }
+
+        // Check if transitioning to receive from funnel
+        if (_desiredState.getCoral() == CoralState.RECEIVE_FROM_FUNNEL) {
+            System.out.println("Transitioning to receive from funnel, need to stow first");
+            return true;
+        }
 
         return false;
     }
+
 
     public boolean needToClearIntake() {
         if (_container.getIntake().getPivotArmAngleRads()
