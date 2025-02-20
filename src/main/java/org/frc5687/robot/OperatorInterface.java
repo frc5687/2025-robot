@@ -3,13 +3,12 @@ package org.frc5687.robot;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
+import org.frc5687.robot.commands.coral.CoralSetState;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
-import org.frc5687.robot.commands.elevator.ElevatorSetState;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
-import org.frc5687.robot.subsystems.elevator.ElevatorState;
+import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.util.FieldConstants.ReefHeight;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
@@ -56,11 +55,6 @@ public class OperatorInterface {
         // _driverController
         //         .rightTrigger()
         //         .whileTrue(new ConditionalCommand(null, null, false)); // TODO intake based on mode
-        _driverController.povLeft().onTrue(container.getDrive().sysIdQuasistatic(Direction.kForward));
-        _driverController.povRight().onTrue(container.getDrive().sysIdQuasistatic(Direction.kReverse));
-
-        _driverController.povUp().onTrue(container.getDrive().sysIdDynamic(Direction.kForward));
-        _driverController.povDown().onTrue(container.getDrive().sysIdDynamic(Direction.kReverse));
 
         _driverController.button(8).onTrue(new InstantCommand(container.getDrive()::zeroIMU));
 
@@ -69,9 +63,7 @@ public class OperatorInterface {
                 .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
 
         /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
-        _operatorController
-                .a()
-                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.STOWED));
+        _operatorController.a().onTrue(new CoralSetState(container.getCoral(), CoralState.STOWED));
 
         _operatorController.b().onTrue(SuperstructureFactory.placeCoralL2(container));
         _operatorController.x().onTrue(SuperstructureFactory.placeCoralL3(container, false));

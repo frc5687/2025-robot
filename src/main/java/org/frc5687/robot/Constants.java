@@ -294,20 +294,20 @@ public class Constants {
         // public static final double MOTION_MAGIC_EXPO_KV = .09;
         // public static final double MOTION_MAGIC_EXPO_KA = .02;
 
-        public static final double MOTION_MAGIC_EXPO_KV = 0.08;
-        public static final double MOTION_MAGIC_EXPO_KA = 0.03;
+        public static final double MOTION_MAGIC_EXPO_KV = 2.0;
+        public static final double MOTION_MAGIC_EXPO_KA = 2.0;
 
         // This needs to be tuned with real PID values
-        public static final double kP = 80.0;
+        public static final double kP = 20.0;
         public static final double kI = 0.0;
-        public static final double kD = 2.0;
+        public static final double kD = 0.0; // 2.0
         public static final double kS = 2.0;
         public static final double kG = 0.0;
-        public static final double kV = 0.09;
-        public static final double kA = 0.05;
+        public static final double kV = 0.09; // 0.09
+        public static final double kA = 0.05; // 0.05
 
-        public static final boolean EAST_INVERTED = true;
-        public static final boolean WEST_INVERTED = false;
+        public static final boolean EAST_INVERTED = false;
+        public static final boolean WEST_INVERTED = true;
 
         public static final double CURRENT_LIMIT = 60.0;
 
@@ -364,7 +364,7 @@ public class Constants {
         public static final double ARM_MASS = Units.lbsToKilograms(5.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = Units.degreesToRadians(180);
+        public static final double MAX_ANGLE = Units.degreesToRadians(300);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 3.0 * Math.PI;

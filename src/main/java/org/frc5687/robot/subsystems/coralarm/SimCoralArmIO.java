@@ -44,6 +44,7 @@ public class SimCoralArmIO implements CoralArmIO {
                         Constants.CoralArm.SIM_PID_CONSTANTS.kI(),
                         Constants.CoralArm.SIM_PID_CONSTANTS.kD(),
                         constraints);
+        _controller.disableContinuousInput();
     }
 
     // https://file.tavsys.net/control/controls-engineering-in-frc.pdf Look up single jointed arm
@@ -76,5 +77,6 @@ public class SimCoralArmIO implements CoralArmIO {
         outputs.controllerOutput = _controller.calculate(_armSim.getAngleRads());
         outputs.voltageFeedForward = calculateFeedForward(_armSim.getAngleRads());
         _armSim.setInputVoltage(outputs.controllerOutput + outputs.voltageFeedForward);
+        System.out.println(outputs.controllerOutput);
     }
 }

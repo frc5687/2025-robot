@@ -112,6 +112,14 @@ public class HardwareElevatorIO implements ElevatorIO {
         //         Units.radiansToRotations(outputs.southWestStageHeight /
         // Constants.Elevator.DRUM_RADIUS)
         //                 * Constants.Elevator.GEAR_RATIO_SOUTH;
+        double eastRotations =
+                Units.radiansToRotations(
+                                outputs.desiredPlatformHeightWorldMeters / Constants.Elevator.DRUM_RADIUS)
+                        * Constants.Elevator.GEAR_RATIO;
+        double westRotations =
+                Units.radiansToRotations(
+                                outputs.desiredPlatformHeightWorldMeters / Constants.Elevator.DRUM_RADIUS)
+                        * Constants.Elevator.GEAR_RATIO;
 
         // if (isWithinPositionTolerance(outputs.desiredStageHeight)) {
         //     outputs.usingPositionHolding = true;
@@ -135,6 +143,9 @@ public class HardwareElevatorIO implements ElevatorIO {
         //         _northWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
         // outputs.voltageCommandSouthWest =
         //         _southWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
+
+        _eastMotor.setControl(_eastPositionTorqueRequest.withPosition(eastRotations));
+        _westMotor.setControl(_westPositionTorqueRequest.withPosition(westRotations));
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted) {
