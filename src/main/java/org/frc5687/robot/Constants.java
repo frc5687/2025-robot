@@ -233,6 +233,10 @@ public class Constants {
             return new DCMotor(
                     12.0, 4.05, 275, 1.4, Units.rotationsPerMinuteToRadiansPerSecond(7530), numMotors);
         }
+
+        public static DCMotor getJohnsonElectric(int numMotors) {
+                return new DCMotor(12.0, 4.5, 26, 2, Units.rotationsPerMinuteToRadiansPerSecond(410), numMotors);
+        }
     }
 
     public static class Intake {
@@ -358,16 +362,17 @@ public class Constants {
         public static final double ENCODER_OFFSET = -0.2209;
         public static final boolean ENCODER_INVERTED = true;
 
-        public static final DCMotor GEARBOX = DCMotor.getBag(1);
-        public static final double GEAR_RATIO = 120; // From Amory
-        public static final double ARM_LENGTH = Units.inchesToMeters(14.0);
+        public static final DCMotor GEARBOX = Motors.getJohnsonElectric(1);
+        public static final double GEAR_RATIO = (48.0 / 24.0); // From Amory
+        public static final double ARM_LENGTH = Units.inchesToMeters(4.0);
         public static final double ARM_MASS = Units.lbsToKilograms(5.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
         public static final double MAX_ANGLE = Units.degreesToRadians(300);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 3.0 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED =
+        (GEARBOX.stallTorqueNewtonMeters * GEAR_RATIO) / MOI_ARM;
     }
 
     public static class Climber {
