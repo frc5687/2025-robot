@@ -2,10 +2,12 @@ package org.frc5687.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -27,9 +29,16 @@ public class HardwareElevatorIO implements ElevatorIO {
     private final MotionMagicExpoTorqueCurrentFOC _westPositionTorqueRequest;
     private final MotionMagicExpoTorqueCurrentFOC _eastPositionTorqueRequest;
 
+    private final VoltageOut _westVoltageRequest;
+    private final VoltageOut _eastVoltageRequest;
+
+    private final LaserCan _laserCan;
+
     private double _platformVelocity = 0.0;
 
-    public HardwareElevatorIO(int eastMotorId, int westMotorId) {
+    public HardwareElevatorIO(int eastMotorId, int westMotorId, int laserCanId) {
+        _laserCan = new LaserCan(laserCanId);
+
         _eastMotor = new TalonFX(eastMotorId, Constants.Elevator.CANBUS);
         _westMotor = new TalonFX(westMotorId, Constants.Elevator.CANBUS);
 
@@ -41,6 +50,9 @@ public class HardwareElevatorIO implements ElevatorIO {
         _westPositionTorqueRequest = new MotionMagicExpoTorqueCurrentFOC(0).withSlot(0);
         _eastPositionTorqueRequest = new MotionMagicExpoTorqueCurrentFOC(0).withSlot(0);
 
+        _westVoltageRequest = new VoltageOut(0);
+        _eastVoltageRequest = new VoltageOut(0);
+
         setSignalFrequency();
         setControlFrequency();
 
@@ -51,7 +63,6 @@ public class HardwareElevatorIO implements ElevatorIO {
     private void setControlFrequency() {
         _westPositionTorqueRequest.UpdateFreqHz = 1000;
         _eastPositionTorqueRequest.UpdateFreqHz = 1000;
-        _westPositionTorqueRequest.UpdateFreqHz = 1000;
     }
 
     private void setSignalFrequency() {
@@ -88,10 +99,19 @@ public class HardwareElevatorIO implements ElevatorIO {
                     _eastMotor.getSupplyCurrent().getValueAsDouble(),
                     _westMotor.getSupplyCurrent().getValueAsDouble(),
                 };
+        LaserCan.Measurement measurement = _laserCan.getMeasurement();
+
+        if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
+            inputs.laserSensorElevatorHeightMeters = measurement.distance_mm * 1000.0;
+        } else {
+            // If we get a bad measurement we want to set it to some invalid measurement
+            inputs.laserSensorElevatorHeightMeters = -1;
+        }
     }
 
     @Override
     public void writeOutputs(ElevatorOutputs outputs) {
+
         // double nwPos = outputs.desiredStageHeight + (outputs.desiredStageHeight *
         // backlashOffset.get());
         // double nePos = outputs.desiredStageHeight + (outputs.desiredStageHeight *
@@ -144,8 +164,18 @@ public class HardwareElevatorIO implements ElevatorIO {
         // outputs.voltageCommandSouthWest =
         //         _southWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
 
-        _eastMotor.setControl(_eastPositionTorqueRequest.withPosition(eastRotations));
-        _westMotor.setControl(_westPositionTorqueRequest.withPosition(westRotations));
+        switch (outputs.controlMode) {
+            case VOLTAGE:
+                _eastMotor.setControl(_eastVoltageRequest.withOutput(outputs.voltageCommandEast));
+                _westMotor.setControl(_westVoltageRequest.withOutput(outputs.voltageCommandWest));
+                break;
+            case POSITION:
+                _eastMotor.setControl(_eastPositionTorqueRequest.withPosition(eastRotations));
+                _westMotor.setControl(_westPositionTorqueRequest.withPosition(westRotations));
+                break;
+            default:
+                break;
+        }
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted) {

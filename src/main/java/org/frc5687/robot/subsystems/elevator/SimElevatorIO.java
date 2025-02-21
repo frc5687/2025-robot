@@ -88,10 +88,19 @@ public class SimElevatorIO implements ElevatorIO {
         double totalVoltage = pidOutput + ffOutput;
         totalVoltage = Math.max(-batteryVoltage, Math.min(batteryVoltage, totalVoltage));
 
-        outputs.voltageCommandEast = totalVoltage;
-        outputs.voltageCommandWest = totalVoltage;
+        switch (outputs.controlMode) {
+            case VOLTAGE:
+                // passed through from external command
+                break;
+            case POSITION:
+                outputs.voltageCommandEast = totalVoltage;
+                outputs.voltageCommandWest = totalVoltage;
+                break;
+            default:
+                break;
+        }
 
-        _elevatorSim.setInputVoltage(totalVoltage);
+        _elevatorSim.setInputVoltage(outputs.voltageCommandEast);
     }
 
     @Override

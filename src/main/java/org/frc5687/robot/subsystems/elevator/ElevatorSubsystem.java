@@ -68,6 +68,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     }
 
     public void setDesiredPlatformHeightWorld(double heightMeters) {
+        _outputs.controlMode = ElevatorControlMode.POSITION;
         heightMeters =
                 MathUtil.clamp(
                         heightMeters,
@@ -112,5 +113,19 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
             }
         }
         _inputs.elevatorState = closestState;
+    }
+
+    public void setVoltage(double voltage) {
+        _outputs.controlMode = ElevatorControlMode.VOLTAGE;
+        _outputs.voltageCommandEast = voltage;
+        _outputs.voltageCommandWest = voltage;
+    }
+
+    public double getAverageCurrent() {
+        return (_inputs.platformMotorCurrents[0] + _inputs.platformMotorCurrents[1]) / 2.0;
+    }
+
+    public double getLaserDistance() {
+        return _inputs.laserSensorElevatorHeightMeters;
     }
 }

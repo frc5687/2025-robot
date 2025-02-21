@@ -52,7 +52,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.CoralArm.PIVOT_MOTOR_INVERTED);
 
-
         configureCancoder();
         configureMotor(_wheelMotor, Constants.CoralArm.WHEEL_MOTOR_INVERTED);
         _absoluteAngle = _cancoder.getAbsolutePosition();

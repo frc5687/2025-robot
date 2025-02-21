@@ -93,7 +93,9 @@ public class RobotContainer implements EpilogueLog {
         } else {
             elevatorIO =
                     new HardwareElevatorIO(
-                            RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR, RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR);
+                            RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR,
+                            RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR,
+                            RobotMap.CAN.LASERCAN.LASERCAN);
         }
 
         _elevator = new ElevatorSubsystem(this, elevatorIO);

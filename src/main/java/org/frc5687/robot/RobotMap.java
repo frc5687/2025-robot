@@ -11,6 +11,10 @@ public class RobotMap {
      */
     public static class CAN {
 
+        public static class LASERCAN {
+            public static final int LASERCAN = 0;
+        }
+
         public static class TALONFX {
 
             // Ordered in order of CAN connection in loop.

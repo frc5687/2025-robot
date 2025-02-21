@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.coral.CoralSetState;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
+import org.frc5687.robot.commands.elevator.HomeElevator;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.coralarm.CoralState;
@@ -22,6 +23,7 @@ public class OperatorInterface {
     }
 
     public void configureCommandMapping(RobotContainer container) {
+        _driverController.a().onTrue(new HomeElevator(container.getElevator()));
         _driverController
                 .x()
                 .onTrue(

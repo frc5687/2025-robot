@@ -8,6 +8,9 @@ public class ElevatorOutputs extends BaseOutputs {
     @Logged(name = "Desired Elevator State", importance = Logged.Importance.CRITICAL)
     public ElevatorState desiredState = ElevatorState.STOWED;
 
+    @Logged(name = "Control Mode", importance = Logged.Importance.DEBUG)
+    public ElevatorControlMode controlMode = ElevatorControlMode.POSITION;
+
     @Logged(name = "Desired Height (m)", importance = Logged.Importance.CRITICAL)
     public double desiredHeight = 0.0;
 

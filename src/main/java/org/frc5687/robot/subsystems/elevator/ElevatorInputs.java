@@ -29,4 +29,7 @@ public class ElevatorInputs extends BaseInputs {
 
     @Logged(name = "Platform 3D Pose", importance = Logged.Importance.DEBUG)
     public Pose3d platformPose = new Pose3d();
+
+    @Logged(name = "Laser Elevator Height (m)", importance = Logged.Importance.CRITICAL)
+    public double laserSensorElevatorHeightMeters = -1.0;
 }
