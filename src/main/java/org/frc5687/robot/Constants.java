@@ -286,7 +286,9 @@ public class Constants {
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =
                 (MOTOR.freeSpeedRadPerSec / GEAR_RATIO) * DRUM_RADIUS;
-        public static final double MAX_ACCELERATION_MPSS = (MOTOR.stallTorqueNewtonMeters / GEAR_RATIO * DRUM_RADIUS) / (MASS * DRUM_RADIUS * DRUM_RADIUS);
+        public static final double MAX_ACCELERATION_MPSS =
+                (MOTOR.stallTorqueNewtonMeters / GEAR_RATIO * DRUM_RADIUS)
+                        / (MASS * DRUM_RADIUS * DRUM_RADIUS);
         public static final double MAX_JERK_MPSSS = 40;
 
         // public static final double MOTION_MAGIC_EXPO_KV = .09;

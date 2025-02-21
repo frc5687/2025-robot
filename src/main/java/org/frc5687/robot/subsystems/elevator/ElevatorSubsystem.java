@@ -62,11 +62,9 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
             double heightMeters = _newDesiredPlatformHeight.get();
             _outputs.desiredPlatformHeightWorldMeters = heightMeters;
             _outputs.desiredHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
-            
+
             _newDesiredPlatformHeight = Optional.empty();
         }
-
-
     }
 
     public void setDesiredPlatformHeightWorld(double heightMeters) {
