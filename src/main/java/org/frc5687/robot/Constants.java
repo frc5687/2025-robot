@@ -143,8 +143,8 @@ public class Constants {
         public static final double ROBOT_WEIGHT = Units.lbsToKilograms(140.0);
 
         // Size of the wheelbase in meters
-        public static final double WIDTH = 0.5842; // meters
-        public static final double LENGTH = 0.5842; // meters
+        public static final double WIDTH = 0.635; // meters
+        public static final double LENGTH = 0.635; // meters
         // Distance of swerve modules from center of robot
         public static final double SWERVE_NS_POS = LENGTH / 2.0;
         public static final double SWERVE_WE_POS = WIDTH / 2.0;

@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import java.util.function.Supplier;
-
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
@@ -23,8 +22,7 @@ public class DriveToPoseSmooth extends OutliersCommand {
 
     private final TunableDouble _smoothingFactor =
             new TunableDouble("DriveToPose", "smoothingFactor", 0.6);
-    private final TunableDouble _maxVelocity =
-            new TunableDouble("DriveToPose", "maxVelocity", 3.0);
+    private final TunableDouble _maxVelocity = new TunableDouble("DriveToPose", "maxVelocity", 3.0);
     private final TunableDouble _maxAcceleration =
             new TunableDouble("DriveToPose", "maxAcceleration", 9.0);
     private final TunableDouble _positionTolerance =
@@ -83,106 +81,105 @@ public class DriveToPoseSmooth extends OutliersCommand {
     }
 
     @Override
-public void execute(double timestamp) {
-    if (_driveKp.hasChanged() || _driveKi.hasChanged() || _driveKd.hasChanged() 
-        || _rotKp.hasChanged() || _rotKi.hasChanged() || _rotKd.hasChanged()) {
-        updatePIDGains();
-    }
-    if (_positionTolerance.hasChanged() || _velocityTolerance.hasChanged()) {
-        updatePIDTolerances();
-    }
+    public void execute(double timestamp) {
+        if (_driveKp.hasChanged()
+                || _driveKi.hasChanged()
+                || _driveKd.hasChanged()
+                || _rotKp.hasChanged()
+                || _rotKi.hasChanged()
+                || _rotKd.hasChanged()) {
+            updatePIDGains();
+        }
+        if (_positionTolerance.hasChanged() || _velocityTolerance.hasChanged()) {
+            updatePIDTolerances();
+        }
 
-    Pose2d currentPose = _drive.getPose();
-    Pose2d targetPose = _poseSupplier.get();
+        Pose2d currentPose = _drive.getPose();
+        Pose2d targetPose = _poseSupplier.get();
 
-    Translation2d errorVec = new Translation2d(
-        targetPose.getX() - currentPose.getX(),
-        targetPose.getY() - currentPose.getY()
-    );
-    Translation2d currentVel = new Translation2d(
-        _fieldRelativeVelocity.vxMetersPerSecond,
-        _fieldRelativeVelocity.vyMetersPerSecond
-    );
+        Translation2d errorVec =
+                new Translation2d(
+                        targetPose.getX() - currentPose.getX(), targetPose.getY() - currentPose.getY());
+        Translation2d currentVel =
+                new Translation2d(
+                        _fieldRelativeVelocity.vxMetersPerSecond, _fieldRelativeVelocity.vyMetersPerSecond);
 
-    // find direction vec
-    double velocityDot = errorVec.getX() * currentVel.getX() + errorVec.getY() * currentVel.getY();
-    boolean movingAway = velocityDot < 0;
+        // find direction vec
+        double velocityDot = errorVec.getX() * currentVel.getX() + errorVec.getY() * currentVel.getY();
+        boolean movingAway = velocityDot < 0;
 
-    double vxDesired = _xController.calculate(currentPose.getX(), targetPose.getX());
-    double vyDesired = _yController.calculate(currentPose.getY(), targetPose.getY());
+        double vxDesired = _xController.calculate(currentPose.getX(), targetPose.getX());
+        double vyDesired = _yController.calculate(currentPose.getY(), targetPose.getY());
 
-    // If we are moving away from the goal we want the control to be more aggresive
-    if (movingAway) {
-        Translation2d counteract = currentVel.times(-_counteractGain.get());
-        vxDesired += counteract.getX();
-        vyDesired += counteract.getY();
-    }
+        // If we are moving away from the goal we want the control to be more aggresive
+        if (movingAway) {
+            Translation2d counteract = currentVel.times(-_counteractGain.get());
+            vxDesired += counteract.getX();
+            vyDesired += counteract.getY();
+        }
 
-    Translation2d desiredVel = new Translation2d(vxDesired, vyDesired);
-    double currentDistance = errorVec.getNorm();
-    
-    // limit our speed based on distance
-    double maxAllowedSpeed = Math.sqrt(2 * _maxAcceleration.get() * currentDistance);
-    maxAllowedSpeed = Math.min(maxAllowedSpeed, _maxVelocity.get());
-    
-    if (desiredVel.getNorm() > maxAllowedSpeed) {
-        desiredVel = desiredVel.times(maxAllowedSpeed / desiredVel.getNorm());
-        vxDesired = desiredVel.getX();
-        vyDesired = desiredVel.getY();
-    }
+        Translation2d desiredVel = new Translation2d(vxDesired, vyDesired);
+        double currentDistance = errorVec.getNorm();
 
-    // Maintain translational velocity mostly for the start
-    if (currentDistance > _positionTolerance.get() * 2) {
-        double currentSpeed = desiredVel.getNorm();
-        if (currentSpeed < _minOutput.get() * _maxVelocity.get()) {
-            desiredVel = errorVec.times(_minOutput.get() * _maxVelocity.get() / currentDistance);
+        // limit our speed based on distance
+        double maxAllowedSpeed = Math.sqrt(2 * _maxAcceleration.get() * currentDistance);
+        maxAllowedSpeed = Math.min(maxAllowedSpeed, _maxVelocity.get());
+
+        if (desiredVel.getNorm() > maxAllowedSpeed) {
+            desiredVel = desiredVel.times(maxAllowedSpeed / desiredVel.getNorm());
             vxDesired = desiredVel.getX();
             vyDesired = desiredVel.getY();
         }
+
+        // Maintain translational velocity mostly for the start
+        if (currentDistance > _positionTolerance.get() * 2) {
+            double currentSpeed = desiredVel.getNorm();
+            if (currentSpeed < _minOutput.get() * _maxVelocity.get()) {
+                desiredVel = errorVec.times(_minOutput.get() * _maxVelocity.get() / currentDistance);
+                vxDesired = desiredVel.getX();
+                vyDesired = desiredVel.getY();
+            }
+        }
+
+        double omegaDesired =
+                _rotationController.calculate(
+                        currentPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+
+        double omega =
+                MathUtil.interpolate(
+                        _fieldRelativeVelocity.omegaRadiansPerSecond, omegaDesired, _smoothingFactor.get());
+
+        double dt = Constants.UPDATE_PERIOD;
+        Translation2d deltaV =
+                new Translation2d(
+                        (vxDesired - _fieldRelativeVelocity.vxMetersPerSecond) * _smoothingFactor.get(),
+                        (vyDesired - _fieldRelativeVelocity.vyMetersPerSecond) * _smoothingFactor.get());
+
+        double effectiveMaxAccel =
+                movingAway
+                        ? _maxAcceleration.get() * _aggressiveAccelMultiplier.get()
+                        : _maxAcceleration.get();
+
+        double maxDv = effectiveMaxAccel * dt;
+        if (deltaV.getNorm() > maxDv) {
+            deltaV = deltaV.times(maxDv / deltaV.getNorm());
+        }
+
+        _fieldRelativeVelocity =
+                new ChassisSpeeds(
+                        _fieldRelativeVelocity.vxMetersPerSecond + deltaV.getX(),
+                        _fieldRelativeVelocity.vyMetersPerSecond + deltaV.getY(),
+                        omega);
+
+        // Convert to robot-relative speeds
+        _drive.setDesiredChassisSpeeds(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        _fieldRelativeVelocity.vxMetersPerSecond,
+                        _fieldRelativeVelocity.vyMetersPerSecond,
+                        _fieldRelativeVelocity.omegaRadiansPerSecond,
+                        _drive.getPose().getRotation()));
     }
 
-    double omegaDesired = _rotationController.calculate(
-        currentPose.getRotation().getRadians(), 
-        targetPose.getRotation().getRadians()
-    );
-    
-    double omega = MathUtil.interpolate(
-        _fieldRelativeVelocity.omegaRadiansPerSecond,
-        omegaDesired,
-        _smoothingFactor.get()
-    );
-
-    double dt = Constants.UPDATE_PERIOD;
-    Translation2d deltaV = new Translation2d(
-        (vxDesired - _fieldRelativeVelocity.vxMetersPerSecond) * _smoothingFactor.get(),
-        (vyDesired - _fieldRelativeVelocity.vyMetersPerSecond) * _smoothingFactor.get()
-    );
-    
-    double effectiveMaxAccel = movingAway ? 
-        _maxAcceleration.get() * _aggressiveAccelMultiplier.get() : 
-        _maxAcceleration.get();
-        
-    double maxDv = effectiveMaxAccel * dt;
-    if (deltaV.getNorm() > maxDv) {
-        deltaV = deltaV.times(maxDv / deltaV.getNorm());
-    }
-
-    _fieldRelativeVelocity = new ChassisSpeeds(
-        _fieldRelativeVelocity.vxMetersPerSecond + deltaV.getX(),
-        _fieldRelativeVelocity.vyMetersPerSecond + deltaV.getY(),
-        omega
-    );
-
-    // Convert to robot-relative speeds
-    _drive.setDesiredChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(
-        _fieldRelativeVelocity.vxMetersPerSecond,
-        _fieldRelativeVelocity.vyMetersPerSecond,
-        _fieldRelativeVelocity.omegaRadiansPerSecond,
-        _drive.getPose().getRotation()
-    ));
-}
-
-    
     @Override
     public void end(boolean interrupted) {
         _drive.setDesiredChassisSpeeds(new ChassisSpeeds());
