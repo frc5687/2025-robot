@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -27,11 +28,14 @@ public class HardwareCoralArmIO implements CoralArmIO {
     private final CANcoder _cancoder;
     private final VictorSP _pivotMotor;
     private final TalonFX _wheelMotor;
+
     private final ProfiledPIDController _controller;
     private final ProximitySensor _coralDetectionSensor;
     private final Debouncer _debouncer;
 
     private final StatusSignal<Angle> _absoluteAngle;
+
+    private SimpleMotorFeedforward _ffModel;
 
     public HardwareCoralArmIO() {
         _cancoder = new CANcoder(RobotMap.CAN.CANCODER.CORAL_ENCODER, "CANivore");
@@ -52,25 +56,27 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.CoralArm.PIVOT_MOTOR_INVERTED);
 
+        _ffModel = new SimpleMotorFeedforward(Constants.CoralArm.kS, Constants.CoralArm.kV);
+
         configureCancoder();
         configureMotor(_wheelMotor, Constants.CoralArm.WHEEL_MOTOR_INVERTED);
         _absoluteAngle = _cancoder.getAbsolutePosition();
         _controller.reset(getAngleRads());
     }
 
-    private void calculateShortestPath(double currentAngle) {
-        if (currentAngle < Units.degreesToRadians(90) || currentAngle >= Units.degreesToRadians(270)) {
-            _controller.enableContinuousInput(0, 2.0 * Math.PI);
-        } else {
-            _controller.disableContinuousInput();
-        }
-    }
+    // private void calculateShortestPath(double currentAngle) {
+    //     if (currentAngle < Units.degreesToRadians(90) || currentAngle >= Units.degreesToRadians(270)) {
+    //         _controller.enableContinuousInput(0, 2.0 * Math.PI);
+    //     } else {
+    //         _controller.disableContinuousInput();
+    //     }
+    // }
 
     private double processSafeAngle(double desiredAngle) {
         return MathUtil.clamp(desiredAngle, Constants.CoralArm.MIN_ANGLE, Constants.CoralArm.MAX_ANGLE);
     }
 
-    private double calculateFeedForward(double angle) {
+    private double calculateGravityFeedForward(double angle) {
         return ((Constants.CoralArm.ARM_LENGTH / 2.0)
                         * (Constants.CoralArm.GEARBOX.rOhms * Constants.CoralArm.ARM_MASS * 9.81)
                         / (Constants.CoralArm.GEAR_RATIO * Constants.CoralArm.GEARBOX.KtNMPerAmp))
@@ -89,12 +95,15 @@ public class HardwareCoralArmIO implements CoralArmIO {
     public void writeOutputs(CoralOutputs outputs) {
         double currentAngle = getAngleRads();
         double safeAngle = processSafeAngle(outputs.desiredAngleRad);
-        calculateShortestPath(currentAngle);
+        // calculateShortestPath(currentAngle);
 
         _controller.setGoal(safeAngle);
 
         double pidOutput = _controller.calculate(currentAngle);
-        double ffOutput = calculateFeedForward(currentAngle);
+        double dynamicsFF = calculateGravityFeedForward(currentAngle);
+        double motorFF = _ffModel.calculate(_controller.getSetpoint().velocity);
+        double ffOutput = motorFF + dynamicsFF;
+
 
         double totalVoltage = MathUtil.clamp(pidOutput + ffOutput, -12.0, 12.0);
 
