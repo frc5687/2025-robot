@@ -354,7 +354,7 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 5.0;
+        public static final double kP = 15.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
@@ -373,11 +373,10 @@ public class Constants {
         public static final double MIN_ANGLE = 0.0;
         public static final double MAX_ANGLE = Units.degreesToRadians(300);
 
-        public static final double MAX_VELOCITY_RAD_PER_SEC = 1;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 1;
+        // public static final double MAX_VELOCITY_RAD_PER_SEC = 2;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 4;
 
-        // public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec /
-        // GEAR_RATIO;
+        public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
     }
 

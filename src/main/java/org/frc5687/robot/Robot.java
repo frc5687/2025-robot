@@ -30,16 +30,14 @@ public class Robot extends TimedRobot {
                 });
         _robotContainer = new RobotContainer(this);
         Epilogue.bind(this);
+        Threads.setCurrentThreadPriority(true, 99);
     }
 
     @Override
     public void robotPeriodic() {
-        Threads.setCurrentThreadPriority(true, 99);
 
         CommandScheduler.getInstance().run();
         _robotContainer.periodic();
-
-        Threads.setCurrentThreadPriority(false, 10);
     }
 
     @Override

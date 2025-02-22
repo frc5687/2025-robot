@@ -75,7 +75,13 @@ public class HardwareElevatorIO implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorInputs inputs) {
-        StatusSignal.waitForAll(0.02, _westVelocity, _westPosition, _eastVelocity, _eastPosition);
+        StatusSignal.refreshAll(
+                _westVelocity,
+                _westPosition,
+                _eastVelocity,
+                _eastPosition,
+                _eastMotor.getSupplyCurrent(),
+                _westMotor.getSupplyCurrent());
 
         double eastPosition =
                 Units.rotationsToRadians(_eastPosition.getValueAsDouble())
@@ -164,18 +170,18 @@ public class HardwareElevatorIO implements ElevatorIO {
         // outputs.voltageCommandSouthWest =
         //         _southWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
 
-        switch (outputs.controlMode) {
-            case VOLTAGE:
-                _eastMotor.setControl(_eastVoltageRequest.withOutput(outputs.voltageCommandEast));
-                _westMotor.setControl(_westVoltageRequest.withOutput(outputs.voltageCommandWest));
-                break;
-            case POSITION:
-                _eastMotor.setControl(_eastPositionTorqueRequest.withPosition(eastRotations));
-                _westMotor.setControl(_westPositionTorqueRequest.withPosition(westRotations));
-                break;
-            default:
-                break;
-        }
+        // switch (outputs.controlMode) {
+        //     case VOLTAGE:
+        //         _eastMotor.setControl(_eastVoltageRequest.withOutput(outputs.voltageCommandEast));
+        //         _westMotor.setControl(_westVoltageRequest.withOutput(outputs.voltageCommandWest));
+        //         break;
+        //     case POSITION:
+        //         _eastMotor.setControl(_eastPositionTorqueRequest.withPosition(eastRotations));
+        //         _westMotor.setControl(_westPositionTorqueRequest.withPosition(westRotations));
+        //         break;
+        //     default:
+        //         break;
+        // }
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted) {
