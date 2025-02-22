@@ -367,8 +367,8 @@ public class Constants {
 
         public static final DCMotor GEARBOX = Motors.getJohnsonElectric(1);
         public static final double GEAR_RATIO = (48.0 / 24.0); // From Amory
-        public static final double ARM_LENGTH = Units.inchesToMeters(4.0);
-        public static final double ARM_MASS = Units.lbsToKilograms(7.0);
+        public static final double ARM_LENGTH = Units.inchesToMeters(7.0);
+        public static final double ARM_MASS = Units.lbsToKilograms(4.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
         public static final double MAX_ANGLE = Units.degreesToRadians(300);
