@@ -49,23 +49,23 @@ public class SimIntakeIO implements IntakeIO {
     @Override
     public void updateInputs(IntakeInputs inputs) {
         // Update arm sim
-        _armSim.update(Constants.UPDATE_PERIOD);
+        // _armSim.update(Constants.UPDATE_PERIOD);
 
         // Update the raw encoders with the sim positoin
-        inputs.armAngleRads = _armSim.getAngleRads();
-        inputs.angularVelocityRadPerSec = _armSim.getVelocityRadPerSec();
-        _armEncoderSim.setDistance(inputs.armAngleRads);
-        _armEncoderSim.setRate(inputs.angularVelocityRadPerSec);
+        // inputs.armAngleRads = _armSim.getAngleRads();
+        // inputs.angularVelocityRadPerSec = _armSim.getVelocityRadPerSec();
+        // _armEncoderSim.setDistance(inputs.armAngleRads);
+        // _armEncoderSim.setRate(inputs.angularVelocityRadPerSec);
 
-        inputs.intakeCurrentDraw = _armSim.getCurrentDrawAmps();
+        // inputs.intakeCurrentDraw = _armSim.getCurrentDrawAmps();
     }
 
     @Override
     public void writeOutputs(IntakeOutputs outputs) {
         // double batteryVoltage = RobotController.getBatteryVoltage();
 
-        _controller.setGoal(outputs.desiredAngleRad);
-        outputs.controllerOutput = _controller.calculate(_armSim.getAngleRads());
-        _armSim.setInputVoltage(outputs.controllerOutput);
+        // _controller.setGoal(outputs.desiredAngleRad);
+        // outputs.controllerOutput = _controller.calculate(_armSim.getAngleRads());
+        // _armSim.setInputVoltage(outputs.controllerOutput);
     }
 }

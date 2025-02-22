@@ -1,13 +1,18 @@
 package org.frc5687.robot.subsystems.algaearm;
 
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
+import org.frc5687.robot.util.TunableDouble;
 
 public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutputs> {
 
     private final RobotStateManager _stateManger = RobotStateManager.getInstance();
+    private TunableDouble algaeP = new TunableDouble("Algae", "kP", Constants.AlgaeArm.kP);
+    private TunableDouble algaeI = new TunableDouble("Algae", "kI", Constants.AlgaeArm.kI);
+    private TunableDouble algaeD = new TunableDouble("Algae", "kD", Constants.AlgaeArm.kD);
 
     public AlgaeArmSubsystem(RobotContainer container, AlgaeArmIO io) {
         super(container, io, new AlgaeInputs(), new AlgaeOutputs());
@@ -21,6 +26,10 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
     protected void periodic(AlgaeInputs inputs, AlgaeOutputs outputs) {
         _stateManger.updateAlgaeArm(_inputs.angleRads);
         _inputs.pose = _stateManger.getPose(RobotCoordinate.ALGAE_ARM_BASE);
+
+        if (algaeP.hasChanged() || algaeI.hasChanged() || algaeD.hasChanged()) {
+            _io.setPID(algaeP.get(), algaeI.get(), algaeD.get(), 0.0, 0.0, 0.0, 0.0);
+        }
     }
 
     public AlgaeState getDesiredState() {

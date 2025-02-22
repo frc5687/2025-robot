@@ -52,11 +52,11 @@ public class RobotStateManager implements EpilogueLog {
         public static final double CORAL_ARM_X_OFFSET = 0.260350;
         public static final double CORAL_ARM_Y_OFFSET = 0.145;
         public static final double CORAL_ARM_Z_OFFSET = 0.381000;
-        public static final double CORAL_ARM_LENGTH = Units.inchesToMeters(12);
+        public static final double CORAL_ARM_LENGTH = Units.inchesToMeters(7.0);
 
-        public static final double ALGAE_ARM_X_OFFSET = 0.171450;
-        public static final double ALGAE_ARM_Y_OFFSET = 0.065;
-        public static final double ALGAE_ARM_Z_OFFSET = 0.178689;
+        public static final double ALGAE_ARM_X_OFFSET = 0.260350;
+        public static final double ALGAE_ARM_Y_OFFSET = -0.108600; // probably close to real
+        public static final double ALGAE_ARM_Z_OFFSET = 0.381; // this is from elevator stage 2 height
         public static final double ALGAE_ARM_LENGTH = Units.inchesToMeters(12);
 
         public static final double INTAKE_ARM_X_OFFSET = -0.330200;
@@ -263,9 +263,7 @@ public class RobotStateManager implements EpilogueLog {
 
     private void updateAlgaeArmTransforms(double armAngleRadians) {
         // Combine platform rotation with arm angle
-        Rotation3d armRotation =
-                new Rotation3d(
-                        _currentPlatformRotation.getX(), armAngleRadians, _currentPlatformRotation.getZ());
+        Rotation3d armRotation = new Rotation3d(0, armAngleRadians, 0);
 
         double cosAngle = Math.cos(armAngleRadians);
         double sinAngle = Math.sin(armAngleRadians);
@@ -277,8 +275,8 @@ public class RobotStateManager implements EpilogueLog {
         _poses.put(
                 RobotCoordinate.ALGAE_ARM_BASE,
                 new Pose3d(
-                        Geometry.ELEVATOR_X_OFFSET + Geometry.ALGAE_ARM_X_OFFSET,
-                        Geometry.ELEVATOR_Y_OFFSET + Geometry.ALGAE_ARM_Y_OFFSET,
+                        Geometry.ALGAE_ARM_X_OFFSET,
+                        Geometry.ALGAE_ARM_Y_OFFSET,
                         elevatorZ + Geometry.ALGAE_ARM_Z_OFFSET,
                         armRotation));
 

@@ -284,7 +284,7 @@ public class Constants {
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
         public static final double MIN_PLATFORM_HEIGHT = 0.191039; // m
-        public static final double MAX_PLATFORM_HEIGHT = 1.562639; // m
+        public static final double MAX_PLATFORM_HEIGHT = 1.542; // m
 
         public static final double MIN_HEIGHT = 0.0; // m
         public static final double MAX_HEIGHT =
@@ -301,17 +301,17 @@ public class Constants {
         // public static final double MOTION_MAGIC_EXPO_KV = .09;
         // public static final double MOTION_MAGIC_EXPO_KA = .02;
 
-        public static final double MOTION_MAGIC_EXPO_KV = 2.0;
-        public static final double MOTION_MAGIC_EXPO_KA = 2.0;
+        public static final double MOTION_MAGIC_EXPO_KV = 0.05;
+        public static final double MOTION_MAGIC_EXPO_KA = 0.04;
 
         // This needs to be tuned with real PID values
-        public static final double kP = 20.0;
+        public static final double kP = 120.0;
         public static final double kI = 0.0;
-        public static final double kD = 0.0; // 2.0
+        public static final double kD = 1.2; // 2.0
         public static final double kS = 2.0;
         public static final double kG = 0.0;
-        public static final double kV = 0.09; // 0.09
-        public static final double kA = 0.05; // 0.05
+        public static final double kV = 0.0; // 0.09
+        public static final double kA = 0.0; // 0.05
 
         public static final boolean EAST_INVERTED = false;
         public static final boolean WEST_INVERTED = true;
@@ -333,8 +333,10 @@ public class Constants {
         public static final boolean PIVOT_MOTOR_INVERTED = true;
         public static final int NUM_MOTORS = 1;
 
-        public static final double ENCODER_OFFSET = -0.2785;
-        public static final boolean ENCODER_INVERTED = true;
+        public static final boolean WHEEL_MOTOR_INVERTED = false;
+        public static final double WHEEL_CURRENT_LIMIT = 20.0;
+
+        public static final double ENCODER_OFFSET = -0.1152375;
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
         public static final double GEAR_RATIO = 315; // From Amory
@@ -345,7 +347,7 @@ public class Constants {
         public static final double MAX_ANGLE = Units.degreesToRadians(270.0);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20.0 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 10.0 * Math.PI;
 
         public static final double FILTER_TIME_CONSTANT = 0.04;
     }
@@ -354,27 +356,42 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 15.0;
+        public static final double kP = 20.0;
         public static final double kI = 0.0;
-        public static final double kD = 0.0;
+        public static final double kD = 0.35;
+        public static final double kV = 0.4;
+        public static final double kS = 0.6;
+
+        public static final double kP_WHEEL = 10.0;
+        public static final double kI_WHEEL = 0.0;
+        public static final double kD_WHEEL = 0.0;
+        public static final double kV_WHEEL = 0.0;
+        public static final double kS_WHEEL = 0.0;
+
+        public static final double WHEEL_CURRENT_LIMIT = 20;
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
-        public static final boolean WHEEL_MOTOR_INVERTED = true;
+        public static final boolean WHEEL_MOTOR_INVERTED = false;
         public static final int NUM_MOTORS = 1;
 
-        public static final double ENCODER_OFFSET = -0.2209;
+        public static final double ENCODER_OFFSET = 0.25708;
         public static final boolean ENCODER_INVERTED = true;
 
         public static final DCMotor GEARBOX = Motors.getJohnsonElectric(1);
         public static final double GEAR_RATIO = (48.0 / 24.0); // From Amory
-        public static final double ARM_LENGTH = Units.inchesToMeters(4.0);
-        public static final double ARM_MASS = Units.lbsToKilograms(7.0);
+        public static final double ARM_LENGTH = Units.inchesToMeters(7.0);
+        public static final double ARM_MASS = Units.lbsToKilograms(4.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
         public static final double MAX_ANGLE = Units.degreesToRadians(300);
 
+        // public static final double MAX_VELOCITY_RAD_PER_SEC = 2;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 15 * Math.PI;
+
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
+        // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
+        public static final double WHEEL_EJECT_CORAL_VOLTAGE = -6.0;
+        public static final double WHEEL_RECEIVE_CORAL_VOLTAGE = 6.0;
     }
 
     public static class Climber {
@@ -388,17 +405,17 @@ public class Constants {
     public static class Vision {
         public static final Transform3d ROBOT_TO_NE_CAM =
                 new Transform3d(
-                        0.291,
-                        -0.284,
-                        0.213,
+                        0.280108,
+                        -0.2542,
+                        0.23297,
                         new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(10)));
         public static final Transform3d ROBOT_TO_NW_CAM =
                 new Transform3d(
-                        0.291,
-                        0.284,
-                        0.213,
+                        0.280108,
+                        0.27301,
+                        0.23297,
                         new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(-10)));
         public static final Transform2d ROBOT_TO_QUEST =
-                new Transform2d(-0.14, -0.34, new Rotation2d(-Math.PI / 2.0));
+                new Transform2d(-0.104, -0.286, Rotation2d.fromDegrees(-135));
     }
 }

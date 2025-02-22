@@ -50,8 +50,8 @@ public class HardwareClimberArmIO implements ClimberIO {
 
     @Override
     public void writeOutputs(ClimberOutputs outputs) {
-        _winchMotor.setControl(
-                _winchPositionRequest.withPosition(Radians.of(outputs.motorSetpointRads)));
-        _servo.set(outputs.servoSetpoint);
+        // _winchMotor.setControl(
+        //         _winchPositionRequest.withPosition(Radians.of(outputs.motorSetpointRads)));
+        // _servo.set(outputs.servoSetpoint);
     }
 }

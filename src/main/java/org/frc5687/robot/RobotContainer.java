@@ -34,7 +34,6 @@ import org.frc5687.robot.subsystems.elevator.ElevatorIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
-import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
@@ -83,10 +82,6 @@ public class RobotContainer implements EpilogueLog {
         RobotStateManager.getInstance()
                 .initEstimators(_drive::getModulePositions, _drive::getHeading, _questNav);
 
-        if (RobotBase.isSimulation()) {
-            SmartDashboard.putData("Field", _field);
-        }
-
         ElevatorIO elevatorIO;
         if (RobotBase.isSimulation()) {
             elevatorIO = new SimElevatorIO();
@@ -108,7 +103,8 @@ public class RobotContainer implements EpilogueLog {
                 RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
         _coralArm = new CoralArmSubsystem(this, coralArmIO);
 
-        IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
+        IntakeIO intakeIO = /*  RobotBase.isSimulation() ?*/
+                new SimIntakeIO() /*  : new HardwareIntakeIO() */;
         _intake = new IntakeSubsystem(this, intakeIO);
 
         ClimberIO climberIO =
@@ -124,7 +120,6 @@ public class RobotContainer implements EpilogueLog {
         _oi.configureCommandMapping(this);
 
         _isCoralMode = true;
-        // Need to control faster due to stabilization
         setupNamedCommand();
     }
 

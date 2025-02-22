@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -75,7 +75,13 @@ public class HardwareElevatorIO implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorInputs inputs) {
-        StatusSignal.waitForAll(.2, _westVelocity, _westPosition, _eastVelocity, _eastPosition);
+        StatusSignal.refreshAll(
+                _westVelocity,
+                _westPosition,
+                _eastVelocity,
+                _eastPosition,
+                _eastMotor.getSupplyCurrent(),
+                _westMotor.getSupplyCurrent());
 
         double eastPosition =
                 Units.rotationsToRadians(_eastPosition.getValueAsDouble())
@@ -133,12 +139,10 @@ public class HardwareElevatorIO implements ElevatorIO {
         // Constants.Elevator.DRUM_RADIUS)
         //                 * Constants.Elevator.GEAR_RATIO_SOUTH;
         double eastRotations =
-                Units.radiansToRotations(
-                                outputs.desiredPlatformHeightWorldMeters / Constants.Elevator.DRUM_RADIUS)
+                Units.radiansToRotations(outputs.desiredHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO;
         double westRotations =
-                Units.radiansToRotations(
-                                outputs.desiredPlatformHeightWorldMeters / Constants.Elevator.DRUM_RADIUS)
+                Units.radiansToRotations(outputs.desiredHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO;
 
         // if (isWithinPositionTolerance(outputs.desiredStageHeight)) {
@@ -209,7 +213,7 @@ public class HardwareElevatorIO implements ElevatorIO {
     }
 
     public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {
-        Slot1Configs config = new Slot1Configs();
+        Slot0Configs config = new Slot0Configs();
         config.kP = kP;
         config.kI = kI;
         config.kD = kD;

@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -13,9 +14,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import org.frc5687.robot.Constants;
@@ -27,17 +28,22 @@ public class HardwareCoralArmIO implements CoralArmIO {
     private final CANcoder _cancoder;
     private final VictorSP _pivotMotor;
     private final TalonFX _wheelMotor;
+
     private final ProfiledPIDController _controller;
     private final ProximitySensor _coralDetectionSensor;
     private final Debouncer _debouncer;
 
     private final StatusSignal<Angle> _absoluteAngle;
 
+    private final VoltageOut _wheelVotlageRequeset;
+
+    private SimpleMotorFeedforward _ffModel;
+
     public HardwareCoralArmIO() {
         _cancoder = new CANcoder(RobotMap.CAN.CANCODER.CORAL_ENCODER, "CANivore");
 
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
-        _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.CORAL_WHEEL_MOTOR);
+        _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.CORAL_WHEEL_MOTOR, "CANivore");
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
         _debouncer = new Debouncer(.1, Debouncer.DebounceType.kRising);
         TrapezoidProfile.Constraints constraints =
@@ -52,25 +58,29 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.CoralArm.PIVOT_MOTOR_INVERTED);
 
+        _ffModel = new SimpleMotorFeedforward(Constants.CoralArm.kS, Constants.CoralArm.kV);
         configureCancoder();
         configureMotor(_wheelMotor, Constants.CoralArm.WHEEL_MOTOR_INVERTED);
+        _wheelVotlageRequeset = new VoltageOut(0).withEnableFOC(true);
+
         _absoluteAngle = _cancoder.getAbsolutePosition();
         _controller.reset(getAngleRads());
     }
 
-    private void calculateShortestPath(double currentAngle) {
-        if (currentAngle < Units.degreesToRadians(90) || currentAngle >= Units.degreesToRadians(270)) {
-            _controller.enableContinuousInput(0, 2.0 * Math.PI);
-        } else {
-            _controller.disableContinuousInput();
-        }
-    }
+    // private void calculateShortestPath(double currentAngle) {
+    //     if (currentAngle < Units.degreesToRadians(90) || currentAngle >=
+    // Units.degreesToRadians(270)) {
+    //         _controller.enableContinuousInput(0, 2.0 * Math.PI);
+    //     } else {
+    //         _controller.disableContinuousInput();
+    //     }
+    // }
 
     private double processSafeAngle(double desiredAngle) {
         return MathUtil.clamp(desiredAngle, Constants.CoralArm.MIN_ANGLE, Constants.CoralArm.MAX_ANGLE);
     }
 
-    private double calculateFeedForward(double angle) {
+    private double calculateGravityFeedForward(double angle) {
         return ((Constants.CoralArm.ARM_LENGTH / 2.0)
                         * (Constants.CoralArm.GEARBOX.rOhms * Constants.CoralArm.ARM_MASS * 9.81)
                         / (Constants.CoralArm.GEAR_RATIO * Constants.CoralArm.GEARBOX.KtNMPerAmp))
@@ -89,12 +99,14 @@ public class HardwareCoralArmIO implements CoralArmIO {
     public void writeOutputs(CoralOutputs outputs) {
         double currentAngle = getAngleRads();
         double safeAngle = processSafeAngle(outputs.desiredAngleRad);
-        calculateShortestPath(currentAngle);
+        // calculateShortestPath(currentAngle);
 
         _controller.setGoal(safeAngle);
 
         double pidOutput = _controller.calculate(currentAngle);
-        double ffOutput = calculateFeedForward(currentAngle);
+        double dynamicsFF = calculateGravityFeedForward(currentAngle);
+        double motorFF = _ffModel.calculate(_controller.getSetpoint().velocity);
+        double ffOutput = motorFF + dynamicsFF;
 
         double totalVoltage = MathUtil.clamp(pidOutput + ffOutput, -12.0, 12.0);
 
@@ -103,7 +115,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         outputs.voltageFeedForward = ffOutput;
 
         _pivotMotor.setVoltage(totalVoltage);
-        _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+        _wheelMotor.setControl(_wheelVotlageRequeset.withOutput(outputs.wheelVoltageCommand));
     }
 
     private double getAngleRads() {
@@ -128,25 +140,24 @@ public class HardwareCoralArmIO implements CoralArmIO {
                 isInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
 
         config.Voltage.withPeakForwardVoltage(Volts.of(12)).withPeakReverseVoltage(Volts.of(-12));
-        double gearRatio = Constants.Elevator.GEAR_RATIO;
-        double metersToRotations = (1.0 / (Constants.Elevator.DRUM_RADIUS)) * gearRatio;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = 0;
-        config.MotionMagic.MotionMagicExpo_kA = Constants.Elevator.MOTION_MAGIC_EXPO_KA;
-        config.MotionMagic.MotionMagicExpo_kV = Constants.Elevator.MOTION_MAGIC_EXPO_KV;
-
-        config.Slot0.kP = Constants.Elevator.kP;
-        config.Slot0.kI = Constants.Elevator.kI;
-        config.Slot0.kD = Constants.Elevator.kD;
-        config.Slot0.kS = Constants.Elevator.kS;
-        config.Slot0.kV = Constants.Elevator.kV;
-        config.Slot0.kA = Constants.Elevator.kA;
-        config.Slot0.kG = Constants.Elevator.kG;
+        config.Slot0.kP = Constants.CoralArm.kP_WHEEL;
+        config.Slot0.kI = Constants.CoralArm.kI_WHEEL;
+        config.Slot0.kD = Constants.CoralArm.kD_WHEEL;
 
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = Constants.Elevator.CURRENT_LIMIT;
+        config.CurrentLimits.SupplyCurrentLimit = Constants.CoralArm.WHEEL_CURRENT_LIMIT;
 
         // motor.getConfigurator().apply(config);
         CTREUtil.applyConfiguration(motor, config);
+    }
+
+    @Override
+    public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {
+        _controller.setP(kP);
+        _controller.setD(kD);
+        _controller.setI(kI);
+        _ffModel.setKv(kV);
+        _ffModel.setKs(kS);
     }
 }

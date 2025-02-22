@@ -4,6 +4,7 @@
 
 package org.frc5687.robot;
 
+import au.grapplerobotics.CanBridge;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -30,16 +31,15 @@ public class Robot extends TimedRobot {
                 });
         _robotContainer = new RobotContainer(this);
         Epilogue.bind(this);
+        Threads.setCurrentThreadPriority(true, 99);
+        CanBridge.runTCP();
     }
 
     @Override
     public void robotPeriodic() {
-        Threads.setCurrentThreadPriority(true, 99);
 
         CommandScheduler.getInstance().run();
         _robotContainer.periodic();
-
-        Threads.setCurrentThreadPriority(false, 10);
     }
 
     @Override
