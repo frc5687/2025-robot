@@ -1,6 +1,6 @@
 package org.frc5687.robot.commands.superstructure;
 
-import edu.wpi.first.math.util.Units;
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
@@ -40,7 +40,7 @@ public class SuperstructureReceive extends OutliersCommand {
     @Override
     public void execute(double timestamp) {
         if (_state == SuperstructureReceiveState.INTAKING) {
-            _coral.setWheelVoltageCommand(12.0);
+            _coral.setWheelVoltageCommand(Constants.CoralArm.WHEEL_RECEIVE_CORAL_VOLTAGE);
             if (_coral.isCoralDetected()) {
                 _state = SuperstructureReceiveState.SAW_IT;
             }
@@ -54,9 +54,10 @@ public class SuperstructureReceive extends OutliersCommand {
         }
 
         if (_state == SuperstructureReceiveState.OUTTAKING) {
-            _coral.setWheelVoltageCommand(-12.0);
+            _coral.setWheelVoltageCommand(Constants.CoralArm.WHEEL_EJECT_CORAL_VOLTAGE);
             // _coral.setArmAngle(Units.degreesToRadians(45));
         }
+
     }
 
     @Override

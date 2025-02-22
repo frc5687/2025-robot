@@ -82,10 +82,6 @@ public class RobotContainer implements EpilogueLog {
         RobotStateManager.getInstance()
                 .initEstimators(_drive::getModulePositions, _drive::getHeading, _questNav);
 
-        if (RobotBase.isSimulation()) {
-            SmartDashboard.putData("Field", _field);
-        }
-
         ElevatorIO elevatorIO;
         if (RobotBase.isSimulation()) {
             elevatorIO = new SimElevatorIO();
@@ -124,7 +120,6 @@ public class RobotContainer implements EpilogueLog {
         _oi.configureCommandMapping(this);
 
         _isCoralMode = true;
-        // Need to control faster due to stabilization
         setupNamedCommand();
     }
 

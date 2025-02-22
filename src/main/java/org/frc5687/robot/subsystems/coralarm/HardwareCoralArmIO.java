@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -34,6 +35,8 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
     private final StatusSignal<Angle> _absoluteAngle;
 
+    private final VoltageOut _wheelVotlageRequeset;
+
     private SimpleMotorFeedforward _ffModel;
 
     public HardwareCoralArmIO() {
@@ -58,6 +61,8 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _ffModel = new SimpleMotorFeedforward(Constants.CoralArm.kS, Constants.CoralArm.kV);
         configureCancoder();
         configureMotor(_wheelMotor, Constants.CoralArm.WHEEL_MOTOR_INVERTED);
+        _wheelVotlageRequeset = new VoltageOut(0).withEnableFOC(true);
+
         _absoluteAngle = _cancoder.getAbsolutePosition();
         _controller.reset(getAngleRads());
     }
@@ -110,7 +115,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         outputs.voltageFeedForward = ffOutput;
 
         _pivotMotor.setVoltage(totalVoltage);
-        _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+        _wheelMotor.setControl(_wheelVotlageRequeset.withOutput(outputs.wheelVoltageCommand));
     }
 
     private double getAngleRads() {
@@ -135,17 +140,13 @@ public class HardwareCoralArmIO implements CoralArmIO {
                 isInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
 
         config.Voltage.withPeakForwardVoltage(Volts.of(12)).withPeakReverseVoltage(Volts.of(-12));
-        double gearRatio = Constants.Elevator.GEAR_RATIO;
-        double metersToRotations = (1.0 / (Constants.Elevator.DRUM_RADIUS)) * gearRatio;
 
-        config.Slot0.kP = Constants.CoralArm.kP;
-        config.Slot0.kI = Constants.CoralArm.kI;
-        config.Slot0.kD = Constants.CoralArm.kD;
-        config.Slot0.kS = Constants.CoralArm.kS;
-        config.Slot0.kV = Constants.CoralArm.kV;
+        config.Slot0.kP = Constants.CoralArm.kP_WHEEL;
+        config.Slot0.kI = Constants.CoralArm.kI_WHEEL;
+        config.Slot0.kD = Constants.CoralArm.kD_WHEEL;
 
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = Constants.Elevator.CURRENT_LIMIT;
+        config.CurrentLimits.SupplyCurrentLimit = Constants.CoralArm.WHEEL_CURRENT_LIMIT;
 
         // motor.getConfigurator().apply(config);
         CTREUtil.applyConfiguration(motor, config);

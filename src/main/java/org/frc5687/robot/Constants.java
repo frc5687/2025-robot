@@ -333,6 +333,9 @@ public class Constants {
         public static final boolean PIVOT_MOTOR_INVERTED = true;
         public static final int NUM_MOTORS = 1;
 
+        public static final boolean WHEEL_MOTOR_INVERTED = false;
+        public static final double WHEEL_CURRENT_LIMIT = 20.0;
+
         public static final double ENCODER_OFFSET = -0.1152375;
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
@@ -365,8 +368,10 @@ public class Constants {
         public static final double kV_WHEEL = 0.0;
         public static final double kS_WHEEL = 0.0;
 
+        public static final double WHEEL_CURRENT_LIMIT = 20;
+
         public static final boolean PIVOT_MOTOR_INVERTED = false;
-        public static final boolean WHEEL_MOTOR_INVERTED = true;
+        public static final boolean WHEEL_MOTOR_INVERTED = false;
         public static final int NUM_MOTORS = 1;
 
         public static final double ENCODER_OFFSET = 0.25708;
@@ -385,6 +390,8 @@ public class Constants {
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
+        public static final double WHEEL_EJECT_CORAL_VOLTAGE = -6.0;
+        public static final double WHEEL_RECEIVE_CORAL_VOLTAGE = 6.0;
     }
 
     public static class Climber {

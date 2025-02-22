@@ -1,5 +1,7 @@
 package org.frc5687.robot.commands.superstructure;
 
+import edu.wpi.first.wpilibj.Timer;
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
@@ -10,6 +12,9 @@ public class SuperstructurePlace extends OutliersCommand {
     private final ElevatorSubsystem _elevator;
     private final CoralArmSubsystem _coral;
     private final AlgaeArmSubsystem _algae;
+
+    private boolean _timerLock;
+    private double _noCoralStartTime;
 
     public SuperstructurePlace(
             ElevatorSubsystem elevator, CoralArmSubsystem coral, AlgaeArmSubsystem algae) {
@@ -22,21 +27,32 @@ public class SuperstructurePlace extends OutliersCommand {
     @Override
     public void initialize() {
         super.initialize();
-        //_elevator.setDesiredPlatformHeightWorld(_elevator.getPlatformWorldHeight() - 0.5);
-         _coral.setWheelVoltageCommand(-12);
+        _coral.setWheelVoltageCommand(Constants.CoralArm.WHEEL_EJECT_CORAL_VOLTAGE);
         _algae.setDesiredState(AlgaeState.IDLE);
+        _noCoralStartTime = Timer.getFPGATimestamp();
+        _timerLock = false;
     }
 
     @Override
-    protected void execute(double timestamp) {}
+    protected void execute(double timestamp) {
+
+        if (!_coral.isCoralDetected() && !_timerLock) {
+            _timerLock = true;
+            _noCoralStartTime = Timer.getFPGATimestamp();
+        } else if (_coral.isCoralDetected()) {
+            _timerLock = false;
+        }
+    }
 
     @Override
     public boolean isFinished() {
-        return !_coral.isCoralDetected() && _algae.isAtDesiredAngle();
+        boolean expiredTime = (Timer.getFPGATimestamp() > (_noCoralStartTime + 0.4));
+        return expiredTime && _algae.isAtDesiredAngle();
     }
 
     @Override
     public void end(boolean interrupted) {
+        _coral.setWheelVoltageCommand(0);
         _elevator.mapToClosestState();
         super.end(interrupted);
     }

@@ -1,11 +1,16 @@
 package org.frc5687.robot.subsystems.algaearm;
 
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -18,12 +23,14 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
+import org.frc5687.robot.util.CTREUtil;
 import org.frc5687.robot.util.sensors.ProximitySensor;
 
 public class HardwareAlgaeArmIO implements AlgaeArmIO {
     private final CANcoder _cancoder;
     private final VictorSP _pivotMotor;
     private final TalonFX _wheelMotor;
+
     private final ProfiledPIDController _controller;
     private final ProximitySensor _algaeDetectionSensor;
     private final LinearFilter _angularVelocityFilter;
@@ -31,10 +38,12 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
     private double _voltageCommand;
     private final StatusSignal<Angle> _absoluteAngle;
 
+    private final VoltageOut _wheelVoltageRequest;
+
     public HardwareAlgaeArmIO() {
         _cancoder = new CANcoder(RobotMap.CAN.CANCODER.ALGAE_ENCODER, "CANivore");
         _pivotMotor = new VictorSP(RobotMap.PWM.ALGAE_PIVOT_MOTOR);
-        _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.ALGAE_WHEEL);
+        _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.ALGAE_WHEEL, "CANivore");
         _algaeDetectionSensor = new ProximitySensor(RobotMap.DIO.ALGAE_SENSOR);
 
         TrapezoidProfile.Constraints constraints =
@@ -51,8 +60,10 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
                 LinearFilter.singlePoleIIR(
                         Constants.AlgaeArm.FILTER_TIME_CONSTANT, Constants.UPDATE_PERIOD);
         _voltageCommand = 0;
+        _wheelVoltageRequest = new VoltageOut(0).withEnableFOC(true);
 
         configureCancoder();
+        configureMotor(_wheelMotor, Constants.AlgaeArm.WHEEL_MOTOR_INVERTED);
         _absoluteAngle = _cancoder.getAbsolutePosition();
         _controller.reset(getAngleRads());
     }
@@ -116,7 +127,7 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
 
         _voltageCommand = totalVoltage;
         _pivotMotor.setVoltage(totalVoltage);
-        // _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+        _wheelMotor.setControl(_wheelVoltageRequest.withOutput(outputs.wheelVoltageCommand));
         // _wheelMotor.set(-0.5);
     }
 
@@ -131,6 +142,22 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         _cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         _cancoder.getConfigurator().apply(_cancoderConfigs);
         // CTREUtil.applyConfiguration(_cancoder, _cancoderConfigs);
+    }
+
+    private void configureMotor(TalonFX motor, boolean isInverted) {
+        var config = new TalonFXConfiguration();
+
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.Inverted =
+                isInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+
+        config.Voltage.withPeakForwardVoltage(Volts.of(12)).withPeakReverseVoltage(Volts.of(-12));
+
+        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        config.CurrentLimits.SupplyCurrentLimit = Constants.AlgaeArm.WHEEL_CURRENT_LIMIT;
+
+        // motor.getConfigurator().apply(config);
+        CTREUtil.applyConfiguration(motor, config);
     }
 
     @Override

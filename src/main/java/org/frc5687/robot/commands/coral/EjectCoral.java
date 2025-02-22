@@ -1,6 +1,6 @@
 package org.frc5687.robot.commands.coral;
 
-import edu.wpi.first.math.util.Units;
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
 
@@ -15,8 +15,8 @@ public class EjectCoral extends OutliersCommand {
     @Override
     public void initialize() {
         super.initialize();
-       // _coral.setArmAngle(_coral.getArmAngleRads() + Units.degreesToRadians(40));
-        _coral.setWheelVoltageCommand(-12);
+        // _coral.setArmAngle(_coral.getArmAngleRads() + Units.degreesToRadians(40));
+        _coral.setWheelVoltageCommand(Constants.CoralArm.WHEEL_EJECT_CORAL_VOLTAGE);
     }
 
     @Override
