@@ -17,7 +17,6 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
 
     private final Object inputLogger;
     private final Object outputLogger;
-    private boolean _seperateControl = false;
 
     @Override
     public String getLogBase() {
@@ -58,15 +57,6 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
 
     protected abstract void periodic(Inputs inputs, Outputs outputs);
 
-    protected void setToSeparateControl(boolean seperateControl) {
-        System.out.println("Set to seperate control: " + seperateControl);
-        _seperateControl = seperateControl;
-    }
-
-    protected boolean isSeparateControl() {
-        return _seperateControl;
-    }
-
     protected void process() {
         _io.updateInputs(_inputs);
         // reflection to call update() on the logger, We are hacking in functionallity
@@ -102,9 +92,7 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
 
     @Override
     public final void periodic() {
-        if (!_seperateControl) {
-            process();
-        }
+        process();
     }
 
     private String firstCharToLowerCase(String str) {

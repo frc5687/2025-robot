@@ -67,8 +67,8 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
 
         BaseStatusSignal.setUpdateFrequencyForAll(50, _steerVelocity);
 
-        _driveMotor.optimizeBusUtilization();
-        _steerMotor.optimizeBusUtilization();
+        // _driveMotor.optimizeBusUtilization();
+        // _steerMotor.optimizeBusUtilization();
     }
 
     @Override
@@ -97,9 +97,6 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
 
         inputs.absoluteAngle =
                 Rotation2d.fromRotations(_cancoder.getAbsolutePosition().getValueAsDouble());
-
-        inputs.faults =
-                _driveMotor.getFaultField().getValue() | (_steerMotor.getFaultField().getValue() << 16);
     }
 
     @Override

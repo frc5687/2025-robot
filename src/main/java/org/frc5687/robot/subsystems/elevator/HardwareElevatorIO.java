@@ -75,7 +75,7 @@ public class HardwareElevatorIO implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorInputs inputs) {
-        StatusSignal.waitForAll(.2, _westVelocity, _westPosition, _eastVelocity, _eastPosition);
+        StatusSignal.waitForAll(0.02, _westVelocity, _westPosition, _eastVelocity, _eastPosition);
 
         double eastPosition =
                 Units.rotationsToRadians(_eastPosition.getValueAsDouble())

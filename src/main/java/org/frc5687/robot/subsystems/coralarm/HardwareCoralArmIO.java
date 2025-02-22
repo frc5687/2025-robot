@@ -37,7 +37,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _cancoder = new CANcoder(RobotMap.CAN.CANCODER.CORAL_ENCODER, "CANivore");
 
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
-        _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.CORAL_WHEEL_MOTOR);
+        _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.CORAL_WHEEL_MOTOR, "CANivore");
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
         _debouncer = new Debouncer(.1, Debouncer.DebounceType.kRising);
         TrapezoidProfile.Constraints constraints =
@@ -131,10 +131,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
         double gearRatio = Constants.Elevator.GEAR_RATIO;
         double metersToRotations = (1.0 / (Constants.Elevator.DRUM_RADIUS)) * gearRatio;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = 0;
-        config.MotionMagic.MotionMagicExpo_kA = Constants.Elevator.MOTION_MAGIC_EXPO_KA;
-        config.MotionMagic.MotionMagicExpo_kV = Constants.Elevator.MOTION_MAGIC_EXPO_KV;
-
         config.Slot0.kP = Constants.Elevator.kP;
         config.Slot0.kI = Constants.Elevator.kI;
         config.Slot0.kD = Constants.Elevator.kD;
@@ -148,5 +144,12 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
         // motor.getConfigurator().apply(config);
         CTREUtil.applyConfiguration(motor, config);
+    }
+
+    @Override
+    public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {
+        _controller.setP(kP);
+        _controller.setD(kD);
+        _controller.setI(kI);
     }
 }

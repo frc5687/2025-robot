@@ -114,9 +114,9 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         outputs.voltageCommand = totalVoltage;
         outputs.controllerOutput = pidOutput;
 
-        _pivotMotor.setVoltage(totalVoltage);
+        // _pivotMotor.setVoltage(totalVoltage);
         _voltageCommand = totalVoltage;
-        _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
+        // _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
         // _wheelMotor.set(-0.5);
     }
 

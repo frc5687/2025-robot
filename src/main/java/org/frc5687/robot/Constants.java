@@ -354,7 +354,7 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 15.0;
+        public static final double kP = 5.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
@@ -362,7 +362,7 @@ public class Constants {
         public static final boolean WHEEL_MOTOR_INVERTED = true;
         public static final int NUM_MOTORS = 1;
 
-        public static final double ENCODER_OFFSET = -0.2209;
+        public static final double ENCODER_OFFSET = 0.25708;
         public static final boolean ENCODER_INVERTED = true;
 
         public static final DCMotor GEARBOX = Motors.getJohnsonElectric(1);
@@ -373,8 +373,12 @@ public class Constants {
         public static final double MIN_ANGLE = 0.0;
         public static final double MAX_ANGLE = Units.degreesToRadians(300);
 
-        public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
+        public static final double MAX_VELOCITY_RAD_PER_SEC = 1;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 1;
+
+        // public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec /
+        // GEAR_RATIO;
+        // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
     }
 
     public static class Climber {
@@ -388,17 +392,17 @@ public class Constants {
     public static class Vision {
         public static final Transform3d ROBOT_TO_NE_CAM =
                 new Transform3d(
-                        0.291,
-                        -0.284,
-                        0.213,
+                        0.280108,
+                        -0.2542,
+                        0.23297,
                         new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(10)));
         public static final Transform3d ROBOT_TO_NW_CAM =
                 new Transform3d(
-                        0.291,
-                        0.284,
-                        0.213,
+                        0.280108,
+                        0.27301,
+                        0.23297,
                         new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(-10)));
         public static final Transform2d ROBOT_TO_QUEST =
-                new Transform2d(-0.14, -0.34, new Rotation2d(-Math.PI / 2.0));
+                new Transform2d(-0.104, -0.286, Rotation2d.fromDegrees(-135));
     }
 }

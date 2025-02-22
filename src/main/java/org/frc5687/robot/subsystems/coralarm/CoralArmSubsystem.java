@@ -1,13 +1,19 @@
 package org.frc5687.robot.subsystems.coralarm;
 
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
+import org.frc5687.robot.util.TunableDouble;
 
 public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutputs> {
 
     private final RobotStateManager _stateManger = RobotStateManager.getInstance();
+
+    private TunableDouble coralP = new TunableDouble("Coral", "kP", Constants.CoralArm.kP);
+    private TunableDouble coralI = new TunableDouble("Coral", "kI", Constants.CoralArm.kI);
+    private TunableDouble coralD = new TunableDouble("Coral", "kD", Constants.CoralArm.kD);
 
     public CoralArmSubsystem(RobotContainer container, CoralArmIO io) {
         super(container, io, new CoralInputs(), new CoralOutputs());
@@ -21,6 +27,10 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     protected void periodic(CoralInputs inputs, CoralOutputs outputs) {
         _stateManger.updateCoralArm(_inputs.angleRads);
         _inputs.pose = _stateManger.getPose(RobotCoordinate.CORAL_ARM_BASE);
+
+        if (coralP.hasChanged() || coralI.hasChanged() || coralD.hasChanged()) {
+            _io.setPID(coralP.get(), coralI.get(), coralD.get(), 0.0, 0.0, 0.0, 0.0);
+        }
     }
 
     public void setDesiredState(CoralState state) {
