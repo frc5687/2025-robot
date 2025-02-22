@@ -2,7 +2,8 @@ package org.frc5687.robot;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.coral.CoralSetState;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
@@ -11,15 +12,16 @@ import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.util.FieldConstants.ReefHeight;
+import org.frc5687.robot.util.OutliersController;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class OperatorInterface {
-    private final CommandXboxController _driverController;
-    private final CommandXboxController _operatorController;
+    private final OutliersController _driverController;
+    private final OutliersController _operatorController;
 
     public OperatorInterface() {
-        _driverController = new CommandXboxController(0);
-        _operatorController = new CommandXboxController(1);
+        _driverController = new OutliersController(new CommandPS5Controller(0));
+        _operatorController = new OutliersController(new CommandPS4Controller(1));
     }
 
     public void configureCommandMapping(RobotContainer container) {
@@ -58,10 +60,10 @@ public class OperatorInterface {
         //         .rightTrigger()
         //         .whileTrue(new ConditionalCommand(null, null, false)); // TODO intake based on mode
 
-        _driverController.button(8).onTrue(new InstantCommand(container.getDrive()::zeroIMU));
+        _driverController.rightMiddleButton().onTrue(new InstantCommand(container.getDrive()::zeroIMU));
 
         _driverController
-                .button(7)
+                .leftMiddleButton()
                 .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
 
         /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
@@ -70,8 +72,8 @@ public class OperatorInterface {
         _operatorController.b().onTrue(SuperstructureFactory.placeCoralL2(container));
         _operatorController.x().onTrue(SuperstructureFactory.placeCoralL3(container, false));
         _operatorController.y().onTrue(SuperstructureFactory.placeCoralL4(container, false));
-        _operatorController.leftBumper().onTrue(SuperstructureFactory.grabAlgaeL2(container));
-        _operatorController.rightBumper().onTrue(SuperstructureFactory.grabAlgaeL1(container));
+        // _operatorController.leftBumper().onTrue(SuperstructureFactory.grabAlgaeL2(container));
+        // _operatorController.rightBumper().onTrue(SuperstructureFactory.grabAlgaeL1(container));
         _operatorController.rightTrigger().onTrue(SuperstructureFactory.processorDropoff(container));
         _operatorController
                 .leftTrigger()
@@ -82,11 +84,11 @@ public class OperatorInterface {
                 .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.GROUND_PICKUP));
     }
 
-    public CommandXboxController getDriverController() {
+    public OutliersController getDriverController() {
         return _driverController;
     }
 
-    public CommandXboxController getOperatorController() {
+    public OutliersController getOperatorController() {
         return _operatorController;
     }
 }

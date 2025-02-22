@@ -6,8 +6,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import org.frc5687.robot.util.FieldConstants.ReefHeight;
 
 public class ReefAlignmentHelpers {
-    public static final double LEFT_OFFSET = 0.275;
-    public static final double RIGHT_OFFSET = 0.04;
+    public static final TunableDouble LEFT_OFFSET =
+            new TunableDouble("ReefAlignmentHelpers", "LEFT_OFFSET", 0.02);
+    public static final TunableDouble RIGHT_OFFSET =
+            new TunableDouble("ReefAlignmentHelpers", "RIGHT_OFFSET", -0.315);
     public static final double SAFE_APPROACH_DISTANCE = 0.5;
 
     public enum ReefSide {
@@ -67,7 +69,7 @@ public class ReefAlignmentHelpers {
 
         Pose2d basePose = getFaceAlignedPose(faceIndex);
 
-        double lateralOffset = (side == ReefSide.LEFT) ? LEFT_OFFSET : -RIGHT_OFFSET;
+        double lateralOffset = (side == ReefSide.LEFT) ? LEFT_OFFSET.get() : RIGHT_OFFSET.get();
 
         double lateralAngle = basePose.getRotation().getRadians() + Math.PI / 2;
         Translation2d lateralMove =

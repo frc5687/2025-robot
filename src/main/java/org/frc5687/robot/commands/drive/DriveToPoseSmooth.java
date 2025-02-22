@@ -147,7 +147,9 @@ public class DriveToPoseSmooth extends OutliersCommand {
 
         double omega =
                 MathUtil.interpolate(
-                        _fieldRelativeVelocity.omegaRadiansPerSecond, omegaDesired, _smoothingFactor.get());
+                        _fieldRelativeVelocity.omegaRadiansPerSecond,
+                        omegaDesired,
+                        _smoothingFactor.get()); // FIXME dennis do your thing
 
         double dt = Constants.UPDATE_PERIOD;
         Translation2d deltaV =

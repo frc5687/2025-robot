@@ -1,5 +1,9 @@
 package org.frc5687.robot.commands.superstructure;
 
+import com.pathplanner.lib.util.FlippingUtil;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -13,6 +17,7 @@ import org.frc5687.robot.commands.intake.IntakeSetState;
 import org.frc5687.robot.commands.intake.RunIntake;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
+import org.frc5687.robot.util.FieldConstants;
 
 public class SuperstructureFactory {
 
@@ -76,47 +81,61 @@ public class SuperstructureFactory {
     //     }
 
     public static Command placeCoralL4(RobotContainer container, boolean withAlgaeGrab) {
-        SuperstructureState targetState =
+        var targetState =
                 withAlgaeGrab
                         ? SuperstructureGoals.PLACE_CORAL_L4_ALGAE_GRAB
                         : SuperstructureGoals.PLACE_CORAL_L4;
-
-        return withStateTracking(
-                container,
-                targetState,
-                new SequentialCommandGroup(
-                        ensureClearance(container), setSuperstructure(container, targetState)));
+        return nameThisBetter(container, targetState);
     }
 
     public static Command placeCoralL3(RobotContainer container, boolean withAlgaeGrab) {
-        SuperstructureState targetState =
+        var targetState =
                 withAlgaeGrab
                         ? SuperstructureGoals.PLACE_CORAL_L3_ALGAE_GRAB
                         : SuperstructureGoals.PLACE_CORAL_L3;
+        return nameThisBetter(container, targetState);
+    }
+
+    public static Command placeCoralL2(RobotContainer container) {
+        return nameThisBetter(container, SuperstructureGoals.PLACE_CORAL_L2);
+    }
+
+    public static Command placeCoralL1(RobotContainer container) {
+        return nameThisBetter(container, SuperstructureGoals.PLACE_CORAL_L1);
+    }
+
+    public static Command nameThisBetter(RobotContainer container, SuperstructureState targetState) {
+        double targetElevatorMotorMeters = targetState.getElevator().getValue() / 2.0;
 
         return withStateTracking(
                 container,
                 targetState,
                 new SequentialCommandGroup(
-                        ensureClearance(container), setSuperstructure(container, targetState)));
-    }
-
-    public static Command placeCoralL2(RobotContainer container) {
-        return withStateTracking(
-                container,
-                SuperstructureGoals.PLACE_CORAL_L2,
-                new SequentialCommandGroup(
+                        new InstantCommand(
+                                () -> {
+                                    System.out.println("🚨🚨🚨🚨🚨🚨🚨🚨");
+                                }),
                         ensureClearance(container),
-                        setSuperstructure(container, SuperstructureGoals.PLACE_CORAL_L2)));
-    }
-
-    public static Command placeCoralL1(RobotContainer container) {
-        return withStateTracking(
-                container,
-                SuperstructureGoals.PLACE_CORAL_L1,
-                new SequentialCommandGroup(
-                        ensureClearance(container),
-                        setSuperstructure(container, SuperstructureGoals.PLACE_CORAL_L1)));
+                        new QueueElevatorCommand(
+                                () -> {
+                                    Translation2d currentPose = container.getDrive().getPose().getTranslation();
+                                    var alliance = DriverStation.getAlliance();
+                                    if (alliance.isEmpty()) {
+                                        System.err.println("Alliance was Empty in QueueElevatorCommand");
+                                        return 0.0; // default to at least moving the mechanism...
+                                    }
+                                    Translation2d reefCenter = FieldConstants.Reef.center;
+                                    if (alliance.get() == Alliance.Red) {
+                                        reefCenter = FlippingUtil.flipFieldPosition(reefCenter);
+                                    }
+                                    return currentPose.getDistance(reefCenter) - 1.5;
+                                },
+                                () -> {
+                                    return container
+                                            .getElevator()
+                                            .getSignedTimeToSetpoint(2.0, targetElevatorMotorMeters);
+                                },
+                                setSuperstructure(container, targetState))));
     }
 
     public static Command grabAlgaeL1(RobotContainer container) {

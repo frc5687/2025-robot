@@ -13,6 +13,7 @@ import org.frc5687.robot.util.TunableDouble;
 public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, ElevatorOutputs> {
     private final RobotStateManager _robotState = RobotStateManager.getInstance();
     private final RobotContainer _container;
+    private double _queuedHeight;
 
     private TunableDouble elevatorP = new TunableDouble("Elevator", "kP", Constants.Elevator.kP);
     private TunableDouble elevatorI = new TunableDouble("Elevator", "kI", Constants.Elevator.kI);
@@ -28,6 +29,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         super(container, io, new ElevatorInputs(), new ElevatorOutputs());
         _container = container;
         _newDesiredPlatformHeight = Optional.empty();
+        _queuedHeight = 0.0;
     }
 
     @Override
@@ -127,5 +129,16 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
 
     public double getLaserDistance() {
         return _inputs.laserSensorElevatorHeightMeters;
+    }
+
+    public double getSignedTimeToSetpoint(double factorOfSafety, double setpointMotorMeters) {
+        double heightMeters = _inputs.heightPositionMeters;
+        double maxTime = 1.0;
+        double maxDistance = Constants.Elevator.MAX_HEIGHT;
+        double signedDistance = heightMeters / 2.0 - setpointMotorMeters;
+        double estimatedTime = maxTime * signedDistance / maxDistance;
+        log("DriveToPoseSmooth/timeItWillTakeElevator", factorOfSafety * estimatedTime);
+
+        return factorOfSafety * estimatedTime;
     }
 }
