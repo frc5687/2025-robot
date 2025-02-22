@@ -15,6 +15,7 @@ import org.frc5687.robot.commands.coral.CoralSetState;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.elevator.ElevatorSetState;
 import org.frc5687.robot.commands.intake.RunIntake;
+import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 import org.frc5687.robot.util.FieldConstants;
@@ -29,11 +30,41 @@ public class SuperstructureFactory {
     }
 
     private static Command setSuperstructure(RobotContainer container, SuperstructureState state) {
-        return new ParallelCommandGroup(
-                new ElevatorSetState(container.getElevator(), state.getElevator()),
-                new CoralSetState(container.getCoral(), state.getCoral()),
-                new AlgaeSetState(container.getAlgae(), state.getAlgae(), true)
-                /*new IntakeSetState(container.getIntake(), state.getIntake())*/ ); // FIXME lmfao
+        /*
+         *
+         *
+         *
+         *
+         * when we are mooving the elveator, we have to:
+         * 1. set the coral to vertical
+         * 2. move the elevator
+         * 3. move the coral
+         *
+         *
+         *
+         *
+         */
+        double prevHeight = container.getElevator().getInputs().heightPositionMeters;
+        double newHeight = state.getElevator().getHeight();
+
+        if (prevHeight == newHeight) {
+            return new ParallelCommandGroup(
+                    new ElevatorSetState(container.getElevator(), state.getElevator()),
+                    new CoralSetState(container.getCoral(), state.getCoral()),
+                    new AlgaeSetState(container.getAlgae(), state.getAlgae(), true)
+                    /*new IntakeSetState(container.getIntake(), state.getIntake())*/ ); // FIXME lmfao
+        } else {
+            Command step1 =
+                    new CoralSetState(
+                            container.getCoral(), CoralState.IDLE_WITH_CORAL); // TODO algae fix this with algae
+            Command step2 =
+                    new ParallelCommandGroup(
+                            new ElevatorSetState(container.getElevator(), state.getElevator()),
+                            new AlgaeSetState(container.getAlgae(), state.getAlgae(), true)
+                            /*new IntakeSetState(container.getIntake(), state.getIntake())*/ ); // FIXME lmfao;
+            Command step3 = new CoralSetState(container.getCoral(), state.getCoral());
+            return new SequentialCommandGroup(step1, step2, step3);
+        }
     }
 
     public static Command clearIntake(RobotContainer container) {
@@ -108,7 +139,8 @@ public class SuperstructureFactory {
 
     public static Command nameThisBetter(
             RobotContainer container, SuperstructureState targetState, Supplier<Boolean> overrideButton) {
-        double targetElevatorMotorMeters = targetState.getElevator().getValue() / 2.0;
+        double targetElevatorMotorMeters =
+                targetState.getElevator().getHeight() / 2.0; // FIXME is this right??
 
         return withStateTracking(
                 container,

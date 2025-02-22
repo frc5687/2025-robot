@@ -80,7 +80,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     }
 
     public void setDesiredState(ElevatorState state) {
-        setDesiredPlatformHeightWorld(state.getValue());
+        setDesiredPlatformHeightWorld(state.getHeight());
         _outputs.desiredState = state;
     }
 
@@ -108,7 +108,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         ElevatorState closestState = ElevatorState.STOWED;
         double minDist = Double.MAX_VALUE;
         for (ElevatorState state : ElevatorState.values()) {
-            double heightDiff = Math.abs(getPlatformWorldHeight() - state.getValue());
+            double heightDiff = Math.abs(getPlatformWorldHeight() - state.getHeight());
             if (heightDiff < minDist) {
                 closestState = state;
                 minDist = heightDiff;

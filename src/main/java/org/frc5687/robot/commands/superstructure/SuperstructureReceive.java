@@ -18,7 +18,7 @@ public class SuperstructureReceive extends OutliersCommand {
     private final SuperstructureState _goal;
     private SuperstructureReceiveState _state;
 
-    private static final TunableDouble _goMore = new TunableDouble("Receive", "goMore", 7.5);
+    private static final TunableDouble _goMore = new TunableDouble("Receive", "goMore", 1.5);
 
     public SuperstructureReceive(RobotContainer container, SuperstructureState goal) {
         _elevator = container.getElevator();

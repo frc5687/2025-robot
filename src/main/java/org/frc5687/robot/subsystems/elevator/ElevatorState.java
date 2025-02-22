@@ -11,15 +11,15 @@ public enum ElevatorState {
     L3_CORAL_PLACING(.866800),
     L4_CORAL_PLACING(Constants.Elevator.MAX_PLATFORM_HEIGHT), // 1.7018
     BARGE_PLACING(Constants.Elevator.MAX_PLATFORM_HEIGHT),
-    FUNNEL_RECEIVE(0.34);
+    FUNNEL_RECEIVE(Constants.Elevator.MIN_PLATFORM_HEIGHT);
 
-    private final double _value;
+    private final double _height;
 
-    ElevatorState(double value) {
-        _value = value;
+    ElevatorState(double height) {
+        _height = height;
     }
 
-    public double getValue() {
-        return _value;
+    public double getHeight() {
+        return _height;
     }
 }
