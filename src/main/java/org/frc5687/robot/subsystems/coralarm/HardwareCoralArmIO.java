@@ -16,7 +16,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import org.frc5687.robot.Constants;
@@ -65,7 +64,8 @@ public class HardwareCoralArmIO implements CoralArmIO {
     }
 
     // private void calculateShortestPath(double currentAngle) {
-    //     if (currentAngle < Units.degreesToRadians(90) || currentAngle >= Units.degreesToRadians(270)) {
+    //     if (currentAngle < Units.degreesToRadians(90) || currentAngle >=
+    // Units.degreesToRadians(270)) {
     //         _controller.enableContinuousInput(0, 2.0 * Math.PI);
     //     } else {
     //         _controller.disableContinuousInput();
@@ -103,7 +103,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
         double dynamicsFF = calculateGravityFeedForward(currentAngle);
         double motorFF = _ffModel.calculate(_controller.getSetpoint().velocity);
         double ffOutput = motorFF + dynamicsFF;
-
 
         double totalVoltage = MathUtil.clamp(pidOutput + ffOutput, -12.0, 12.0);
 
@@ -160,5 +159,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _controller.setP(kP);
         _controller.setD(kD);
         _controller.setI(kI);
+        _ffModel.setKv(kV);
+        _ffModel.setKs(kS);
     }
 }

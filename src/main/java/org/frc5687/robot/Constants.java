@@ -333,8 +333,7 @@ public class Constants {
         public static final boolean PIVOT_MOTOR_INVERTED = true;
         public static final int NUM_MOTORS = 1;
 
-        public static final double ENCODER_OFFSET = -0.2785;
-        public static final boolean ENCODER_INVERTED = true;
+        public static final double ENCODER_OFFSET = -0.1152375;
 
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
         public static final double GEAR_RATIO = 315; // From Amory
@@ -345,7 +344,7 @@ public class Constants {
         public static final double MAX_ANGLE = Units.degreesToRadians(270.0);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20.0 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 10.0 * Math.PI;
 
         public static final double FILTER_TIME_CONSTANT = 0.04;
     }
@@ -354,9 +353,11 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 15.0;
+        public static final double kP = 20.0;
         public static final double kI = 0.0;
-        public static final double kD = 0.0;
+        public static final double kD = 0.35;
+        public static final double kV = 0.4;
+        public static final double kS = 0.6;
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
         public static final boolean WHEEL_MOTOR_INVERTED = true;
@@ -374,7 +375,7 @@ public class Constants {
         public static final double MAX_ANGLE = Units.degreesToRadians(300);
 
         // public static final double MAX_VELOCITY_RAD_PER_SEC = 2;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 4;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 15 * Math.PI;
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;

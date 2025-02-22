@@ -102,7 +102,7 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
     public void writeOutputs(AlgaeOutputs outputs) {
         double currentAngle = getAngleRads();
         double safeAngle = processSafeAngle(outputs.desiredAngleRad);
-        calculateShortestPath(currentAngle);
+        // calculateShortestPath(currentAngle);
 
         _controller.setGoal(safeAngle);
 
@@ -114,8 +114,8 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         outputs.voltageCommand = totalVoltage;
         outputs.controllerOutput = pidOutput;
 
-        // _pivotMotor.setVoltage(totalVoltage);
         _voltageCommand = totalVoltage;
+        _pivotMotor.setVoltage(totalVoltage);
         // _wheelMotor.setVoltage(outputs.wheelVoltageCommand);
         // _wheelMotor.set(-0.5);
     }
@@ -128,8 +128,15 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         var _cancoderConfigs = new CANcoderConfiguration();
         _cancoderConfigs.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(1));
         _cancoderConfigs.MagnetSensor.MagnetOffset = Constants.AlgaeArm.ENCODER_OFFSET;
-        _cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        _cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         _cancoder.getConfigurator().apply(_cancoderConfigs);
         // CTREUtil.applyConfiguration(_cancoder, _cancoderConfigs);
+    }
+
+    @Override
+    public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {
+        _controller.setP(kP);
+        _controller.setD(kD);
+        _controller.setI(kI);
     }
 }

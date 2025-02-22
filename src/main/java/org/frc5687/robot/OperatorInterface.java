@@ -3,10 +3,9 @@ package org.frc5687.robot;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import org.frc5687.robot.commands.coral.CoralSetState;
-import org.frc5687.robot.commands.elevator.HomeElevator;
+import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
-import org.frc5687.robot.subsystems.coralarm.CoralState;
+import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 
 public class OperatorInterface {
     private final CommandXboxController _driverController;
@@ -18,7 +17,7 @@ public class OperatorInterface {
     }
 
     public void configureCommandMapping(RobotContainer container) {
-        _driverController.a().onTrue(new HomeElevator(container.getElevator()));
+        // _driverController.a().onTrue(new HomeElevator(container.getElevator()));
         _driverController
                 .x()
                 .onTrue(
@@ -78,12 +77,13 @@ public class OperatorInterface {
         // _operatorController
         //         .povUp()
         //         .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.GROUND_PICKUP));
+        _operatorController.a().onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.IDLE));
         _operatorController
-                .a()
-                .onTrue(new CoralSetState(container.getCoral(), CoralState.RECEIVE_FROM_FUNNEL));
-        _operatorController.b().onTrue(new CoralSetState(container.getCoral(), CoralState.STOWED));
-        _operatorController.x().onTrue(new CoralSetState(container.getCoral(), CoralState.PLACING));
-        _operatorController.y().onTrue(new CoralSetState(container.getCoral(), CoralState.PLACING_L4));
+                .b()
+                .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.REEF_PICKUP_WHEEL));
+        _operatorController
+                .x()
+                .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.GROUND_PICKUP));
     }
 
     public CommandXboxController getDriverController() {

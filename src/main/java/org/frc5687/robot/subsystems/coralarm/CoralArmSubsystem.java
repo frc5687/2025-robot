@@ -14,6 +14,8 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     private TunableDouble coralP = new TunableDouble("Coral", "kP", Constants.CoralArm.kP);
     private TunableDouble coralI = new TunableDouble("Coral", "kI", Constants.CoralArm.kI);
     private TunableDouble coralD = new TunableDouble("Coral", "kD", Constants.CoralArm.kD);
+    private TunableDouble coralV = new TunableDouble("Coral", "kV", Constants.CoralArm.kV);
+    private TunableDouble coralS = new TunableDouble("Coral", "kS", Constants.CoralArm.kS);
 
     public CoralArmSubsystem(RobotContainer container, CoralArmIO io) {
         super(container, io, new CoralInputs(), new CoralOutputs());
@@ -28,8 +30,12 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
         _stateManger.updateCoralArm(_inputs.angleRads);
         _inputs.pose = _stateManger.getPose(RobotCoordinate.CORAL_ARM_BASE);
 
-        if (coralP.hasChanged() || coralI.hasChanged() || coralD.hasChanged()) {
-            _io.setPID(coralP.get(), coralI.get(), coralD.get(), 0.0, 0.0, 0.0, 0.0);
+        if (coralP.hasChanged()
+                || coralI.hasChanged()
+                || coralD.hasChanged()
+                || coralV.hasChanged()
+                || coralS.hasChanged()) {
+            _io.setPID(coralP.get(), coralI.get(), coralD.get(), coralV.get(), coralS.get(), 0.0, 0.0);
         }
     }
 
