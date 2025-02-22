@@ -22,8 +22,8 @@ public class SuperstructurePlace extends OutliersCommand {
     @Override
     public void initialize() {
         super.initialize();
-        _elevator.setDesiredPlatformHeightWorld(_elevator.getPlatformWorldHeight() - 0.5);
-        // _coral.setDesiredAngleRadians(Math.PI);
+        //_elevator.setDesiredPlatformHeightWorld(_elevator.getPlatformWorldHeight() - 0.5);
+         _coral.setWheelVoltageCommand(-12);
         _algae.setDesiredState(AlgaeState.IDLE);
     }
 
@@ -32,7 +32,7 @@ public class SuperstructurePlace extends OutliersCommand {
 
     @Override
     public boolean isFinished() {
-        return _elevator.isAtDesiredPosition() && _algae.isAtDesiredAngle();
+        return !_coral.isCoralDetected() && _algae.isAtDesiredAngle();
     }
 
     @Override
