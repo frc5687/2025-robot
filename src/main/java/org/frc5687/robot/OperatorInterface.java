@@ -3,9 +3,9 @@ package org.frc5687.robot;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import org.frc5687.robot.commands.algae.AlgaeSetState;
+import org.frc5687.robot.commands.elevator.ElevatorSetState;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
-import org.frc5687.robot.subsystems.algaearm.AlgaeState;
+import org.frc5687.robot.subsystems.elevator.ElevatorState;
 
 public class OperatorInterface {
     private final CommandXboxController _driverController;
@@ -77,13 +77,18 @@ public class OperatorInterface {
         // _operatorController
         //         .povUp()
         //         .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.GROUND_PICKUP));
-        _operatorController.a().onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.IDLE));
+        _operatorController
+                .a()
+                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.STOWED));
         _operatorController
                 .b()
-                .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.REEF_PICKUP_WHEEL));
+                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L2_CORAL_PLACING));
+        _operatorController
+                .y()
+                .onTrue(new ElevatorSetState(container.getElevator(), ElevatorState.L3_CORAL_PLACING));
         _operatorController
                 .x()
-                .onTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.GROUND_PICKUP));
+                .onTrue(SuperstructureFactory.receiveFromFunnel(container));
     }
 
     public CommandXboxController getDriverController() {

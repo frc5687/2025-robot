@@ -56,7 +56,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _pivotMotor.setInverted(Constants.CoralArm.PIVOT_MOTOR_INVERTED);
 
         _ffModel = new SimpleMotorFeedforward(Constants.CoralArm.kS, Constants.CoralArm.kV);
-
         configureCancoder();
         configureMotor(_wheelMotor, Constants.CoralArm.WHEEL_MOTOR_INVERTED);
         _absoluteAngle = _cancoder.getAbsolutePosition();
@@ -139,13 +138,11 @@ public class HardwareCoralArmIO implements CoralArmIO {
         double gearRatio = Constants.Elevator.GEAR_RATIO;
         double metersToRotations = (1.0 / (Constants.Elevator.DRUM_RADIUS)) * gearRatio;
 
-        config.Slot0.kP = Constants.Elevator.kP;
-        config.Slot0.kI = Constants.Elevator.kI;
-        config.Slot0.kD = Constants.Elevator.kD;
-        config.Slot0.kS = Constants.Elevator.kS;
-        config.Slot0.kV = Constants.Elevator.kV;
-        config.Slot0.kA = Constants.Elevator.kA;
-        config.Slot0.kG = Constants.Elevator.kG;
+        config.Slot0.kP = Constants.CoralArm.kP;
+        config.Slot0.kI = Constants.CoralArm.kI;
+        config.Slot0.kD = Constants.CoralArm.kD;
+        config.Slot0.kS = Constants.CoralArm.kS;
+        config.Slot0.kV = Constants.CoralArm.kV;
 
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = Constants.Elevator.CURRENT_LIMIT;

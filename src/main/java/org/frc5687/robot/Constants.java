@@ -284,7 +284,7 @@ public class Constants {
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
         public static final double MIN_PLATFORM_HEIGHT = 0.191039; // m
-        public static final double MAX_PLATFORM_HEIGHT = 1.562639; // m
+        public static final double MAX_PLATFORM_HEIGHT = 1.542; // m
 
         public static final double MIN_HEIGHT = 0.0; // m
         public static final double MAX_HEIGHT =
@@ -301,17 +301,17 @@ public class Constants {
         // public static final double MOTION_MAGIC_EXPO_KV = .09;
         // public static final double MOTION_MAGIC_EXPO_KA = .02;
 
-        public static final double MOTION_MAGIC_EXPO_KV = 2.0;
-        public static final double MOTION_MAGIC_EXPO_KA = 2.0;
+        public static final double MOTION_MAGIC_EXPO_KV = 0.05;
+        public static final double MOTION_MAGIC_EXPO_KA = 0.04;
 
         // This needs to be tuned with real PID values
-        public static final double kP = 20.0;
+        public static final double kP = 120.0;
         public static final double kI = 0.0;
-        public static final double kD = 0.0; // 2.0
+        public static final double kD = 1.2; // 2.0
         public static final double kS = 2.0;
         public static final double kG = 0.0;
-        public static final double kV = 0.09; // 0.09
-        public static final double kA = 0.05; // 0.05
+        public static final double kV = 0.0; // 0.09
+        public static final double kA = 0.0; // 0.05
 
         public static final boolean EAST_INVERTED = false;
         public static final boolean WEST_INVERTED = true;
@@ -358,6 +358,12 @@ public class Constants {
         public static final double kD = 0.35;
         public static final double kV = 0.4;
         public static final double kS = 0.6;
+
+        public static final double kP_WHEEL = 10.0;
+        public static final double kI_WHEEL = 0.0;
+        public static final double kD_WHEEL = 0.0;
+        public static final double kV_WHEEL = 0.0;
+        public static final double kS_WHEEL = 0.0;
 
         public static final boolean PIVOT_MOTOR_INVERTED = false;
         public static final boolean WHEEL_MOTOR_INVERTED = true;

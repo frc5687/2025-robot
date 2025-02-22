@@ -4,7 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -139,12 +139,10 @@ public class HardwareElevatorIO implements ElevatorIO {
         // Constants.Elevator.DRUM_RADIUS)
         //                 * Constants.Elevator.GEAR_RATIO_SOUTH;
         double eastRotations =
-                Units.radiansToRotations(
-                                outputs.desiredPlatformHeightWorldMeters / Constants.Elevator.DRUM_RADIUS)
+                Units.radiansToRotations(outputs.desiredHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO;
         double westRotations =
-                Units.radiansToRotations(
-                                outputs.desiredPlatformHeightWorldMeters / Constants.Elevator.DRUM_RADIUS)
+                Units.radiansToRotations(outputs.desiredHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO;
 
         // if (isWithinPositionTolerance(outputs.desiredStageHeight)) {
@@ -170,18 +168,18 @@ public class HardwareElevatorIO implements ElevatorIO {
         // outputs.voltageCommandSouthWest =
         //         _southWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
 
-        // switch (outputs.controlMode) {
-        //     case VOLTAGE:
-        //         _eastMotor.setControl(_eastVoltageRequest.withOutput(outputs.voltageCommandEast));
-        //         _westMotor.setControl(_westVoltageRequest.withOutput(outputs.voltageCommandWest));
-        //         break;
-        //     case POSITION:
-        //         _eastMotor.setControl(_eastPositionTorqueRequest.withPosition(eastRotations));
-        //         _westMotor.setControl(_westPositionTorqueRequest.withPosition(westRotations));
-        //         break;
-        //     default:
-        //         break;
-        // }
+        switch (outputs.controlMode) {
+            case VOLTAGE:
+                _eastMotor.setControl(_eastVoltageRequest.withOutput(outputs.voltageCommandEast));
+                _westMotor.setControl(_westVoltageRequest.withOutput(outputs.voltageCommandWest));
+                break;
+            case POSITION:
+                _eastMotor.setControl(_eastPositionTorqueRequest.withPosition(eastRotations));
+                _westMotor.setControl(_westPositionTorqueRequest.withPosition(westRotations));
+                break;
+            default:
+                break;
+        }
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted) {
@@ -215,7 +213,7 @@ public class HardwareElevatorIO implements ElevatorIO {
     }
 
     public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {
-        Slot1Configs config = new Slot1Configs();
+        Slot0Configs config = new Slot0Configs();
         config.kP = kP;
         config.kI = kI;
         config.kD = kD;
