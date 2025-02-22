@@ -27,7 +27,7 @@ public class SuperstructurePlace extends OutliersCommand {
     @Override
     public void initialize() {
         super.initialize();
-        _coral.setWheelVoltageCommand(Constants.CoralArm.WHEEL_EJECT_CORAL_VOLTAGE);
+        _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_EJECT_CORAL_DUTY_CYCLE);
         _algae.setDesiredState(AlgaeState.IDLE);
         _noCoralStartTime = Timer.getFPGATimestamp();
         _timerLock = false;
@@ -52,7 +52,7 @@ public class SuperstructurePlace extends OutliersCommand {
 
     @Override
     public void end(boolean interrupted) {
-        _coral.setWheelVoltageCommand(0);
+        _coral.setWheelMotorPosition(_coral.getWheelMotorPosition());
         _elevator.mapToClosestState();
         super.end(interrupted);
     }

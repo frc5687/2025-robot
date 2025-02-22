@@ -6,7 +6,8 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -34,8 +35,10 @@ public class HardwareCoralArmIO implements CoralArmIO {
     private final Debouncer _debouncer;
 
     private final StatusSignal<Angle> _absoluteAngle;
+    private final StatusSignal<Angle> _wheelAngle;
 
-    private final VoltageOut _wheelVotlageRequeset;
+    private final DutyCycleOut _wheelDutyCycleOut;
+    private final PositionVoltage _wheelPositionController;
 
     private SimpleMotorFeedforward _ffModel;
 
@@ -45,7 +48,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
         _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.CORAL_WHEEL_MOTOR, "CANivore");
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
-        _debouncer = new Debouncer(.1, Debouncer.DebounceType.kRising);
+        _debouncer = new Debouncer(0.050, Debouncer.DebounceType.kRising);
         TrapezoidProfile.Constraints constraints =
                 new TrapezoidProfile.Constraints(
                         Constants.CoralArm.MAX_VELOCITY_RAD_PER_SEC,
@@ -61,9 +64,11 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _ffModel = new SimpleMotorFeedforward(Constants.CoralArm.kS, Constants.CoralArm.kV);
         configureCancoder();
         configureMotor(_wheelMotor, Constants.CoralArm.WHEEL_MOTOR_INVERTED);
-        _wheelVotlageRequeset = new VoltageOut(0).withEnableFOC(true);
+        _wheelDutyCycleOut = new DutyCycleOut(0).withEnableFOC(true);
+        _wheelPositionController = new PositionVoltage(0).withEnableFOC(true);
 
         _absoluteAngle = _cancoder.getAbsolutePosition();
+        _wheelAngle = _wheelMotor.getPosition();
         _controller.reset(getAngleRads());
     }
 
@@ -89,9 +94,11 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
     @Override
     public void updateInputs(CoralInputs inputs) {
-        StatusSignal.refreshAll(_absoluteAngle);
+        StatusSignal.refreshAll(_absoluteAngle, _wheelAngle);
         inputs.angleRads = getAngleRads();
-        inputs.isCoralDetected = _debouncer.calculate(_coralDetectionSensor.get());
+        inputs.isCoralDetectedRaw = _coralDetectionSensor.get();
+        inputs.isCoralDetected = _debouncer.calculate(inputs.isCoralDetectedRaw);
+        inputs.wheelAngle = _wheelAngle.getValueAsDouble();
         inputs.motorCurrent = 0.0;
     }
 
@@ -115,7 +122,12 @@ public class HardwareCoralArmIO implements CoralArmIO {
         outputs.voltageFeedForward = ffOutput;
 
         _pivotMotor.setVoltage(totalVoltage);
-        _wheelMotor.setControl(_wheelVotlageRequeset.withOutput(outputs.wheelVoltageCommand));
+        if (outputs.wheelPositionControl) {
+            _wheelMotor.setControl(_wheelPositionController.withPosition(outputs.wheelPositionCommand));
+        } else {
+
+            _wheelMotor.setControl(_wheelDutyCycleOut.withOutput(outputs.wheelVoltageCommand));
+        }
     }
 
     private double getAngleRads() {

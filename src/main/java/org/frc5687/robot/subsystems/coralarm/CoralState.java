@@ -11,21 +11,21 @@ public enum CoralState {
     PLACING(Units.degreesToRadians(30 + 90), 0), // 27.5 deg
     RECEIVE_FROM_INTAKE(Units.degreesToRadians(45 + 90), 0),
     DURING_HANDOFF(Units.degreesToRadians(135 + 90), 12),
-    PLACING_L4(Units.degreesToRadians(30 + 90), 0); // 27.5 deg
+    PLACING_L4(Units.degreesToRadians(30 + 90 + 15), 0); // 27.5 deg
 
     private final double _armAngle;
-    private final double _rollerVoltage;
+    private final double _rollerDutyCycle;
 
-    CoralState(double armAngle, double rollerVoltage) {
+    CoralState(double armAngle, double rollerDutyCycle) {
         _armAngle = armAngle;
-        _rollerVoltage = rollerVoltage;
+        _rollerDutyCycle = rollerDutyCycle;
     }
 
     public double getArmAngle() {
         return _armAngle;
     }
 
-    public double getRollerVoltage() {
-        return _rollerVoltage;
+    public double getRollerDutyCycle() {
+        return _rollerDutyCycle;
     }
 }

@@ -135,7 +135,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         double heightMeters = _inputs.heightPositionMeters;
         double maxTime = 1.0;
         double maxDistance = Constants.Elevator.MAX_HEIGHT;
-        double signedDistance = heightMeters / 2.0 - setpointMotorMeters;
+        double signedDistance = setpointMotorMeters - heightMeters;
         double estimatedTime = maxTime * signedDistance / maxDistance;
         log("DriveToPoseSmooth/timeItWillTakeElevator", factorOfSafety * estimatedTime);
 

@@ -8,12 +8,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import java.util.function.Supplier;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.coral.CoralSetState;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.elevator.ElevatorSetState;
-import org.frc5687.robot.commands.intake.IntakeSetState;
 import org.frc5687.robot.commands.intake.RunIntake;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
@@ -32,8 +32,8 @@ public class SuperstructureFactory {
         return new ParallelCommandGroup(
                 new ElevatorSetState(container.getElevator(), state.getElevator()),
                 new CoralSetState(container.getCoral(), state.getCoral()),
-                new AlgaeSetState(container.getAlgae(), state.getAlgae()),
-                new IntakeSetState(container.getIntake(), state.getIntake()));
+                new AlgaeSetState(container.getAlgae(), state.getAlgae(), true)
+                /*new IntakeSetState(container.getIntake(), state.getIntake())*/ ); // FIXME lmfao
     }
 
     public static Command clearIntake(RobotContainer container) {
@@ -48,7 +48,7 @@ public class SuperstructureFactory {
 
     public static Command ensureClearance(RobotContainer container) {
         return new SequentialCommandGroup(
-                clearIntake(container) /* , transitionToSafeCoralState(container)*/);
+                clearIntake(container), transitionToSafeCoralState(container));
     }
 
     public static Command receiveFromFunnel(RobotContainer container) {
@@ -80,31 +80,34 @@ public class SuperstructureFactory {
     // SuperstructureGoals.RECEIVE_FROM_INTAKE)));
     //     }
 
-    public static Command placeCoralL4(RobotContainer container, boolean withAlgaeGrab) {
+    public static Command placeCoralL4(
+            RobotContainer container, boolean withAlgaeGrab, Supplier<Boolean> overrideButton) {
         var targetState =
                 withAlgaeGrab
                         ? SuperstructureGoals.PLACE_CORAL_L4_ALGAE_GRAB
                         : SuperstructureGoals.PLACE_CORAL_L4;
-        return nameThisBetter(container, targetState);
+        return nameThisBetter(container, targetState, overrideButton);
     }
 
-    public static Command placeCoralL3(RobotContainer container, boolean withAlgaeGrab) {
+    public static Command placeCoralL3(
+            RobotContainer container, boolean withAlgaeGrab, Supplier<Boolean> overrideButton) {
         var targetState =
                 withAlgaeGrab
                         ? SuperstructureGoals.PLACE_CORAL_L3_ALGAE_GRAB
                         : SuperstructureGoals.PLACE_CORAL_L3;
-        return nameThisBetter(container, targetState);
+        return nameThisBetter(container, targetState, overrideButton);
     }
 
-    public static Command placeCoralL2(RobotContainer container) {
-        return nameThisBetter(container, SuperstructureGoals.PLACE_CORAL_L2);
+    public static Command placeCoralL2(RobotContainer container, Supplier<Boolean> overrideButton) {
+        return nameThisBetter(container, SuperstructureGoals.PLACE_CORAL_L2, overrideButton);
     }
 
-    public static Command placeCoralL1(RobotContainer container) {
-        return nameThisBetter(container, SuperstructureGoals.PLACE_CORAL_L1);
+    public static Command placeCoralL1(RobotContainer container, Supplier<Boolean> overrideButton) {
+        return nameThisBetter(container, SuperstructureGoals.PLACE_CORAL_L1, overrideButton);
     }
 
-    public static Command nameThisBetter(RobotContainer container, SuperstructureState targetState) {
+    public static Command nameThisBetter(
+            RobotContainer container, SuperstructureState targetState, Supplier<Boolean> overrideButton) {
         double targetElevatorMotorMeters = targetState.getElevator().getValue() / 2.0;
 
         return withStateTracking(
@@ -135,6 +138,7 @@ public class SuperstructureFactory {
                                             .getElevator()
                                             .getSignedTimeToSetpoint(2.0, targetElevatorMotorMeters);
                                 },
+                                overrideButton,
                                 setSuperstructure(container, targetState))));
     }
 

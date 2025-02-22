@@ -8,6 +8,7 @@ import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
+import org.frc5687.robot.util.TunableDouble;
 
 public class SuperstructureReceive extends OutliersCommand {
     private final ElevatorSubsystem _elevator;
@@ -16,7 +17,8 @@ public class SuperstructureReceive extends OutliersCommand {
     private final IntakeSubsystem _intake;
     private final SuperstructureState _goal;
     private SuperstructureReceiveState _state;
-    private double timer;
+
+    private static final TunableDouble _goMore = new TunableDouble("Receive", "goMore", 7.5);
 
     public SuperstructureReceive(RobotContainer container, SuperstructureState goal) {
         _elevator = container.getElevator();
@@ -40,24 +42,16 @@ public class SuperstructureReceive extends OutliersCommand {
     @Override
     public void execute(double timestamp) {
         if (_state == SuperstructureReceiveState.INTAKING) {
-            _coral.setWheelVoltageCommand(Constants.CoralArm.WHEEL_RECEIVE_CORAL_VOLTAGE);
+            _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_RECEIVE_CORAL_DUTY_CYCLE);
             if (_coral.isCoralDetected()) {
                 _state = SuperstructureReceiveState.SAW_IT;
+                _coral.setWheelMotorPosition(_coral.getWheelMotorPosition() + _goMore.get());
+            }
+        } else if (_state == SuperstructureReceiveState.SAW_IT) {
+            if (_coral.isAtDesiredAngle()) {
+                _state = SuperstructureReceiveState.DONE;
             }
         }
-
-        if (_state == SuperstructureReceiveState.SAW_IT) {
-            if (!_coral.isCoralDetected()) {
-                _state = SuperstructureReceiveState.OUTTAKING;
-                timer = timestamp;
-            }
-        }
-
-        if (_state == SuperstructureReceiveState.OUTTAKING) {
-            _coral.setWheelVoltageCommand(Constants.CoralArm.WHEEL_EJECT_CORAL_VOLTAGE);
-            // _coral.setArmAngle(Units.degreesToRadians(45));
-        }
-
     }
 
     @Override
@@ -67,7 +61,7 @@ public class SuperstructureReceive extends OutliersCommand {
 
     @Override
     public void end(boolean interrupted) {
-        _coral.setWheelVoltageCommand(0.0);
+        _coral.setWheelMotorPosition(_coral.getWheelMotorPosition());
     }
 
     public enum SuperstructureReceiveState {

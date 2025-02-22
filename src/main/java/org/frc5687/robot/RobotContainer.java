@@ -2,13 +2,13 @@ package org.frc5687.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.frc5687.robot.commands.algae.IntakeAlgae;
+import java.util.function.Supplier;
+import org.frc5687.robot.commands.algae.IdleAlgae;
 import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
@@ -150,11 +150,7 @@ public class RobotContainer implements EpilogueLog {
         //     () -> -modifyAxis(_oi.getDriverController().getLeftY())
         // ));
 
-        _algaeArm.setDefaultCommand(
-                new IntakeAlgae(
-                        _algaeArm,
-                        0,
-                        () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12, 12)));
+        _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
         // _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
         _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
         // _coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
@@ -181,9 +177,16 @@ public class RobotContainer implements EpilogueLog {
         } else {
             NamedCommands.registerCommand("ReceiveFunnel", SuperstructureFactory.receiveFromFunnel(this));
         }
-        NamedCommands.registerCommand("CoralL4", SuperstructureFactory.placeCoralL4(this, false));
-        NamedCommands.registerCommand("CoralL3", SuperstructureFactory.placeCoralL3(this, false));
-        NamedCommands.registerCommand("CoralL2", SuperstructureFactory.placeCoralL2(this));
+        Supplier<Boolean> falseSupplier =
+                () -> {
+                    return false;
+                };
+        NamedCommands.registerCommand(
+                "CoralL4", SuperstructureFactory.placeCoralL4(this, false, falseSupplier));
+        NamedCommands.registerCommand(
+                "CoralL3", SuperstructureFactory.placeCoralL3(this, false, falseSupplier));
+        NamedCommands.registerCommand(
+                "CoralL2", SuperstructureFactory.placeCoralL2(this, falseSupplier));
         NamedCommands.registerCommand("Place", SuperstructureFactory.place(this));
     }
 

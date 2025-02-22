@@ -71,14 +71,14 @@ public class SuperstructureIntake extends OutliersCommand {
                 if (!_coral.isCoralDetected()) {
                     _intake.setRollerVoltage(-1);
                     _intake.setIntakeVoltage(3);
-                    _coral.setWheelVoltageCommand(-12);
+                    _coral.setWheelMotorDutyCycle(-1);
                     _timer = timestamp;
                 }
                 if (_coral.isCoralDetected()) {
                     _intake.setDesiredState(IntakeState.IDLE);
                     _intake.setRollerVoltage(0);
                     _intake.setIntakeVoltage(0);
-                    _coral.setWheelVoltageCommand(0);
+                    _coral.setWheelMotorPosition(_coral.getWheelMotorPosition());
                 }
             }
         }

@@ -24,23 +24,39 @@ public class SuperstructureTracker {
     }
 
     public boolean needsSafeCoralTransition() {
-        double currentArmAngle = _container.getCoral().getArmAngleRads();
-        double stowedAngleThreshold = CoralState.STOWED.getArmAngle() + Units.degreesToRadians(10);
+        // double currentArmAngle = _container.getCoral().getArmAngleRads();
+        // double stowedAngleThreshold = CoralState.STOWED.getArmAngle() + Units.degreesToRadians(10);
 
-        // Check if arm is too far extended
-        if (currentArmAngle > stowedAngleThreshold) {
-            System.out.println(
-                    "Arm angle is too far extended, need to stow: "
-                            + Units.radiansToDegrees(currentArmAngle)
-                            + " degrees");
-            return true;
-        }
+        // // Check if arm is too far extended
+        // if (currentArmAngle > stowedAngleThreshold) {
+        //     System.out.println(
+        //             "Arm angle is too far extended, need to stow: "
+        //                     + Units.radiansToDegrees(currentArmAngle)
+        //                     + " degrees");
+        //     return true;
+        // }
 
         // Check if transitioning to receive from funnel
-        if (_desiredState.getCoral() == CoralState.RECEIVE_FROM_FUNNEL) {
+        boolean elevatorAboveCollision =
+                _container.getElevator().getInputs().platformHeightMeters > 1.5;
+
+        if (elevatorAboveCollision && _desiredState.getCoral() == CoralState.RECEIVE_FROM_FUNNEL) {
             System.out.println("Transitioning to receive from funnel, need to stow first");
             return true;
         }
+
+        // boolean currentlyAboveCollision =
+        //         _container.getElevator().getInputs().platformHeightMeters
+        //                 > 1.5; // SORRY FOR HARDCODING - xavier
+        // boolean goalAboveCollision = _desiredState.getElevator().getValue() > 1.5;
+
+        // if (currentlyAboveCollision && !goalAboveCollision) {
+        //     return true;
+        // }
+
+        // if (goalAboveCollision && !currentlyAboveCollision) {
+        //     return true;
+        // }
 
         return false;
     }

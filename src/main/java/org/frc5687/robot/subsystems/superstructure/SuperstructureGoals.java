@@ -10,7 +10,10 @@ public class SuperstructureGoals {
     // either the funnel or intake
     public static final SuperstructureState SAFE_CORAL_TRANSITION =
             new SuperstructureState(
-                    ElevatorState.STOWED, CoralState.STOWED, AlgaeState.IDLE, IntakeState.IDLE);
+                    ElevatorState.FUNNEL_RECEIVE,
+                    CoralState.IDLE_WITH_CORAL,
+                    AlgaeState.IDLE,
+                    IntakeState.IDLE);
 
     public static final SuperstructureState RECEIVE_FROM_FUNNEL_RUNNING =
             new SuperstructureState(

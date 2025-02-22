@@ -17,7 +17,7 @@ public class ManualDriveCoral extends OutliersCommand {
 
     @Override
     protected void execute(double timestamp) {
-        _coralArmSubsystem.setWheelVoltageCommand(_doubleSupplier.getAsDouble());
+        _coralArmSubsystem.setWheelMotorDutyCycle(_doubleSupplier.getAsDouble());
     }
 
     @Override
