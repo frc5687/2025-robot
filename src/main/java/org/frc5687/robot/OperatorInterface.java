@@ -3,6 +3,7 @@ package org.frc5687.robot;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
@@ -23,7 +24,7 @@ public class OperatorInterface {
             _operatorController = new OutliersController(new CommandXboxController(1));
         } else {
             _driverController = new OutliersController(new CommandPS5Controller(0));
-            _operatorController = new OutliersController(new CommandPS5Controller(1));
+            _operatorController = new OutliersController(new CommandPS4Controller(1));
         }
     }
 
@@ -61,9 +62,7 @@ public class OperatorInterface {
 
         _driverController.leftTrigger().whileTrue(manager.groundIntake(RequestType.IMMEDIATE));
 
-        _driverController
-                .rightTrigger()
-                .onTrue(manager.placeAtCurrentHeight(RequestType.IMMEDIATE));
+        _driverController.rightTrigger().onTrue(manager.placeAtCurrentHeight(RequestType.IMMEDIATE));
 
         _driverController.rightMiddleButton().onTrue(new InstantCommand(container.getDrive()::zeroIMU));
         _driverController
@@ -81,37 +80,25 @@ public class OperatorInterface {
 
         _operatorController
                 .a()
-                .onTrue(
-                        manager.setToPlaceHeight(
-                                SuperstructureGoals.PLACE_CORAL_L1, RequestType.QUEUED));
+                .onTrue(manager.setToPlaceHeight(SuperstructureGoals.PLACE_CORAL_L1, RequestType.QUEUED));
         _operatorController
                 .b()
-                .onTrue(
-                        manager.setToPlaceHeight(
-                                SuperstructureGoals.PLACE_CORAL_L2, RequestType.QUEUED));
+                .onTrue(manager.setToPlaceHeight(SuperstructureGoals.PLACE_CORAL_L2, RequestType.QUEUED));
         _operatorController
                 .x()
-                .onTrue(
-                        manager.setToPlaceHeight(
-                                SuperstructureGoals.PLACE_CORAL_L3, RequestType.QUEUED));
+                .onTrue(manager.setToPlaceHeight(SuperstructureGoals.PLACE_CORAL_L3, RequestType.QUEUED));
         _operatorController
                 .y()
-                .onTrue(
-                        manager.setToPlaceHeight(
-                                SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED));
+                .onTrue(manager.setToPlaceHeight(SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED));
 
         _operatorController
                 .leftBumper()
-                .whileTrue(
-                        manager.grabAlgae(SuperstructureGoals.L2_ALGAE_GRAB, RequestType.QUEUED));
+                .whileTrue(manager.grabAlgae(SuperstructureGoals.L2_ALGAE_GRAB, RequestType.QUEUED));
         _operatorController
                 .rightBumper()
-                .whileTrue(
-                        manager.grabAlgae(SuperstructureGoals.L1_ALGAE_GRAB, RequestType.QUEUED));
+                .whileTrue(manager.grabAlgae(SuperstructureGoals.L1_ALGAE_GRAB, RequestType.QUEUED));
 
-        _operatorController
-                .rightTrigger()
-                .onTrue(manager.receiveFunnel(RequestType.IMMEDIATE));
+        _operatorController.rightTrigger().onTrue(manager.receiveFunnel(RequestType.IMMEDIATE));
     }
 
     public OutliersController getDriverController() {

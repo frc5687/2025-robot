@@ -6,8 +6,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import java.util.function.Supplier;
 import org.frc5687.robot.RobotContainer;
-import org.frc5687.robot.subsystems.elevator.ElevatorState;
+import org.frc5687.robot.subsystems.intake.IntakeState;
 import org.frc5687.robot.util.FieldConstants;
+import org.frc5687.robot.util.TunableDouble;
 
 public class SuperstructureManager extends SubsystemBase {
     private final RobotContainer _container;
@@ -46,7 +47,8 @@ public class SuperstructureManager extends SubsystemBase {
                                         () ->
                                                 type != RequestType.QUEUED
                                                         || _forceQueueExecution
-                                                        || isPositionSafe(),
+                                                        || isPositionSafe()
+                                                        || isElevatorGoingDown(stateSupplier.get()),
                                         description)),
                 // execute
                 () -> {},
@@ -71,8 +73,7 @@ public class SuperstructureManager extends SubsystemBase {
 
     public Command placeAtCurrentHeight(RequestType type) {
         return new SequentialCommandGroup(
-                createRequest(
-                        this::determineCurrentPlaceState, MotorState.EJECT, "Place at current height", type),
+                createRequest(this::getCurrentGoal, MotorState.EJECT, "Eject at current height", type),
                 new WaitCommand(0.5),
                 createRequest(
                         () -> SuperstructureGoals.RECEIVE_FROM_FUNNEL,
@@ -86,13 +87,58 @@ public class SuperstructureManager extends SubsystemBase {
                 () -> SuperstructureGoals.GROUND_PICKUP, MotorState.INTAKE, "Ground Intake", type);
     }
 
+    // public Command receiveFunnel(RequestType type) {
+    //     return createRequest(
+    //                     () -> SuperstructureGoals.RECEIVE_FROM_FUNNEL,
+    //                     MotorState.RECEIVE_FUNNEL,
+    //                     "Receive from funnel",
+    //                     type)
+    //             .until(() -> _container.getCoral().isCoralDetected())
+    //             .andThen(
+    //                     createRequest(
+    //                             () -> SuperstructureGoals.RECEIVE_FROM_FUNNEL,
+    //                             MotorState.HOLD,
+    //                             "Hold after receive",
+    //                             RequestType.IMMEDIATE));
+    // }
+
     public Command receiveFunnel(RequestType type) {
+        return new SequentialCommandGroup(
+                createRequest(
+                        () -> SuperstructureGoals.SAFE_CORAL_TRANSITION,
+                        MotorState.HOLD,
+                        "Moving to safe state for receive",
+                        RequestType.IMMEDIATE),
+                createRequest(
+                                () -> SuperstructureGoals.RECEIVE_FROM_FUNNEL,
+                                MotorState.RECEIVE_FUNNEL,
+                                "Receiving from funnel",
+                                type)
+                        .until(() -> _container.getCoral().isCoralDetected()),
+                new FunctionalCommand(
+                        () -> {
+                            double currentPos = _container.getCoral().getWheelMotorPosition();
+                            double goMore = new TunableDouble("Receive", "goMore", 1.5).get();
+                            _container.getCoral().setWheelMotorPosition(currentPos + goMore);
+                        },
+                        () -> {},
+                        (interrupted) -> {},
+                        () -> _container.getCoral().isAtDesiredAngle(),
+                        _container.getCoral()),
+                createRequest(
+                        () -> SuperstructureGoals.RECEIVE_FROM_FUNNEL,
+                        MotorState.HOLD,
+                        "Holding after receive",
+                        RequestType.IMMEDIATE));
+    }
+
+    public Command receiveFunnelSim(RequestType type) {
         return createRequest(
                         () -> SuperstructureGoals.RECEIVE_FROM_FUNNEL,
                         MotorState.RECEIVE_FUNNEL,
                         "Receive from funnel",
                         type)
-                .until(() -> _container.getCoral().isCoralDetected())
+                .until(() -> true)
                 .andThen(
                         createRequest(
                                 () -> SuperstructureGoals.RECEIVE_FROM_FUNNEL,
@@ -119,7 +165,12 @@ public class SuperstructureManager extends SubsystemBase {
     private boolean isPositionSafe() {
         Translation2d currentPose = _container.getDrive().getPose().getTranslation();
         Translation2d reefCenter = getAllianceSpecificReefCenter();
-        return currentPose.getDistance(reefCenter) <= 1.5;
+        return currentPose.getDistance(reefCenter) <= 3.5;
+    }
+
+    private boolean isElevatorGoingDown(SuperstructureState requestedState) {
+        double elevatorHeight = _container.getElevator().getPlatformWorldHeight();
+        return requestedState.getElevator().getHeight() < elevatorHeight;
     }
 
     private Translation2d getAllianceSpecificReefCenter() {
@@ -135,18 +186,11 @@ public class SuperstructureManager extends SubsystemBase {
         _requestHandler.execute();
     }
 
-    private SuperstructureState determineCurrentPlaceState() {
-        double offset = 0.1;
-        double currentHeight = _container.getElevator().getPlatformWorldHeight();
-
-        if (currentHeight >= ElevatorState.L4_CORAL_PLACING.getHeight() - offset) {
-            return SuperstructureGoals.PLACE_CORAL_L4;
-        } else if (currentHeight >= ElevatorState.L3_CORAL_PLACING.getHeight() - offset) {
-            return SuperstructureGoals.PLACE_CORAL_L3;
-        } else if (currentHeight >= ElevatorState.L2_CORAL_PLACING.getHeight() - offset) {
-            return SuperstructureGoals.PLACE_CORAL_L2;
-        } else {
-            return SuperstructureGoals.PLACE_CORAL_L1;
-        }
+    private SuperstructureState getCurrentGoal() {
+        return new SuperstructureState(
+                _container.getElevator().getDesiredState(),
+                _container.getCoral().getDesiredState(),
+                _container.getAlgae().getDesiredState(),
+                IntakeState.IDLE); // TODO FIX INTAKE
     }
 }

@@ -31,9 +31,9 @@ public class RequestHandler implements EpilogueLog {
             case QUEUED:
                 handleQueuedRequest(request);
                 break;
-            // case AUTO_SEQUENCE:
-            //     handleAutoRequest(request);
-            //     break;
+                // case AUTO_SEQUENCE:
+                //     handleAutoRequest(request);
+                //     break;
         }
     }
 
@@ -46,7 +46,7 @@ public class RequestHandler implements EpilogueLog {
                 _pendingRequest = request;
                 _isSafeTransitioning = true;
                 _transitionStartTime = Timer.getFPGATimestamp();
-                setSubsystemStates(SuperstructureGoals.SAFE_CORAL_TRANSITION); 
+                setSubsystemStates(SuperstructureGoals.SAFE_CORAL_TRANSITION);
                 updateMotors(MotorState.HOLD);
             } else {
                 // Direct transition is safe
