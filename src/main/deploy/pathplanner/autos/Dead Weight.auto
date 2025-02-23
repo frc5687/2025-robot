@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Middle to L4"
+                  "pathName": "Middle to R4"
                 }
               }
             ]
@@ -24,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "L4 to PUSH"
+                  "pathName": "R4 to PUSH"
                 }
               }
             ]
@@ -50,7 +50,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "HP_NE to L1"
+                  "pathName": "HP_NE to R3"
                 }
               }
             ]
@@ -63,7 +63,33 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "L1 to HP_NE"
+                  "pathName": "R3 to HP_NE"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "HP_NE to R2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R2 to HP_NE"
                 }
               }
             ]
@@ -77,32 +103,6 @@
                 "type": "path",
                 "data": {
                   "pathName": "HP_NE to L2"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "L2 to HP_NE"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "HP_NE to R3"
                 }
               }
             ]
