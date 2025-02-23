@@ -5,22 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Opponents_Cage to L5"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralL4"
-                }
-              }
-            ]
+            "pathName": "Opponents_Cage to R5"
           }
         },
         {
@@ -30,41 +17,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "L5 to HP_SE"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ReceiveFunnel"
-                }
-              }
-            ]
+            "pathName": "R5 to HP_SE"
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "HP_SE to L1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralL4"
-                }
-              }
-            ]
+            "pathName": "HP_SE to R1"
           }
         },
         {
@@ -74,41 +35,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "L1 to HP_SE"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ReceiveFunnel"
-                }
-              }
-            ]
+            "pathName": "R1 to HP_SE"
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "HP_SE to L6"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralL4"
-                }
-              }
-            ]
+            "pathName": "HP_SE to R6"
           }
         },
         {
@@ -118,41 +53,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "L6 to HP_SE"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ReceiveFunnel"
-                }
-              }
-            ]
+            "pathName": "R6 to HP_SE"
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "HP_SE to R5"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "CoralL4"
-                }
-              }
-            ]
+            "pathName": "HP_SE to L6"
           }
         },
         {

@@ -114,13 +114,12 @@ public class RobotContainer implements EpilogueLog {
         VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new PhotonVisionIO();
         _vision = new VisionSubsystem(this, visionIO);
 
-        configureDefaultCommands();
-
         _superstructureTracker = new SuperstructureTracker(this);
         _oi.configureCommandMapping(this);
 
         _isCoralMode = true;
         setupNamedCommand();
+        configureDefaultCommands();
     }
 
     private void configureDefaultCommands() {
@@ -188,6 +187,7 @@ public class RobotContainer implements EpilogueLog {
         NamedCommands.registerCommand(
                 "CoralL2", SuperstructureFactory.placeCoralL2(this, falseSupplier));
         NamedCommands.registerCommand("Place", SuperstructureFactory.place(this));
+        // place shoots it out
     }
 
     public void periodic() {
