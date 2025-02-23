@@ -45,7 +45,11 @@ public class SuperstructureReceive extends OutliersCommand {
             _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_RECEIVE_CORAL_DUTY_CYCLE);
             if (_coral.isCoralDetected()) {
                 _state = SuperstructureReceiveState.SAW_IT;
-                _coral.setWheelMotorPosition(_coral.getWheelMotorPosition() + _goMore.get());
+                var oldPos = _coral.getWheelMotorPosition();
+                var gomore = _goMore.get();
+                var newPos = oldPos + gomore;
+                System.out.println("old pos: " + oldPos + ", gomore: " + gomore + ", new pos: " + newPos);
+                _coral.setWheelMotorPosition(newPos);
             }
         } else if (_state == SuperstructureReceiveState.SAW_IT) {
             if (_coral.isAtDesiredAngle()) {

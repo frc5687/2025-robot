@@ -25,12 +25,10 @@ public class ClimberSubsystem extends OutliersSubsystem<ClimberInputs, ClimberOu
     }
 
     public void toggleClimberSetpoint() {
-        if (_outputs.motorSetpointRads == Constants.Climber.CLIMBER_DOWN_RADS) {
-            System.out.println("Climber setpoint = 180rot");
+        if (_outputs.motorSetpointRads != Constants.Climber.CLIMBER_UP_RADS) {
             _outputs.servoSetpoint = 0.0;
             _outputs.motorSetpointRads = Constants.Climber.CLIMBER_UP_RADS;
         } else {
-            System.out.println("Climber setpoint = 0deg");
             _outputs.servoSetpoint = 0.52;
             _outputs.motorSetpointRads = Constants.Climber.CLIMBER_DOWN_RADS;
         }

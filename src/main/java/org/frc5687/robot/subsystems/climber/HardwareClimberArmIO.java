@@ -25,6 +25,7 @@ public class HardwareClimberArmIO implements ClimberIO {
 
     public HardwareClimberArmIO() {
         _winchMotor = new TalonFX(RobotMap.CAN.TALONFX.CLIMBER_WINCH, Constants.Climber.CAN_BUS);
+        _winchMotor.setPosition(0);
         _servo = new Servo(RobotMap.PWM.CLIMBER_SERVO);
         _winchAngle = _winchMotor.getPosition();
         _supplyCurrent = _winchMotor.getSupplyCurrent();
@@ -50,8 +51,8 @@ public class HardwareClimberArmIO implements ClimberIO {
 
     @Override
     public void writeOutputs(ClimberOutputs outputs) {
-        // _winchMotor.setControl(
-        //         _winchPositionRequest.withPosition(Radians.of(outputs.motorSetpointRads)));
+        _winchMotor.setControl(
+                _winchPositionRequest.withPosition(Radians.of(outputs.motorSetpointRads)));
         // _servo.set(outputs.servoSetpoint);
     }
 }

@@ -383,7 +383,7 @@ public class Constants {
         public static final double ARM_MASS = Units.lbsToKilograms(4.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = Units.degreesToRadians(300);
+        public static final double MAX_ANGLE = 5.45;
 
         // public static final double MAX_VELOCITY_RAD_PER_SEC = 2;
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 15 * Math.PI;
@@ -396,8 +396,8 @@ public class Constants {
 
     public static class Climber {
         public static final String CAN_BUS = "CANivore";
-        public static final double CLIMBER_DOWN_RADS = 0.0;
-        public static final double CLIMBER_UP_RADS = Units.rotationsToRadians(180);
+        public static final double CLIMBER_UP_RADS = 1964; // feb 22 2025 xavier
+        public static final double CLIMBER_DOWN_RADS = 0.35 * CLIMBER_UP_RADS;
         public static final double kP = 6.0;
         public static final double kD = 0.3;
     }
