@@ -70,6 +70,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _absoluteAngle = _cancoder.getAbsolutePosition();
         _wheelAngle = _wheelMotor.getPosition();
         _controller.reset(getAngleRads());
+        _wheelMotor.setPosition(0);
     }
 
     // private void calculateShortestPath(double currentAngle) {
@@ -125,7 +126,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
         if (outputs.wheelPositionControl) {
             _wheelMotor.setControl(_wheelPositionController.withPosition(outputs.wheelPositionCommand));
         } else {
-            _wheelMotor.setPosition(0); // lol
             _wheelMotor.setControl(_wheelDutyCycleOut.withOutput(outputs.wheelVoltageCommand));
         }
     }

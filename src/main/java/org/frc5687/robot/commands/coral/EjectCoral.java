@@ -9,13 +9,10 @@ public class EjectCoral extends OutliersCommand {
 
     public EjectCoral(CoralArmSubsystem coral) {
         _coral = coral;
-        addRequirements(_coral);
     }
 
     @Override
     public void initialize() {
-        super.initialize();
-        // _coral.setArmAngle(_coral.getArmAngleRads() + Units.degreesToRadians(40));
         _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_EJECT_CORAL_DUTY_CYCLE);
     }
 
@@ -23,13 +20,7 @@ public class EjectCoral extends OutliersCommand {
     protected void execute(double timestamp) {}
 
     @Override
-    public boolean isFinished() {
-        return _coral.isAtDesiredAngle();
-    }
-
-    @Override
     public void end(boolean interrupted) {
-        _coral.mapToClosestState();
-        super.end(interrupted);
+        _coral.holdPosition();
     }
 }

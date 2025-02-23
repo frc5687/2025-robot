@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 public record SuperstructureRequest(
         SuperstructureState targetPosition,
-        MotorState targetMotors,
         RequestType type,
         Supplier<Boolean> driveCondition,
         String description) {

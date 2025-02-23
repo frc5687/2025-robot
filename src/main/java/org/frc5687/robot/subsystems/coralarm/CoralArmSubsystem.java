@@ -57,6 +57,10 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
         _outputs.wheelPositionCommand = position;
     }
 
+    public void holdPosition() {
+        setWheelMotorPosition(getWheelMotorPosition());
+    }
+
     public CoralState getDesiredState() {
         return _outputs.desiredState;
     }

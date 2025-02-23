@@ -1,37 +1,41 @@
 package org.frc5687.robot.subsystems.superstructure;
 
+import java.util.Optional;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.subsystems.intake.IntakeState;
 
 public class SuperstructureState {
-    private ElevatorState _elevator;
-    private CoralState _coral;
-    private AlgaeState _algae;
-    private IntakeState _intake;
+    private Optional<ElevatorState> _elevator;
+    private Optional<CoralState> _coral;
+    private Optional<AlgaeState> _algae;
+    private Optional<IntakeState> _intake;
 
     public SuperstructureState(
-            ElevatorState elevator, CoralState coreal, AlgaeState algae, IntakeState intake) {
+            Optional<ElevatorState> elevator,
+            Optional<CoralState> coral,
+            Optional<AlgaeState> algae,
+            Optional<IntakeState> intake) {
         _elevator = elevator;
-        _coral = coreal;
+        _coral = coral;
         _algae = algae;
         _intake = intake;
     }
 
-    public ElevatorState getElevator() {
+    public Optional<ElevatorState> getElevator() {
         return _elevator;
     }
 
-    public CoralState getCoral() {
+    public Optional<CoralState> getCoral() {
         return _coral;
     }
 
-    public AlgaeState getAlgae() {
+    public Optional<AlgaeState> getAlgae() {
         return _algae;
     }
 
-    public IntakeState getIntake() {
+    public Optional<IntakeState> getIntake() {
         return _intake;
     }
 

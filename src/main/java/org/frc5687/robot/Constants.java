@@ -284,7 +284,7 @@ public class Constants {
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
         public static final double MIN_PLATFORM_HEIGHT = 0.191039; // m
-        public static final double MAX_PLATFORM_HEIGHT = 1.542; // m
+        public static final double MAX_PLATFORM_HEIGHT = 1.5; // m
 
         public static final double MIN_HEIGHT = 0.0; // m
         public static final double MAX_HEIGHT =

@@ -94,7 +94,7 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
 
     public boolean isAtState(AlgaeState state) {
         double angleDiff = Math.abs(state.getArmAngle() - getArmAngleRads());
-        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(3.0);
+        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(5.0);
         return isWithinPositionTolerance;
     }
 }

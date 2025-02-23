@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
@@ -62,7 +63,7 @@ public class OperatorInterface {
 
         _driverController.leftTrigger().whileTrue(manager.groundIntake(RequestType.IMMEDIATE));
 
-        _driverController.rightTrigger().onTrue(manager.placeAtCurrentHeight(RequestType.IMMEDIATE));
+        _driverController.rightTrigger().whileTrue(new EjectCoral(container.getCoral()));
 
         _driverController.rightMiddleButton().onTrue(new InstantCommand(container.getDrive()::zeroIMU));
         _driverController

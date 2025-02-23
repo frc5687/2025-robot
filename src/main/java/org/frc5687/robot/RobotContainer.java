@@ -38,7 +38,6 @@ import org.frc5687.robot.subsystems.intake.SimIntakeIO;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
-import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
 import org.frc5687.robot.subsystems.vision.PhotonVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.subsystems.vision.VisionIO;
@@ -60,7 +59,6 @@ public class RobotContainer implements EpilogueLog {
 
     private final VisionSubsystem _vision;
 
-    private final SuperstructureTracker _superstructureTracker;
     private final SuperstructureManager _superstructureManager;
 
     private SendableChooser<Command> _autoChooser;
@@ -116,7 +114,6 @@ public class RobotContainer implements EpilogueLog {
         VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new PhotonVisionIO();
         _vision = new VisionSubsystem(this, visionIO);
 
-        _superstructureTracker = new SuperstructureTracker(this);
         _superstructureManager = new SuperstructureManager(this);
 
         _oi.configureCommandMapping(this);
@@ -205,8 +202,8 @@ public class RobotContainer implements EpilogueLog {
                 _superstructureManager.setToPlaceHeight(
                         SuperstructureGoals.PLACE_CORAL_L2, RequestType.IMMEDIATE));
 
-        NamedCommands.registerCommand(
-                "Place", _superstructureManager.placeAtCurrentHeight(RequestType.IMMEDIATE));
+        // NamedCommands.registerCommand(
+        //         "Place", _superstructureManager.placeAtCurrentHeight(RequestType.IMMEDIATE));
 
         // Supplier<Boolean> falseSupplier =
         //         () -> {
@@ -275,10 +272,6 @@ public class RobotContainer implements EpilogueLog {
 
     public boolean getIntakeMode() {
         return _isCoralMode;
-    }
-
-    public SuperstructureTracker getSuperstructureTracker() {
-        return _superstructureTracker;
     }
 
     public SuperstructureManager getSuperstructureManager() {

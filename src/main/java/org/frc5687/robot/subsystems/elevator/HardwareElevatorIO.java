@@ -58,6 +58,9 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         configureMotor(_eastMotor, Constants.Elevator.EAST_INVERTED);
         configureMotor(_westMotor, Constants.Elevator.WEST_INVERTED);
+
+        _eastMotor.setPosition(0);
+        _westMotor.setPosition(0);
     }
 
     private void setControlFrequency() {

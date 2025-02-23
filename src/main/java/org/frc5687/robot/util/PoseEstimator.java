@@ -59,7 +59,8 @@ public class PoseEstimator {
         Matrix<N3, N1> stdDevs =
                 _visionStdFilter.calculateVisionStdDevs(
                         visionPose, _estimatedPose, timestamp, _currentVelocity);
-        processMeasurement(visionPose.estimatedPose.toPose2d(), stdDevs, timestamp);
+        processMeasurement(
+                visionPose.estimatedPose.toPose2d(), VecBuilder.fill(0.01, 0.01, 1), timestamp);
     }
 
     public void updateOdometry() {
