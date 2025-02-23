@@ -5,6 +5,8 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import java.util.*;
+
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.util.FieldConstants;
@@ -42,17 +44,6 @@ public class SimVisionIO implements VisionIO {
     private final Map<String, CameraConfig> _cameras = new HashMap<>();
     private final RobotStateManager _robotState = RobotStateManager.getInstance();
 
-    // Not real for robot yet, just was testing.
-    public static final Transform3d ROBOT_TO_NE_CAMERA =
-            new Transform3d(
-                    new Translation3d(0.281, 0.038, 0.217),
-                    new Rotation3d(0, Units.degreesToRadians(-15), 0));
-
-    private static final Transform3d ROBOT_TO_NW_CAMERA =
-            new Transform3d(
-                    new Translation3d(0.281, -0.200, 0.217),
-                    new Rotation3d(0, Units.degreesToRadians(-15), 0));
-
     public SimVisionIO() {
         _visionSim = new VisionSystemSim("MainVision");
 
@@ -65,8 +56,8 @@ public class SimVisionIO implements VisionIO {
             return;
         }
 
-        addCamera("North_East_Camera", ROBOT_TO_NE_CAMERA, layout);
-        addCamera("North_West_Camera", ROBOT_TO_NW_CAMERA, layout);
+        addCamera("North_East_Camera", Constants.Vision.ROBOT_TO_NE_CAM, layout);
+        addCamera("North_West_Camera", Constants.Vision.ROBOT_TO_NW_CAM, layout);
     }
 
     private void addCamera(String name, Transform3d robotToCamera, AprilTagFieldLayout layout) {
@@ -83,7 +74,7 @@ public class SimVisionIO implements VisionIO {
         cameraSim.enableDrawWireframe(false);
         cameraSim.enableProcessedStream(false);
         cameraSim.enableRawStream(false);
-        cameraSim.setMaxSightRange(1.0);
+        cameraSim.setMaxSightRange(3.0);
 
         PhotonPoseEstimator estimator =
                 new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
