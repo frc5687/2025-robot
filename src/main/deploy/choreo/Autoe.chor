@@ -7,15 +7,15 @@
    "Elevator_Down_Event":{
     "dimension":"Number",
     "var":{
-     "exp":"0.2",
-     "val":0.2
+     "exp":"0.3",
+     "val":0.3
     }
    },
    "Elevator_Up_Event":{
     "dimension":"Number",
     "var":{
-     "exp":"-0.5",
-     "val":-0.5
+     "exp":"-1",
+     "val":-1.0
     }
    }
   },
@@ -316,8 +316,8 @@
    "val":628.3185307179587
   },
   "tmax":{
-   "exp":"0.8 N * m",
-   "val":0.8
+   "exp":"0.7 N * m",
+   "val":0.7
   },
   "cof":{
    "exp":"1.1",

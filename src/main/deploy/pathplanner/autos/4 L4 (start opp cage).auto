@@ -23,6 +23,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "HP_SE to R1"
@@ -41,6 +47,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "HP_SE to R6"
@@ -56,6 +68,12 @@
           "type": "path",
           "data": {
             "pathName": "R6 to HP_SE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
           }
         },
         {
