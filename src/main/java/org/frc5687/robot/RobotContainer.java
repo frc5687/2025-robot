@@ -7,13 +7,11 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import java.util.function.Supplier;
 import org.frc5687.robot.commands.algae.IdleAlgae;
 import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
 import org.frc5687.robot.commands.intake.IdleIntake;
-import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.algaearm.HardwareAlgaeArmIO;
@@ -182,22 +180,45 @@ public class RobotContainer implements EpilogueLog {
                         SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
 
         if (RobotBase.isSimulation()) {
+            // NamedCommands.registerCommand( "ReceiveFunnel",
+            // SuperstructureFactory.receiveFromFunnelSim(this));
+
             NamedCommands.registerCommand(
-                    "ReceiveFunnel", SuperstructureFactory.receiveFromFunnelSim(this));
+                    "ReceiveFunnel", _superstructureManager.receiveFunnelSim(RequestType.IMMEDIATE));
         } else {
-            NamedCommands.registerCommand("ReceiveFunnel", SuperstructureFactory.receiveFromFunnel(this));
+            NamedCommands.registerCommand(
+                    "ReceiveFunnel", _superstructureManager.receiveFunnel(RequestType.IMMEDIATE));
         }
-        Supplier<Boolean> falseSupplier =
-                () -> {
-                    return false;
-                };
+
         NamedCommands.registerCommand(
-                "CoralL4", SuperstructureFactory.placeCoralL4(this, false, falseSupplier));
+                "CoralL4",
+                _superstructureManager.setToPlaceHeight(
+                        SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
+
         NamedCommands.registerCommand(
-                "CoralL3", SuperstructureFactory.placeCoralL3(this, false, falseSupplier));
+                "CoralL3",
+                _superstructureManager.setToPlaceHeight(
+                        SuperstructureGoals.PLACE_CORAL_L3, RequestType.IMMEDIATE));
+
         NamedCommands.registerCommand(
-                "CoralL2", SuperstructureFactory.placeCoralL2(this, falseSupplier));
-        NamedCommands.registerCommand("Place", SuperstructureFactory.place(this));
+                "CoralL2",
+                _superstructureManager.setToPlaceHeight(
+                        SuperstructureGoals.PLACE_CORAL_L2, RequestType.IMMEDIATE));
+
+        NamedCommands.registerCommand(
+                "Place", _superstructureManager.placeAtCurrentHeight(RequestType.IMMEDIATE));
+
+        // Supplier<Boolean> falseSupplier =
+        //         () -> {
+        //             return false;
+        //         };
+        // NamedCommands.registerCommand(
+        //         "CoralL4", SuperstructureFactory.placeCoralL4(this, false, falseSupplier));
+        // NamedCommands.registerCommand(
+        //         "CoralL3", SuperstructureFactory.placeCoralL3(this, false, falseSupplier));
+        // NamedCommands.registerCommand(
+        //         "CoralL2", SuperstructureFactory.placeCoralL2(this, falseSupplier));
+        // NamedCommands.registerCommand("Place", SuperstructureFactory.place(this));
         // place shoots it out
     }
 
