@@ -10,15 +10,12 @@ public class SuperstructureGoals {
     // either the funnel or intake
     public static final SuperstructureState SAFE_CORAL_TRANSITION =
             new SuperstructureState(
-                    ElevatorState.FUNNEL_RECEIVE,
-                    CoralState.IDLE_WITH_CORAL,
-                    AlgaeState.IDLE,
-                    IntakeState.IDLE);
+                    ElevatorState.FUNNEL_RECEIVE, CoralState.IDLE, AlgaeState.IDLE, IntakeState.IDLE);
 
     public static final SuperstructureState RECEIVE_FROM_FUNNEL_RUNNING =
             new SuperstructureState(
                     ElevatorState.FUNNEL_RECEIVE,
-                    CoralState.RECEIVE_FROM_FUNNEL_RUNNING,
+                    CoralState.RECEIVE_FROM_FUNNEL,
                     AlgaeState.IDLE,
                     IntakeState.IDLE);
 
@@ -38,7 +35,7 @@ public class SuperstructureGoals {
 
     public static final SuperstructureState EJECT_INTAKE =
             new SuperstructureState(
-                    ElevatorState.STOWED, CoralState.IDLE_NO_CORAL, AlgaeState.IDLE, IntakeState.DEPLOYED);
+                    ElevatorState.STOWED, CoralState.IDLE, AlgaeState.IDLE, IntakeState.DEPLOYED);
     public static final SuperstructureState CLEAR_INTAKE =
             new SuperstructureState(
                     ElevatorState.STOWED, CoralState.STOWED, AlgaeState.IDLE, IntakeState.IDLE);
@@ -50,7 +47,7 @@ public class SuperstructureGoals {
             new SuperstructureState(
                     ElevatorState.L4_CORAL_PLACING,
                     CoralState.PLACING_L4,
-                    AlgaeState.REEF_PICKUP_WHEEL,
+                    AlgaeState.REEF_PICKUP,
                     IntakeState.IDLE);
 
     public static final SuperstructureState PLACE_CORAL_L3 =
@@ -60,7 +57,7 @@ public class SuperstructureGoals {
             new SuperstructureState(
                     ElevatorState.L3_CORAL_PLACING,
                     CoralState.PLACING,
-                    AlgaeState.REEF_PICKUP_WHEEL,
+                    AlgaeState.REEF_PICKUP,
                     IntakeState.IDLE);
 
     public static final SuperstructureState PLACE_CORAL_L2 =
@@ -73,34 +70,21 @@ public class SuperstructureGoals {
 
     public static final SuperstructureState L1_ALGAE_GRAB =
             new SuperstructureState(
-                    ElevatorState.L1_ALGAE_GRAB,
-                    CoralState.IDLE_NO_CORAL,
-                    AlgaeState.REEF_PICKUP_WHEEL,
-                    IntakeState.IDLE);
+                    ElevatorState.L1_ALGAE_GRAB, CoralState.IDLE, AlgaeState.REEF_PICKUP, IntakeState.IDLE);
     public static final SuperstructureState L2_ALGAE_GRAB =
             new SuperstructureState(
-                    ElevatorState.L2_ALGAE_GRAB,
-                    CoralState.IDLE_NO_CORAL,
-                    AlgaeState.REEF_PICKUP_WHEEL,
-                    IntakeState.IDLE);
+                    ElevatorState.L2_ALGAE_GRAB, CoralState.IDLE, AlgaeState.REEF_PICKUP, IntakeState.IDLE);
     public static final SuperstructureState PROCESSOR_DROPOFF =
             new SuperstructureState(
                     ElevatorState.L1_CORAL_PLACING,
-                    CoralState.IDLE_NO_CORAL,
+                    CoralState.IDLE,
                     AlgaeState.PROCESSOR_DROPOFF,
-                    IntakeState.IDLE);
-
-    public static final SuperstructureState PROCESSOR_DROPOFF_WHEEL =
-            new SuperstructureState(
-                    ElevatorState.L1_CORAL_PLACING,
-                    CoralState.IDLE_NO_CORAL,
-                    AlgaeState.PROCESSOR_DROPOFF_WHEEL,
                     IntakeState.IDLE);
 
     public static final SuperstructureState GROUND_PICKUP =
             new SuperstructureState(
                     ElevatorState.FUNNEL_RECEIVE,
-                    CoralState.IDLE_NO_CORAL,
+                    CoralState.IDLE,
                     AlgaeState.GROUND_PICKUP,
                     IntakeState.IDLE);
 }

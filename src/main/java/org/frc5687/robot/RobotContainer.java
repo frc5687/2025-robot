@@ -7,13 +7,12 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import java.util.function.Supplier;
 import org.frc5687.robot.commands.algae.IdleAlgae;
-import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
 import org.frc5687.robot.commands.intake.IdleIntake;
+import org.frc5687.robot.commands.superstructure.SetSuperstructure;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmIO;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
@@ -38,7 +37,7 @@ import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
-import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.vision.PhotonVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.subsystems.vision.VisionIO;
@@ -59,8 +58,6 @@ public class RobotContainer implements EpilogueLog {
     private final ClimberSubsystem _climber;
 
     private final VisionSubsystem _vision;
-
-    private final SuperstructureTracker _superstructureTracker;
 
     private SendableChooser<Command> _autoChooser;
 
@@ -115,8 +112,8 @@ public class RobotContainer implements EpilogueLog {
         VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new PhotonVisionIO();
         _vision = new VisionSubsystem(this, visionIO);
 
-        _superstructureTracker = new SuperstructureTracker(this);
-        _oi.configureCommandMapping(this);
+        _oi.configureDriverMapping(this);
+        _oi.configureOperatorMapping(this);
 
         _isCoralMode = true;
         setupNamedCommand();
@@ -173,21 +170,17 @@ public class RobotContainer implements EpilogueLog {
     private void setupNamedCommand() {
         if (RobotBase.isSimulation()) {
             NamedCommands.registerCommand(
-                    "ReceiveFunnel", SuperstructureFactory.receiveFromFunnelSim(this));
+                    "ReceiveFunnel", new SetSuperstructure(this, SuperstructureGoals.RECEIVE_FROM_FUNNEL));
         } else {
             NamedCommands.registerCommand("ReceiveFunnel", SuperstructureFactory.receiveFromFunnel(this));
         }
-        Supplier<Boolean> falseSupplier =
-                () -> {
-                    return false;
-                };
         NamedCommands.registerCommand(
-                "CoralL4", SuperstructureFactory.placeCoralL4(this, false, falseSupplier));
+                "CoralL4", new SetSuperstructure(this, SuperstructureGoals.PLACE_CORAL_L4));
         NamedCommands.registerCommand(
-                "CoralL3", SuperstructureFactory.placeCoralL3(this, false, falseSupplier));
+                "CoralL3", new SetSuperstructure(this, SuperstructureGoals.PLACE_CORAL_L3));
         NamedCommands.registerCommand(
-                "CoralL2", SuperstructureFactory.placeCoralL2(this, falseSupplier));
-        NamedCommands.registerCommand("Place", new EjectCoral(_coralArm));
+                "CoralL2", new SetSuperstructure(this, SuperstructureGoals.PLACE_CORAL_L2));
+        // NamedCommands.registerCommand("Place", new EjectCoral(_coralArm)); FIXME add this back
         // place shoots it out
     }
 
@@ -244,10 +237,6 @@ public class RobotContainer implements EpilogueLog {
 
     public boolean getIntakeMode() {
         return _isCoralMode;
-    }
-
-    public SuperstructureTracker getSuperstructureTracker() {
-        return _superstructureTracker;
     }
 
     @Override

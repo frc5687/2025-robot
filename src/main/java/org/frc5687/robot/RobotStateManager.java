@@ -196,8 +196,8 @@ public class RobotStateManager implements EpilogueLog {
         updateIntakeArmTransforms(angleRadians);
     }
 
-    public synchronized void updatePlatform(double centerHeight) {
-        updateElevatorTransforms(centerHeight);
+    public synchronized void updatePlatform(double motorHeightMeters) {
+        updateElevatorTransforms(motorHeightMeters);
 
         Pose3d currentCoralArm = _poses.get(RobotCoordinate.CORAL_ARM_END);
         if (currentCoralArm != null) {
@@ -210,21 +210,21 @@ public class RobotStateManager implements EpilogueLog {
         }
     }
 
-    private void updateElevatorTransforms(double heightMeters) {
+    private void updateElevatorTransforms(double motorHeightMeters) {
         // Update stage position with platform rotation
         _poses.put(
                 RobotCoordinate.ELEVATOR_STAGE,
                 new Pose3d(
                         Geometry.ELEVATOR_X_OFFSET,
                         Geometry.ELEVATOR_Y_OFFSET,
-                        Geometry.ELEVATOR_STAGE_ONE_HEIGHT + heightMeters,
+                        Geometry.ELEVATOR_STAGE_ONE_HEIGHT + motorHeightMeters,
                         new Rotation3d()));
         _poses.put(
                 RobotCoordinate.ELEVATOR_TOP,
                 new Pose3d(
                         Geometry.ELEVATOR_X_OFFSET,
                         Geometry.ELEVATOR_Y_OFFSET,
-                        Geometry.ELEVATOR_STAGE_TWO_HEIGHT + (heightMeters * 2.0),
+                        Geometry.ELEVATOR_STAGE_TWO_HEIGHT + (motorHeightMeters * 2.0),
                         new Rotation3d()));
     }
 

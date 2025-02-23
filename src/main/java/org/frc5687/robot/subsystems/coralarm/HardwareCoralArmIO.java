@@ -125,7 +125,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
         if (outputs.wheelPositionControl) {
             _wheelMotor.setControl(_wheelPositionController.withPosition(outputs.wheelPositionCommand));
         } else {
-            _wheelMotor.setPosition(0); // lol
             _wheelMotor.setControl(_wheelDutyCycleOut.withOutput(outputs.wheelVoltageCommand));
         }
     }
@@ -171,5 +170,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _controller.setI(kI);
         _ffModel.setKv(kV);
         _ffModel.setKs(kS);
+        _ffModel.setKa(kA);
     }
 }

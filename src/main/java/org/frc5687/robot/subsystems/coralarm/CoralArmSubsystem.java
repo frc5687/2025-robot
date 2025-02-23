@@ -16,6 +16,7 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     private TunableDouble coralD = new TunableDouble("Coral", "kD", Constants.CoralArm.kD);
     private TunableDouble coralV = new TunableDouble("Coral", "kV", Constants.CoralArm.kV);
     private TunableDouble coralS = new TunableDouble("Coral", "kS", Constants.CoralArm.kS);
+    private TunableDouble coralA = new TunableDouble("Coral", "kA", Constants.CoralArm.kA);
 
     public CoralArmSubsystem(RobotContainer container, CoralArmIO io) {
         super(container, io, new CoralInputs(), new CoralOutputs());
@@ -34,15 +35,16 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
                 || coralI.hasChanged()
                 || coralD.hasChanged()
                 || coralV.hasChanged()
-                || coralS.hasChanged()) {
-            _io.setPID(coralP.get(), coralI.get(), coralD.get(), coralV.get(), coralS.get(), 0.0, 0.0);
+                || coralS.hasChanged()
+                || coralA.hasChanged()) {
+            _io.setPID(
+                    coralP.get(), coralI.get(), coralD.get(), coralV.get(), coralS.get(), coralA.get(), 0.0);
         }
     }
 
     public void setDesiredState(CoralState state) {
         _outputs.desiredState = state;
         setArmAngle(state.getArmAngle());
-        setWheelMotorDutyCycle(state.getRollerDutyCycle());
     }
 
     public void setWheelMotorDutyCycle(double voltage) {

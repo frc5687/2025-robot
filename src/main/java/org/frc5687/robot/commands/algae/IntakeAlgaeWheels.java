@@ -1,15 +1,19 @@
-package org.frc5687.robot.commands.superstructure;
+package org.frc5687.robot.commands.algae;
 
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 
-public class WaitUntilAlgaeDetected extends OutliersCommand {
+public class IntakeAlgaeWheels extends OutliersCommand {
     private final AlgaeArmSubsystem _algae;
 
-    public WaitUntilAlgaeDetected(RobotContainer container) {
+    public IntakeAlgaeWheels(RobotContainer container) {
         _algae = container.getAlgae();
-        // addRequirements(_algae); i think this is not needed - xavier
+    }
+
+    @Override
+    public void initialize() {
+        _algae.setWheelMotorVoltage(12);
     }
 
     @Override
@@ -21,5 +25,7 @@ public class WaitUntilAlgaeDetected extends OutliersCommand {
     }
 
     @Override
-    public void end(boolean interrupted) {}
+    public void end(boolean interrupted) {
+        _algae.setWheelMotorVoltage(0);
+    }
 }

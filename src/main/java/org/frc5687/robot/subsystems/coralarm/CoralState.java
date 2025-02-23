@@ -4,29 +4,21 @@ import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.Constants;
 
 public enum CoralState {
-    STOWED(Units.degreesToRadians(270), 0),
-    IDLE_NO_CORAL(Units.degreesToRadians(180), 0), // 117 deg
-    IDLE_WITH_CORAL(Units.degreesToRadians(180), 0), // 90 deg
-    RECEIVE_FROM_FUNNEL(Constants.CoralArm.MAX_ANGLE, 0),
-    RECEIVE_FROM_FUNNEL_RUNNING(Constants.CoralArm.MAX_ANGLE, 12),
-    PLACING(Units.degreesToRadians(30 + 90), 0), // 27.5 deg
-    RECEIVE_FROM_INTAKE(Units.degreesToRadians(45 + 90), 0),
-    DURING_HANDOFF(Units.degreesToRadians(135 + 90), 12),
-    PLACING_L4(Units.degreesToRadians(30 + 90 + 15), 0); // 27.5 deg
+    STOWED(Units.degreesToRadians(270)),
+    IDLE(Units.degreesToRadians(180)),
+    RECEIVE_FROM_FUNNEL(Constants.CoralArm.MAX_ANGLE),
+    PLACING(Units.degreesToRadians(30 + 90)),
+    RECEIVE_FROM_INTAKE(Units.degreesToRadians(45 + 90)),
+    DURING_HANDOFF(Units.degreesToRadians(135 + 90)),
+    PLACING_L4(Units.degreesToRadians(30 + 90 + 15));
 
     private final double _armAngle;
-    private final double _rollerDutyCycle;
 
-    CoralState(double armAngle, double rollerDutyCycle) {
+    CoralState(double armAngle) {
         _armAngle = armAngle;
-        _rollerDutyCycle = rollerDutyCycle;
     }
 
     public double getArmAngle() {
         return _armAngle;
-    }
-
-    public double getRollerDutyCycle() {
-        return _rollerDutyCycle;
     }
 }

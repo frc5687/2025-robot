@@ -9,17 +9,11 @@ public class ElevatorInputs extends BaseInputs {
     @Logged(name = "Elevator State", importance = Logged.Importance.CRITICAL)
     public ElevatorState elevatorState = ElevatorState.STOWED;
 
-    @Logged(name = "Elevator Height Position (m)", importance = Logged.Importance.CRITICAL)
-    public double heightPositionMeters = 0.0;
+    @Logged(name = "Motor Height (m)", importance = Logged.Importance.CRITICAL)
+    public double motorHeightMeters = 0.0;
 
     @Logged(name = "First Stage Velocity (mps)", importance = Logged.Importance.CRITICAL)
     public double firstStageVelocityMPS = 0.0;
-
-    @Logged(name = "Platform Height (m)", importance = Logged.Importance.CRITICAL)
-    public double platformHeightMeters = 0.0;
-
-    @Logged(name = "Platform Velocity (mps)")
-    public double platformVelocityMPS = 0.0;
 
     @Logged(name = "Platform Motors Current (A)", importance = Logged.Importance.CRITICAL)
     public double[] platformMotorCurrents = new double[2];

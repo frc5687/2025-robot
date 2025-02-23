@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
-import org.frc5687.robot.RobotStateManager.Geometry;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.util.TunableDouble;
@@ -13,7 +12,6 @@ import org.frc5687.robot.util.TunableDouble;
 public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, ElevatorOutputs> {
     private final RobotStateManager _robotState = RobotStateManager.getInstance();
     private final RobotContainer _container;
-    private double _queuedHeight;
 
     private TunableDouble elevatorP = new TunableDouble("Elevator", "kP", Constants.Elevator.kP);
     private TunableDouble elevatorI = new TunableDouble("Elevator", "kI", Constants.Elevator.kI);
@@ -23,19 +21,17 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     private TunableDouble elevatorG = new TunableDouble("Elevator", "kG", Constants.Elevator.kG);
     private TunableDouble elevatorV = new TunableDouble("Elevator", "kV", Constants.Elevator.kV);
 
-    private Optional<Double> _newDesiredPlatformHeight;
+    private Optional<Double> _newDesiredMotorHeight;
 
     public ElevatorSubsystem(RobotContainer container, ElevatorIO io) {
         super(container, io, new ElevatorInputs(), new ElevatorOutputs());
         _container = container;
-        _newDesiredPlatformHeight = Optional.empty();
-        _queuedHeight = 0.0;
+        _newDesiredMotorHeight = Optional.empty();
     }
 
     @Override
     protected void processInputs() {
-        _robotState.updatePlatform(_inputs.heightPositionMeters);
-        _inputs.platformHeightMeters = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP).getZ();
+        _robotState.updatePlatform(_inputs.motorHeightMeters);
         _inputs.stagePose = _robotState.getPose(RobotCoordinate.ELEVATOR_STAGE);
         _inputs.platformPose = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP);
     }
@@ -60,27 +56,21 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
                     elevatorG.get());
         }
 
-        if (_newDesiredPlatformHeight.isPresent()) {
-            double heightMeters = _newDesiredPlatformHeight.get();
-            _outputs.desiredPlatformHeightWorldMeters = heightMeters;
-            _outputs.desiredHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
-
-            _newDesiredPlatformHeight = Optional.empty();
+        if (_newDesiredMotorHeight.isPresent()) {
+            _outputs.desiredMotorHeightMeters = _newDesiredMotorHeight.get();
+            _newDesiredMotorHeight = Optional.empty();
         }
     }
 
-    public void setDesiredPlatformHeightWorld(double heightMeters) {
+    private void setDesiredMotorHeight(double heightMeters) {
         _outputs.controlMode = ElevatorControlMode.POSITION;
         heightMeters =
-                MathUtil.clamp(
-                        heightMeters,
-                        Constants.Elevator.MIN_PLATFORM_HEIGHT,
-                        Constants.Elevator.MAX_PLATFORM_HEIGHT);
-        _newDesiredPlatformHeight = Optional.of(heightMeters);
+                MathUtil.clamp(heightMeters, Constants.Elevator.MIN_HEIGHT, Constants.Elevator.MAX_HEIGHT);
+        _newDesiredMotorHeight = Optional.of(heightMeters);
     }
 
     public void setDesiredState(ElevatorState state) {
-        setDesiredPlatformHeightWorld(state.getHeight());
+        setDesiredMotorHeight(state.getHeight());
         _outputs.desiredState = state;
     }
 
@@ -96,19 +86,15 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         return _outputs.desiredState;
     }
 
-    public double getPlatformWorldHeight() {
-        return _inputs.platformPose.getZ();
-    }
-
     public boolean isAtDesiredPosition() {
-        return Math.abs(_outputs.desiredPlatformHeightWorldMeters - getPlatformWorldHeight()) < 0.01;
+        return Math.abs(_outputs.desiredMotorHeightMeters - _inputs.motorHeightMeters) < 0.01;
     }
 
     public void mapToClosestState() {
         ElevatorState closestState = ElevatorState.STOWED;
         double minDist = Double.MAX_VALUE;
         for (ElevatorState state : ElevatorState.values()) {
-            double heightDiff = Math.abs(getPlatformWorldHeight() - state.getHeight());
+            double heightDiff = Math.abs(_inputs.motorHeightMeters - state.getHeight());
             if (heightDiff < minDist) {
                 closestState = state;
                 minDist = heightDiff;
@@ -131,14 +117,13 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         return _inputs.laserSensorElevatorHeightMeters;
     }
 
-    public double getSignedTimeToSetpoint(double factorOfSafety, double setpointMotorMeters) {
-        double heightMeters = _inputs.heightPositionMeters;
-        double maxTime = 0.7;
-        double maxDistance = Constants.Elevator.MAX_HEIGHT;
+    public double getSignedTimeToSetpoint(double setpointMotorMeters) {
+        double heightMeters = _inputs.motorHeightMeters;
+        double secondsPerMeter = 2.0 / Constants.Elevator.MAX_HEIGHT;
         double signedDistance = setpointMotorMeters - heightMeters;
-        double estimatedTime = maxTime * signedDistance / maxDistance;
-        log("DriveToPoseSmooth/timeItWillTakeElevator", factorOfSafety * estimatedTime);
 
-        return factorOfSafety * estimatedTime + 2.0;
+        double estimatedTime = signedDistance * secondsPerMeter + 2.0;
+        log("DriveToPoseSmooth/timeItWillTakeElevator", estimatedTime);
+        return estimatedTime;
     }
 }

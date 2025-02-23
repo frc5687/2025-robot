@@ -93,7 +93,7 @@ public class HardwareElevatorIO implements ElevatorIO {
                         * Constants.Elevator.DRUM_RADIUS
                         / Constants.Elevator.GEAR_RATIO;
 
-        inputs.heightPositionMeters = (eastPosition + westPosition) / 2.0;
+        inputs.motorHeightMeters = (eastPosition + westPosition) / 2.0;
 
         _platformVelocity =
                 (_eastVelocity.getValueAsDouble() + _westVelocity.getValueAsDouble() / 2.0)
@@ -139,10 +139,10 @@ public class HardwareElevatorIO implements ElevatorIO {
         // Constants.Elevator.DRUM_RADIUS)
         //                 * Constants.Elevator.GEAR_RATIO_SOUTH;
         double eastRotations =
-                Units.radiansToRotations(outputs.desiredHeight / Constants.Elevator.DRUM_RADIUS)
+                Units.radiansToRotations(outputs.desiredMotorHeightMeters / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO;
         double westRotations =
-                Units.radiansToRotations(outputs.desiredHeight / Constants.Elevator.DRUM_RADIUS)
+                Units.radiansToRotations(outputs.desiredMotorHeightMeters / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO;
 
         // if (isWithinPositionTolerance(outputs.desiredStageHeight)) {

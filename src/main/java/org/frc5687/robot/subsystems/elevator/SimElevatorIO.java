@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import org.frc5687.robot.Constants;
-import org.frc5687.robot.RobotStateManager.Geometry;
 
 public class SimElevatorIO implements ElevatorIO {
     private double _kP = 200.0;
@@ -48,7 +47,7 @@ public class SimElevatorIO implements ElevatorIO {
                         Constants.Elevator.MASS,
                         Constants.Elevator.DRUM_RADIUS,
                         0.0,
-                        Geometry.ELEVATOR_STAGE_ONE_MAX_HEIGHT - Geometry.ELEVATOR_STAGE_ONE_HEIGHT,
+                        Constants.Elevator.MAX_HEIGHT,
                         true,
                         0,
                         0.0001,
@@ -63,10 +62,10 @@ public class SimElevatorIO implements ElevatorIO {
     public void updateInputs(ElevatorInputs inputs) {
         _elevatorSim.update(Constants.UPDATE_PERIOD);
 
-        inputs.heightPositionMeters = _elevatorSim.getPositionMeters();
+        inputs.motorHeightMeters = _elevatorSim.getPositionMeters();
         inputs.firstStageVelocityMPS = _elevatorSim.getVelocityMetersPerSecond();
 
-        _elevatorEncoderSim.setDistance(inputs.heightPositionMeters);
+        _elevatorEncoderSim.setDistance(inputs.motorHeightMeters);
         _elevatorEncoderSim.setRate(_elevatorSim.getVelocityMetersPerSecond());
 
         double currentDraw = _elevatorSim.getCurrentDrawAmps();
@@ -81,7 +80,8 @@ public class SimElevatorIO implements ElevatorIO {
 
         TrapezoidProfile.State setpoint = _elevatorPIDController.getSetpoint();
 
-        double pidOutput = _elevatorPIDController.calculate(currentPosition, outputs.desiredHeight);
+        double pidOutput =
+                _elevatorPIDController.calculate(currentPosition, outputs.desiredMotorHeightMeters);
 
         double ffOutput = _feedforward.calculate(setpoint.velocity) + _kG;
 

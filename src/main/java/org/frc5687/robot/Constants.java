@@ -283,12 +283,8 @@ public class Constants {
         public static final double MASS = 13.6078; // kg
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
-        public static final double MIN_PLATFORM_HEIGHT = 0.191039; // m
-        public static final double MAX_PLATFORM_HEIGHT = 1.542; // m
-
-        public static final double MIN_HEIGHT = 0.0; // m
-        public static final double MAX_HEIGHT =
-                MAX_PLATFORM_HEIGHT / 2.0; // m THIS IS THE HEIGHT OF THE FIRST STAGE
+        public static final double MIN_HEIGHT = 0.0;
+        public static final double MAX_HEIGHT = 0.67; // motor meters
 
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =
@@ -361,6 +357,7 @@ public class Constants {
         public static final double kD = 0.35;
         public static final double kV = 0.4;
         public static final double kS = 0.6;
+        public static final double kA = 0;
 
         public static final double kP_WHEEL = 6.0;
         public static final double kI_WHEEL = 0.0;

@@ -12,9 +12,9 @@ public class SuperstructureState {
     private IntakeState _intake;
 
     public SuperstructureState(
-            ElevatorState elevator, CoralState coreal, AlgaeState algae, IntakeState intake) {
+            ElevatorState elevator, CoralState coral, AlgaeState algae, IntakeState intake) {
         _elevator = elevator;
-        _coral = coreal;
+        _coral = coral;
         _algae = algae;
         _intake = intake;
     }
