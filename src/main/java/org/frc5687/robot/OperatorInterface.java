@@ -10,10 +10,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.function.Supplier;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.coral.CoralSetState;
+import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.superstructure.SuperstructureFactory;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.coralarm.CoralState;
+import org.frc5687.robot.util.FieldConstants.ReefHeight;
 import org.frc5687.robot.util.OutliersController;
+import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class OperatorInterface {
     private final OutliersController _driverController;
@@ -48,17 +51,15 @@ public class OperatorInterface {
                                 }));
         _driverController.b().onTrue(SuperstructureFactory.receiveFromFunnel(container));
 
-        // _driverController
-        // .leftBumper()
-        // .whileTrue(
-        // new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT,
-        // ReefHeight.L4));
-        // _driverController
-        // .rightBumper()
-        // .whileTrue(
-        // new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT,
-        // ReefHeight.L4));
-        // _driverController.leftTrigger().whileTrue(SuperstructureFactory.groundIntakeHandoff(container));
+        _driverController
+                .leftBumper()
+                .whileTrue(
+                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT, ReefHeight.L4));
+        _driverController
+                .rightBumper()
+                .whileTrue(
+                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT, ReefHeight.L4));
+        _driverController.leftTrigger().whileTrue(SuperstructureFactory.groundIntakeHandoff(container));
         _driverController
                 .rightTrigger()
                 .onTrue(SuperstructureFactory.place(container)); // TODO place based on held
@@ -99,14 +100,14 @@ public class OperatorInterface {
         _operatorController
                 .y()
                 .onTrue(SuperstructureFactory.placeCoralL4(container, false, overrideButton));
-        // _operatorController.leftBumper().onTrue(SuperstructureFactory.grabAlgaeL2(container));
-        // _operatorController.rightBumper().onTrue(SuperstructureFactory.grabAlgaeL1(container));
+        _operatorController.leftBumper().whileTrue(SuperstructureFactory.grabAlgaeL2(container));
+        _operatorController.rightBumper().whileTrue(SuperstructureFactory.grabAlgaeL1(container));
         _operatorController.rightTrigger().onTrue(SuperstructureFactory.processorDropoff(container));
         _operatorController
                 .leftTrigger()
                 .whileTrue(
                         new AlgaeSetState(container.getAlgae(), AlgaeState.PROCESSOR_DROPOFF_WHEEL, false));
-        _operatorController.povDown().whileTrue(SuperstructureFactory.intakeEject(container));
+        // _operatorController.povDown().whileTrue(SuperstructureFactory.intakeEject(container));
         _operatorController
                 .povUp()
                 .whileTrue(new AlgaeSetState(container.getAlgae(), AlgaeState.GROUND_PICKUP, false));

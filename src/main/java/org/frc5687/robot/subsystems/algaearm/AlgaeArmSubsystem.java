@@ -74,6 +74,10 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
         return _inputs.algaeState;
     }
 
+    public boolean isAlgaeDetected() {
+        return _inputs.isAlgaeDetected;
+    }
+
     public void mapToClosestState() {
         AlgaeState closestState = AlgaeState.IDLE;
         double minDist = Double.MAX_VALUE;

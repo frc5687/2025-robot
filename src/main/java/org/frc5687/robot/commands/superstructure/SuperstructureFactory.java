@@ -178,14 +178,20 @@ public class SuperstructureFactory {
         return withStateTracking(
                 container,
                 SuperstructureGoals.L1_ALGAE_GRAB,
-                setSuperstructure(container, SuperstructureGoals.L1_ALGAE_GRAB));
+                new SequentialCommandGroup(
+                        ensureClearance(container),
+                        setSuperstructure(container, SuperstructureGoals.L1_ALGAE_GRAB),
+                        new WaitUntilAlgaeDetected(container)));
     }
 
     public static Command grabAlgaeL2(RobotContainer container) {
         return withStateTracking(
                 container,
                 SuperstructureGoals.L2_ALGAE_GRAB,
-                setSuperstructure(container, SuperstructureGoals.L2_ALGAE_GRAB));
+                new SequentialCommandGroup(
+                        ensureClearance(container),
+                        setSuperstructure(container, SuperstructureGoals.L2_ALGAE_GRAB),
+                        new WaitUntilAlgaeDetected(container)));
     }
 
     public static Command processorDropoff(RobotContainer container) {

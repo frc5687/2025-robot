@@ -5,7 +5,7 @@ import org.frc5687.robot.Constants;
 
 public enum CoralState {
     STOWED(Units.degreesToRadians(270), 0),
-    IDLE_NO_CORAL(Units.degreesToRadians(270), 0), // 117 deg
+    IDLE_NO_CORAL(Units.degreesToRadians(180), 0), // 117 deg
     IDLE_WITH_CORAL(Units.degreesToRadians(180), 0), // 90 deg
     RECEIVE_FROM_FUNNEL(Constants.CoralArm.MAX_ANGLE, 0),
     RECEIVE_FROM_FUNNEL_RUNNING(Constants.CoralArm.MAX_ANGLE, 12),
