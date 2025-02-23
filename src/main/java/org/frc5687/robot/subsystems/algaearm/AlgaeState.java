@@ -10,16 +10,16 @@ public enum AlgaeState {
     PROCESSOR_DROPOFF(2.75762, 0),
     PROCESSOR_DROPOFF_WHEEL(2.75762, -12); // 158 deg
 
-    private final double _value;
+    private final double _armAngle;
     private final double _wheelVoltage;
 
-    AlgaeState(double value, double wheelVoltage) {
-        _value = value;
+    AlgaeState(double armAngle, double wheelVoltage) {
+        _armAngle = armAngle;
         _wheelVoltage = wheelVoltage;
     }
 
-    public double getValue() {
-        return _value;
+    public double getArmAngle() {
+        return _armAngle;
     }
 
     public double getWheelVoltage() {

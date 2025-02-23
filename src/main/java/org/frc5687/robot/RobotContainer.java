@@ -37,6 +37,9 @@ import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
+import org.frc5687.robot.subsystems.superstructure.RequestType;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
 import org.frc5687.robot.subsystems.vision.PhotonVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
@@ -60,6 +63,7 @@ public class RobotContainer implements EpilogueLog {
     private final VisionSubsystem _vision;
 
     private final SuperstructureTracker _superstructureTracker;
+    private final SuperstructureManager _superstructureManager;
 
     private SendableChooser<Command> _autoChooser;
 
@@ -115,6 +119,8 @@ public class RobotContainer implements EpilogueLog {
         _vision = new VisionSubsystem(this, visionIO);
 
         _superstructureTracker = new SuperstructureTracker(this);
+        _superstructureManager = new SuperstructureManager(this);
+
         _oi.configureCommandMapping(this);
 
         _isCoralMode = true;
@@ -170,6 +176,11 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void setupNamedCommand() {
+        NamedCommands.registerCommand(
+                "CoralL4",
+                _superstructureManager.setToPlaceHeight(
+                        SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
+
         if (RobotBase.isSimulation()) {
             NamedCommands.registerCommand(
                     "ReceiveFunnel", SuperstructureFactory.receiveFromFunnelSim(this));
@@ -247,6 +258,10 @@ public class RobotContainer implements EpilogueLog {
 
     public SuperstructureTracker getSuperstructureTracker() {
         return _superstructureTracker;
+    }
+
+    public SuperstructureManager getSuperstructureManager() {
+        return _superstructureManager;
     }
 
     @Override

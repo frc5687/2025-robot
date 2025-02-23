@@ -105,6 +105,26 @@ public class OutliersController {
         }
     }
 
+    public Trigger start() {
+        if (_xboxController != null) {
+            return _xboxController.start();
+        } else if (_ps4Controller != null) {
+            return _ps4Controller.options();
+        } else {
+            return _ps5Controller.options();
+        }
+    }
+
+    public Trigger back() {
+        if (_xboxController != null) {
+            return _xboxController.back();
+        } else if (_ps4Controller != null) {
+            return _ps4Controller.share();
+        } else {
+            return _ps5Controller.create();
+        }
+    }
+
     public Trigger povUp() {
         return _genericController.povUp();
     }

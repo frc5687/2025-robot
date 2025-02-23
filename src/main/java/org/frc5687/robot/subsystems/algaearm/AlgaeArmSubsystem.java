@@ -1,5 +1,6 @@
 package org.frc5687.robot.subsystems.algaearm;
 
+import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
@@ -38,7 +39,7 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
 
     public void setDesiredState(AlgaeState state) {
         _outputs.desiredState = state;
-        setDesiredAngleRadians(state.getValue());
+        setDesiredAngleRadians(state.getArmAngle());
     }
 
     public void setDesiredAngleRadians(double angleRadians) {
@@ -82,12 +83,18 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
         AlgaeState closestState = AlgaeState.IDLE;
         double minDist = Double.MAX_VALUE;
         for (AlgaeState state : AlgaeState.values()) {
-            double dist = Math.abs(getArmAngleRads() - state.getValue());
+            double dist = Math.abs(getArmAngleRads() - state.getArmAngle());
             if (dist < minDist) {
                 closestState = state;
                 minDist = dist;
             }
         }
         _inputs.algaeState = closestState;
+    }
+
+    public boolean isAtState(AlgaeState state) {
+        double angleDiff = Math.abs(state.getArmAngle() - getArmAngleRads());
+        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(3.0);
+        return isWithinPositionTolerance;
     }
 }

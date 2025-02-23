@@ -141,4 +141,13 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
 
         return factorOfSafety * estimatedTime + 2.0;
     }
+
+    public boolean isAtState(ElevatorState state) {
+        double heightDiff = Math.abs(state.getHeight() - getPlatformWorldHeight());
+        // 1 cm tolerance
+        boolean isWithinPositionTolerance = heightDiff < 0.01;
+
+        // TODO Probably add velocity as well
+        return isWithinPositionTolerance;
+    }
 }

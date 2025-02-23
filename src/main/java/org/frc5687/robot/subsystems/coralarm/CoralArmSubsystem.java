@@ -1,5 +1,6 @@
 package org.frc5687.robot.subsystems.coralarm;
 
+import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
@@ -103,5 +104,11 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
             }
         }
         _inputs.currentState = closestState;
+    }
+
+    public boolean isAtState(CoralState state) {
+        double angleDiff = Math.abs(state.getArmAngle() - getArmAngleRads());
+        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(3.0);
+        return isWithinPositionTolerance;
     }
 }
