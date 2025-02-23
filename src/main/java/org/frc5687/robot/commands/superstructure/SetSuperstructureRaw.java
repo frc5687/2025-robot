@@ -83,7 +83,6 @@ public class SetSuperstructureRaw extends OutliersCommand {
         if (_intakeGoal.isPresent()) {
             _intake.setDesiredState(_intakeGoal.get());
         }
-        System.out.println("📈 setseuperraw begin");
     }
 
     @Override
@@ -95,10 +94,5 @@ public class SetSuperstructureRaw extends OutliersCommand {
                 && _coral.isAtDesiredAngle()
                 && _algae.isAtDesiredAngle();
         // && _intake.isAtDesiredAngle(); TODO add intake
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        System.out.println("📉 setseuperraw ended (interrupted?: " + interrupted);
     }
 }

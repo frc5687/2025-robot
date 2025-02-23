@@ -1,6 +1,6 @@
 package org.frc5687.robot.commands.superstructure;
 
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import java.util.Optional;
 import org.frc5687.robot.RobotContainer;
@@ -26,6 +26,8 @@ public class SetSuperstructure extends OutliersCommand {
     private Optional<AlgaeState> _algaeGoal;
     private Optional<CoralState> _coralGoal;
     private Optional<IntakeState> _intakeGoal;
+
+    private Command _command;
 
     public SetSuperstructure(RobotContainer container, SuperstructureState goalState) {
         this(
@@ -64,15 +66,6 @@ public class SetSuperstructure extends OutliersCommand {
 
     @Override
     public void initialize() {
-        System.out.println(
-                "Set Superstructure with goals "
-                        + _elevatorGoal
-                        + ", "
-                        + _algaeGoal
-                        + ", "
-                        + _coralGoal
-                        + " and "
-                        + _intakeGoal);
         if (willCollide()) {
             var step1 =
                     new SetSuperstructureRaw(
@@ -87,26 +80,27 @@ public class SetSuperstructure extends OutliersCommand {
             var step3 =
                     new SetSuperstructureRaw(_container, _algaeGoal, _elevatorGoal, _intakeGoal, _coralGoal);
             System.out.println("will  collide");
-            CommandScheduler.getInstance().schedule(new SequentialCommandGroup(step1, step2, step3));
+            _command = new SequentialCommandGroup(step1, step2, step3);
         } else {
             System.out.println("will not collide");
-            CommandScheduler.getInstance()
-                    .schedule(
-                            new SetSuperstructureRaw(
-                                    _container, _algaeGoal, _elevatorGoal, _intakeGoal, _coralGoal));
+            _command =
+                    new SetSuperstructureRaw(_container, _algaeGoal, _elevatorGoal, _intakeGoal, _coralGoal);
         }
+        _command.initialize();
     }
 
     @Override
-    protected void execute(double timestamp) {}
+    protected void execute(double timestamp) {
+        _command.execute();
+    }
 
     @Override
     public boolean isFinished() {
-        return true;
+        return _command.isFinished();
     }
 
     @Override
     public void end(boolean interrupted) {
-        // TODO consider what to do when this is interrupted.
+        _command.end(interrupted);
     }
 }
