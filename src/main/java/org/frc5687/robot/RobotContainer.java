@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.Supplier;
 import org.frc5687.robot.commands.algae.IdleAlgae;
+import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
@@ -186,7 +187,7 @@ public class RobotContainer implements EpilogueLog {
                 "CoralL3", SuperstructureFactory.placeCoralL3(this, false, falseSupplier));
         NamedCommands.registerCommand(
                 "CoralL2", SuperstructureFactory.placeCoralL2(this, falseSupplier));
-        NamedCommands.registerCommand("Place", SuperstructureFactory.place(this));
+        NamedCommands.registerCommand("Place", new EjectCoral(_coralArm));
         // place shoots it out
     }
 

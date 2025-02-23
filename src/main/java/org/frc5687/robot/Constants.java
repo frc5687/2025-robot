@@ -392,6 +392,8 @@ public class Constants {
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
         public static final double WHEEL_EJECT_CORAL_DUTY_CYCLE = -1.0;
         public static final double WHEEL_RECEIVE_CORAL_DUTY_CYCLE = 0.6;
+
+        public static final double EJECT_TIME = 0.5; // seconds
     }
 
     public static class Climber {

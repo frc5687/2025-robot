@@ -12,9 +12,7 @@ import java.util.function.Supplier;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.AlgaeSetState;
 import org.frc5687.robot.commands.coral.CoralSetState;
-import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.elevator.ElevatorSetState;
-import org.frc5687.robot.commands.intake.RunIntake;
 import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
@@ -30,20 +28,6 @@ public class SuperstructureFactory {
     }
 
     private static Command setSuperstructure(RobotContainer container, SuperstructureState state) {
-        /*
-         *
-         *
-         *
-         *
-         * when we are mooving the elveator, we have to:
-         * 1. set the coral to vertical
-         * 2. move the elevator
-         * 3. move the coral
-         *
-         *
-         *
-         *
-         */
         double prevHeight = container.getElevator().getInputs().heightPositionMeters;
         double newHeight = state.getElevator().getHeight();
 
@@ -52,7 +36,7 @@ public class SuperstructureFactory {
                     new ElevatorSetState(container.getElevator(), state.getElevator()),
                     new CoralSetState(container.getCoral(), state.getCoral()),
                     new AlgaeSetState(container.getAlgae(), state.getAlgae(), true)
-                    /*new IntakeSetState(container.getIntake(), state.getIntake())*/ ); // FIXME lmfao
+                    /*new IntakeSetState(container.getIntake(), state.getIntake())*/ ); // FIXME
         } else {
             Command step1 =
                     new CoralSetState(
@@ -61,7 +45,7 @@ public class SuperstructureFactory {
                     new ParallelCommandGroup(
                             new ElevatorSetState(container.getElevator(), state.getElevator()),
                             new AlgaeSetState(container.getAlgae(), state.getAlgae(), true)
-                            /*new IntakeSetState(container.getIntake(), state.getIntake())*/ ); // FIXME lmfao;
+                            /*new IntakeSetState(container.getIntake(), state.getIntake())*/ ); // FIXME
             Command step3 = new CoralSetState(container.getCoral(), state.getCoral());
             return new SequentialCommandGroup(step1, step2, step3);
         }
@@ -100,16 +84,6 @@ public class SuperstructureFactory {
                         ensureClearance(container),
                         setSuperstructure(container, SuperstructureGoals.RECEIVE_FROM_FUNNEL)));
     }
-
-    //     public static Command receiveFromIntake(RobotContainer container) {
-    //         return withStateTracking(
-    //                 container,
-    //                 SuperstructureGoals.RECEIVE_FROM_INTAKE,
-    //                 new SequentialCommandGroup(
-    //                         ensureClearance(container),
-    //                         new SuperstructureIntake(container,
-    // SuperstructureGoals.RECEIVE_FROM_INTAKE)));
-    //     }
 
     public static Command placeCoralL4(
             RobotContainer container, boolean withAlgaeGrab, Supplier<Boolean> overrideButton) {
@@ -204,40 +178,5 @@ public class SuperstructureFactory {
                                 container,
                                 SuperstructureGoals.PROCESSOR_DROPOFF_WHEEL,
                                 setSuperstructure(container, SuperstructureGoals.PROCESSOR_DROPOFF_WHEEL)));
-    }
-
-    public static Command intakeEject(RobotContainer container) {
-        return withStateTracking(
-                        container,
-                        SuperstructureGoals.EJECT_INTAKE,
-                        setSuperstructure(container, SuperstructureGoals.EJECT_INTAKE))
-                .andThen(new RunIntake(container.getIntake(), -12, 12, null));
-    }
-
-    public static Command groundPickup(RobotContainer container) {
-        return withStateTracking(
-                container,
-                SuperstructureGoals.GROUND_PICKUP,
-                setSuperstructure(container, SuperstructureGoals.GROUND_PICKUP));
-    }
-
-    public static Command place(RobotContainer container) {
-        return new SequentialCommandGroup(
-                new EjectCoral(container.getCoral()),
-                new SuperstructurePlace(
-                        container.getElevator(), container.getCoral(), container.getAlgae()));
-    }
-
-    public static Command groundIntakeHandoff(RobotContainer container) {
-        return new SequentialCommandGroup(
-                new SuperstructureIntake(
-                        container.getElevator(),
-                        container.getCoral(),
-                        container.getAlgae(),
-                        container.getIntake()));
-    }
-
-    public static Command placeAndStow(RobotContainer container) {
-        return new SequentialCommandGroup(place(container), receiveFromFunnel(container));
     }
 }
