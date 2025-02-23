@@ -5,107 +5,93 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Middle to R4"
-                }
-              }
-            ]
+            "pathName": "Middle to R4"
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "R4 to PUSH"
-                }
-              }
-            ]
+            "name": "Place"
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "PUSH to HP_NE"
-                }
-              }
-            ]
+            "pathName": "R4 to PUSH"
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "HP_NE to R3"
-                }
-              }
-            ]
+            "pathName": "PUSH to HP_NE"
           }
         },
         {
-          "type": "parallel",
+          "type": "wait",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "R3 to HP_NE"
-                }
-              }
-            ]
+            "waitTime": 0.3
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "HP_NE to R2"
-                }
-              }
-            ]
+            "pathName": "HP_NE to R3"
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "R2 to HP_NE"
-                }
-              }
-            ]
+            "name": "Place"
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "HP_NE to L2"
-                }
-              }
-            ]
+            "pathName": "R3 to HP_NE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HP_NE to R2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Place"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R2 to HP_NE"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HP_NE to L2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Place"
           }
         }
       ]
