@@ -15,7 +15,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class VisionSTDFilter {
     private static final double BASE_XY_STD = 0.5;
     private static final double BASE_THETA_STD = 0.3;
-    private static final double MIN_XY_STD = 0.1; 
+    private static final double MIN_XY_STD = 0.1;
     private static final double MIN_THETA_STD = 0.02;
     private static final double MAX_XY_STD = 2.0;
     private static final double MAX_THETA_STD = 1.0;
@@ -23,8 +23,8 @@ public class VisionSTDFilter {
     private static final double DISTANCE_SCALE_FACTOR = 0.009;
     private static final double AMBIGUITY_SCALE_FACTOR = 0.03;
     private static final double TIME_SCALE_FACTOR = 0.001;
-    private static final double VELOCITY_SCALE_FACTOR = 0.3; 
-    private static final double VELOCITY_EXPONENT = 2.0; 
+    private static final double VELOCITY_SCALE_FACTOR = 0.3;
+    private static final double VELOCITY_EXPONENT = 2.0;
 
     private static final double MIN_TAG_AREA_PERCENT = 0.1;
     private static final double GOOD_TAG_AREA_PERCENT = 1.0;
@@ -59,12 +59,12 @@ public class VisionSTDFilter {
         double velocityMultiplier = calculateVelocityMultiplier();
         double qualityMultiplier = calculateQualityMultiplier(avgTagQuality);
 
-        double combinedMultiplier = 
-            distanceMultiplier * 
-            ambiguityMultiplier * 
-            timeMultiplier * 
-            velocityMultiplier * 
-            qualityMultiplier;
+        double combinedMultiplier =
+                distanceMultiplier
+                        * ambiguityMultiplier
+                        * timeMultiplier
+                        * velocityMultiplier
+                        * qualityMultiplier;
 
         xyStd *= Math.max(1.0, combinedMultiplier);
         thetaStd *= Math.max(1.0, combinedMultiplier);
@@ -95,10 +95,11 @@ public class VisionSTDFilter {
 
         double totalQuality = 0.0;
         for (PhotonTrackedTarget target : targets) {
-            double areaQuality = Math.min(
-                    1.0,
-                    (target.getArea() - MIN_TAG_AREA_PERCENT)
-                            / (GOOD_TAG_AREA_PERCENT - MIN_TAG_AREA_PERCENT));
+            double areaQuality =
+                    Math.min(
+                            1.0,
+                            (target.getArea() - MIN_TAG_AREA_PERCENT)
+                                    / (GOOD_TAG_AREA_PERCENT - MIN_TAG_AREA_PERCENT));
 
             double skewQuality = 1.0 - (target.getSkew() / MAX_TAG_SKEW);
             double poseAmbiguity = 1.0 - Math.min(1.0, target.getPoseAmbiguity());
@@ -138,7 +139,7 @@ public class VisionSTDFilter {
         double rotation = Math.abs(lastPose.getRotation().minus(newPose.getRotation()).getDegrees());
 
         double maxPossibleTranslation = _robotVelocity * dt * 1.5;
-        double maxPossibleRotation = 45.0 * dt; 
+        double maxPossibleRotation = 45.0 * dt;
 
         return translation > maxPossibleTranslation || rotation > maxPossibleRotation;
     }
@@ -158,9 +159,10 @@ public class VisionSTDFilter {
     private void handleInitialLocalization(
             EstimatedRobotPose visionPose, Pose2d currentEstimatedPose, double currentTimestamp) {
 
-        double poseDifference = currentEstimatedPose
-                .getTranslation()
-                .getDistance(visionPose.estimatedPose.toPose2d().getTranslation());
+        double poseDifference =
+                currentEstimatedPose
+                        .getTranslation()
+                        .getDistance(visionPose.estimatedPose.toPose2d().getTranslation());
 
         boolean hasMultipleTags = visionPose.targetsUsed.size() >= 2;
         boolean hasGoodQuality = calculateTagQuality(visionPose.targetsUsed) > 0.7;
@@ -177,7 +179,9 @@ public class VisionSTDFilter {
         double minDistance = Double.MAX_VALUE;
         for (PhotonTrackedTarget target : targets) {
             Transform3d camToTarget = target.getBestCameraToTarget();
-            double distance = Math.sqrt(camToTarget.getX() * camToTarget.getX() + camToTarget.getY() * camToTarget.getY());
+            double distance =
+                    Math.sqrt(
+                            camToTarget.getX() * camToTarget.getX() + camToTarget.getY() * camToTarget.getY());
             minDistance = Math.min(minDistance, distance);
         }
         return minDistance;

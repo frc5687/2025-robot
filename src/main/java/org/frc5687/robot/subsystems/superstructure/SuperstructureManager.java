@@ -71,7 +71,7 @@ public class SuperstructureManager extends SubsystemBase {
                 () -> placeState, MotorState.HOLD, "Set place height " + placeState.getElevator(), type);
     }
 
-    public Command placeAtCurrentHeight(RequestType type) {
+    public Command placeAtCurrentHeightAndStow(RequestType type) {
         return new SequentialCommandGroup(
                 createRequest(this::getCurrentGoal, MotorState.EJECT, "Eject at current height", type),
                 new WaitCommand(0.5),
@@ -80,6 +80,12 @@ public class SuperstructureManager extends SubsystemBase {
                         MotorState.STOPPED,
                         "Return to funnel",
                         RequestType.IMMEDIATE));
+    }
+
+    public Command placeAtCurrentHeight(RequestType type) {
+        return new SequentialCommandGroup(
+                createRequest(this::getCurrentGoal, MotorState.EJECT, "Eject at current height", type),
+                new WaitCommand(0.3));
     }
 
     public Command groundIntake(RequestType type) {

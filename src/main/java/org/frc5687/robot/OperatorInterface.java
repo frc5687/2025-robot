@@ -62,7 +62,9 @@ public class OperatorInterface {
 
         _driverController.leftTrigger().whileTrue(manager.groundIntake(RequestType.IMMEDIATE));
 
-        _driverController.rightTrigger().onTrue(manager.placeAtCurrentHeight(RequestType.IMMEDIATE));
+        _driverController
+                .rightTrigger()
+                .onTrue(manager.placeAtCurrentHeightAndStow(RequestType.IMMEDIATE));
 
         _driverController.rightMiddleButton().onTrue(new InstantCommand(container.getDrive()::zeroIMU));
         _driverController
