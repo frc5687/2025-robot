@@ -416,6 +416,6 @@ public class Constants {
                         0.23297,
                         new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(-10)));
         public static final Transform2d ROBOT_TO_QUEST =
-                new Transform2d(-0.104, -0.286, Rotation2d.fromDegrees(-135));
+                new Transform2d(-0.175, -0.369, Rotation2d.fromDegrees(-90));
     }
 }
