@@ -64,7 +64,7 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
 
     // This is to map to closest state incase of interrupt.
     public void mapToClosestState() {
-        IntakeState closestState = IntakeState.STOWED;
+        IntakeState closestState = IntakeState.IDLE;
         double minDist = Double.MAX_VALUE;
 
         for (IntakeState state : IntakeState.values()) {

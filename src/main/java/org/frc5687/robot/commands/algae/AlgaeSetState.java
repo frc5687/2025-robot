@@ -20,7 +20,6 @@ public class AlgaeSetState extends OutliersCommand {
     @Override
     public void initialize() {
         super.initialize();
-        _algae.setWheelMotorVoltage(_desiredState.getWheelVoltage());
         _algae.setDesiredState(_desiredState);
     }
 

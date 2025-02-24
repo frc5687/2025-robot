@@ -54,7 +54,6 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     public void setDesiredState(CoralState state) {
         _outputs.desiredState = state;
         setArmAngle(state.getArmAngle());
-        setWheelMotorDutyCycle(state.getRollerDutyCycle());
     }
 
     public void setWheelMotorDutyCycle(double voltage) {
@@ -109,7 +108,7 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     }
 
     public void mapToClosestState() {
-        CoralState closestState = CoralState.STOWED;
+        CoralState closestState = CoralState.IDLE;
         double minDist = Double.MAX_VALUE;
         for (CoralState state : CoralState.values()) {
             double dist = Math.abs(getArmAngleRads() - state.getArmAngle());

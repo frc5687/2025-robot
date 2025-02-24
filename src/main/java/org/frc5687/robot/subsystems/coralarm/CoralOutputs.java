@@ -5,7 +5,7 @@ import org.frc5687.robot.util.BaseOutputs;
 
 public class CoralOutputs extends BaseOutputs {
     @Logged(name = "Desired Coral State", importance = Logged.Importance.CRITICAL)
-    public CoralState desiredState = CoralState.STOWED;
+    public CoralState desiredState = CoralState.IDLE;
 
     @Logged(name = "Desired Angle (rad)", importance = Logged.Importance.CRITICAL)
     public double desiredAngleRad = desiredState.getArmAngle();

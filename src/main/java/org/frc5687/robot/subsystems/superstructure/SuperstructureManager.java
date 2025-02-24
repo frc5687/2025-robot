@@ -64,10 +64,6 @@ public class SuperstructureManager extends SubsystemBase {
         return createRequest(() -> placeState, "Set place height " + placeState.getElevator(), type);
     }
 
-    public Command groundIntake(RequestType type) {
-        return createRequest(() -> SuperstructureGoals.GROUND_PICKUP, "Ground Intake", type);
-    }
-
     public Command receiveFunnel(RequestType type) {
         return new SequentialCommandGroup(
                 createRequest(() -> SuperstructureGoals.RECEIVE_FROM_FUNNEL, "Receiving from funnel", type),

@@ -6,7 +6,7 @@ import org.frc5687.robot.util.BaseInputs;
 @Logged
 public class IntakeInputs extends BaseInputs {
     @Logged(name = "Intake State", importance = Logged.Importance.CRITICAL)
-    public IntakeState currentState = IntakeState.STOWED;
+    public IntakeState currentState = IntakeState.IDLE;
 
     @Logged(name = "Roller Velocity(RadsPS)", importance = Logged.Importance.CRITICAL)
     public double rollerVelocityRadperSec = 0;

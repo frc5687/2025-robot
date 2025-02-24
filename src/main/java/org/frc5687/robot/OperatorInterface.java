@@ -37,20 +37,22 @@ public class OperatorInterface {
 
     private void configureDriverControls(RobotContainer container, SuperstructureManager manager) {
 
+        // TODO snapto should onlt be snap to
+        // TODO when the elevator is L1 with no coral it should automatically intake (might have to
+        // queue this so it doesn't collide with the reef)
+
         // Face angles with funnel receive
         _driverController
                 .x()
                 .onTrue(
                         new InstantCommand(
-                                        () -> container.getDrive().enableHeadingController(Units.degreesToRadians(-60)))
-                                .andThen(manager.receiveFunnel(RequestType.IMMEDIATE)));
+                                () -> container.getDrive().enableHeadingController(Units.degreesToRadians(-60))));
 
         _driverController
                 .b()
                 .onTrue(
                         new InstantCommand(
-                                        () -> container.getDrive().enableHeadingController(Units.degreesToRadians(60)))
-                                .andThen(manager.receiveFunnel(RequestType.IMMEDIATE)));
+                                () -> container.getDrive().enableHeadingController(Units.degreesToRadians(60))));
 
         _driverController
                 .leftBumper()
@@ -61,7 +63,7 @@ public class OperatorInterface {
                 .whileTrue(
                         new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT, ReefHeight.L4));
 
-        _driverController.leftTrigger().whileTrue(manager.groundIntake(RequestType.IMMEDIATE));
+        // _driverController.leftTrigger().whileTrue(manager.groundIntake(RequestType.IMMEDIATE));
 
         _driverController.rightTrigger().whileTrue(new EjectCoral(container.getCoral()));
 
@@ -94,10 +96,12 @@ public class OperatorInterface {
 
         _operatorController
                 .leftBumper()
-                .whileTrue(manager.grabAlgae(SuperstructureGoals.L2_ALGAE_GRAB, RequestType.QUEUED));
+                .whileTrue(
+                        manager.grabAlgae(SuperstructureGoals.PLACE_CORAL_L3_ALGAE_GRAB, RequestType.QUEUED));
         _operatorController
                 .rightBumper()
-                .whileTrue(manager.grabAlgae(SuperstructureGoals.L1_ALGAE_GRAB, RequestType.QUEUED));
+                .whileTrue(
+                        manager.grabAlgae(SuperstructureGoals.PLACE_CORAL_L4_ALGAE_GRAB, RequestType.QUEUED));
 
         _operatorController.rightTrigger().onTrue(manager.receiveFunnel(RequestType.IMMEDIATE));
     }

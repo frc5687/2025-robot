@@ -19,8 +19,6 @@ public class IntakeSetState extends OutliersCommand {
     public void initialize() {
         super.initialize();
         _intake.setDesiredState(_desiredState);
-        _intake.setIntakeVoltage(_desiredState.getBeltVoltage());
-        _intake.setRollerVoltage(_desiredState.getRollerVoltage());
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.frc5687.robot.util.BaseInputs;
 @Logged
 public class CoralInputs extends BaseInputs {
     @Logged(name = "Coral State", importance = Logged.Importance.CRITICAL)
-    public CoralState currentState = CoralState.IDLE_WITH_CORAL;
+    public CoralState currentState = CoralState.IDLE;
 
     @Logged(name = "Arm Angle (rads)", importance = Logged.Importance.CRITICAL)
     public double angleRads = 0.0;

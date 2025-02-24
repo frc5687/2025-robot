@@ -41,17 +41,14 @@ public class RequestHandler implements EpilogueLog {
             // first get out of the way
             var step1 =
                     new SuperstructureState(
-                            Optional.empty(),
-                            Optional.of(CoralState.IDLE_NO_CORAL),
-                            Optional.empty(),
-                            Optional.empty());
+                            Optional.empty(), Optional.of(CoralState.IDLE), Optional.empty(), Optional.empty());
             addRequest(
                     new SuperstructureRequest(
                             step1, RequestType.IMMEDIATE, null, "outstretch hand (step 1)"));
             var step2 =
                     new SuperstructureState(
                             request.targetPosition().getElevator(),
-                            Optional.of(CoralState.IDLE_NO_CORAL),
+                            Optional.of(CoralState.IDLE),
                             request.targetPosition().getAlgae(),
                             request.targetPosition().getIntake());
             addRequest(
