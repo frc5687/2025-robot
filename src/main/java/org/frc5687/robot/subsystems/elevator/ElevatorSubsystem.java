@@ -69,6 +69,10 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         }
     }
 
+    public void setDesiredPlatformHeightWorld(ElevatorState state) {
+        setDesiredPlatformHeightWorld(state.getHeight());
+    }
+
     public void setDesiredPlatformHeightWorld(double heightMeters) {
         _outputs.controlMode = ElevatorControlMode.POSITION;
         heightMeters =
@@ -79,42 +83,12 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         _newDesiredPlatformHeight = Optional.of(heightMeters);
     }
 
-    public void setDesiredState(ElevatorState state) {
-        setDesiredPlatformHeightWorld(state.getHeight());
-        _outputs.desiredState = state;
-    }
-
-    public ElevatorState getCurrentState() {
-        return _inputs.elevatorState;
-    }
-
-    public void setCurrentState(ElevatorState state) {
-        _inputs.elevatorState = state;
-    }
-
-    public ElevatorState getDesiredState() {
-        return _outputs.desiredState;
-    }
-
     public double getPlatformWorldHeight() {
         return _inputs.platformPose.getZ();
     }
 
     public boolean isAtDesiredPosition() {
         return Math.abs(_outputs.desiredPlatformHeightWorldMeters - getPlatformWorldHeight()) < 0.01;
-    }
-
-    public void mapToClosestState() {
-        ElevatorState closestState = ElevatorState.STOWED;
-        double minDist = Double.MAX_VALUE;
-        for (ElevatorState state : ElevatorState.values()) {
-            double heightDiff = Math.abs(getPlatformWorldHeight() - state.getHeight());
-            if (heightDiff < minDist) {
-                closestState = state;
-                minDist = heightDiff;
-            }
-        }
-        _inputs.elevatorState = closestState;
     }
 
     public void setVoltage(double voltage) {

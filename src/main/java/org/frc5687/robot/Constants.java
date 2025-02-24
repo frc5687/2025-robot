@@ -10,7 +10,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import java.util.Optional;
+import org.frc5687.robot.subsystems.algaearm.AlgaeState;
+import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleConfig;
+import org.frc5687.robot.subsystems.elevator.ElevatorState;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 import org.frc5687.robot.util.PIDConstants;
 
 // import edu.wpi.first.math.util.Units;
@@ -417,5 +422,54 @@ public class Constants {
                         new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(-10)));
         public static final Transform2d ROBOT_TO_QUEST =
                 new Transform2d(-0.175, -0.369, Rotation2d.fromDegrees(-90));
+    }
+
+    public class SuperstructureGoals {
+        public static final SuperstructureState RECEIVE_FROM_FUNNEL =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.FUNNEL_RECEIVE),
+                        Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
+                        Optional.empty(),
+                        Optional.empty());
+
+        public static final SuperstructureState PLACE_CORAL_L4 =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4),
+                        Optional.of(AlgaeState.IDLE), Optional.empty());
+
+        public static final SuperstructureState PLACE_CORAL_L4_ALGAE_GRAB =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L4_CORAL_PLACING),
+                        Optional.of(CoralState.PLACING_L4),
+                        Optional.of(AlgaeState.REEF_PICKUP),
+                        Optional.empty());
+
+        public static final SuperstructureState PLACE_CORAL_L3 =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L3_CORAL_PLACING), Optional.of(CoralState.PLACING),
+                        Optional.of(AlgaeState.IDLE), Optional.empty());
+        public static final SuperstructureState PLACE_CORAL_L3_ALGAE_GRAB =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L3_CORAL_PLACING),
+                        Optional.of(CoralState.PLACING),
+                        Optional.of(AlgaeState.REEF_PICKUP),
+                        Optional.empty());
+
+        public static final SuperstructureState PLACE_CORAL_L2 =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L2_CORAL_PLACING), Optional.of(CoralState.PLACING),
+                        Optional.of(AlgaeState.IDLE), Optional.empty());
+
+        public static final SuperstructureState PLACE_CORAL_L1 =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L1_CORAL_PLACING), Optional.of(CoralState.PLACING),
+                        Optional.of(AlgaeState.IDLE), Optional.empty());
+
+        public static final SuperstructureState PROCESSOR_DROPOFF =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L1_CORAL_PLACING),
+                        Optional.of(CoralState.IDLE),
+                        Optional.of(AlgaeState.PROCESSOR_DROPOFF),
+                        Optional.empty());
     }
 }

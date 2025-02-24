@@ -3,7 +3,6 @@ package org.frc5687.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,7 +35,6 @@ import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
-import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.subsystems.vision.PhotonVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
@@ -64,13 +62,11 @@ public class RobotContainer implements EpilogueLog {
     private SendableChooser<Command> _autoChooser;
 
     private final QuestNav _questNav;
-    private final Field2d _field;
     private boolean _isCoralMode;
 
     public RobotContainer(Robot robot) {
         _robot = robot;
         _oi = new OperatorInterface();
-        _field = new Field2d();
         _questNav = new QuestNav();
         DriveIO driveIO =
                 RobotBase.isSimulation()
@@ -174,7 +170,7 @@ public class RobotContainer implements EpilogueLog {
         NamedCommands.registerCommand(
                 "CoralL4",
                 _superstructureManager.createRequest(
-                        SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
+                        Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
 
         if (RobotBase.isSimulation()) {
             // NamedCommands.registerCommand( "ReceiveFunnel",
@@ -190,17 +186,17 @@ public class RobotContainer implements EpilogueLog {
         NamedCommands.registerCommand(
                 "CoralL4",
                 _superstructureManager.createRequest(
-                        SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
+                        Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
 
         NamedCommands.registerCommand(
                 "CoralL3",
                 _superstructureManager.createRequest(
-                        SuperstructureGoals.PLACE_CORAL_L3, RequestType.IMMEDIATE));
+                        Constants.SuperstructureGoals.PLACE_CORAL_L3, RequestType.IMMEDIATE));
 
         NamedCommands.registerCommand(
                 "CoralL2",
                 _superstructureManager.createRequest(
-                        SuperstructureGoals.PLACE_CORAL_L2, RequestType.IMMEDIATE));
+                        Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.IMMEDIATE));
 
         // NamedCommands.registerCommand(
         //         "Place", _superstructureManager.placeAtCurrentHeight(RequestType.IMMEDIATE));

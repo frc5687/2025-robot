@@ -12,7 +12,6 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
 
     public IntakeSubsystem(RobotContainer container, SubsystemIO<IntakeInputs, IntakeOutputs> io) {
         super(container, io, new IntakeInputs(), new IntakeOutputs());
-        setDesiredState(IntakeState.IDLE);
     }
 
     @Override
@@ -23,8 +22,7 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     @Override
     protected void periodic(IntakeInputs inputs, IntakeOutputs outputs) {}
 
-    public void setDesiredState(IntakeState state) {
-        _outputs.desiredState = state;
+    public void setDesiredPivotAngle(IntakeState state) {
         setDesiredPivotAngle(state.getValue());
     }
 
@@ -32,10 +30,6 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
         double desiredAngleClamped =
                 MathUtil.clamp(angle, Constants.Intake.MIN_ANGLE, Constants.Intake.MAX_ANGLE);
         _outputs.desiredAngleRad = desiredAngleClamped;
-    }
-
-    public void setCurrentState(IntakeState state) {
-        _inputs.currentState = state;
     }
 
     public void setRollerVoltage(double voltage) {
@@ -60,20 +54,5 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
 
     public boolean isIntakeCoralDetected() {
         return _inputs.isCoralDetected;
-    }
-
-    // This is to map to closest state incase of interrupt.
-    public void mapToClosestState() {
-        IntakeState closestState = IntakeState.IDLE;
-        double minDist = Double.MAX_VALUE;
-
-        for (IntakeState state : IntakeState.values()) {
-            double angleDiff = Math.abs(getPivotArmAngleRads() - state.getValue());
-            if (angleDiff < minDist) {
-                closestState = state;
-                minDist = angleDiff;
-            }
-        }
-        setCurrentState(closestState);
     }
 }

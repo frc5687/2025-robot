@@ -6,11 +6,8 @@ import org.frc5687.robot.util.BaseInputs;
 
 @Logged
 public class ElevatorInputs extends BaseInputs {
-    @Logged(name = "Elevator State", importance = Logged.Importance.CRITICAL)
-    public ElevatorState elevatorState = ElevatorState.STOWED;
-
     @Logged(name = "Elevator Height Position (m)", importance = Logged.Importance.CRITICAL)
-    public double heightPositionMeters = 0.0;
+    public double heightPositionMeters = ElevatorState.STOWED.getHeight();
 
     @Logged(name = "First Stage Velocity (mps)", importance = Logged.Importance.CRITICAL)
     public double firstStageVelocityMPS = 0.0;

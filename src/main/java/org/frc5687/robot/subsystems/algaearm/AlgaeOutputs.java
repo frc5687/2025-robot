@@ -4,11 +4,8 @@ import edu.wpi.first.epilogue.Logged;
 import org.frc5687.robot.util.BaseOutputs;
 
 public class AlgaeOutputs extends BaseOutputs {
-    @Logged(name = "Desired Algae State", importance = Logged.Importance.CRITICAL)
-    AlgaeState desiredState = AlgaeState.IDLE;
-
     @Logged(name = "Desired Angle (rad)", importance = Logged.Importance.CRITICAL)
-    double desiredAngleRad = 0.0;
+    double desiredAngleRad = AlgaeState.IDLE.getArmAngle();
 
     @Logged(name = "Controller Output", importance = Logged.Importance.DEBUG)
     double controllerOutput = 0.0;

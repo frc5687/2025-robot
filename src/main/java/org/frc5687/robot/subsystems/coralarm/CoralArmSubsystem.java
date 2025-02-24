@@ -21,7 +21,6 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
 
     public CoralArmSubsystem(RobotContainer container, CoralArmIO io) {
         super(container, io, new CoralInputs(), new CoralOutputs());
-        setDesiredState(_inputs.currentState);
     }
 
     @Override
@@ -51,11 +50,6 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
                 * Math.cos(angle);
     }
 
-    public void setDesiredState(CoralState state) {
-        _outputs.desiredState = state;
-        setArmAngle(state.getArmAngle());
-    }
-
     public void setWheelMotorDutyCycle(double voltage) {
         _outputs.wheelPositionControl = false;
         _outputs.wheelVoltageCommand = voltage;
@@ -71,8 +65,8 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
         setWheelMotorPosition(getWheelMotorPosition());
     }
 
-    public CoralState getDesiredState() {
-        return _outputs.desiredState;
+    public void setArmAngle(CoralState state) {
+        setArmAngle(state.getArmAngle());
     }
 
     public double getArmAngleRads() {
@@ -91,38 +85,17 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
         return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.08;
     }
 
+    public boolean isAtState(CoralState state) {
+        double angleDiff = Math.abs(state.getArmAngle() - getArmAngleRads());
+        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(3.0);
+        return isWithinPositionTolerance;
+    }
+
     public boolean isAtDesiredWheelAngle() {
         return Math.abs(_outputs.wheelPositionCommand - _inputs.wheelAngle) < 0.08;
     }
 
     public boolean isCoralDetected() {
         return _inputs.isCoralDetected;
-    }
-
-    public void setCurrentState(CoralState state) {
-        _inputs.currentState = state;
-    }
-
-    public CoralState getCurrentState() {
-        return _inputs.currentState;
-    }
-
-    public void mapToClosestState() {
-        CoralState closestState = CoralState.IDLE;
-        double minDist = Double.MAX_VALUE;
-        for (CoralState state : CoralState.values()) {
-            double dist = Math.abs(getArmAngleRads() - state.getArmAngle());
-            if (dist < minDist) {
-                closestState = state;
-                minDist = dist;
-            }
-        }
-        _inputs.currentState = closestState;
-    }
-
-    public boolean isAtState(CoralState state) {
-        double angleDiff = Math.abs(state.getArmAngle() - getArmAngleRads());
-        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(3.0);
-        return isWithinPositionTolerance;
     }
 }

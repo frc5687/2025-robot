@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
-import org.frc5687.robot.subsystems.superstructure.SuperstructureGoals;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.util.FieldConstants.ReefHeight;
 import org.frc5687.robot.util.OutliersController;
@@ -83,25 +82,35 @@ public class OperatorInterface {
 
         _operatorController
                 .a()
-                .onTrue(manager.createRequest(SuperstructureGoals.PLACE_CORAL_L1, RequestType.QUEUED));
+                .onTrue(
+                        manager.createRequest(
+                                Constants.SuperstructureGoals.PLACE_CORAL_L1, RequestType.QUEUED));
         _operatorController
                 .b()
-                .onTrue(manager.createRequest(SuperstructureGoals.PLACE_CORAL_L2, RequestType.QUEUED));
+                .onTrue(
+                        manager.createRequest(
+                                Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.QUEUED));
         _operatorController
                 .x()
-                .onTrue(manager.createRequest(SuperstructureGoals.PLACE_CORAL_L3, RequestType.QUEUED));
+                .onTrue(
+                        manager.createRequest(
+                                Constants.SuperstructureGoals.PLACE_CORAL_L3, RequestType.QUEUED));
         _operatorController
                 .y()
-                .onTrue(manager.createRequest(SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED));
+                .onTrue(
+                        manager.createRequest(
+                                Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED));
 
         _operatorController
                 .leftBumper()
                 .whileTrue(
-                        manager.grabAlgae(SuperstructureGoals.PLACE_CORAL_L3_ALGAE_GRAB, RequestType.QUEUED));
+                        manager.grabAlgae(
+                                Constants.SuperstructureGoals.PLACE_CORAL_L3_ALGAE_GRAB, RequestType.QUEUED));
         _operatorController
                 .rightBumper()
                 .whileTrue(
-                        manager.grabAlgae(SuperstructureGoals.PLACE_CORAL_L4_ALGAE_GRAB, RequestType.QUEUED));
+                        manager.grabAlgae(
+                                Constants.SuperstructureGoals.PLACE_CORAL_L4_ALGAE_GRAB, RequestType.QUEUED));
 
         _operatorController.rightTrigger().onTrue(manager.receiveFunnel(RequestType.IMMEDIATE));
     }

@@ -6,9 +6,6 @@ import org.frc5687.robot.util.BaseInputs;
 
 @Logged
 public class AlgaeInputs extends BaseInputs {
-    @Logged(name = "Algae State", importance = Logged.Importance.CRITICAL)
-    public AlgaeState algaeState = AlgaeState.IDLE;
-
     @Logged(name = "Arm Angle (rads)", importance = Logged.Importance.CRITICAL)
     public double angleRads = 0.0;
 

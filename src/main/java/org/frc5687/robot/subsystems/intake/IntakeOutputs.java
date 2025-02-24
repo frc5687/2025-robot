@@ -5,10 +5,6 @@ import org.frc5687.robot.util.BaseOutputs;
 
 @Logged
 public class IntakeOutputs extends BaseOutputs {
-
-    @Logged(name = "Intake Desired State", importance = Logged.Importance.CRITICAL)
-    public IntakeState desiredState = IntakeState.IDLE;
-
     @Logged(name = "Roller Voltage Command (V)", importance = Logged.Importance.CRITICAL)
     public double rollerVoltage = 0.0;
 
@@ -16,7 +12,7 @@ public class IntakeOutputs extends BaseOutputs {
     public double intakeVoltage = 0.0;
 
     @Logged(name = "Pivot Target Angle", importance = Logged.Importance.CRITICAL)
-    public double pivotTargetAngle = 0.0;
+    public double pivotTargetAngle = IntakeState.IDLE.getValue();
 
     @Logged(name = "Desired Angle (rad)", importance = Logged.Importance.CRITICAL)
     double desiredAngleRad = 0.0;

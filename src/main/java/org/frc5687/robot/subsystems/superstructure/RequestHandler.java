@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.Queue;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.subsystems.coralarm.CoralState;
-import org.frc5687.robot.subsystems.intake.IntakeState;
 import org.frc5687.robot.util.EpilogueLog;
 
 public class RequestHandler implements EpilogueLog {
@@ -117,16 +116,16 @@ public class RequestHandler implements EpilogueLog {
 
     private void setSubsystemStates(SuperstructureState state) {
         if (state.getElevator().isPresent()) {
-            _container.getElevator().setDesiredState(state.getElevator().get());
+            _container.getElevator().setDesiredPlatformHeightWorld(state.getElevator().get());
         }
         if (state.getCoral().isPresent()) {
-            _container.getCoral().setDesiredState(state.getCoral().get());
+            _container.getCoral().setArmAngle(state.getCoral().get());
         }
         if (state.getAlgae().isPresent()) {
-            _container.getAlgae().setDesiredState(state.getAlgae().get());
+            _container.getAlgae().setArmAngle(state.getAlgae().get());
         }
         if (state.getIntake().isPresent()) {
-            _container.getIntake().setDesiredState(state.getIntake().get());
+            _container.getIntake().setDesiredPivotAngle(state.getIntake().get());
         }
     }
 
@@ -139,15 +138,6 @@ public class RequestHandler implements EpilogueLog {
         if (goal.getCoral().isPresent() && !_container.getCoral().isAtState(goal.getCoral().get()))
             return false;
         return true;
-    }
-
-    private SuperstructureState getCurrentState() {
-        return new SuperstructureState(
-                Optional.of(_container.getElevator().getCurrentState()),
-                Optional.of(_container.getCoral().getCurrentState()),
-                Optional.of(_container.getAlgae().getCurrentState()),
-                Optional.of(IntakeState.IDLE) // TODO FIXME
-                );
     }
 
     public SuperstructureRequest getActiveRequest() {

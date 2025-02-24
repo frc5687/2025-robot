@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import java.util.function.Supplier;
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.util.FieldConstants;
 
@@ -41,7 +42,7 @@ public class SuperstructureManager extends SubsystemBase {
                                         () ->
                                                 type != RequestType.QUEUED
                                                         || _forceQueueExecution
-                                                        || isPositionSafe()
+                                                        || isPositionNearReef()
                                                         || isElevatorGoingDown(stateSupplier.get()),
                                         description)),
                 // execute
@@ -66,7 +67,8 @@ public class SuperstructureManager extends SubsystemBase {
 
     public Command receiveFunnel(RequestType type) {
         return new SequentialCommandGroup(
-                createRequest(() -> SuperstructureGoals.RECEIVE_FROM_FUNNEL, "Receiving from funnel", type),
+                createRequest(
+                        () -> Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, "Receiving from funnel", type),
                 new FunctionalCommand(
                         () -> {
                             _container.getCoral().setWheelMotorDutyCycle(0.3);
@@ -81,13 +83,8 @@ public class SuperstructureManager extends SubsystemBase {
     }
 
     public Command receiveFunnelSim(RequestType type) {
-        return createRequest(() -> SuperstructureGoals.RECEIVE_FROM_FUNNEL, "Receive from funnel", type)
-                .until(() -> true)
-                .andThen(
-                        createRequest(
-                                () -> SuperstructureGoals.RECEIVE_FROM_FUNNEL,
-                                "Hold after receive",
-                                RequestType.IMMEDIATE));
+        return createRequest(
+                () -> Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, "Receive from funnel", type);
     }
 
     public Command grabAlgae(SuperstructureState state, RequestType type) {
@@ -104,7 +101,7 @@ public class SuperstructureManager extends SubsystemBase {
         _forceQueueExecution = false;
     }
 
-    private boolean isPositionSafe() {
+    private boolean isPositionNearReef() {
         Translation2d currentPose = _container.getDrive().getPose().getTranslation();
         Translation2d reefCenter = getAllianceSpecificReefCenter();
         return currentPose.getDistance(reefCenter) <= 3.5;

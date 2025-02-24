@@ -17,7 +17,6 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
 
     public AlgaeArmSubsystem(RobotContainer container, AlgaeArmIO io) {
         super(container, io, new AlgaeInputs(), new AlgaeOutputs());
-        setDesiredState(_inputs.algaeState);
     }
 
     @Override
@@ -33,17 +32,8 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
         }
     }
 
-    public AlgaeState getDesiredState() {
-        return _outputs.desiredState;
-    }
-
-    public void setDesiredState(AlgaeState state) {
-        _outputs.desiredState = state;
-        setDesiredAngleRadians(state.getArmAngle());
-    }
-
-    public void setDesiredAngleRadians(double angleRadians) {
-        _outputs.desiredAngleRad = angleRadians;
+    public void setArmAngle(AlgaeState state) {
+        setArmAngle(state.getArmAngle());
     }
 
     public void setArmAngle(double angle) {
@@ -62,39 +52,17 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
         _outputs.wheelVoltageCommand = voltage;
     }
 
-    // TODO: Make tolerance for all subsystems
     public boolean isAtDesiredAngle() {
         return Math.abs(_outputs.desiredAngleRad - _inputs.angleRads) < 0.04;
-    }
-
-    public void setCurrentState(AlgaeState state) {
-        _inputs.algaeState = state;
-    }
-
-    public AlgaeState getCurrentState() {
-        return _inputs.algaeState;
-    }
-
-    public boolean isAlgaeDetected() {
-        return _inputs.isAlgaeDetected;
-    }
-
-    public void mapToClosestState() {
-        AlgaeState closestState = AlgaeState.IDLE;
-        double minDist = Double.MAX_VALUE;
-        for (AlgaeState state : AlgaeState.values()) {
-            double dist = Math.abs(getArmAngleRads() - state.getArmAngle());
-            if (dist < minDist) {
-                closestState = state;
-                minDist = dist;
-            }
-        }
-        _inputs.algaeState = closestState;
     }
 
     public boolean isAtState(AlgaeState state) {
         double angleDiff = Math.abs(state.getArmAngle() - getArmAngleRads());
         boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(5.0);
         return isWithinPositionTolerance;
+    }
+
+    public boolean isAlgaeDetected() {
+        return _inputs.isAlgaeDetected;
     }
 }

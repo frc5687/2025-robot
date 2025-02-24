@@ -4,11 +4,8 @@ import edu.wpi.first.epilogue.Logged;
 import org.frc5687.robot.util.BaseOutputs;
 
 public class CoralOutputs extends BaseOutputs {
-    @Logged(name = "Desired Coral State", importance = Logged.Importance.CRITICAL)
-    public CoralState desiredState = CoralState.IDLE;
-
     @Logged(name = "Desired Angle (rad)", importance = Logged.Importance.CRITICAL)
-    public double desiredAngleRad = desiredState.getArmAngle();
+    public double desiredAngleRad = CoralState.IDLE.getArmAngle();
 
     @Logged(name = "Controller Output", importance = Logged.Importance.DEBUG)
     public double controllerOutput = 0.0;

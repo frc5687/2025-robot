@@ -11,16 +11,12 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSTDFilter {
-    private final TunableDouble BASE_STD =
-            new TunableDouble(
-                    "VisionSTDFilter", "BASE_STD", 0.3);
+    private final TunableDouble BASE_STD = new TunableDouble("VisionSTDFilter", "BASE_STD", 0.3);
     private static final double MIN_STD = 0.03;
     private final TunableDouble TAG_DISTANCE_FACTOR =
-            new TunableDouble(
-                    "VisionSTDFilter", "TAG_DISTANCE_FACTOR", 0.1); 
+            new TunableDouble("VisionSTDFilter", "TAG_DISTANCE_FACTOR", 0.1);
     private final TunableDouble MULTI_TAG_BOOST =
-            new TunableDouble(
-                    "VisionSTDFilter", "MUTLI_TAG_BOOST", 0.3);
+            new TunableDouble("VisionSTDFilter", "MUTLI_TAG_BOOST", 0.3);
 
     // reworked to be WAY simpler, start adding functionality when needed.
     public Matrix<N3, N1> calculateVisionStdDevs(EstimatedRobotPose visionPose) {
