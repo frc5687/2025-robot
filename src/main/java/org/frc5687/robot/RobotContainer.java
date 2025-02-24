@@ -173,7 +173,7 @@ public class RobotContainer implements EpilogueLog {
     private void setupNamedCommand() {
         NamedCommands.registerCommand(
                 "CoralL4",
-                _superstructureManager.setToPlaceHeight(
+                _superstructureManager.createRequest(
                         SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
 
         if (RobotBase.isSimulation()) {
@@ -189,17 +189,17 @@ public class RobotContainer implements EpilogueLog {
 
         NamedCommands.registerCommand(
                 "CoralL4",
-                _superstructureManager.setToPlaceHeight(
+                _superstructureManager.createRequest(
                         SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
 
         NamedCommands.registerCommand(
                 "CoralL3",
-                _superstructureManager.setToPlaceHeight(
+                _superstructureManager.createRequest(
                         SuperstructureGoals.PLACE_CORAL_L3, RequestType.IMMEDIATE));
 
         NamedCommands.registerCommand(
                 "CoralL2",
-                _superstructureManager.setToPlaceHeight(
+                _superstructureManager.createRequest(
                         SuperstructureGoals.PLACE_CORAL_L2, RequestType.IMMEDIATE));
 
         // NamedCommands.registerCommand(

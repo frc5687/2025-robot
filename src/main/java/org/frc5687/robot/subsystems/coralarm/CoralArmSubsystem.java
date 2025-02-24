@@ -17,6 +17,7 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     private TunableDouble coralD = new TunableDouble("Coral", "kD", Constants.CoralArm.kD);
     private TunableDouble coralV = new TunableDouble("Coral", "kV", Constants.CoralArm.kV);
     private TunableDouble coralS = new TunableDouble("Coral", "kS", Constants.CoralArm.kS);
+    private TunableDouble fudge = new TunableDouble("Coral", "fudge", 0.0);
 
     public CoralArmSubsystem(RobotContainer container, CoralArmIO io) {
         super(container, io, new CoralInputs(), new CoralOutputs());
@@ -30,6 +31,9 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     protected void periodic(CoralInputs inputs, CoralOutputs outputs) {
         _stateManger.updateCoralArm(_inputs.angleRads);
         _inputs.pose = _stateManger.getPose(RobotCoordinate.CORAL_ARM_BASE);
+        double elevatorAcceleration = _robotContainer.getElevator().getInputs().platformAcceleration;
+        _outputs.dynamicsFF =
+                calculateGravityFeedForward(getArmAngleRads(), 9.81 + fudge.get() * elevatorAcceleration);
 
         if (coralP.hasChanged()
                 || coralI.hasChanged()
@@ -38,6 +42,13 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
                 || coralS.hasChanged()) {
             _io.setPID(coralP.get(), coralI.get(), coralD.get(), coralV.get(), coralS.get(), 0.0, 0.0);
         }
+    }
+
+    private double calculateGravityFeedForward(double angle, double gravityAcceleration) {
+        return ((Constants.CoralArm.ARM_LENGTH / 2.0)
+                        * (Constants.CoralArm.GEARBOX.rOhms * Constants.CoralArm.ARM_MASS * gravityAcceleration)
+                        / (Constants.CoralArm.GEAR_RATIO * Constants.CoralArm.GEARBOX.KtNMPerAmp))
+                * Math.cos(angle);
     }
 
     public void setDesiredState(CoralState state) {

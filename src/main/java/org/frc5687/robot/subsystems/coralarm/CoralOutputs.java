@@ -16,8 +16,8 @@ public class CoralOutputs extends BaseOutputs {
     @Logged(name = "Desired Voltage (V)", importance = Logged.Importance.DEBUG)
     public double voltageCommand = 0.0;
 
-    @Logged(name = "Desired Voltage Feed Forward (V)", importance = Logged.Importance.DEBUG)
-    public double voltageFeedForward = 0.0;
+    @Logged(name = "Dynamics Feed Forward (V)", importance = Logged.Importance.DEBUG)
+    public double dynamicsFF = 0.0;
 
     @Logged(
             name = "Wheel Control Type (is position controlled?)",

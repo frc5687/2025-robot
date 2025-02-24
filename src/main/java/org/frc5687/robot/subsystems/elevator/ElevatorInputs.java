@@ -24,6 +24,9 @@ public class ElevatorInputs extends BaseInputs {
     @Logged(name = "Platform Motors Current (A)", importance = Logged.Importance.CRITICAL)
     public double[] platformMotorCurrents = new double[2];
 
+    @Logged(name = "Platform Acceleration (m/s^2)", importance = Logged.Importance.CRITICAL)
+    public double platformAcceleration = 0.0;
+
     @Logged(name = "Stage 3D Pose", importance = Logged.Importance.DEBUG)
     public Pose3d stagePose = new Pose3d();
 

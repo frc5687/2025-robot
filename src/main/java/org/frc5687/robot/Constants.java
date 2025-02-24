@@ -305,13 +305,13 @@ public class Constants {
         public static final double MOTION_MAGIC_EXPO_KA = 0.04;
 
         // This needs to be tuned with real PID values
-        public static final double kP = 120.0;
+        public static final double kP = 100.0;
         public static final double kI = 0.0;
-        public static final double kD = 1.2; // 2.0
+        public static final double kD = 3.0;
         public static final double kS = 2.0;
-        public static final double kG = 0.0;
-        public static final double kV = 0.0; // 0.09
-        public static final double kA = 0.0; // 0.05
+        public static final double kG = 5.0;
+        public static final double kV = 0.0;
+        public static final double kA = 0.0;
 
         public static final boolean EAST_INVERTED = false;
         public static final boolean WEST_INVERTED = true;
@@ -356,9 +356,9 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 20.0;
+        public static final double kP = 40.0;
         public static final double kI = 0.0;
-        public static final double kD = 0.35;
+        public static final double kD = 2.3;
         public static final double kV = 0.4;
         public static final double kS = 0.6;
 

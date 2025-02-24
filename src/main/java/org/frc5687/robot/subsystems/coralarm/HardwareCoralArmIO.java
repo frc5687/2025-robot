@@ -86,13 +86,6 @@ public class HardwareCoralArmIO implements CoralArmIO {
         return MathUtil.clamp(desiredAngle, Constants.CoralArm.MIN_ANGLE, Constants.CoralArm.MAX_ANGLE);
     }
 
-    private double calculateGravityFeedForward(double angle) {
-        return ((Constants.CoralArm.ARM_LENGTH / 2.0)
-                        * (Constants.CoralArm.GEARBOX.rOhms * Constants.CoralArm.ARM_MASS * 9.81)
-                        / (Constants.CoralArm.GEAR_RATIO * Constants.CoralArm.GEARBOX.KtNMPerAmp))
-                * Math.cos(angle);
-    }
-
     @Override
     public void updateInputs(CoralInputs inputs) {
         StatusSignal.refreshAll(_absoluteAngle, _wheelAngle);
@@ -107,20 +100,17 @@ public class HardwareCoralArmIO implements CoralArmIO {
     public void writeOutputs(CoralOutputs outputs) {
         double currentAngle = getAngleRads();
         double safeAngle = processSafeAngle(outputs.desiredAngleRad);
-        // calculateShortestPath(currentAngle);
 
         _controller.setGoal(safeAngle);
 
         double pidOutput = _controller.calculate(currentAngle);
-        double dynamicsFF = calculateGravityFeedForward(currentAngle);
         double motorFF = _ffModel.calculate(_controller.getSetpoint().velocity);
-        double ffOutput = motorFF + dynamicsFF;
+        double ffOutput = motorFF + outputs.dynamicsFF;
 
         double totalVoltage = MathUtil.clamp(pidOutput + ffOutput, -12.0, 12.0);
 
         outputs.voltageCommand = totalVoltage;
         outputs.controllerOutput = pidOutput;
-        outputs.voltageFeedForward = ffOutput;
 
         _pivotMotor.setVoltage(totalVoltage);
         if (outputs.wheelPositionControl) {

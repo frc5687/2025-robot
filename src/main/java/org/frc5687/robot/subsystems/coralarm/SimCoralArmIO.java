@@ -47,14 +47,6 @@ public class SimCoralArmIO implements CoralArmIO {
         _controller.disableContinuousInput();
     }
 
-    // https://file.tavsys.net/control/controls-engineering-in-frc.pdf Look up single jointed arm
-    private double calculateFeedForward(double angle) {
-        return ((Constants.CoralArm.ARM_LENGTH / 2.0)
-                        * (Constants.CoralArm.GEARBOX.rOhms * Constants.CoralArm.ARM_MASS * 9.81)
-                        / (Constants.CoralArm.GEAR_RATIO * Constants.CoralArm.GEARBOX.KtNMPerAmp))
-                * Math.cos(angle);
-    }
-
     @Override
     public void updateInputs(CoralInputs inputs) {
         // Update arm sim
@@ -75,7 +67,6 @@ public class SimCoralArmIO implements CoralArmIO {
     public void writeOutputs(CoralOutputs outputs) {
         _controller.setGoal(outputs.desiredAngleRad);
         outputs.controllerOutput = _controller.calculate(_armSim.getAngleRads());
-        outputs.voltageFeedForward = calculateFeedForward(_armSim.getAngleRads());
-        _armSim.setInputVoltage(outputs.controllerOutput + outputs.voltageFeedForward);
+        _armSim.setInputVoltage(outputs.controllerOutput + outputs.dynamicsFF);
     }
 }

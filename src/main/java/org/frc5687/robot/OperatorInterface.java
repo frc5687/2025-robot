@@ -81,16 +81,16 @@ public class OperatorInterface {
 
         _operatorController
                 .a()
-                .onTrue(manager.setToPlaceHeight(SuperstructureGoals.PLACE_CORAL_L1, RequestType.QUEUED));
+                .onTrue(manager.createRequest(SuperstructureGoals.PLACE_CORAL_L1, RequestType.QUEUED));
         _operatorController
                 .b()
-                .onTrue(manager.setToPlaceHeight(SuperstructureGoals.PLACE_CORAL_L2, RequestType.QUEUED));
+                .onTrue(manager.createRequest(SuperstructureGoals.PLACE_CORAL_L2, RequestType.QUEUED));
         _operatorController
                 .x()
-                .onTrue(manager.setToPlaceHeight(SuperstructureGoals.PLACE_CORAL_L3, RequestType.QUEUED));
+                .onTrue(manager.createRequest(SuperstructureGoals.PLACE_CORAL_L3, RequestType.QUEUED));
         _operatorController
                 .y()
-                .onTrue(manager.setToPlaceHeight(SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED));
+                .onTrue(manager.createRequest(SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED));
 
         _operatorController
                 .leftBumper()

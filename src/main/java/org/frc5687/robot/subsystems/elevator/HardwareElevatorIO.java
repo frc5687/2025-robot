@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.util.CTREUtil;
@@ -21,8 +22,10 @@ public class HardwareElevatorIO implements ElevatorIO {
     private final TalonFX _eastMotor;
     private final TalonFX _westMotor;
 
+    private final StatusSignal<AngularAcceleration> _westAcceleration;
     private final StatusSignal<AngularVelocity> _westVelocity;
     private final StatusSignal<Angle> _westPosition;
+    private final StatusSignal<AngularAcceleration> _eastAcceleration;
     private final StatusSignal<AngularVelocity> _eastVelocity;
     private final StatusSignal<Angle> _eastPosition;
 
@@ -35,6 +38,8 @@ public class HardwareElevatorIO implements ElevatorIO {
     private final LaserCan _laserCan;
 
     private double _platformVelocity = 0.0;
+
+    private boolean _zeroed;
 
     public HardwareElevatorIO(int eastMotorId, int westMotorId, int laserCanId) {
         _laserCan = new LaserCan(laserCanId);
@@ -53,14 +58,16 @@ public class HardwareElevatorIO implements ElevatorIO {
         _westVoltageRequest = new VoltageOut(0);
         _eastVoltageRequest = new VoltageOut(0);
 
+        _westAcceleration = _westMotor.getAcceleration();
+        _eastAcceleration = _eastMotor.getAcceleration();
+
         setSignalFrequency();
         setControlFrequency();
 
         configureMotor(_eastMotor, Constants.Elevator.EAST_INVERTED);
         configureMotor(_westMotor, Constants.Elevator.WEST_INVERTED);
 
-        _eastMotor.setPosition(0);
-        _westMotor.setPosition(0);
+        _zeroed = false;
     }
 
     private void setControlFrequency() {
@@ -79,8 +86,10 @@ public class HardwareElevatorIO implements ElevatorIO {
     @Override
     public void updateInputs(ElevatorInputs inputs) {
         StatusSignal.refreshAll(
+                _westAcceleration,
                 _westVelocity,
                 _westPosition,
+                _eastAcceleration,
                 _eastVelocity,
                 _eastPosition,
                 _eastMotor.getSupplyCurrent(),
@@ -102,7 +111,13 @@ public class HardwareElevatorIO implements ElevatorIO {
                 (_eastVelocity.getValueAsDouble() + _westVelocity.getValueAsDouble() / 2.0)
                         * (2 * Math.PI * Constants.Elevator.DRUM_RADIUS)
                         / Constants.Elevator.GEAR_RATIO;
-        inputs.firstStageVelocityMPS = _platformVelocity;
+
+        inputs.platformAcceleration =
+                (_eastAcceleration.getValueAsDouble() + _westAcceleration.getValueAsDouble() / 2.0)
+                        * (2 * Math.PI * Constants.Elevator.DRUM_RADIUS)
+                        / Constants.Elevator.GEAR_RATIO;
+
+        inputs.firstStageVelocityMPS = _platformVelocity / 2.0;
         inputs.platformMotorCurrents =
                 new double[] {
                     _eastMotor.getSupplyCurrent().getValueAsDouble(),
@@ -111,7 +126,21 @@ public class HardwareElevatorIO implements ElevatorIO {
         LaserCan.Measurement measurement = _laserCan.getMeasurement();
 
         if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-            inputs.laserSensorElevatorHeightMeters = measurement.distance_mm * 1000.0;
+            inputs.laserSensorElevatorHeightMeters = measurement.distance_mm / 1000.0;
+            if (!_zeroed) {
+                double laserMotorMeters = inputs.laserSensorElevatorHeightMeters - 0.030;
+                _eastMotor.setPosition(
+                        laserMotorMeters
+                                / Constants.Elevator.DRUM_RADIUS
+                                * Constants.Elevator.GEAR_RATIO
+                                / (2 * Math.PI));
+                _westMotor.setPosition(
+                        laserMotorMeters
+                                / Constants.Elevator.DRUM_RADIUS
+                                * Constants.Elevator.GEAR_RATIO
+                                / (2 * Math.PI));
+                _zeroed = true;
+            }
         } else {
             // If we get a bad measurement we want to set it to some invalid measurement
             inputs.laserSensorElevatorHeightMeters = -1;
@@ -120,6 +149,12 @@ public class HardwareElevatorIO implements ElevatorIO {
 
     @Override
     public void writeOutputs(ElevatorOutputs outputs) {
+
+        if (!_zeroed) {
+            System.err.println(
+                    "BIG BAD ERROR!!!! ELEVATOR HAS NOT BEEN ZEROED, SO NO ELEVATING FOR NOW >:(");
+            return;
+        }
 
         // double nwPos = outputs.desiredStageHeight + (outputs.desiredStageHeight *
         // backlashOffset.get());
@@ -193,8 +228,6 @@ public class HardwareElevatorIO implements ElevatorIO {
                 isInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
 
         config.Voltage.withPeakForwardVoltage(Volts.of(12)).withPeakReverseVoltage(Volts.of(-12));
-        double gearRatio = Constants.Elevator.GEAR_RATIO;
-        double metersToRotations = (1.0 / (Constants.Elevator.DRUM_RADIUS)) * gearRatio;
 
         config.MotionMagic.MotionMagicCruiseVelocity = 0;
         config.MotionMagic.MotionMagicExpo_kA = Constants.Elevator.MOTION_MAGIC_EXPO_KA;

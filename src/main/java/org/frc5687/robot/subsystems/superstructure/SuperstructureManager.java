@@ -60,7 +60,7 @@ public class SuperstructureManager extends SubsystemBase {
                 this);
     }
 
-    public Command setToPlaceHeight(SuperstructureState placeState, RequestType type) {
+    public Command createRequest(SuperstructureState placeState, RequestType type) {
         return createRequest(() -> placeState, "Set place height " + placeState.getElevator(), type);
     }
 
