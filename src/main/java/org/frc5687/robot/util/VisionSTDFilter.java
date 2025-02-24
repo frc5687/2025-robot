@@ -212,13 +212,4 @@ public class VisionSTDFilter {
         timestampHistory.clear();
         confidenceHistory.clear();
     }
-
-    // private double getxstddev() {
-    //     double xstddev = 0.0;
-    //     for (int i = 0; true; i++) {
-    //         var pose = visionPoses.get(i);
-    //         if (pose == null) break;
-    //         double x = pose.estimatedPose.getX();
-    //     }
-    // }
 }
