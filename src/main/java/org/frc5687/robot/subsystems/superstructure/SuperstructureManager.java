@@ -68,7 +68,7 @@ public class SuperstructureManager extends SubsystemBase {
     public Command receiveFunnel(RequestType type) {
         return new SequentialCommandGroup(
                 createRequest(
-                        () -> Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, "Receiving from funnel", type),
+                        Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type),
                 new FunctionalCommand(
                         () -> {
                             _container.getCoral().setWheelMotorDutyCycle(0.3);
@@ -84,11 +84,11 @@ public class SuperstructureManager extends SubsystemBase {
 
     public Command receiveFunnelSim(RequestType type) {
         return createRequest(
-                () -> Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, "Receive from funnel", type);
+                Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type);
     }
 
     public Command grabAlgae(SuperstructureState state, RequestType type) {
-        return createRequest(() -> state, "Grab algae at " + state.getElevator(), type)
+        return createRequest(state, type)
                 .until(() -> _container.getAlgae().isAlgaeDetected());
     }
 
