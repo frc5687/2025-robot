@@ -52,15 +52,11 @@ public class PoseEstimator {
         _lastPose = pose;
         _currentVelocity = 0.0;
         _poseBuffer.clear();
-        _visionStdFilter.reset();
     }
 
     public void addVisionMeasurement(EstimatedRobotPose visionPose, double timestamp) {
-        Matrix<N3, N1> stdDevs =
-                _visionStdFilter.calculateVisionStdDevs(
-                        visionPose, _estimatedPose, timestamp, _currentVelocity);
-        processMeasurement(
-                visionPose.estimatedPose.toPose2d(), VecBuilder.fill(0.01, 0.01, 1), timestamp);
+        Matrix<N3, N1> stdDevs = _visionStdFilter.calculateVisionStdDevs(visionPose);
+        processMeasurement(visionPose.estimatedPose.toPose2d(), stdDevs, timestamp);
     }
 
     public void updateOdometry() {
