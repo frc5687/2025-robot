@@ -4,6 +4,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
@@ -15,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 
-public class PoseEstimator {
+public class PoseEstimator implements EpilogueLog {
     private static final double POSE_BUFFER_SECONDS = 1.5;
 
     private final OdometrySource _odometrySource;
@@ -56,6 +57,7 @@ public class PoseEstimator {
 
     public void addVisionMeasurement(EstimatedRobotPose visionPose, double timestamp) {
         Matrix<N3, N1> stdDevs = _visionStdFilter.calculateVisionStdDevs(visionPose);
+        log("Vision Pose", visionPose.estimatedPose, Pose3d.struct);
         processMeasurement(visionPose.estimatedPose.toPose2d(), stdDevs, timestamp);
     }
 
@@ -140,5 +142,10 @@ public class PoseEstimator {
 
     public double getCurrentVelocity() {
         return _currentVelocity;
+    }
+
+    @Override
+    public String getLogBase() {
+        return "PoseEstimator";
     }
 }

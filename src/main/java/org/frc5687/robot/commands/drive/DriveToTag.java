@@ -14,8 +14,8 @@ import org.frc5687.robot.subsystems.vision.AprilTagObservation;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
 import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.ReefAlignmentHelpers;
-import org.frc5687.robot.util.TunableDouble;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
+import org.frc5687.robot.util.TunableDouble;
 
 public class DriveToTag extends OutliersCommand {
     private final DriveSubsystem _drive;
@@ -25,7 +25,8 @@ public class DriveToTag extends OutliersCommand {
     private final ProfiledPIDController _driveController;
     private final ProfiledPIDController _thetaController;
     private final ProfiledPIDController _lateralController;
-    private final TunableDouble _distanceOffset = new TunableDouble("DriveToTag", "Distance Offset", 0.2);
+    private final TunableDouble _distanceOffset =
+            new TunableDouble("DriveToTag", "Distance Offset", 0.2);
 
     public DriveToTag(DriveSubsystem drive, VisionSubsystem vision, ReefSide reefSide) {
         _drive = drive;
@@ -38,10 +39,9 @@ public class DriveToTag extends OutliersCommand {
         _thetaController =
                 new ProfiledPIDController(
                         3.0, 0.0, 0.0, new TrapezoidProfile.Constraints(Math.PI, Math.PI / 2), 0.02);
-                        
-        _lateralController = 
-                new ProfiledPIDController(
-                        1.5, 0.0, 0.0, new TrapezoidProfile.Constraints(2.0, 3.0), 0.02);
+
+        _lateralController =
+                new ProfiledPIDController(1.5, 0.0, 0.0, new TrapezoidProfile.Constraints(2.0, 3.0), 0.02);
 
         _thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -65,10 +65,10 @@ public class DriveToTag extends OutliersCommand {
             isRedAlliance = alliance.get() == Alliance.Red;
         }
         int tagId = ReefAlignmentHelpers.getTagIdFromBestFace(_drive.getPose(), isRedAlliance);
-        
+
         String cameraName;
         List<AprilTagObservation> observations;
-        
+
         if (_reefSide == ReefSide.RIGHT) {
             cameraName = "North_West_Camera";
             observations = _vision.getNorthWestCameraObservations();
@@ -79,19 +79,21 @@ public class DriveToTag extends OutliersCommand {
 
         Optional<AprilTagObservation> observation = _vision.getTagFromObservations(observations, tagId);
         if (observation.isEmpty()) {
+            _drive.setDesiredChassisSpeeds(new ChassisSpeeds(0, 0, 0));
             return;
         }
 
         Optional<Pose3d> tagPose = FieldConstants.aprilTagLayout.getTagPose(tagId);
         if (tagPose.isEmpty()) {
+            _drive.setDesiredChassisSpeeds(new ChassisSpeeds(0, 0, 0));
             return;
         }
         log("desired tag id", tagId);
 
-        // I tried distance calculation with just pitch, corners with the focal length from simulated calibration seems better.
-        double distance = _vision.calculateDistanceWithCalibration(
-                observation.get(), cameraName);
-        
+        // I tried distance calculation with just pitch, corners with the focal length from simulated
+        // calibration seems better.
+        double distance = _vision.calculateDistanceWithCalibration(observation.get(), cameraName);
+
         log("Distance", distance);
 
         Rotation2d targetHeading =
@@ -100,19 +102,20 @@ public class DriveToTag extends OutliersCommand {
         // lateral offset to align directly with tag
         double lateralOffset = _vision.calculateLateralOffset(observation.get(), cameraName);
         log("Lateral Offset", lateralOffset);
-        
+
         // negative as the error will be negative since distance is always positive away from tag.
         double vxDesired = -_driveController.calculate(distance, _distanceOffset.get());
         double vyDesired = _lateralController.calculate(lateralOffset, 0);
-        
+
         log("vxDesired", vxDesired);
         log("vyDesired", vyDesired);
 
-        ChassisSpeeds speeds = new ChassisSpeeds(
-                vxDesired,
-                vyDesired,
-                _thetaController.calculate(
-                        _drive.getPose().getRotation().getRadians(), targetHeading.getRadians()));
+        ChassisSpeeds speeds =
+                new ChassisSpeeds(
+                        vxDesired,
+                        vyDesired,
+                        _thetaController.calculate(
+                                _drive.getPose().getRotation().getRadians(), targetHeading.getRadians()));
 
         _drive.setDesiredChassisSpeeds(speeds);
     }

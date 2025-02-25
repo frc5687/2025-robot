@@ -413,15 +413,17 @@ public class Constants {
                 new Transform3d(0.281, -0.025, 0.234, new Rotation3d(0, Units.degreesToRadians(-15), 0));
 
         public static final Matrix<N3, N3> simCalibrationMatrix = new Matrix<>(Nat.N3(), Nat.N3());
-        public static final double simFocalLength = (1280 / 2.0) / Math.tan(Units.degreesToRadians(81.0) / 2.0 );
+        public static final double simFocalLength =
+                (1280 / 2.0) / Math.tan(Units.degreesToRadians(81.0) / 2.0);
+
         static {
-                // https://www.mathworks.com/help/vision/ug/camera-calibration.html
-                // ignoring skew in sim, maybe real life as well
-                simCalibrationMatrix.set(0, 0, simFocalLength); // fx
-                simCalibrationMatrix.set(1, 1, simFocalLength); // fy
-                simCalibrationMatrix.set(0, 2, 1280 / 2.0); // cx 
-                simCalibrationMatrix.set(1, 2, 720 / 2.0); // cy 
-                simCalibrationMatrix.set(2, 2, 1.0); 
+            // https://www.mathworks.com/help/vision/ug/camera-calibration.html
+            // ignoring skew in sim, maybe real life as well
+            simCalibrationMatrix.set(0, 0, simFocalLength); // fx
+            simCalibrationMatrix.set(1, 1, simFocalLength); // fy
+            simCalibrationMatrix.set(0, 2, 1280 / 2.0); // cx
+            simCalibrationMatrix.set(1, 2, 720 / 2.0); // cy
+            simCalibrationMatrix.set(2, 2, 1.0);
         }
 
         public static final Transform3d ROBOT_TO_NW_CAM =

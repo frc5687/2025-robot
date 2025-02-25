@@ -6,10 +6,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.util.struct.StructSerializable;
 import edu.wpi.first.wpilibj.Timer;
-
 import java.nio.ByteBuffer;
 import java.util.List;
-
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.TargetCorner;
 
@@ -48,25 +46,18 @@ public class AprilTagObservation implements StructSerializable {
             double ambiguity = bb.getDouble();
             double yaw = bb.getDouble();
             double pitch = bb.getDouble();
-            
+
             Translation2d[] corners = new Translation2d[4];
             for (int i = 0; i < 4; i++) {
                 double x = bb.getDouble();
                 double y = bb.getDouble();
                 corners[i] = new Translation2d(x, y);
             }
-            
+
             double timestamp = bb.getDouble();
-            
+
             return new AprilTagObservation(
-                    id,
-                    transform,
-                    area,
-                    ambiguity,
-                    yaw,
-                    pitch,
-                    corners,
-                    timestamp);
+                    id, transform, area, ambiguity, yaw, pitch, corners, timestamp);
         }
 
         @Override
@@ -77,7 +68,7 @@ public class AprilTagObservation implements StructSerializable {
             bb.putDouble(value.getAmbiguity());
             bb.putDouble(value.getYaw());
             bb.putDouble(value.getPitch());
-            
+
             Translation2d[] corners = value.getCorners();
             for (int i = 0; i < 4; i++) {
                 if (corners != null && i < corners.length) {
@@ -88,7 +79,7 @@ public class AprilTagObservation implements StructSerializable {
                     bb.putDouble(0.0);
                 }
             }
-            
+
             bb.putDouble(value.getTimestamp());
         }
 
