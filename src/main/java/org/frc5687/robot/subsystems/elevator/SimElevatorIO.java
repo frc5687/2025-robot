@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import org.frc5687.robot.Constants;
-import org.frc5687.robot.RobotStateManager.Geometry;
 
 public class SimElevatorIO implements ElevatorIO {
     private double _kP = 200.0;
@@ -47,8 +46,8 @@ public class SimElevatorIO implements ElevatorIO {
                         Constants.Elevator.GEAR_RATIO,
                         Constants.Elevator.MASS,
                         Constants.Elevator.DRUM_RADIUS,
-                        0.0,
-                        Geometry.ELEVATOR_STAGE_ONE_MAX_HEIGHT - Geometry.ELEVATOR_STAGE_ONE_HEIGHT,
+                        Constants.Elevator.MIN_HEIGHT,
+                        Constants.Elevator.MAX_HEIGHT,
                         true,
                         0,
                         0.0001,
@@ -83,9 +82,9 @@ public class SimElevatorIO implements ElevatorIO {
 
         double pidOutput = _elevatorPIDController.calculate(currentPosition, outputs.desiredHeight);
 
-        double ffOutput = _feedforward.calculate(setpoint.velocity) + _kG;
+        // double ffOutput = _feedforward.calculate(setpoint.velocity) + _kG;
 
-        double totalVoltage = pidOutput + ffOutput;
+        double totalVoltage = pidOutput /* + ffOutpu */;
         totalVoltage = Math.max(-batteryVoltage, Math.min(batteryVoltage, totalVoltage));
 
         switch (outputs.controlMode) {

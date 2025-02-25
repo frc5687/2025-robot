@@ -288,12 +288,8 @@ public class Constants {
         public static final double MASS = 13.6078; // kg
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
-        public static final double MIN_PLATFORM_HEIGHT = 0.191039; // m
-        public static final double MAX_PLATFORM_HEIGHT = 1.5; // m
-
         public static final double MIN_HEIGHT = 0.0; // m
-        public static final double MAX_HEIGHT =
-                MAX_PLATFORM_HEIGHT / 2.0; // m THIS IS THE HEIGHT OF THE FIRST STAGE
+        public static final double MAX_HEIGHT = 0.678; // m
 
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =
@@ -343,6 +339,8 @@ public class Constants {
 
         public static final double ENCODER_OFFSET = -0.1152375;
 
+        public static final double BOTTOM_EJECT_SAFE_ANGLE = 2.22;
+        public static final double TOP_EJECT_SAFE_ANGLE = 1.5;
         public static final DCMotor GEARBOX = DCMotor.getBag(1);
         public static final double GEAR_RATIO = 315; // From Amory
         public static final double ARM_LENGTH = 0.589;
@@ -361,11 +359,11 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 40.0;
+        public static final double kP = 20.0;
         public static final double kI = 0.0;
-        public static final double kD = 2.3;
-        public static final double kV = 0.4;
-        public static final double kS = 0.6;
+        public static final double kD = 0.8;
+        public static final double kV = 0.0;
+        public static final double kS = 0.0;
 
         public static final double kP_WHEEL = 6.0;
         public static final double kI_WHEEL = 0.0;
@@ -387,7 +385,7 @@ public class Constants {
         public static final double ARM_LENGTH = Units.inchesToMeters(7.0);
         public static final double ARM_MASS = Units.lbsToKilograms(4.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
-        public static final double MIN_ANGLE = 0.0;
+        public static final double MIN_ANGLE = 2.094;
         public static final double MAX_ANGLE = 5.45;
 
         // public static final double MAX_VELOCITY_RAD_PER_SEC = 2;
@@ -435,30 +433,31 @@ public class Constants {
         public static final SuperstructureState PLACE_CORAL_L4 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4),
-                        Optional.of(AlgaeState.IDLE), Optional.empty());
-
-        public static final SuperstructureState PLACE_CORAL_L4_ALGAE_GRAB =
-                new SuperstructureState(
-                        Optional.of(ElevatorState.L4_CORAL_PLACING),
-                        Optional.of(CoralState.PLACING_L4),
-                        Optional.of(AlgaeState.REEF_PICKUP),
-                        Optional.empty());
+                        Optional.of(AlgaeState.CORAL_DODGE), Optional.empty());
 
         public static final SuperstructureState PLACE_CORAL_L3 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L3_CORAL_PLACING), Optional.of(CoralState.PLACING),
-                        Optional.of(AlgaeState.IDLE), Optional.empty());
-        public static final SuperstructureState PLACE_CORAL_L3_ALGAE_GRAB =
+                        Optional.of(AlgaeState.CORAL_DODGE), Optional.empty());
+
+        public static final SuperstructureState HIGH_ALGAE_GRAB =
                 new SuperstructureState(
-                        Optional.of(ElevatorState.L3_CORAL_PLACING),
-                        Optional.of(CoralState.PLACING),
+                        Optional.of(ElevatorState.HIGH_ALGAE_GRAB),
+                        Optional.of(CoralState.IDLE),
+                        Optional.of(AlgaeState.REEF_PICKUP),
+                        Optional.empty());
+
+        public static final SuperstructureState LOW_ALGAE_GRAB =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.LOW_ALGAE_GRAB),
+                        Optional.of(CoralState.IDLE),
                         Optional.of(AlgaeState.REEF_PICKUP),
                         Optional.empty());
 
         public static final SuperstructureState PLACE_CORAL_L2 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L2_CORAL_PLACING), Optional.of(CoralState.PLACING),
-                        Optional.of(AlgaeState.IDLE), Optional.empty());
+                        Optional.of(AlgaeState.CORAL_DODGE), Optional.empty());
 
         public static final SuperstructureState PLACE_CORAL_L1 =
                 new SuperstructureState(
@@ -470,6 +469,27 @@ public class Constants {
                         Optional.of(ElevatorState.L1_CORAL_PLACING),
                         Optional.of(CoralState.IDLE),
                         Optional.of(AlgaeState.PROCESSOR_DROPOFF),
+                        Optional.empty());
+
+        public static final SuperstructureState BARGE_HELD =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.BARGE_PLACING),
+                        Optional.of(CoralState.IDLE),
+                        Optional.of(AlgaeState.IDLE),
+                        Optional.empty());
+
+        public static final SuperstructureState BARGE_DROPOFF =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.BARGE_PLACING),
+                        Optional.of(CoralState.IDLE),
+                        Optional.of(AlgaeState.BARGE_DROPOFF),
+                        Optional.empty());
+
+        public static final SuperstructureState GROUND_PICKUP =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.STOWED),
+                        Optional.of(CoralState.IDLE),
+                        Optional.of(AlgaeState.GROUND_PICKUP),
                         Optional.empty());
     }
 }

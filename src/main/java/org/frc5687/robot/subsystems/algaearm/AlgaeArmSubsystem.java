@@ -62,6 +62,11 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
         return isWithinPositionTolerance;
     }
 
+    public boolean isSafeToEject() {
+        return _inputs.angleRads > Constants.AlgaeArm.BOTTOM_EJECT_SAFE_ANGLE
+                || _inputs.angleRads < Constants.AlgaeArm.TOP_EJECT_SAFE_ANGLE;
+    }
+
     public boolean isAlgaeDetected() {
         return _inputs.isAlgaeDetected;
     }

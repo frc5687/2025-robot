@@ -11,9 +11,6 @@ public class ElevatorOutputs extends BaseOutputs {
     @Logged(name = "Desired Height (m)", importance = Logged.Importance.CRITICAL)
     public double desiredHeight = 0.0;
 
-    @Logged(name = "Desired Platform Height World(m)", importance = Logged.Importance.CRITICAL)
-    public double desiredPlatformHeightWorldMeters = 0.0;
-
     @Logged(name = "Platform East Voltage Command (V)", importance = Logged.Importance.DEBUG)
     public double voltageCommandEast = 0.0;
 

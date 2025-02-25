@@ -36,7 +36,7 @@ public class HomeElevator extends OutliersCommand {
             _elevator.setVoltage(0.0);
             // Reset encoder position to zero (you'll need to add this method to ElevatorSubsystem)
             // _elevator.resetEncoderPosition();
-            _elevator.setDesiredPlatformHeightWorld(ElevatorState.STOWED);
+            _elevator.setDesiredHeight(ElevatorState.STOWED);
             _isFinished = true;
         }
     }

@@ -12,12 +12,6 @@ public class ElevatorInputs extends BaseInputs {
     @Logged(name = "First Stage Velocity (mps)", importance = Logged.Importance.CRITICAL)
     public double firstStageVelocityMPS = 0.0;
 
-    @Logged(name = "Platform Height (m)", importance = Logged.Importance.CRITICAL)
-    public double platformHeightMeters = 0.0;
-
-    @Logged(name = "Platform Velocity (mps)")
-    public double platformVelocityMPS = 0.0;
-
     @Logged(name = "Platform Motors Current (A)", importance = Logged.Importance.CRITICAL)
     public double[] platformMotorCurrents = new double[2];
 
@@ -30,6 +24,6 @@ public class ElevatorInputs extends BaseInputs {
     @Logged(name = "Platform 3D Pose", importance = Logged.Importance.DEBUG)
     public Pose3d platformPose = new Pose3d();
 
-    @Logged(name = "Laser Elevator Height (m)", importance = Logged.Importance.CRITICAL)
+    @Logged(name = "Laser Measurement (m)", importance = Logged.Importance.CRITICAL)
     public double laserSensorElevatorHeightMeters = -1.0;
 }

@@ -63,7 +63,7 @@ public class RequestHandler implements EpilogueLog {
         if (elevatorRequest.isEmpty()) return false;
 
         var requestedElevatorHeight = elevatorRequest.get().getHeight();
-        var currentElevatorHeight = _container.getElevator().getInputs().platformHeightMeters;
+        var currentElevatorHeight = _container.getElevator().getInputs().heightPositionMeters;
         return Math.abs(currentElevatorHeight - requestedElevatorHeight) > 0.03;
     }
 
@@ -116,7 +116,7 @@ public class RequestHandler implements EpilogueLog {
 
     private void setSubsystemStates(SuperstructureState state) {
         if (state.getElevator().isPresent()) {
-            _container.getElevator().setDesiredPlatformHeightWorld(state.getElevator().get());
+            _container.getElevator().setDesiredHeight(state.getElevator().get());
         }
         if (state.getCoral().isPresent()) {
             _container.getCoral().setArmAngle(state.getCoral().get());
@@ -132,11 +132,20 @@ public class RequestHandler implements EpilogueLog {
     private boolean activeRequestFinished() {
         var goal = getActiveRequest().targetPosition();
         if (goal.getElevator().isPresent()
-                && !_container.getElevator().isAtState(goal.getElevator().get())) return false;
-        if (goal.getAlgae().isPresent() && !_container.getAlgae().isAtState(goal.getAlgae().get()))
+                && !_container.getElevator().isAtState(goal.getElevator().get())) {
+            System.out.println("elevator not finished");
             return false;
-        if (goal.getCoral().isPresent() && !_container.getCoral().isAtState(goal.getCoral().get()))
+        }
+        ;
+        if (goal.getAlgae().isPresent() && !_container.getAlgae().isAtState(goal.getAlgae().get())) {
+            System.out.println("algae not finished");
             return false;
+        }
+        if (goal.getCoral().isPresent() && !_container.getCoral().isAtState(goal.getCoral().get())) {
+            System.out.println("coral not finished");
+            return false;
+        }
+        System.out.println("all finished");
         return true;
     }
 

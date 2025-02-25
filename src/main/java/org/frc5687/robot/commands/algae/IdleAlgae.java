@@ -20,7 +20,7 @@ public class IdleAlgae extends OutliersCommand {
 
     @Override
     protected void execute(double timestamp) {
-        if (_algaeArm.getInputs().isAlgaeDetected && isPulseActive()) {
+        if (_algaeArm.getInputs().isAlgaeDetected && isPulseActive() && _algaeArm.isSafeToEject()) {
             _algaeArm.setWheelMotorVoltage(asdf.get());
         } else {
             _algaeArm.setWheelMotorVoltage(0);

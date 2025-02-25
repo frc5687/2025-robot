@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
-import org.frc5687.robot.RobotStateManager.Geometry;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.util.TunableDouble;
@@ -23,19 +22,18 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     private TunableDouble elevatorG = new TunableDouble("Elevator", "kG", Constants.Elevator.kG);
     private TunableDouble elevatorV = new TunableDouble("Elevator", "kV", Constants.Elevator.kV);
 
-    private Optional<Double> _newDesiredPlatformHeight;
+    private Optional<Double> _newDesiredHeight;
 
     public ElevatorSubsystem(RobotContainer container, ElevatorIO io) {
         super(container, io, new ElevatorInputs(), new ElevatorOutputs());
         _container = container;
-        _newDesiredPlatformHeight = Optional.empty();
+        _newDesiredHeight = Optional.empty();
         _queuedHeight = 0.0;
     }
 
     @Override
     protected void processInputs() {
         _robotState.updatePlatform(_inputs.heightPositionMeters);
-        _inputs.platformHeightMeters = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP).getZ();
         _inputs.stagePose = _robotState.getPose(RobotCoordinate.ELEVATOR_STAGE);
         _inputs.platformPose = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP);
     }
@@ -60,35 +58,29 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
                     elevatorG.get());
         }
 
-        if (_newDesiredPlatformHeight.isPresent()) {
-            double heightMeters = _newDesiredPlatformHeight.get();
-            _outputs.desiredPlatformHeightWorldMeters = heightMeters;
-            _outputs.desiredHeight = (heightMeters - Geometry.ELEVATOR_STAGE_TWO_HEIGHT) / 2.0;
-
-            _newDesiredPlatformHeight = Optional.empty();
+        if (_newDesiredHeight.isPresent()) {
+            _outputs.desiredHeight = _newDesiredHeight.get();
+            _newDesiredHeight = Optional.empty();
         }
     }
 
-    public void setDesiredPlatformHeightWorld(ElevatorState state) {
-        setDesiredPlatformHeightWorld(state.getHeight());
+    public void setDesiredHeight(ElevatorState state) {
+        setDesiredHeight(state.getHeight());
     }
 
-    public void setDesiredPlatformHeightWorld(double heightMeters) {
+    public void setDesiredHeight(double heightMeters) {
         _outputs.controlMode = ElevatorControlMode.POSITION;
         heightMeters =
-                MathUtil.clamp(
-                        heightMeters,
-                        Constants.Elevator.MIN_PLATFORM_HEIGHT,
-                        Constants.Elevator.MAX_PLATFORM_HEIGHT);
-        _newDesiredPlatformHeight = Optional.of(heightMeters);
-    }
-
-    public double getPlatformWorldHeight() {
-        return _inputs.platformPose.getZ();
+                MathUtil.clamp(heightMeters, Constants.Elevator.MIN_HEIGHT, Constants.Elevator.MAX_HEIGHT);
+        _newDesiredHeight = Optional.of(heightMeters);
     }
 
     public boolean isAtDesiredPosition() {
-        return Math.abs(_outputs.desiredPlatformHeightWorldMeters - getPlatformWorldHeight()) < 0.01;
+        return Math.abs(_outputs.desiredHeight - _inputs.heightPositionMeters) < 0.01;
+    }
+
+    public double getElevatorHeight() {
+        return _inputs.heightPositionMeters;
     }
 
     public void setVoltage(double voltage) {
@@ -105,19 +97,8 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         return _inputs.laserSensorElevatorHeightMeters;
     }
 
-    public double getSignedTimeToSetpoint(double factorOfSafety, double setpointMotorMeters) {
-        double heightMeters = _inputs.heightPositionMeters;
-        double maxTime = 0.7;
-        double maxDistance = Constants.Elevator.MAX_HEIGHT;
-        double signedDistance = setpointMotorMeters - heightMeters;
-        double estimatedTime = maxTime * signedDistance / maxDistance;
-        log("DriveToPoseSmooth/timeItWillTakeElevator", factorOfSafety * estimatedTime);
-
-        return factorOfSafety * estimatedTime + 2.0;
-    }
-
     public boolean isAtState(ElevatorState state) {
-        double heightDiff = Math.abs(state.getHeight() - getPlatformWorldHeight());
+        double heightDiff = Math.abs(state.getHeight() - getElevatorHeight());
         // 1 cm tolerance
         boolean isWithinPositionTolerance = heightDiff < 0.01;
 

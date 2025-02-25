@@ -3,13 +3,21 @@ package org.frc5687.robot;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import java.util.Optional;
+import org.frc5687.robot.commands.algae.EjectAlgae;
+import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
+import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
+import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.FieldConstants.ReefHeight;
 import org.frc5687.robot.util.OutliersController;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
@@ -36,7 +44,6 @@ public class OperatorInterface {
 
     private void configureDriverControls(RobotContainer container, SuperstructureManager manager) {
 
-        // TODO snapto should onlt be snap to
         // TODO when the elevator is L1 with no coral it should automatically intake (might have to
         // queue this so it doesn't collide with the reef)
 
@@ -62,7 +69,21 @@ public class OperatorInterface {
                 .whileTrue(
                         new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT, ReefHeight.L4));
 
-        // _driverController.leftTrigger().whileTrue(manager.groundIntake(RequestType.IMMEDIATE));
+        _driverController
+                .leftTrigger()
+                .whileTrue(
+                        new SequentialCommandGroup(
+                                manager.grabAlgae(
+                                        Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE),
+                                new IntakeAlgae(container.getAlgae()),
+                                manager.createRequest(
+                                        new SuperstructureState(
+                                                Optional.empty(),
+                                                Optional.empty(),
+                                                Optional.of(AlgaeState.IDLE),
+                                                Optional.empty()),
+                                        RequestType.IMMEDIATE),
+                                new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))));
 
         _driverController.rightTrigger().whileTrue(new EjectCoral(container.getCoral()));
 
@@ -104,15 +125,67 @@ public class OperatorInterface {
         _operatorController
                 .leftBumper()
                 .whileTrue(
-                        manager.grabAlgae(
-                                Constants.SuperstructureGoals.PLACE_CORAL_L3_ALGAE_GRAB, RequestType.QUEUED));
+                        new SequentialCommandGroup(
+                                manager.grabAlgae(
+                                        Constants.SuperstructureGoals.LOW_ALGAE_GRAB, RequestType.IMMEDIATE),
+                                new IntakeAlgae(container.getAlgae()),
+                                new WaitUntilCommand(
+                                        () ->
+                                                container
+                                                                .getDrive()
+                                                                .getPose()
+                                                                .getTranslation()
+                                                                .getDistance(FieldConstants.getAllianceSpecificReefCenter())
+                                                        > 2),
+                                manager.createRequest(
+                                        new SuperstructureState(
+                                                Optional.empty(),
+                                                Optional.empty(),
+                                                Optional.of(AlgaeState.IDLE),
+                                                Optional.empty()),
+                                        RequestType.IMMEDIATE),
+                                new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))));
         _operatorController
                 .rightBumper()
                 .whileTrue(
-                        manager.grabAlgae(
-                                Constants.SuperstructureGoals.PLACE_CORAL_L4_ALGAE_GRAB, RequestType.QUEUED));
+                        new SequentialCommandGroup(
+                                manager.grabAlgae(
+                                        Constants.SuperstructureGoals.HIGH_ALGAE_GRAB, RequestType.IMMEDIATE),
+                                new IntakeAlgae(container.getAlgae()),
+                                new WaitUntilCommand(
+                                        () ->
+                                                container
+                                                                .getDrive()
+                                                                .getPose()
+                                                                .getTranslation()
+                                                                .getDistance(FieldConstants.getAllianceSpecificReefCenter())
+                                                        > 2),
+                                manager.createRequest(
+                                        new SuperstructureState(
+                                                Optional.empty(),
+                                                Optional.empty(),
+                                                Optional.of(AlgaeState.IDLE),
+                                                Optional.empty()),
+                                        RequestType.IMMEDIATE),
+                                new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))));
 
-        _operatorController.rightTrigger().onTrue(manager.receiveFunnel(RequestType.IMMEDIATE));
+        _operatorController.povDown().onTrue(manager.receiveFunnel(RequestType.IMMEDIATE));
+        _operatorController
+                .rightTrigger()
+                .whileTrue(
+                        new SequentialCommandGroup(
+                                manager.createRequest(
+                                        Constants.SuperstructureGoals.BARGE_HELD, RequestType.IMMEDIATE),
+                                manager.createRequest(
+                                        Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE),
+                                new EjectAlgae(container.getAlgae())));
+                        _operatorController
+                                .rightTrigger()
+                                .whileTrue(
+                                        manager.createRequest(
+                                                Constants.SuperstructureGoals.PROCESSOR_DROPOFF, RequestType.IMMEDIATE)).onFalse(
+                                                new EjectAlgae(container.getAlgae()));
+        
     }
 
     public OutliersController getDriverController() {

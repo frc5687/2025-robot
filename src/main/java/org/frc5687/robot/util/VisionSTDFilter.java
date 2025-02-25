@@ -28,7 +28,7 @@ public class VisionSTDFilter {
         double multiTagFactor = tagCount > 1 ? MULTI_TAG_BOOST.get() : 1.0;
         double xyStd = MathUtil.clamp(distanceStd * multiTagFactor, MIN_STD, BASE_STD.get());
         double thetaStd = 0.4; // just dont trust to much IMU is better TODO: Maybe use
-        System.out.println("xy: " + xyStd);
+        // System.out.println("xy: " + xyStd);
 
         return VecBuilder.fill(xyStd, xyStd, thetaStd);
     }

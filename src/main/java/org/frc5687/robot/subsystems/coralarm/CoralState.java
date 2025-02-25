@@ -4,7 +4,7 @@ import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.Constants;
 
 public enum CoralState {
-    IDLE(Units.degreesToRadians(180)),
+    IDLE(Units.degreesToRadians(30 + 90)),
     RECEIVE_FROM_FUNNEL(Constants.CoralArm.MAX_ANGLE),
     PLACING(Units.degreesToRadians(30 + 90)), // 27.5 deg
     PLACING_L4(Units.degreesToRadians(30 + 90 + 15)); // 27.5 deg

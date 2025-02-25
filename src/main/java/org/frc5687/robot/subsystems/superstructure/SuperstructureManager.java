@@ -1,8 +1,6 @@
 package org.frc5687.robot.subsystems.superstructure;
 
-import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
@@ -67,8 +65,7 @@ public class SuperstructureManager extends SubsystemBase {
 
     public Command receiveFunnel(RequestType type) {
         return new SequentialCommandGroup(
-                createRequest(
-                        Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type),
+                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type),
                 new FunctionalCommand(
                         () -> {
                             _container.getCoral().setWheelMotorDutyCycle(0.3);
@@ -83,13 +80,15 @@ public class SuperstructureManager extends SubsystemBase {
     }
 
     public Command receiveFunnelSim(RequestType type) {
-        return createRequest(
-                Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type);
+        return createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type);
     }
 
     public Command grabAlgae(SuperstructureState state, RequestType type) {
-        return createRequest(state, type)
-                .until(() -> _container.getAlgae().isAlgaeDetected());
+        return createRequest(state, type).until(() -> _container.getAlgae().isAlgaeDetected());
+    }
+
+    public Command groundIntakeAlgae(SuperstructureState state, RequestType type) {
+        return createRequest(state, type).until(() -> _container.getAlgae().isAlgaeDetected());
     }
 
     // Queue override controls
@@ -103,23 +102,15 @@ public class SuperstructureManager extends SubsystemBase {
 
     private boolean isPositionNearReef() {
         Translation2d currentPose = _container.getDrive().getPose().getTranslation();
-        Translation2d reefCenter = getAllianceSpecificReefCenter();
+        Translation2d reefCenter = FieldConstants.getAllianceSpecificReefCenter();
         return currentPose.getDistance(reefCenter) <= 3.5;
     }
 
     private boolean isElevatorGoingDown(SuperstructureState requestedState) {
         if (requestedState.getElevator().isEmpty()) return false; // FIXME is this the correct behavior?
 
-        double elevatorHeight = _container.getElevator().getPlatformWorldHeight();
+        double elevatorHeight = _container.getElevator().getElevatorHeight();
         return requestedState.getElevator().get().getHeight() < elevatorHeight;
-    }
-
-    private Translation2d getAllianceSpecificReefCenter() {
-        var alliance = DriverStation.getAlliance();
-        if (alliance.isEmpty()) return FieldConstants.Reef.center;
-        return alliance.get() == DriverStation.Alliance.Red
-                ? FlippingUtil.flipFieldPosition(FieldConstants.Reef.center)
-                : FieldConstants.Reef.center;
     }
 
     @Override

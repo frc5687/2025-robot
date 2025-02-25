@@ -1,9 +1,11 @@
 package org.frc5687.robot.util;
 
+import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -177,5 +179,13 @@ public class FieldConstants {
         } catch (Exception e) {
 
         }
+    }
+
+    public static Translation2d getAllianceSpecificReefCenter() {
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isEmpty()) return FieldConstants.Reef.center;
+        return alliance.get() == DriverStation.Alliance.Red
+                ? FlippingUtil.flipFieldPosition(FieldConstants.Reef.center)
+                : FieldConstants.Reef.center;
     }
 }

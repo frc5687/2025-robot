@@ -128,7 +128,7 @@ public class HardwareElevatorIO implements ElevatorIO {
         if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
             inputs.laserSensorElevatorHeightMeters = measurement.distance_mm / 1000.0;
             if (!_zeroed) {
-                double laserMotorMeters = inputs.laserSensorElevatorHeightMeters - 0.030;
+                double laserMotorMeters = inputs.laserSensorElevatorHeightMeters - 0.020;
                 _eastMotor.setPosition(
                         laserMotorMeters
                                 / Constants.Elevator.DRUM_RADIUS
