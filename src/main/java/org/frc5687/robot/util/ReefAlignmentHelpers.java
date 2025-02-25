@@ -3,7 +3,6 @@ package org.frc5687.robot.util;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import org.frc5687.robot.util.FieldConstants.ReefHeight;
 
 public class ReefAlignmentHelpers {
     public static final TunableDouble LEFT_OFFSET =
@@ -42,6 +41,14 @@ public class ReefAlignmentHelpers {
         return faceNumber;
     }
 
+    public static int getTagIdFromBestFace(Pose2d robotPose, boolean isRedAlliance) {
+        int faceNumber = calculateBestFace(robotPose);
+        int faceIndex = faceNumber - 1;
+        return isRedAlliance
+                ? FieldConstants.Reef.redAllianceTagIds[faceIndex]
+                : FieldConstants.Reef.blueAllianceTagIds[faceIndex];
+    }
+
     public static Pose2d getFaceAlignedPose(int faceIndex) {
         Pose2d facePose = FieldConstants.Reef.centerFaces[faceIndex];
 
@@ -60,7 +67,7 @@ public class ReefAlignmentHelpers {
         return new Pose2d(facePosition.plus(outwardOffset), robotRotation);
     }
 
-    public static Pose2d calculateTargetPose(int faceNumber, ReefSide side, ReefHeight height) {
+    public static Pose2d calculateTargetPose(int faceNumber, ReefSide side) {
         if (faceNumber < 1 || faceNumber > 6) {
             throw new IllegalArgumentException("Face number must be between 1 and 6");
         }

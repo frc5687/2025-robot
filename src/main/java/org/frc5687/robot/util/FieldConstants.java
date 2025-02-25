@@ -61,6 +61,13 @@ public class FieldConstants {
 
         public static final Pose2d[] centerFaces =
                 new Pose2d[6]; // Starting facing the driver station in clockwise order
+
+        // Starting facing the driver station in clockwise order
+        public static final int[] blueAllianceTagIds = {18, 19, 20, 21, 22, 17};
+
+        // Starting facing the driver station in clockwise order
+        public static final int[] redAllianceTagIds = {7, 6, 11, 10, 9, 8};
+
         public static final List<Map<ReefHeight, Pose3d>> branchPositions =
                 new ArrayList<>(); // Starting at the right branch facing the driver station in clockwise
 

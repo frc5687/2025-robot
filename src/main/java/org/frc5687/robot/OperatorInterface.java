@@ -12,13 +12,13 @@ import java.util.Optional;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
+import org.frc5687.robot.commands.drive.DriveToTag;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 import org.frc5687.robot.util.FieldConstants;
-import org.frc5687.robot.util.FieldConstants.ReefHeight;
 import org.frc5687.robot.util.OutliersController;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
@@ -60,14 +60,17 @@ public class OperatorInterface {
                         new InstantCommand(
                                 () -> container.getDrive().enableHeadingController(Units.degreesToRadians(60))));
 
+        // _driverController
+        //         .leftBumper()
+        //         .whileTrue(
+        //                 new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT));
         _driverController
                 .leftBumper()
-                .whileTrue(
-                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT, ReefHeight.L4));
+                .whileTrue(new DriveToTag(container.getDrive(), container.getVision(), ReefSide.RIGHT));
+
         _driverController
                 .rightBumper()
-                .whileTrue(
-                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT, ReefHeight.L4));
+                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT));
 
         _driverController
                 .leftTrigger()
@@ -179,13 +182,12 @@ public class OperatorInterface {
                                 manager.createRequest(
                                         Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE),
                                 new EjectAlgae(container.getAlgae())));
-                        _operatorController
-                                .rightTrigger()
-                                .whileTrue(
-                                        manager.createRequest(
-                                                Constants.SuperstructureGoals.PROCESSOR_DROPOFF, RequestType.IMMEDIATE)).onFalse(
-                                                new EjectAlgae(container.getAlgae()));
-        
+        _operatorController
+                .rightTrigger()
+                .whileTrue(
+                        manager.createRequest(
+                                Constants.SuperstructureGoals.PROCESSOR_DROPOFF, RequestType.IMMEDIATE))
+                .onFalse(new EjectAlgae(container.getAlgae()));
     }
 
     public OutliersController getDriverController() {

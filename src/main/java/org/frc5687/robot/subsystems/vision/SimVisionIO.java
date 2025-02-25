@@ -54,7 +54,7 @@ public class SimVisionIO implements VisionIO {
             return;
         }
 
-        addCamera("North_East_Camera", Constants.Vision.ROBOT_TO_NE_CAM, layout);
+        addCamera("North_Camera", Constants.Vision.ROBOT_TO_NORTH_CAM, layout);
         addCamera("North_West_Camera", Constants.Vision.ROBOT_TO_NW_CAM, layout);
     }
 
@@ -64,15 +64,15 @@ public class SimVisionIO implements VisionIO {
         SimCameraProperties cameraProp = new SimCameraProperties();
         cameraProp.setCalibration(1280, 720, Rotation2d.fromDegrees(81));
         cameraProp.setCalibError(0.35, 0.10);
-        cameraProp.setFPS(40);
-        cameraProp.setAvgLatencyMs(25);
+        cameraProp.setFPS(120);
+        cameraProp.setAvgLatencyMs(10);
         cameraProp.setLatencyStdDevMs(5);
 
         PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraProp);
         cameraSim.enableDrawWireframe(false);
         cameraSim.enableProcessedStream(false);
         cameraSim.enableRawStream(false);
-        cameraSim.setMaxSightRange(3.0);
+        cameraSim.setMaxSightRange(4.0);
 
         PhotonPoseEstimator estimator =
                 new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
@@ -85,7 +85,7 @@ public class SimVisionIO implements VisionIO {
     // TODO: make a queue for time as well and drop old tags
     @Override
     public void updateInputs(VisionInputs inputs) {
-        updateCameraInputs(inputs, "North_East_Camera");
+        updateCameraInputs(inputs, "North_Camera");
         updateCameraInputs(inputs, "North_West_Camera");
         _visionSim.update(_robotState.getPose(RobotCoordinate.ROBOT_BASE_SIM_ODOM).toPose2d());
     }

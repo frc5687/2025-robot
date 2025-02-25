@@ -1,12 +1,15 @@
 /* Team 5687 (C)2020-2022 */
 package org.frc5687.robot;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -406,18 +409,23 @@ public class Constants {
     }
 
     public static class Vision {
-        public static final Transform3d ROBOT_TO_NE_CAM =
-                new Transform3d(
-                        0.280108,
-                        -0.2542,
-                        0.23297,
-                        new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(10)));
+        public static final Transform3d ROBOT_TO_NORTH_CAM =
+                new Transform3d(0.281, -0.025, 0.234, new Rotation3d(0, Units.degreesToRadians(-15), 0));
+
+        public static final Matrix<N3, N3> simCalibrationMatrix = new Matrix<>(Nat.N3(), Nat.N3());
+        public static final double simFocalLength = (1280 / 2.0) / Math.tan(Units.degreesToRadians(81.0) / 2.0 );
+        static {
+                // https://www.mathworks.com/help/vision/ug/camera-calibration.html
+                // ignoring skew in sim, maybe real life as well
+                simCalibrationMatrix.set(0, 0, simFocalLength); // fx
+                simCalibrationMatrix.set(1, 1, simFocalLength); // fy
+                simCalibrationMatrix.set(0, 2, 1280 / 2.0); // cx 
+                simCalibrationMatrix.set(1, 2, 720 / 2.0); // cy 
+                simCalibrationMatrix.set(2, 2, 1.0); 
+        }
+
         public static final Transform3d ROBOT_TO_NW_CAM =
-                new Transform3d(
-                        0.280108,
-                        0.27301,
-                        0.23297,
-                        new Rotation3d(0, Units.degreesToRadians(-15), Units.degreesToRadians(-10)));
+                new Transform3d(0.281, 0.279, 0.234, new Rotation3d(0, Units.degreesToRadians(-15), 0));
         public static final Transform2d ROBOT_TO_QUEST =
                 new Transform2d(-0.175, -0.369, Rotation2d.fromDegrees(-90));
     }
