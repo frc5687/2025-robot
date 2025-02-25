@@ -87,8 +87,12 @@ public class SuperstructureManager extends SubsystemBase {
         return createRequest(state, type).until(() -> _container.getAlgae().isAlgaeDetected());
     }
 
-    public Command groundIntakeAlgae(SuperstructureState state, RequestType type) {
-        return createRequest(state, type).until(() -> _container.getAlgae().isAlgaeDetected());
+    public Command aimAtAlgaeNet() {
+        return new SequentialCommandGroup(
+                                createRequest(
+                                        Constants.SuperstructureGoals.BARGE_HELD, RequestType.IMMEDIATE),
+                                createRequest(
+                                        Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE));
     }
 
     // Queue override controls

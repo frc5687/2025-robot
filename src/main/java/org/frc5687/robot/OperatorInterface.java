@@ -2,6 +2,7 @@ package org.frc5687.robot;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -44,9 +45,6 @@ public class OperatorInterface {
 
     private void configureDriverControls(RobotContainer container, SuperstructureManager manager) {
 
-        // TODO when the elevator is L1 with no coral it should automatically intake (might have to
-        // queue this so it doesn't collide with the reef)
-
         // Face angles with funnel receive
         _driverController
                 .x()
@@ -88,9 +86,10 @@ public class OperatorInterface {
                                         RequestType.IMMEDIATE),
                                 new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))));
 
-        _driverController.rightTrigger().whileTrue(new EjectCoral(container.getCoral()));
-
+        _driverController.rightTrigger().whileTrue(
+                new ConditionalCommand(new EjectAlgae(container.getAlgae()), new EjectCoral(container.getCoral()), container.getAlgae()::isAlgaeDetected));
         _driverController.rightMiddleButton().onTrue(new InstantCommand(container.getDrive()::zeroIMU));
+
         _driverController
                 .leftMiddleButton()
                 .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
@@ -98,32 +97,66 @@ public class OperatorInterface {
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
     private void configureOperatorControls(RobotContainer container, SuperstructureManager manager) {
-        // override queue
         _operatorController
                 .back()
                 .onTrue(new InstantCommand(manager::forceQueueExecution))
                 .onFalse(new InstantCommand(manager::releaseQueueExecution));
 
-        _operatorController
-                .a()
-                .onTrue(
-                        manager.createRequest(
-                                Constants.SuperstructureGoals.PLACE_CORAL_L1, RequestType.QUEUED));
-        _operatorController
-                .b()
-                .onTrue(
-                        manager.createRequest(
-                                Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.QUEUED));
+        /*
+         * if algae held:
+         *      processor dropoff
+         * elif coral held:
+         *      coral trough
+         *      wait until (coral not held & far from reef)
+         *      receive from funnel
+         * else:
+         *      receive from funnel
+         */
         _operatorController
                 .x()
                 .onTrue(
-                        manager.createRequest(
-                                Constants.SuperstructureGoals.PLACE_CORAL_L3, RequestType.QUEUED));
+                        new ConditionalCommand(
+                                manager.grabAlgae(
+                                        Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE),
+                                new ConditionalCommand(
+                                        new SequentialCommandGroup(manager.createRequest(
+                                                Constants.SuperstructureGoals.PLACE_CORAL_L1, RequestType.IMMEDIATE),
+                                                new WaitUntilCommand(
+                                                        () ->
+                                                                !container.getCoral().isCoralDetected() && container
+                                                                                .getDrive()
+                                                                                .getPose()
+                                                                                .getTranslation()
+                                                                                .getDistance(FieldConstants.getAllianceSpecificReefCenter())
+                                                                        > 2),
+                                                                        manager.receiveFunnel(RequestType.IMMEDIATE)
+                                        ),
+                                        manager.receiveFunnel(RequestType.IMMEDIATE),
+                                        container.getCoral()::isCoralDetected),
+                                container.getAlgae()::isAlgaeDetected));
+
         _operatorController
                 .y()
                 .onTrue(
                         manager.createRequest(
-                                Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED));
+                                Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.QUEUED));
+        _operatorController
+                .b()
+                .onTrue(
+                        manager.createRequest(
+                                Constants.SuperstructureGoals.PLACE_CORAL_L3, RequestType.QUEUED));
+        /*
+         * if algae held:
+         *      net dropoff
+         * else:
+         *      coral l4
+         */
+        _operatorController
+                .a()
+                .onTrue(
+                        new ConditionalCommand(manager.aimAtAlgaeNet(), manager.createRequest(
+                                Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED), container.getAlgae()::isAlgaeDetected)
+                        );
 
         _operatorController
                 .leftBumper()
@@ -171,23 +204,6 @@ public class OperatorInterface {
                                                 Optional.empty()),
                                         RequestType.IMMEDIATE),
                                 new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))));
-
-        _operatorController.povDown().onTrue(manager.receiveFunnel(RequestType.IMMEDIATE));
-        _operatorController
-                .rightTrigger()
-                .whileTrue(
-                        new SequentialCommandGroup(
-                                manager.createRequest(
-                                        Constants.SuperstructureGoals.BARGE_HELD, RequestType.IMMEDIATE),
-                                manager.createRequest(
-                                        Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE),
-                                new EjectAlgae(container.getAlgae())));
-        _operatorController
-                .rightTrigger()
-                .whileTrue(
-                        manager.createRequest(
-                                Constants.SuperstructureGoals.PROCESSOR_DROPOFF, RequestType.IMMEDIATE))
-                .onFalse(new EjectAlgae(container.getAlgae()));
     }
 
     public OutliersController getDriverController() {
