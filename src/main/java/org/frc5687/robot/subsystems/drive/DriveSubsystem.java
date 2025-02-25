@@ -140,8 +140,14 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     private void updateSetpoint() {
         double headingControllerOutput = 0.0;
         if (_headingControllerSetpoint.isPresent()) {
-            headingControllerOutput =
-                    _headingController.calculate(getHeading().getRadians(), _headingControllerSetpoint.get());
+            var setpoint = _headingControllerSetpoint.get();
+            boolean pointingAtSetpoint =
+                    Math.abs(getHeading().minus(new Rotation2d(setpoint)).getDegrees()) < 2.0;
+            boolean stopped = Math.abs(_inputs.yawVelocityRadPerSec) < 0.1;
+            if (stopped & pointingAtSetpoint) {
+                _headingControllerSetpoint = Optional.empty();
+            }
+            headingControllerOutput = _headingController.calculate(getHeading().getRadians(), setpoint);
         }
         Pose2d robotPoseVel =
                 new Pose2d(
