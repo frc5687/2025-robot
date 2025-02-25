@@ -428,8 +428,8 @@ public class Constants {
 
         public static final Transform3d ROBOT_TO_NW_CAM =
                 new Transform3d(0.281, 0.279, 0.234, new Rotation3d(0, Units.degreesToRadians(-15), 0));
-        public static final Transform2d ROBOT_TO_QUEST =
-                new Transform2d(-0.175, -0.369, Rotation2d.fromDegrees(-90));
+        public static final Transform2d ROBOT_TO_QUEST = //0.776m up
+                new Transform2d(-0.149, -0.347, Rotation2d.fromDegrees(-105));
     }
 
     public class SuperstructureGoals {
