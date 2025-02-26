@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -153,7 +154,11 @@ public class RobotStateManager implements EpilogueLog {
             _simPoseEstimator.updateOdometry();
             Pose2d robotPose = _simPoseEstimator.getEstimatedPose();
             _rawQuestPoseBuffer.addSample(Timer.getFPGATimestamp(), robotPose);
-            log("Estimated Robot Pose", _poseEstimator2.getEstimatedRobotPose(), Pose2d.struct);
+            Pose2d estimatedPose = _poseEstimator2.getEstimatedRobotPose();
+            log("Estimated Robot Pose", estimatedPose, Pose2d.struct);
+            log(
+                    "Pose error (mm)",
+                    1000 * new Transform2d(robotPose, estimatedPose).getTranslation().getNorm());
             _poses.put(
                     RobotCoordinate.ROBOT_BASE_SIM_ODOM,
                     new Pose3d(
@@ -370,5 +375,6 @@ public class RobotStateManager implements EpilogueLog {
     public void logEstimatedPoses() {
         log("Quest Estimator Pose", getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV), Pose3d.struct);
         log("Swerve Estimator Pose", getPose(RobotCoordinate.ROBOT_BASE_SWERVE), Pose3d.struct);
+        log("Sim Odom Pose", getPose(RobotCoordinate.ROBOT_BASE_SIM_ODOM), Pose3d.struct);
     }
 }

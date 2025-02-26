@@ -23,10 +23,15 @@ public class QuestNavPoseEstimator implements EpilogueLog {
     private static final Pose2d FIELD_TO_ORIGIN =
             new Pose2d(2.5, 1.75, new Rotation2d(Units.degreesToRadians(32)));
 
+    private double xyFactorTotal;
+    private double thetaFactorTotal;
+
     public QuestNavPoseEstimator(QuestNav questNav, Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
-        _originToFieldEstimate = null;
+        _originToFieldEstimate = new Transform2d();
         _questNav = questNav;
         _chassisSpeedsSupplier = chassisSpeedsSupplier;
+        xyFactorTotal = 0.0;
+        thetaFactorTotal = 0.0;
     }
 
     public void addVisionMeasurement(EstimatedRobotPose visionPose, double timestamp) {
@@ -37,6 +42,9 @@ public class QuestNavPoseEstimator implements EpilogueLog {
                 new Transform2d(new Pose2d(), visionPose.estimatedPose.toPose2d());
         Transform2d fieldToQuest = visionFieldToRobot.plus(Constants.Vision.ROBOT_TO_QUEST);
         Transform2d originToField = originToQuest.plus(fieldToQuest.inverse());
+        Transform2d estimatedError = _originToFieldEstimate.plus(originToField.inverse());
+        if (xyFactorTotal > 0 && estimatedError.getTranslation().getNorm() > 0.3) return;
+
         log("Vision fieldToRobot", visionFieldToRobot, Transform2d.struct);
         // TODO get real x y theta error for each measurement and use sheets
         log(
@@ -44,11 +52,6 @@ public class QuestNavPoseEstimator implements EpilogueLog {
                 RobotStateManager.getInstance().getQuestPose(timestamp - 0.02).get(),
                 Pose2d.struct);
         log("Measured originToField", originToField, Transform2d.struct);
-
-        if (_originToFieldEstimate == null) {
-            _originToFieldEstimate = originToField;
-            return;
-        }
 
         ChassisSpeeds speeds = _chassisSpeedsSupplier.get();
         double angularVelocity = Math.abs(speeds.omegaRadiansPerSecond);
@@ -59,11 +62,16 @@ public class QuestNavPoseEstimator implements EpilogueLog {
         log("speed stddev", speedStd);
         double xyStd = stddevs.get(0, 0) + speedStd;
         double thetaStd = stddevs.get(2, 0) / 2.0 + speedStd;
+        double distance = questPose.get().getTranslation().getNorm();
+        double xyFactor = Math.exp(-10 * xyStd); // arbitrary function i made up
+        double thetaFactor = Math.exp(-10 * thetaStd) * (1 + distance); // arbitrary function i made up
 
         double newX =
-                addMeasurementToAverage(originToField.getX(), _originToFieldEstimate.getX(), xyStd);
+                addMeasurementToAverage(
+                        originToField.getX(), _originToFieldEstimate.getX(), xyFactor, xyFactorTotal);
         double newY =
-                addMeasurementToAverage(originToField.getY(), _originToFieldEstimate.getY(), xyStd);
+                addMeasurementToAverage(
+                        originToField.getY(), _originToFieldEstimate.getY(), xyFactor, xyFactorTotal);
 
         double averageRotationVectorX = _originToFieldEstimate.getRotation().getCos();
         double averageRotationVectorY = _originToFieldEstimate.getRotation().getSin();
@@ -71,18 +79,24 @@ public class QuestNavPoseEstimator implements EpilogueLog {
         double guessRotationVectorY = originToField.getRotation().getSin();
 
         double newRotationVectorX =
-                addMeasurementToAverage(guessRotationVectorX, averageRotationVectorX, thetaStd);
+                addMeasurementToAverage(
+                        guessRotationVectorX, averageRotationVectorX, thetaFactor, thetaFactorTotal);
         double newRotationVectorY =
-                addMeasurementToAverage(guessRotationVectorY, averageRotationVectorY, thetaStd);
+                addMeasurementToAverage(
+                        guessRotationVectorY, averageRotationVectorY, thetaFactor, thetaFactorTotal);
         Rotation2d newRotation = new Rotation2d(newRotationVectorX, newRotationVectorY);
+
+        xyFactorTotal += xyFactor;
+        thetaFactorTotal += thetaFactor;
 
         _originToFieldEstimate = new Transform2d(newX, newY, newRotation);
         log("Estimated quest origin to field origin", _originToFieldEstimate, Transform2d.struct);
     }
 
-    private double addMeasurementToAverage(double newMeasurement, double prevAverage, double stddev) {
-        double averagingFactor = 0.04 * Math.exp(-10 * stddev); // arbitrary function i made up
-        return newMeasurement * averagingFactor + prevAverage * (1 - averagingFactor);
+    private double addMeasurementToAverage(
+            double newMeasurement, double prevAverage, double newFactor, double prevFactorTotal) {
+        double sum = prevAverage * prevFactorTotal + newMeasurement * newFactor;
+        return sum / (prevFactorTotal + newFactor);
     }
 
     private Optional<Pose2d> getRawQuestPose(double timestamp) {

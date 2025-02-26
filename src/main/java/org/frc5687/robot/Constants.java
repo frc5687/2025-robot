@@ -409,7 +409,7 @@ public class Constants {
     }
 
     public static class Vision {
-        public static final double MIN_AMBIGUITY = 0.5;
+        public static final double MIN_AMBIGUITY = 0.3;
 
         public static final Transform3d ROBOT_TO_NORTH_CAM =
                 new Transform3d(0.281, -0.025, 0.234, new Rotation3d(0, Units.degreesToRadians(-15), 0));
