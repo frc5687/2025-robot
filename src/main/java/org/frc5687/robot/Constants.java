@@ -426,6 +426,30 @@ public class Constants {
             simCalibrationMatrix.set(2, 2, 1.0);
         }
 
+        public static final Matrix<N3, N3> NORTH_CALIB_MATRIX = new Matrix<>(Nat.N3(), Nat.N3());
+
+        static {
+            // https://www.mathworks.com/help/vision/ug/camera-calibration.html
+            // ignoring skew in sim, maybe real life as well
+            NORTH_CALIB_MATRIX.set(0, 0, 563.25); // fx
+            NORTH_CALIB_MATRIX.set(1, 1, 563.67); // fy
+            NORTH_CALIB_MATRIX.set(0, 2, 472.60); // cx
+            NORTH_CALIB_MATRIX.set(1, 2, 254.14); // cy
+            NORTH_CALIB_MATRIX.set(2, 2, 1.0);
+        }
+
+        public static final Matrix<N3, N3> NORTH_WEST_CALIB_MATRIX = new Matrix<>(Nat.N3(), Nat.N3());
+
+        static {
+            // https://www.mathworks.com/help/vision/ug/camera-calibration.html
+            // ignoring skew in sim, maybe real life as well
+            NORTH_WEST_CALIB_MATRIX.set(0, 0, 561.10); // fx
+            NORTH_WEST_CALIB_MATRIX.set(1, 1, 561.65); // fy
+            NORTH_WEST_CALIB_MATRIX.set(0, 2, 494.00); // cx
+            NORTH_WEST_CALIB_MATRIX.set(1, 2, 324.88); // cy
+            NORTH_WEST_CALIB_MATRIX.set(2, 2, 1.0);
+        }
+
         public static final Transform3d ROBOT_TO_NW_CAM =
                 new Transform3d(0.281, 0.279, 0.234, new Rotation3d(0, Units.degreesToRadians(-15), 0));
         public static final Transform2d ROBOT_TO_QUEST = // 0.776m up

@@ -119,7 +119,8 @@ public class QuestNav implements EpilogueLog {
      * @param newPose new robot pose
      */
     public void resetPose(Pose2d newPose) {
-        resetPoseOculus = getUncorrectedOculusPose();
+        resetPoseOculus =
+                getUncorrectedOculusPose().transformBy(Constants.Vision.ROBOT_TO_QUEST.inverse());
         resetPoseRobot = newPose;
     }
 

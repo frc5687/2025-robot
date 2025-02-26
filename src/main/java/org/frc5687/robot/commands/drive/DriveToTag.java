@@ -45,7 +45,7 @@ public class DriveToTag extends OutliersCommand {
 
         _thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        addRequirements(drive, vision);
+        addRequirements(drive);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class DriveToTag extends OutliersCommand {
         _driveController.reset(0, 0);
         _lateralController.reset(0, 0);
         _thetaController.reset(currentPose.getRotation().getRadians(), 0);
-        _vision.setPipeline(1); // remove magic number later -Dennis
+        _vision.setPipelineIndex(1); // remove magic number later -Dennis
     }
 
     @Override
@@ -65,6 +65,7 @@ public class DriveToTag extends OutliersCommand {
             isRedAlliance = alliance.get() == Alliance.Red;
         }
         int tagId = ReefAlignmentHelpers.getTagIdFromBestFace(_drive.getPose(), isRedAlliance);
+        log("desired tag id", tagId);
 
         String cameraName;
         List<AprilTagObservation> observations;
@@ -88,7 +89,6 @@ public class DriveToTag extends OutliersCommand {
             _drive.setDesiredChassisSpeeds(new ChassisSpeeds(0, 0, 0));
             return;
         }
-        log("desired tag id", tagId);
 
         // I tried distance calculation with just pitch, corners with the focal length from simulated
         // calibration seems better.

@@ -1,6 +1,7 @@
 package org.frc5687.robot;
 
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -15,6 +16,7 @@ import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DriveToTag;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
+import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
@@ -49,19 +51,40 @@ public class OperatorInterface {
         _driverController
                 .x()
                 .onTrue(
-                        new InstantCommand(
-                                () -> container.getDrive().enableHeadingController(Units.degreesToRadians(-60))));
+                        new TeleopDriveWithSnapTo(
+                                -60,
+                                container.getDrive(),
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftY())
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftX())
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getRightX())
+                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                                () -> true)); // Always field relative
 
         _driverController
                 .b()
                 .onTrue(
-                        new InstantCommand(
-                                () -> container.getDrive().enableHeadingController(Units.degreesToRadians(60))));
+                        new TeleopDriveWithSnapTo(
+                                60,
+                                container.getDrive(),
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftY())
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftX())
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getRightX())
+                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                                () -> true)); // Always field relative
 
         // _driverController
         //         .leftBumper()
-        //         .whileTrue(
-        //                 new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT));
+        //         .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT));
         _driverController
                 .leftBumper()
                 .whileTrue(new DriveToTag(container.getDrive(), container.getVision(), ReefSide.RIGHT));
@@ -95,9 +118,31 @@ public class OperatorInterface {
                                 container.getAlgae()::isAlgaeDetected));
         _driverController.rightMiddleButton().onTrue(new InstantCommand(container.getDrive()::zeroIMU));
 
+        // _driverController
+        //         .leftMiddleButton()
+        //         .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
+
+        // _driverController
+        //         .leftMiddleButton()
+        //         .onTrue(
+        //                 new InstantCommand(
+        //                         () -> {
+        //                             var questVisionUpdatesOn =
+        // RobotStateManager.getInstance()._questVisionUpdatesOn;
+        //                             System.out.println(
+        //                                     "quest vision updates are now " + (questVisionUpdatesOn ?
+        // "off" : "on"));
+        //                             RobotStateManager.getInstance()._questVisionUpdatesOn =
+        // !questVisionUpdatesOn;
+        //                         }));
+
         _driverController
                 .leftMiddleButton()
-                .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
+                .onTrue(
+                        new InstantCommand(
+                                () ->
+                                        RobotStateManager.getInstance()
+                                                .resetEstimatedPose(new Pose2d(3.169, 4.021, new Rotation2d()))));
     }
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */

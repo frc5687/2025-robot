@@ -6,9 +6,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class ReefAlignmentHelpers {
     public static final TunableDouble LEFT_OFFSET =
-            new TunableDouble("ReefAlignmentHelpers", "LEFT_OFFSET", 0.02);
+            new TunableDouble("ReefAlignmentHelpers", "LEFT_OFFSET", 0.06);
     public static final TunableDouble RIGHT_OFFSET =
-            new TunableDouble("ReefAlignmentHelpers", "RIGHT_OFFSET", -0.315);
+            new TunableDouble("ReefAlignmentHelpers", "RIGHT_OFFSET", -0.27);
     public static final double SAFE_APPROACH_DISTANCE = 0.5;
 
     public enum ReefSide {

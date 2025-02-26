@@ -12,7 +12,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSTDFilter {
     private final TunableDouble BASE_STD = new TunableDouble("VisionSTDFilter", "BASE_STD", 0.3);
-    private static final double MIN_STD = 0.03;
+    private static final double MIN_STD = 0.1;
     private final TunableDouble TAG_DISTANCE_FACTOR =
             new TunableDouble("VisionSTDFilter", "TAG_DISTANCE_FACTOR", 0.1);
     private final TunableDouble MULTI_TAG_BOOST =

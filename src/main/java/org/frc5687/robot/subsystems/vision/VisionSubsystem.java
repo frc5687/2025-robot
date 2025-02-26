@@ -1,10 +1,12 @@
 package org.frc5687.robot.subsystems.vision;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import java.util.*;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
@@ -19,10 +21,6 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
     public VisionSubsystem(RobotContainer container, VisionIO io) {
         super(container, io, new VisionInputs(), new VisionOutputs());
-    }
-
-    public void setPipeline(int index) {
-        _outputs.pipelineIndex = index;
     }
 
     public boolean hasValidTag(AprilTagObservation observation) {
@@ -47,9 +45,21 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     @Override
     protected void periodic(VisionInputs inputs, VisionOutputs outputs) {
         List<Pose3d> estimatedPoses = new ArrayList<>();
-        for (var robotPose : inputs.estimatedPoses.values()) {
-            estimatedPoses.add(robotPose.estimatedPose);
-            RobotStateManager.getInstance().updateVision(robotPose);
+        if (_outputs.pipelineIndex
+                == 0) { // FIXME this probably is not real.. there is a delay before this is actually the
+            // pipeline
+            for (var robotPose : inputs.estimatedPoses.values()) {
+                estimatedPoses.add(robotPose.estimatedPose);
+                RobotStateManager.getInstance().updateVision(robotPose);
+            }
+        }
+
+        if (_outputs.pipelineIndex
+                == 1) { // FIXME this probably is not real.. there is a delay before this is actually the
+            // pipeline
+            for (var obs : getNorthCameraObservations()) {
+                log("north camera distance", calculateDistanceWithCalibration(obs, "North_Camera"));
+            }
         }
 
         log("VisionPoses", estimatedPoses, Pose3d.struct);
@@ -106,7 +116,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         }
         centerX /= corners.length;
 
-        Matrix<N3, N3> calibrationMatrix = Constants.Vision.simCalibrationMatrix;
+        Matrix<N3, N3> calibrationMatrix = getCalibrationMatrix(cameraName);
         double principalX = calibrationMatrix.get(0, 2);
 
         return (centerX - principalX) / principalX;
@@ -115,7 +125,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     public double calculateDistanceWithCalibration(
             AprilTagObservation observation, String cameraName) {
 
-        Matrix<N3, N3> calibrationMatrix = Constants.Vision.simCalibrationMatrix; // TODO FIX
+        Matrix<N3, N3> calibrationMatrix = getCalibrationMatrix(cameraName);
         Translation2d[] corners = observation.getCorners();
 
         // focal length from calibration matrix
@@ -137,6 +147,21 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         // we can use similar triangels to calculate the distance using the tag size and focal length
         // distance = (actual_size * focal_length) / pixel_size
         return Units.inchesToMeters(6.5) * focalLength / avgPixelSize;
+    }
+
+    private Matrix<N3, N3> getCalibrationMatrix(String cameraName) {
+        if (RobotBase.isSimulation()) {
+            return Constants.Vision.simCalibrationMatrix;
+        }
+
+        if (cameraName == "North_Camera") {
+            return Constants.Vision.NORTH_CALIB_MATRIX;
+        } else if (cameraName == "North_West_Camera") {
+            return Constants.Vision.NORTH_WEST_CALIB_MATRIX;
+        } else {
+            System.err.println("Invalid camera " + cameraName);
+            return Matrix.eye(Nat.N3());
+        }
     }
 
     @Override

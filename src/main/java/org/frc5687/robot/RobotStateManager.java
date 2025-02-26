@@ -74,6 +74,8 @@ public class RobotStateManager implements EpilogueLog {
     private PoseEstimator _swervePoseEstimator;
     private PoseEstimator _simPoseEstimator;
 
+    public boolean _questVisionUpdatesOn;
+
     private RobotStateManager() {
         _poses = new EnumMap<>(RobotCoordinate.class);
         _poses.put(RobotCoordinate.ROBOT_BASE_SWERVE, new Pose3d());
@@ -87,6 +89,7 @@ public class RobotStateManager implements EpilogueLog {
                         Geometry.ELEVATOR_STAGE_ONE_HEIGHT,
                         new Rotation3d()));
         updatePlatform(0.0);
+        _questVisionUpdatesOn = false;
     }
 
     public static synchronized RobotStateManager getInstance() {
@@ -146,7 +149,7 @@ public class RobotStateManager implements EpilogueLog {
     }
 
     public synchronized void updateVision(EstimatedRobotPose estimatedRobotPose) {
-        if (_questNavPoseEstimator != null) {
+        if (_questNavPoseEstimator != null && _questVisionUpdatesOn) {
             _questNavPoseEstimator.addVisionMeasurement(
                     estimatedRobotPose, estimatedRobotPose.timestampSeconds);
         }

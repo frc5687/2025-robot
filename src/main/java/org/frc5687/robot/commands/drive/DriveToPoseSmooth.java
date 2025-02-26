@@ -26,7 +26,7 @@ public class DriveToPoseSmooth extends OutliersCommand {
     private final TunableDouble _maxAcceleration =
             new TunableDouble("DriveToPose", "maxAcceleration", 9.0);
     private final TunableDouble _positionTolerance =
-            new TunableDouble("DriveToPose", "positionTolerance", 0.05);
+            new TunableDouble("DriveToPose", "positionTolerance", 0.01);
     private final TunableDouble _velocityTolerance =
             new TunableDouble("DriveToPose", "velocityTolerance", 0.1);
     private final TunableDouble _minOutput = new TunableDouble("DriveToPose", "minOutput", 0.1);

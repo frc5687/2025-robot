@@ -57,7 +57,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        _robotContainer.getDrive().disableHeadingController();
         m_autonomousCommand = _robotContainer.getAutonomousCommand();
 
         if (m_autonomousCommand != null) {

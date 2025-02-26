@@ -226,7 +226,7 @@ public class RobotContainer implements EpilogueLog {
     }
 
     // for not be lazy and just square input TODO: DONT
-    private static double modifyAxis(double value) {
+    public static double modifyAxis(double value) {
         value = Helpers.applyDeadband(value, 0.1);
         value = Math.copySign(value * value, value);
 
