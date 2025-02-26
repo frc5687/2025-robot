@@ -1,0 +1,79 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Opponents_Cage to R5 (slow)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R5 to HP_SE (slow)"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HP_SE to R6 (slow)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R6 to HP_SE (slow)"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HP_SE to L6 (slow)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L6 to HP_SE (slow)"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}
