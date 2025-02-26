@@ -86,8 +86,13 @@ public class OperatorInterface {
                                         RequestType.IMMEDIATE),
                                 new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))));
 
-        _driverController.rightTrigger().whileTrue(
-                new ConditionalCommand(new EjectAlgae(container.getAlgae()), new EjectCoral(container.getCoral()), container.getAlgae()::isAlgaeDetected));
+        _driverController
+                .rightTrigger()
+                .whileTrue(
+                        new ConditionalCommand(
+                                new EjectAlgae(container.getAlgae()),
+                                new EjectCoral(container.getCoral()),
+                                container.getAlgae()::isAlgaeDetected));
         _driverController.rightMiddleButton().onTrue(new InstantCommand(container.getDrive()::zeroIMU));
 
         _driverController
@@ -119,18 +124,20 @@ public class OperatorInterface {
                                 manager.grabAlgae(
                                         Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE),
                                 new ConditionalCommand(
-                                        new SequentialCommandGroup(manager.createRequest(
-                                                Constants.SuperstructureGoals.PLACE_CORAL_L1, RequestType.IMMEDIATE),
+                                        new SequentialCommandGroup(
+                                                manager.createRequest(
+                                                        Constants.SuperstructureGoals.PLACE_CORAL_L1, RequestType.IMMEDIATE),
                                                 new WaitUntilCommand(
                                                         () ->
-                                                                !container.getCoral().isCoralDetected() && container
-                                                                                .getDrive()
-                                                                                .getPose()
-                                                                                .getTranslation()
-                                                                                .getDistance(FieldConstants.getAllianceSpecificReefCenter())
-                                                                        > 2),
-                                                                        manager.receiveFunnel(RequestType.IMMEDIATE)
-                                        ),
+                                                                !container.getCoral().isCoralDetected()
+                                                                        && container
+                                                                                        .getDrive()
+                                                                                        .getPose()
+                                                                                        .getTranslation()
+                                                                                        .getDistance(
+                                                                                                FieldConstants.getAllianceSpecificReefCenter())
+                                                                                > 2),
+                                                manager.receiveFunnel(RequestType.IMMEDIATE)),
                                         manager.receiveFunnel(RequestType.IMMEDIATE),
                                         container.getCoral()::isCoralDetected),
                                 container.getAlgae()::isAlgaeDetected));
@@ -154,9 +161,11 @@ public class OperatorInterface {
         _operatorController
                 .a()
                 .onTrue(
-                        new ConditionalCommand(manager.aimAtAlgaeNet(), manager.createRequest(
-                                Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED), container.getAlgae()::isAlgaeDetected)
-                        );
+                        new ConditionalCommand(
+                                manager.aimAtAlgaeNet(),
+                                manager.createRequest(
+                                        Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED),
+                                container.getAlgae()::isAlgaeDetected));
 
         _operatorController
                 .leftBumper()

@@ -14,8 +14,8 @@
    "Elevator_Up_Event":{
     "dimension":"Number",
     "var":{
-     "exp":"-1",
-     "val":-1.0
+     "exp":"-1.5",
+     "val":-1.5
     }
    }
   },

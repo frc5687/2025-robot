@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Opponents_Cage to R5"
+            "pathName": "Middle to R4 (slow)"
           }
         },
         {
@@ -19,7 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R5 to HP_SE"
+            "pathName": "R4 to PUSH"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PUSH to HP_NE"
           }
         },
         {
@@ -31,7 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "HP_SE to R1"
+            "pathName": "HP_NE to R2 (slow)"
           }
         },
         {
@@ -43,7 +49,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R1 to HP_SE"
+            "pathName": "R2 to HP_NE (slow)"
           }
         },
         {
@@ -55,7 +61,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "HP_SE to R6"
+            "pathName": "HP_NE to L2 (slow)"
           }
         },
         {
@@ -67,25 +73,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R6 to HP_SE"
+            "pathName": "L2 to HP_NE (slow)"
           }
         },
         {
           "type": "wait",
           "data": {
             "waitTime": 0.3
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "HP_SE to L6"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoPlace"
           }
         }
       ]

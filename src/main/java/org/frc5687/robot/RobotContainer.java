@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.frc5687.robot.commands.algae.IdleAlgae;
+import org.frc5687.robot.commands.auto.AutoActions;
 import org.frc5687.robot.commands.coral.IdleCoral;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
@@ -197,6 +198,8 @@ public class RobotContainer implements EpilogueLog {
                 "CoralL2",
                 _superstructureManager.createRequest(
                         Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.IMMEDIATE));
+
+        NamedCommands.registerCommand("AutoPlace", AutoActions.autoPlace(this));
 
         // NamedCommands.registerCommand(
         //         "Place", _superstructureManager.placeAtCurrentHeight(RequestType.IMMEDIATE));

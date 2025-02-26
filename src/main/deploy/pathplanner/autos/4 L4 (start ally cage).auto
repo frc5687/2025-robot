@@ -13,7 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Place"
+            "name": "AutoPlace"
           }
         },
         {
@@ -37,7 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Place"
+            "name": "AutoPlace"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Place"
+            "name": "AutoPlace"
           }
         },
         {
@@ -85,7 +85,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Place"
+            "name": "AutoPlace"
           }
         }
       ]
