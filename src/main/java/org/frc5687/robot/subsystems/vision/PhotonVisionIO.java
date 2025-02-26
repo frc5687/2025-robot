@@ -1,12 +1,14 @@
 package org.frc5687.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.util.FieldConstants;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -28,7 +30,7 @@ public class PhotonVisionIO implements VisionIO {
                             FieldConstants.aprilTagLayout,
                             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
                             robotToCamera);
-            estimator.setMultiTagFallbackStrategy(PoseStrategy.AVERAGE_BEST_TARGETS);
+            estimator.setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
         }
     }
 
@@ -55,6 +57,8 @@ public class PhotonVisionIO implements VisionIO {
         inputs.cameraObservations.put(cameraName, new ArrayList<>());
         CameraConfig cam = _cameras.get(cameraName);
         List<PhotonPipelineResult> results = cam.camera.getAllUnreadResults();
+        cam.estimator.addHeadingData(
+                Timer.getFPGATimestamp(), RobotStateManager.getInstance().getRawIMURotation());
         if (!results.isEmpty()) {
             PhotonPipelineResult mostRecentResult = results.get(results.size() - 1);
             Optional<EstimatedRobotPose> estimatedPose = cam.estimator.update(mostRecentResult);

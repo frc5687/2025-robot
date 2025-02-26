@@ -80,6 +80,8 @@ public class RobotStateManager implements EpilogueLog {
     private PoseEstimator _swervePoseEstimator;
     private PoseEstimator _simPoseEstimator;
 
+    private Supplier<Rotation2d> _imuRotation;
+
     private final TimeInterpolatableBuffer<Pose2d> _rawQuestPoseBuffer;
 
     public boolean _questVisionUpdatesOn;
@@ -113,6 +115,7 @@ public class RobotStateManager implements EpilogueLog {
             Supplier<Rotation2d> headingSupplier,
             Supplier<ChassisSpeeds> chassisSpeedsSupplier,
             QuestNav nav) {
+        _imuRotation = headingSupplier;
         _questNavPoseEstimator = new PoseEstimator(new QuestNavOdometrySource(nav));
         _swervePoseEstimator =
                 new PoseEstimator(new WheelOdometrySource(positionSupplier, headingSupplier));
@@ -343,6 +346,10 @@ public class RobotStateManager implements EpilogueLog {
             return new Transform3d();
         }
         return new Transform3d(_poses.get(fromFrame), _poses.get(toFrame));
+    }
+
+    public Rotation2d getRawIMURotation() {
+        return _imuRotation.get();
     }
 
     public Rotation3d getPlatformRotation() {

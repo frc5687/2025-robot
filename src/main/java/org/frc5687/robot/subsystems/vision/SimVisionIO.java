@@ -3,6 +3,7 @@ package org.frc5687.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.wpilibj.Timer;
 import java.util.*;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotStateManager;
@@ -62,10 +63,10 @@ public class SimVisionIO implements VisionIO {
         PhotonCamera camera = new PhotonCamera(name);
 
         SimCameraProperties cameraProp = new SimCameraProperties();
-        cameraProp.setCalibration(1280, 720, Rotation2d.fromDegrees(81));
+        cameraProp.setCalibration(1280, 720, Rotation2d.fromDegrees(88));
         cameraProp.setCalibError(0.35, 0.10);
-        cameraProp.setFPS(120);
-        cameraProp.setAvgLatencyMs(10);
+        cameraProp.setFPS(60);
+        cameraProp.setAvgLatencyMs(20);
         cameraProp.setLatencyStdDevMs(5);
 
         PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraProp);
@@ -76,7 +77,7 @@ public class SimVisionIO implements VisionIO {
 
         PhotonPoseEstimator estimator =
                 new PhotonPoseEstimator(layout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCamera);
-        estimator.setMultiTagFallbackStrategy(PoseStrategy.AVERAGE_BEST_TARGETS);
+        estimator.setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
 
         _visionSim.addCamera(cameraSim, robotToCamera);
         _cameras.put(name, new CameraConfig(name, robotToCamera, camera, cameraSim, estimator));
@@ -95,6 +96,7 @@ public class SimVisionIO implements VisionIO {
         inputs.cameraObservations.put(cameraName, new ArrayList<>());
         CameraConfig cam = _cameras.get(cameraName);
         List<PhotonPipelineResult> results = cam.camera.getAllUnreadResults();
+        cam.estimator.addHeadingData(Timer.getFPGATimestamp(), _robotState.getRawIMURotation());
         if (!results.isEmpty()) {
             PhotonPipelineResult mostRecentResult = results.get(results.size() - 1);
             Optional<EstimatedRobotPose> estimatedPose = cam.estimator.update(mostRecentResult);
