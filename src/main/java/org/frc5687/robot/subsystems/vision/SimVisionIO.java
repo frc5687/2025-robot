@@ -69,9 +69,9 @@ public class SimVisionIO implements VisionIO {
         cameraProp.setLatencyStdDevMs(5);
 
         PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraProp);
-        cameraSim.enableDrawWireframe(false);
-        cameraSim.enableProcessedStream(false);
-        cameraSim.enableRawStream(false);
+        cameraSim.enableDrawWireframe(true);
+        cameraSim.enableProcessedStream(true);
+        cameraSim.enableRawStream(true);
         cameraSim.setMaxSightRange(4.0);
 
         PhotonPoseEstimator estimator =
@@ -85,6 +85,7 @@ public class SimVisionIO implements VisionIO {
     // TODO: make a queue for time as well and drop old tags
     @Override
     public void updateInputs(VisionInputs inputs) {
+        inputs.estimatedPoses.clear();
         updateCameraInputs(inputs, "North_Camera");
         updateCameraInputs(inputs, "North_West_Camera");
         _visionSim.update(_robotState.getPose(RobotCoordinate.ROBOT_BASE_SIM_ODOM).toPose2d());
@@ -98,15 +99,18 @@ public class SimVisionIO implements VisionIO {
             PhotonPipelineResult mostRecentResult = results.get(results.size() - 1);
             Optional<EstimatedRobotPose> estimatedPose = cam.estimator.update(mostRecentResult);
             if (estimatedPose.isPresent()) {
-                inputs.estimatedPoses.put(cameraName, estimatedPose.get());
+                boolean usedMultitag = mostRecentResult.multitagResult.isPresent();
+                AprilTagObservation observation =
+                        AprilTagObservation.fromPhotonVision(
+                                mostRecentResult.targets.get(0), mostRecentResult.getTimestampSeconds());
+                if (usedMultitag || VisionSubsystem.hasValidTag(observation))
+                    inputs.estimatedPoses.put(cameraName, estimatedPose.get());
             }
             for (PhotonTrackedTarget target : mostRecentResult.targets) {
-                inputs
-                        .cameraObservations
-                        .get(cameraName)
-                        .add(
-                                AprilTagObservation.fromPhotonVision(
-                                        target, mostRecentResult.getTimestampSeconds()));
+                AprilTagObservation observation =
+                        AprilTagObservation.fromPhotonVision(target, mostRecentResult.getTimestampSeconds());
+                if (VisionSubsystem.hasValidTag(observation))
+                    inputs.cameraObservations.get(cameraName).add(observation);
             }
         }
     }

@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.FloatArraySubscriber;
 import edu.wpi.first.networktables.IntegerPublisher;
@@ -15,6 +16,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
+import java.util.Optional;
 import org.frc5687.robot.Constants;
 
 /**
@@ -41,10 +43,12 @@ public class QuestNav implements EpilogueLog {
             nt4Table.getDoubleTopic("batteryPercent").subscribe(0.0f);
 
     // Pose of the Quest when the pose was reset
-    private Pose2d resetPoseOculus = new Pose2d();
+    // private Pose2d resetPoseOculus = new Pose2d();
 
     // Pose of the robot when the pose was reset
-    private Pose2d resetPoseRobot = new Pose2d();
+    // private Pose2d resetPoseRobot = new Pose2d();
+
+    private final TimeInterpolatableBuffer<Pose2d> _rawQuestPoseBuffer;
 
     /* Constructor */
     public QuestNav() {
@@ -52,6 +56,7 @@ public class QuestNav implements EpilogueLog {
         // if (questMiso.get() != 99) {
         //     questMosi.set(1);
         // }
+        _rawQuestPoseBuffer = TimeInterpolatableBuffer.createBuffer(10.0);
     }
 
     /**
@@ -68,12 +73,13 @@ public class QuestNav implements EpilogueLog {
      *
      * @return pose of the Quest
      */
-    public Pose2d getQuestPose() {
-        var rawPose = getUncorrectedOculusPose();
-        var poseRelativeToReset = rawPose.minus(resetPoseOculus);
+    // public Pose2d getQuestPose() {
+    //     var rawPose = getUncorrectedOculusPose();
+    //     // var poseRelativeToReset = rawPose.minus(resetPoseOculus);
 
-        return resetPoseRobot.transformBy(poseRelativeToReset);
-    }
+    //     // return resetPoseRobot.transformBy(poseRelativeToReset);
+    //     return rawPose;
+    // }
 
     /*
      * Gets the battery percent of the Quest.
@@ -118,11 +124,11 @@ public class QuestNav implements EpilogueLog {
      *
      * @param newPose new robot pose
      */
-    public void resetPose(Pose2d newPose) {
-        resetPoseOculus =
-                getUncorrectedOculusPose().transformBy(Constants.Vision.ROBOT_TO_QUEST.inverse());
-        resetPoseRobot = newPose;
-    }
+    // public void resetPose(Pose2d newPose) {
+    //     resetPoseOculus =
+    //             getUncorrectedOculusPose().transformBy(Constants.Vision.ROBOT_TO_QUEST.inverse());
+    //     resetPoseRobot = newPose;
+    // }
 
     /**
      * Clean up questnav subroutine messages after processing on the headset. Call this each iteration
@@ -139,13 +145,19 @@ public class QuestNav implements EpilogueLog {
      *
      * @return pose of the oculus
      */
-    private Pose2d getUncorrectedOculusPose() {
+    public Pose2d getQuestPose() {
         var eulerAngles = questEulerAngles.get();
         var rotation = Rotation2d.fromDegrees(-Math.IEEEremainder(eulerAngles[1], 360d));
 
         var questnavPosition = questPosition.get();
         var translation = new Translation2d(questnavPosition[2], -questnavPosition[0]);
-        return new Pose2d(translation, rotation);
+        var pose = new Pose2d(translation, rotation);
+        _rawQuestPoseBuffer.addSample(Timer.getFPGATimestamp(), pose);
+        return pose;
+    }
+
+    public Optional<Pose2d> getQuestPose(double timestamp) {
+        return _rawQuestPoseBuffer.getSample(timestamp);
     }
 
     public Pose3d getUncorrectedOculusPose3d() {

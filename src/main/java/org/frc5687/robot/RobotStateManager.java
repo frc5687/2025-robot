@@ -5,15 +5,20 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import java.util.EnumMap;
+import java.util.Optional;
 import java.util.function.Supplier;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.PoseEstimator;
 import org.frc5687.robot.util.QuestNav;
 import org.frc5687.robot.util.QuestNavOdometrySource;
+import org.frc5687.robot.util.QuestNavPoseEstimator;
 import org.frc5687.robot.util.WheelOdometrySource;
 import org.photonvision.EstimatedRobotPose;
 
@@ -71,8 +76,11 @@ public class RobotStateManager implements EpilogueLog {
     private Rotation3d _currentPlatformRotation = new Rotation3d();
 
     private PoseEstimator _questNavPoseEstimator;
+    private QuestNavPoseEstimator _poseEstimator2;
     private PoseEstimator _swervePoseEstimator;
     private PoseEstimator _simPoseEstimator;
+
+    private final TimeInterpolatableBuffer<Pose2d> _rawQuestPoseBuffer;
 
     public boolean _questVisionUpdatesOn;
 
@@ -89,6 +97,7 @@ public class RobotStateManager implements EpilogueLog {
                         Geometry.ELEVATOR_STAGE_ONE_HEIGHT,
                         new Rotation3d()));
         updatePlatform(0.0);
+        _rawQuestPoseBuffer = TimeInterpolatableBuffer.createBuffer(10.0);
         _questVisionUpdatesOn = false;
     }
 
@@ -102,10 +111,12 @@ public class RobotStateManager implements EpilogueLog {
     public void initEstimators(
             Supplier<SwerveModulePosition[]> positionSupplier,
             Supplier<Rotation2d> headingSupplier,
+            Supplier<ChassisSpeeds> chassisSpeedsSupplier,
             QuestNav nav) {
         _questNavPoseEstimator = new PoseEstimator(new QuestNavOdometrySource(nav));
         _swervePoseEstimator =
                 new PoseEstimator(new WheelOdometrySource(positionSupplier, headingSupplier));
+        _poseEstimator2 = new QuestNavPoseEstimator(nav, chassisSpeedsSupplier);
         if (RobotBase.isSimulation()) {
             _simPoseEstimator =
                     new PoseEstimator(new WheelOdometrySource(positionSupplier, headingSupplier));
@@ -138,6 +149,8 @@ public class RobotStateManager implements EpilogueLog {
         if (_simPoseEstimator != null) {
             _simPoseEstimator.updateOdometry();
             Pose2d robotPose = _simPoseEstimator.getEstimatedPose();
+            _rawQuestPoseBuffer.addSample(Timer.getFPGATimestamp(), robotPose);
+            log("Estimated Robot Pose", _poseEstimator2.getEstimatedRobotPose(), Pose2d.struct);
             _poses.put(
                     RobotCoordinate.ROBOT_BASE_SIM_ODOM,
                     new Pose3d(
@@ -157,6 +170,11 @@ public class RobotStateManager implements EpilogueLog {
             _swervePoseEstimator.addVisionMeasurement(
                     estimatedRobotPose, estimatedRobotPose.timestampSeconds);
         }
+        _poseEstimator2.addVisionMeasurement(estimatedRobotPose, estimatedRobotPose.timestampSeconds);
+    }
+
+    public Optional<Pose2d> getQuestPose(double timestamp) {
+        return _rawQuestPoseBuffer.getSample(timestamp);
     }
 
     public synchronized void resetEstimatedPose(Pose2d pose) {

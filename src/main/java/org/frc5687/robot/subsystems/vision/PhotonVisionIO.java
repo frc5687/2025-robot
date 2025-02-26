@@ -46,7 +46,7 @@ public class PhotonVisionIO implements VisionIO {
 
     @Override
     public void updateInputs(VisionInputs inputs) {
-        inputs.estimatedPoses = new HashMap<>();
+        inputs.estimatedPoses.clear();
         updateCameraInputs(inputs, "North_Camera");
         updateCameraInputs(inputs, "North_West_Camera");
     }
@@ -59,15 +59,18 @@ public class PhotonVisionIO implements VisionIO {
             PhotonPipelineResult mostRecentResult = results.get(results.size() - 1);
             Optional<EstimatedRobotPose> estimatedPose = cam.estimator.update(mostRecentResult);
             if (estimatedPose.isPresent()) {
-                inputs.estimatedPoses.put(cameraName, estimatedPose.get());
+                boolean usedMultitag = mostRecentResult.multitagResult.isPresent();
+                AprilTagObservation observation =
+                        AprilTagObservation.fromPhotonVision(
+                                mostRecentResult.targets.get(0), mostRecentResult.getTimestampSeconds());
+                if (usedMultitag || VisionSubsystem.hasValidTag(observation))
+                    inputs.estimatedPoses.put(cameraName, estimatedPose.get());
             }
             for (PhotonTrackedTarget target : mostRecentResult.targets) {
-                inputs
-                        .cameraObservations
-                        .get(cameraName)
-                        .add(
-                                AprilTagObservation.fromPhotonVision(
-                                        target, mostRecentResult.getTimestampSeconds()));
+                AprilTagObservation observation =
+                        AprilTagObservation.fromPhotonVision(target, mostRecentResult.getTimestampSeconds());
+                if (VisionSubsystem.hasValidTag(observation))
+                    inputs.cameraObservations.get(cameraName).add(observation);
             }
         }
     }

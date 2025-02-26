@@ -77,7 +77,11 @@ public class RobotContainer implements EpilogueLog {
         _drive = new DriveSubsystem(this, driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
 
         RobotStateManager.getInstance()
-                .initEstimators(_drive::getModulePositions, _drive::getHeading, _questNav);
+                .initEstimators(
+                        _drive::getModulePositions,
+                        _drive::getHeading,
+                        _drive::getMeasuredChassisSpeeds,
+                        _questNav);
 
         ElevatorIO elevatorIO;
         if (RobotBase.isSimulation()) {
