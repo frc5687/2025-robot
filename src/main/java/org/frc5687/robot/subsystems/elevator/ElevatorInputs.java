@@ -26,4 +26,36 @@ public class ElevatorInputs extends BaseInputs {
 
     @Logged(name = "Laser Measurement (m)", importance = Logged.Importance.CRITICAL)
     public double laserSensorElevatorHeightMeters = -1.0;
+
+    // Enhanced logging for motor synchronization
+    @Logged(name = "East Motor Position (m)", importance = Logged.Importance.CRITICAL)
+    public double eastPositionMeters = 0.0;
+
+    @Logged(name = "West Motor Position (m)", importance = Logged.Importance.CRITICAL)
+    public double westPositionMeters = 0.0;
+
+    @Logged(name = "East-West Position Difference (m)", importance = Logged.Importance.CRITICAL)
+    public double eastWestPositionDifference = 0.0;
+
+    @Logged(name = "East Motor Velocity (mps)", importance = Logged.Importance.DEBUG)
+    public double eastVelocityMPS = 0.0;
+
+    @Logged(name = "West Motor Velocity (mps)", importance = Logged.Importance.DEBUG)
+    public double westVelocityMPS = 0.0;
+
+    @Logged(name = "East-West Velocity Difference (mps)", importance = Logged.Importance.CRITICAL)
+    public double eastWestVelocityDifference = 0.0;
+
+    // Safety status
+    @Logged(name = "Safety Status", importance = Logged.Importance.CRITICAL)
+    public String safetyStatus = "OK";
+
+    @Logged(name = "Elevator Disabled", importance = Logged.Importance.CRITICAL)
+    public boolean isDisabled = false;
+
+    @Logged(name = "Position Difference Safety Trip (m)", importance = Logged.Importance.DEBUG)
+    public double positionDifferenceSafetyThreshold = 0.03; // 3cm default, configurable
+
+    @Logged(name = "Zeroed", importance = Logged.Importance.CRITICAL)
+    public boolean zeroed = false;
 }

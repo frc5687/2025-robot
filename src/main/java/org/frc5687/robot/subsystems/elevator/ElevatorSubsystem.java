@@ -1,6 +1,7 @@
 package org.frc5687.robot.subsystems.elevator;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.Optional;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
@@ -13,6 +14,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     private final RobotStateManager _robotState = RobotStateManager.getInstance();
     private final RobotContainer _container;
     private double _queuedHeight;
+    private final ElevatorIO _elevatorIO;
 
     private TunableDouble elevatorP = new TunableDouble("Elevator", "kP", Constants.Elevator.kP);
     private TunableDouble elevatorI = new TunableDouble("Elevator", "kI", Constants.Elevator.kI);
@@ -23,9 +25,11 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     private TunableDouble elevatorV = new TunableDouble("Elevator", "kV", Constants.Elevator.kV);
 
     private Optional<Double> _newDesiredHeight;
+    private boolean _previouslySafetyTripped = false;
 
     public ElevatorSubsystem(RobotContainer container, ElevatorIO io) {
         super(container, io, new ElevatorInputs(), new ElevatorOutputs());
+        _elevatorIO = io;
         _container = container;
         _newDesiredHeight = Optional.empty();
         _queuedHeight = 0.0;
@@ -36,6 +40,20 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         _robotState.updatePlatform(_inputs.heightPositionMeters);
         _inputs.stagePose = _robotState.getPose(RobotCoordinate.ELEVATOR_STAGE);
         _inputs.platformPose = _robotState.getPose(RobotCoordinate.ELEVATOR_TOP);
+
+        // Log safety trips
+        if (_inputs.isDisabled && !_previouslySafetyTripped) {
+            DriverStation.reportError(
+                    "ELEVATOR SAFETY TRIPPED: Position difference of "
+                            + _inputs.eastWestPositionDifference
+                            + "m exceeds threshold of "
+                            + _inputs.positionDifferenceSafetyThreshold
+                            + "m",
+                    false);
+            _previouslySafetyTripped = true;
+        } else if (!_inputs.isDisabled && _previouslySafetyTripped) {
+            _previouslySafetyTripped = false;
+        }
     }
 
     @Override
@@ -101,8 +119,34 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         double heightDiff = Math.abs(state.getHeight() - getElevatorHeight());
         // 1 cm tolerance
         boolean isWithinPositionTolerance = heightDiff < 0.01;
+        // Also check velocity is close to zero (added)
+        boolean isVelocityNearZero = Math.abs(_inputs.firstStageVelocityMPS) < 0.01;
 
-        // TODO Probably add velocity as well
-        return isWithinPositionTolerance;
+        return isWithinPositionTolerance && isVelocityNearZero;
+    }
+
+    /**
+     * @return Whether the elevator is currently disabled due to a safety trip
+     */
+    public boolean isSafetyTripped() {
+        return _inputs.isDisabled;
+    }
+
+    public void resetSafety() {
+        if (_inputs.isDisabled) {
+            _elevatorIO.resetSafety();
+        }
+    }
+
+    public double getPositionDifference() {
+        return _inputs.eastWestPositionDifference;
+    }
+
+    public double getPositionDifferenceThreshold() {
+        return _inputs.positionDifferenceSafetyThreshold;
+    }
+
+    public String getSafetyStatus() {
+        return _inputs.safetyStatus;
     }
 }

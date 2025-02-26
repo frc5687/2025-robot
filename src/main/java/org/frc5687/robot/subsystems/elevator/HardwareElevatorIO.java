@@ -17,6 +17,7 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.util.CTREUtil;
+import org.frc5687.robot.util.TunableDouble;
 
 public class HardwareElevatorIO implements ElevatorIO {
     private final TalonFX _eastMotor;
@@ -38,8 +39,11 @@ public class HardwareElevatorIO implements ElevatorIO {
     private final LaserCan _laserCan;
 
     private double _platformVelocity = 0.0;
+    private boolean _zeroed = false;
+    private boolean _safetyTripped = false;
 
-    private boolean _zeroed;
+    private TunableDouble _positionDifferenceThreshold =
+            new TunableDouble("Elevator", "PositionDifferenceThreshold", 0.03);
 
     public HardwareElevatorIO(int eastMotorId, int westMotorId, int laserCanId) {
         _laserCan = new LaserCan(laserCanId);
@@ -66,8 +70,6 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         configureMotor(_eastMotor, Constants.Elevator.EAST_INVERTED);
         configureMotor(_westMotor, Constants.Elevator.WEST_INVERTED);
-
-        _zeroed = false;
     }
 
     private void setControlFrequency() {
@@ -78,9 +80,11 @@ public class HardwareElevatorIO implements ElevatorIO {
     private void setSignalFrequency() {
         _westPosition.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
         _westVelocity.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
+        _westAcceleration.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
 
         _eastPosition.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
         _eastVelocity.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
+        _eastAcceleration.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
     }
 
     @Override
@@ -105,15 +109,44 @@ public class HardwareElevatorIO implements ElevatorIO {
                         * Constants.Elevator.DRUM_RADIUS
                         / Constants.Elevator.GEAR_RATIO;
 
-        inputs.heightPositionMeters = (eastPosition + westPosition) / 2.0;
-
-        _platformVelocity =
-                (_eastVelocity.getValueAsDouble() + _westVelocity.getValueAsDouble() / 2.0)
+        double eastVelocity =
+                _eastVelocity.getValueAsDouble()
                         * (2 * Math.PI * Constants.Elevator.DRUM_RADIUS)
                         / Constants.Elevator.GEAR_RATIO;
 
+        double westVelocity =
+                _westVelocity.getValueAsDouble()
+                        * (2 * Math.PI * Constants.Elevator.DRUM_RADIUS)
+                        / Constants.Elevator.GEAR_RATIO;
+
+        inputs.eastPositionMeters = eastPosition;
+        inputs.westPositionMeters = westPosition;
+        inputs.eastVelocityMPS = eastVelocity;
+        inputs.westVelocityMPS = westVelocity;
+
+        double positionDifference = Math.abs(eastPosition - westPosition);
+        double velocityDifference = Math.abs(eastVelocity - westVelocity);
+
+        inputs.eastWestPositionDifference = positionDifference;
+        inputs.eastWestVelocityDifference = velocityDifference;
+
+        inputs.positionDifferenceSafetyThreshold = _positionDifferenceThreshold.get();
+
+        if (_zeroed && positionDifference > _positionDifferenceThreshold.get()) {
+            _safetyTripped = true;
+            inputs.safetyStatus =
+                    String.format(
+                            "SAFETY TRIPPED: Position difference of %.3fm exceeds threshold", positionDifference);
+            System.err.println(inputs.safetyStatus);
+        }
+
+        inputs.heightPositionMeters = (eastPosition + westPosition) / 2.0;
+
+        _platformVelocity = (eastVelocity + westVelocity) / 2.0;
+
         inputs.platformAcceleration =
-                (_eastAcceleration.getValueAsDouble() + _westAcceleration.getValueAsDouble() / 2.0)
+                (_eastAcceleration.getValueAsDouble() + _westAcceleration.getValueAsDouble())
+                        / 2.0
                         * (2 * Math.PI * Constants.Elevator.DRUM_RADIUS)
                         / Constants.Elevator.GEAR_RATIO;
 
@@ -123,88 +156,60 @@ public class HardwareElevatorIO implements ElevatorIO {
                     _eastMotor.getSupplyCurrent().getValueAsDouble(),
                     _westMotor.getSupplyCurrent().getValueAsDouble(),
                 };
+
+        inputs.isDisabled = _safetyTripped;
+        inputs.zeroed = _zeroed;
+
+        if (!_safetyTripped) {
+            inputs.safetyStatus = "OK";
+        }
+
         LaserCan.Measurement measurement = _laserCan.getMeasurement();
 
         if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
             inputs.laserSensorElevatorHeightMeters = measurement.distance_mm / 1000.0;
-            if (!_zeroed) {
+
+            if (!_zeroed && !_safetyTripped) {
                 double laserMotorMeters = inputs.laserSensorElevatorHeightMeters - 0.020;
-                _eastMotor.setPosition(
+                double rotations =
                         laserMotorMeters
                                 / Constants.Elevator.DRUM_RADIUS
                                 * Constants.Elevator.GEAR_RATIO
-                                / (2 * Math.PI));
-                _westMotor.setPosition(
-                        laserMotorMeters
-                                / Constants.Elevator.DRUM_RADIUS
-                                * Constants.Elevator.GEAR_RATIO
-                                / (2 * Math.PI));
+                                / (2 * Math.PI);
+
+                _eastMotor.setPosition(rotations);
+                _westMotor.setPosition(rotations);
                 _zeroed = true;
+                inputs.zeroed = true;
+                inputs.safetyStatus = "Zeroed successfully";
+                System.out.println("Elevator zeroed successfully at height: " + laserMotorMeters + "m");
             }
         } else {
-            // If we get a bad measurement we want to set it to some invalid measurement
             inputs.laserSensorElevatorHeightMeters = -1;
         }
     }
 
     @Override
     public void writeOutputs(ElevatorOutputs outputs) {
-
         if (!_zeroed) {
-            System.err.println(
-                    "BIG BAD ERROR!!!! ELEVATOR HAS NOT BEEN ZEROED, SO NO ELEVATING FOR NOW >:(");
+            System.err.println("ERROR: ELEVATOR HAS NOT BEEN ZEROED, NO CONTROL COMMANDS WILL BE SENT");
             return;
         }
 
-        // double nwPos = outputs.desiredStageHeight + (outputs.desiredStageHeight *
-        // backlashOffset.get());
-        // double nePos = outputs.desiredStageHeight + (outputs.desiredStageHeight *
-        // backlashOffset.get());
-        // double swPos = outputs.desiredStageHeight - (outputs.desiredStageHeight *
-        // backlashOffset.get());
+        if (_safetyTripped) {
+            System.err.println("ERROR: ELEVATOR SAFETY TRIPPED - MOTORS DISABLED UNTIL RESET");
+            // Stop motors
+            _eastMotor.setControl(new VoltageOut(0));
+            _westMotor.setControl(new VoltageOut(0));
+            return;
+        }
 
-        // double nwRotations =
-        //         Units.radiansToRotations(outputs.northWestStageHeight /
-        // Constants.Elevator.DRUM_RADIUS)
-        //                 * Constants.Elevator.GEAR_RATIO_NORTH;
-
-        // double neRotations =
-        //         Units.radiansToRotations(outputs.northEastStageHeight /
-        // Constants.Elevator.DRUM_RADIUS)
-        //                 * Constants.Elevator.GEAR_RATIO_NORTH;
-        // double swRotations =
-        //         Units.radiansToRotations(outputs.southWestStageHeight /
-        // Constants.Elevator.DRUM_RADIUS)
-        //                 * Constants.Elevator.GEAR_RATIO_SOUTH;
         double eastRotations =
                 Units.radiansToRotations(outputs.desiredHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO;
         double westRotations =
                 Units.radiansToRotations(outputs.desiredHeight / Constants.Elevator.DRUM_RADIUS)
                         * Constants.Elevator.GEAR_RATIO;
-
-        // if (isWithinPositionTolerance(outputs.desiredStageHeight)) {
-        //     outputs.usingPositionHolding = true;
-        //     _northWestElevatorMotor.setControl(_northWestPositionRequest.withPosition(nwRotations));
-        //     _northEastElevatorMotor.setControl(_northEastPositionRequest.withPosition(neRotations));
-        //     _southWestElevatorMotor.setControl(_southWestPositionRequest.withPosition(swRotations));
-        // } else {
-
-        //     outputs.usingPositionHolding = false;
-
-        //
-        // _northWestElevatorMotor.setControl(_northWestPositionTorqueRequest.withPosition(nwRotations));
-        //
-        // _northEastElevatorMotor.setControl(_northEastPositionTorqueRequest.withPosition(neRotations));
-        //
-        // _southWestElevatorMotor.setControl(_southWestPositionTorqueRequest.withPosition(swRotations));
-        // }
-        // outputs.voltageCommandNorthEast =
-        //         _northEastElevatorMotor.getClosedLoopOutput().getValueAsDouble();
-        // outputs.voltageCommandNorthWest =
-        //         _northWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
-        // outputs.voltageCommandSouthWest =
-        //         _southWestElevatorMotor.getClosedLoopOutput().getValueAsDouble();
 
         switch (outputs.controlMode) {
             case VOLTAGE:
@@ -244,7 +249,6 @@ public class HardwareElevatorIO implements ElevatorIO {
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = Constants.Elevator.CURRENT_LIMIT;
 
-        // motor.getConfigurator().apply(config);
         CTREUtil.applyConfiguration(motor, config);
     }
 
@@ -260,5 +264,13 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         CTREUtil.applyConfiguration(_eastMotor, config);
         CTREUtil.applyConfiguration(_westMotor, config);
+    }
+
+    @Override
+    public void resetSafety() {
+        if (_safetyTripped) {
+            System.out.println("Resetting elevator safety");
+            _safetyTripped = false;
+        }
     }
 }
