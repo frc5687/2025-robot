@@ -14,7 +14,7 @@ import java.util.Optional;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
-import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
+import org.frc5687.robot.commands.drive.DriveToTag;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
@@ -81,17 +81,20 @@ public class OperatorInterface {
                                                 * Constants.SwerveModule.MAX_ANGULAR_SPEED,
                                 () -> true)); // Always field relative
 
-        _driverController
-                .leftBumper()
-                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT));
         // _driverController
         //         .leftBumper()
-        //         .whileTrue(new DriveToTag(container.getDrive(), container.getVision(),
-        // ReefSide.RIGHT));
+        //         .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT));
+        _driverController
+                .leftBumper()
+                .whileTrue(new DriveToTag(container.getDrive(), container.getVision(), ReefSide.LEFT));
+
+        // _driverController
+        //         .rightBumper()
+        //         .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT));
 
         _driverController
                 .rightBumper()
-                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT));
+                .whileTrue(new DriveToTag(container.getDrive(), container.getVision(), ReefSide.RIGHT));
 
         _driverController
                 .leftTrigger()

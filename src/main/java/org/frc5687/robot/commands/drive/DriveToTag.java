@@ -56,7 +56,7 @@ public class DriveToTag extends OutliersCommand {
         _driveController.reset(0, 0);
         _lateralController.reset(0, 0);
         _thetaController.reset(currentPose.getRotation().getRadians(), 0);
-        _vision.setPipelineIndex(1); // remove magic number later -Dennis
+        // _vision.setPipelineIndex(1); // remove magic number later -Dennis
     }
 
     @Override
@@ -129,7 +129,7 @@ public class DriveToTag extends OutliersCommand {
 
     @Override
     public void end(boolean interrupted) {
-        _vision.setPipelineIndex(0);
+        // _vision.setPipelineIndex(0);
         _drive.setDesiredChassisSpeeds(new ChassisSpeeds());
     }
 }
