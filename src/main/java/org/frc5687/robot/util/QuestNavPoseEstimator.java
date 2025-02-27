@@ -9,11 +9,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
-import org.frc5687.robot.RobotStateManager;
 import org.photonvision.EstimatedRobotPose;
 
 public class QuestNavPoseEstimator implements EpilogueLog {
@@ -25,32 +23,35 @@ public class QuestNavPoseEstimator implements EpilogueLog {
 
     private double xyFactorTotal;
     private double thetaFactorTotal;
+    private int measurements;
 
     public QuestNavPoseEstimator(QuestNav questNav, Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
         _originToFieldEstimate = new Transform2d();
         _questNav = questNav;
         _chassisSpeedsSupplier = chassisSpeedsSupplier;
-        xyFactorTotal = 0.0;
-        thetaFactorTotal = 0.0;
+        xyFactorTotal = 100.0;
+        thetaFactorTotal = 100.0;
+        measurements = 0;
     }
 
     public void addVisionMeasurement(EstimatedRobotPose visionPose, double timestamp) {
-        Optional<Pose2d> questPose = getRawQuestPose(timestamp - 0.02);
+        if (_questNav.timeSinceLastUpdate() > 0.040) return;
+        Optional<Pose2d> questPose = _questNav.getQuestPose(timestamp);
         if (questPose.isEmpty()) return;
+        log("Interpolated fieldToRobot", questPose.get(), Pose2d.struct);
         Transform2d originToQuest = new Transform2d(new Pose2d(), questPose.get());
         Transform2d visionFieldToRobot =
                 new Transform2d(new Pose2d(), visionPose.estimatedPose.toPose2d());
         Transform2d fieldToQuest = visionFieldToRobot.plus(Constants.Vision.ROBOT_TO_QUEST);
         Transform2d originToField = originToQuest.plus(fieldToQuest.inverse());
         Transform2d estimatedError = _originToFieldEstimate.plus(originToField.inverse());
-        if (xyFactorTotal > 0 && estimatedError.getTranslation().getNorm() > 0.3) return;
+        // if (measurements > 10 && estimatedError.getTranslation().getNorm() > 0.3) {
+        //     System.out.println("error too high " + estimatedError.getTranslation().getNorm());
+        //     return;
+        // }
 
         log("Vision fieldToRobot", visionFieldToRobot, Transform2d.struct);
         // TODO get real x y theta error for each measurement and use sheets
-        log(
-                "Interpolated fieldToRobot",
-                RobotStateManager.getInstance().getQuestPose(timestamp - 0.02).get(),
-                Pose2d.struct);
         log("Measured originToField", originToField, Transform2d.struct);
 
         ChassisSpeeds speeds = _chassisSpeedsSupplier.get();
@@ -86,11 +87,17 @@ public class QuestNavPoseEstimator implements EpilogueLog {
                         guessRotationVectorY, averageRotationVectorY, thetaFactor, thetaFactorTotal);
         Rotation2d newRotation = new Rotation2d(newRotationVectorX, newRotationVectorY);
 
-        xyFactorTotal += xyFactor;
-        thetaFactorTotal += thetaFactor;
+        // xyFactorTotal += xyFactor;
+        // thetaFactorTotal += thetaFactor;
+        measurements += 1;
 
         _originToFieldEstimate = new Transform2d(newX, newY, newRotation);
         log("Estimated quest origin to field origin", _originToFieldEstimate, Transform2d.struct);
+        log("Quest Start Pose", _originToFieldEstimate.inverse(), Transform2d.struct);
+        log(
+                "Robot Start Pose",
+                _originToFieldEstimate.inverse().plus(Constants.Vision.ROBOT_TO_QUEST.inverse()),
+                Transform2d.struct);
     }
 
     private double addMeasurementToAverage(
@@ -99,20 +106,24 @@ public class QuestNavPoseEstimator implements EpilogueLog {
         return sum / (prevFactorTotal + newFactor);
     }
 
-    private Optional<Pose2d> getRawQuestPose(double timestamp) {
-        var pose = RobotStateManager.getInstance().getQuestPose(timestamp);
-        if (pose.isEmpty()) return Optional.empty();
-        return Optional.of(
-                FIELD_TO_ORIGIN.plus(
-                        new Transform2d(new Pose2d(), pose.get()).plus(Constants.Vision.ROBOT_TO_QUEST)));
-    }
+    //     private void resetRobotPose(Pose2d robotPose) {
+    //         if (_questNav.timeSinceLastUpdate() > 0.040) {
+    //                 System.err.println("Failed to reset pose. Quest is down.");
+    //                 return;
+    //         };
+    //         Pose2d questPose = _questNav.getQuestPose();
+    //         Transform2d originToQuest = new Transform2d(new Pose2d(), questPose);
+    //         Transform2d fieldToRobot = new Transform2d(new Pose2d(), robotPose);
+    //         Transform2d fieldToQuest = visionFieldToRobot.plus(Constants.Vision.ROBOT_TO_QUEST);
+    //         Transform2d originToField = originToQuest.plus(fieldToQuest.inverse());
+    //     }
 
     public Pose2d getEstimatedRobotPose() {
         if (_originToFieldEstimate == null) return new Pose2d(); // scuffed
         Transform2d estimatedQuestPose =
                 _originToFieldEstimate
                         .inverse()
-                        .plus(new Transform2d(new Pose2d(), getRawQuestPose(Timer.getFPGATimestamp()).get()));
+                        .plus(new Transform2d(new Pose2d(), _questNav.getQuestPose()));
         return new Pose2d().plus(estimatedQuestPose).plus(Constants.Vision.ROBOT_TO_QUEST.inverse());
     }
 

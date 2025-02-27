@@ -14,7 +14,6 @@ import java.util.Optional;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
-import org.frc5687.robot.commands.drive.DriveToTag;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
@@ -82,12 +81,13 @@ public class OperatorInterface {
                                                 * Constants.SwerveModule.MAX_ANGULAR_SPEED,
                                 () -> true)); // Always field relative
 
-        // _driverController
-        //         .leftBumper()
-        //         .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT));
         _driverController
                 .leftBumper()
-                .whileTrue(new DriveToTag(container.getDrive(), container.getVision(), ReefSide.RIGHT));
+                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT));
+        // _driverController
+        //         .leftBumper()
+        //         .whileTrue(new DriveToTag(container.getDrive(), container.getVision(),
+        // ReefSide.RIGHT));
 
         _driverController
                 .rightBumper()
@@ -143,6 +143,9 @@ public class OperatorInterface {
                                 () ->
                                         RobotStateManager.getInstance()
                                                 .resetEstimatedPose(new Pose2d(3.169, 4.021, new Rotation2d()))));
+
+        _driverController.a().onTrue(new InstantCommand(container.getClimber()::decreaseServoSetpoint));
+        _driverController.y().onTrue(new InstantCommand(container.getClimber()::increaseServoSetpoint));
     }
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */

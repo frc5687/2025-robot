@@ -53,6 +53,6 @@ public class HardwareClimberArmIO implements ClimberIO {
     public void writeOutputs(ClimberOutputs outputs) {
         _winchMotor.setControl(
                 _winchPositionRequest.withPosition(Radians.of(outputs.motorSetpointRads)));
-        // _servo.set(outputs.servoSetpoint);
+        _servo.set(outputs.servoSetpoint);
     }
 }
