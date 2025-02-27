@@ -38,6 +38,10 @@ import org.frc5687.robot.subsystems.intake.SimIntakeIO;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.subsystems.vision.LimelightVisionIO;
+import org.frc5687.robot.subsystems.lights.HardwareLightsIO;
+import org.frc5687.robot.subsystems.lights.LightSubsystem;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
+import org.frc5687.robot.subsystems.vision.PhotonVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.subsystems.vision.VisionIO;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
@@ -55,6 +59,7 @@ public class RobotContainer implements EpilogueLog {
     private final AlgaeArmSubsystem _algaeArm;
     private final CoralArmSubsystem _coralArm;
     private final ClimberSubsystem _climber;
+    private final LightSubsystem _lights;
 
     private final VisionSubsystem _vision;
 
@@ -70,10 +75,13 @@ public class RobotContainer implements EpilogueLog {
         _robot = robot;
         _oi = new OperatorInterface();
         _questNav = new QuestNav();
-        DriveIO driveIO =
-                RobotBase.isSimulation()
-                        ? new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON)
-                        : new CTREDriveIO(RobotMap.CAN.PIGEON.PIGEON, Constants.SwerveModule.CAN_BUS);
+
+        // TODO implement simulation io
+        _lights = new LightSubsystem(this, new HardwareLightsIO());
+
+        DriveIO driveIO = RobotBase.isSimulation()
+                ? new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON)
+                : new CTREDriveIO(RobotMap.CAN.PIGEON.PIGEON, Constants.SwerveModule.CAN_BUS);
 
         _drive = new DriveSubsystem(this, driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
 
@@ -88,29 +96,25 @@ public class RobotContainer implements EpilogueLog {
         if (RobotBase.isSimulation()) {
             elevatorIO = new SimElevatorIO();
         } else {
-            elevatorIO =
-                    new HardwareElevatorIO(
-                            RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR,
-                            RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR,
-                            RobotMap.CAN.LASERCAN.LASERCAN);
+            elevatorIO = new HardwareElevatorIO(
+                    RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR,
+                    RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR,
+                    RobotMap.CAN.LASERCAN.LASERCAN);
         }
 
         _elevator = new ElevatorSubsystem(this, elevatorIO);
 
-        AlgaeArmIO algaeArmIO =
-                RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
+        AlgaeArmIO algaeArmIO = RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
         _algaeArm = new AlgaeArmSubsystem(this, algaeArmIO);
 
-        CoralArmIO coralArmIO =
-                RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
+        CoralArmIO coralArmIO = RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
         _coralArm = new CoralArmSubsystem(this, coralArmIO);
 
-        IntakeIO intakeIO = /*  RobotBase.isSimulation() ?*/
-                new SimIntakeIO() /*  : new HardwareIntakeIO() */;
+        IntakeIO intakeIO = /* RobotBase.isSimulation() ? */
+                new SimIntakeIO() /* : new HardwareIntakeIO() */;
         _intake = new IntakeSubsystem(this, intakeIO);
 
-        ClimberIO climberIO =
-                RobotBase.isSimulation() ? new SimClimberIO() : new HardwareClimberArmIO();
+        ClimberIO climberIO = RobotBase.isSimulation() ? new SimClimberIO() : new HardwareClimberArmIO();
         _climber = new ClimberSubsystem(this, climberIO);
 
         VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new LimelightVisionIO();
@@ -129,27 +133,24 @@ public class RobotContainer implements EpilogueLog {
         _drive.setDefaultCommand(
                 new TeleopDriveCommand(
                         _drive,
-                        () ->
-                                -modifyAxis(_oi.getDriverController().getLeftY())
-                                        * Constants.SwerveModule.MAX_LINEAR_SPEED,
-                        () ->
-                                -modifyAxis(_oi.getDriverController().getLeftX())
-                                        * Constants.SwerveModule.MAX_LINEAR_SPEED,
-                        () ->
-                                -modifyAxis(_oi.getDriverController().getRightX())
-                                        * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                        () -> -modifyAxis(_oi.getDriverController().getLeftY())
+                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                        () -> -modifyAxis(_oi.getDriverController().getLeftX())
+                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                        () -> -modifyAxis(_oi.getDriverController().getRightX())
+                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
                         () -> true // Always field relative
-                        ));
+                ));
 
         // _drive.setDefaultCommand(
         // new TeleopDriveCommand(
-        //         _drive, () -> 0, () -> 0, () -> 0, () -> true // Always field relative
-        //         ));
+        // _drive, () -> 0, () -> 0, () -> 0, () -> true // Always field relative
+        // ));
 
         _elevator.setDefaultCommand(new IdleElevator(_elevator));
         // _elevator.setDefaultCommand(new SetElevatorPosition(
-        //     _elevator,
-        //     () -> -modifyAxis(_oi.getDriverController().getLeftY())
+        // _elevator,
+        // () -> -modifyAxis(_oi.getDriverController().getLeftY())
         // ));
 
         _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
@@ -158,11 +159,11 @@ public class RobotContainer implements EpilogueLog {
         // _coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
         _intake.setDefaultCommand(new IdleIntake(_intake));
         // _intake.setDefaultCommand(
-        //         new RunIntake(
-        //                 _intake,
-        //                 0,
-        //                 0,
-        //                 () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12,
+        // new RunIntake(
+        // _intake,
+        // 0,
+        // 0,
+        // () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12,
         // 12)));
         _autoChooser = AutoBuilder.buildAutoChooser("test");
         SmartDashboard.putData("Auto Chooser", _autoChooser);
@@ -203,18 +204,18 @@ public class RobotContainer implements EpilogueLog {
         NamedCommands.registerCommand("AutoPlace", AutoActions.autoPlace(this));
 
         // NamedCommands.registerCommand(
-        //         "Place", _superstructureManager.placeAtCurrentHeight(RequestType.IMMEDIATE));
+        // "Place", _superstructureManager.placeAtCurrentHeight(RequestType.IMMEDIATE));
 
         // Supplier<Boolean> falseSupplier =
-        //         () -> {
-        //             return false;
-        //         };
+        // () -> {
+        // return false;
+        // };
         // NamedCommands.registerCommand(
-        //         "CoralL4", SuperstructureFactory.placeCoralL4(this, false, falseSupplier));
+        // "CoralL4", SuperstructureFactory.placeCoralL4(this, false, falseSupplier));
         // NamedCommands.registerCommand(
-        //         "CoralL3", SuperstructureFactory.placeCoralL3(this, false, falseSupplier));
+        // "CoralL3", SuperstructureFactory.placeCoralL3(this, false, falseSupplier));
         // NamedCommands.registerCommand(
-        //         "CoralL2", SuperstructureFactory.placeCoralL2(this, falseSupplier));
+        // "CoralL2", SuperstructureFactory.placeCoralL2(this, falseSupplier));
         // NamedCommands.registerCommand("Place", SuperstructureFactory.place(this));
         // place shoots it out
     }

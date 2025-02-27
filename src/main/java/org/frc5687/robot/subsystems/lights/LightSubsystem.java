@@ -4,18 +4,12 @@ import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.subsystems.SubsystemIO;
-import org.frc5687.robot.subsystems.intake.IntakeInputs;
-import org.frc5687.robot.subsystems.intake.IntakeOutputs;
-import org.frc5687.robot.subsystems.intake.IntakeState;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 
 public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs> {
 
     public LightSubsystem(RobotContainer container, SubsystemIO<LightInputs, LightOutputs> io) {
         super(container, io, new LightInputs(), new LightOutputs());
-        setDesiredState(LightState.PLACEHOLDER);
+        setDesiredState(LightState.TWINKLE_DEFAULT);
     }
 
     @Override
@@ -29,5 +23,4 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
     public void setDesiredState(LightState state) {
         _outputs.desiredState = state;
     }
-
 }
