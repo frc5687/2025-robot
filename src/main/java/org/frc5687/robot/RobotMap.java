@@ -50,7 +50,7 @@ public class RobotMap {
             public static final int ELEVATOR = 1;
         }
 
-        public static class CANDLE {}
+        public static final int CANDLE = 13;
     }
 
     /**

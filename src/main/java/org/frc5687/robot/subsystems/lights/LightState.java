@@ -1,16 +1,19 @@
 package org.frc5687.robot.subsystems.lights;
 
+import com.ctre.phoenix.led.Animation;
+import com.ctre.phoenix.led.TwinkleAnimation;
+import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
+
 public enum LightState {
-    PLACEHOLDER(0);
+    TWINKLE_DEFAULT(255, 255, 255);
 
-    private final double _brightness;
+    private final Animation _animation;
 
-    LightState(double brightness) {
-        _brightness = brightness;
+    LightState(int r, int g, int b) {
+        _animation = new TwinkleAnimation(r, g, b, 0, 1.0, 100, TwinklePercent.Percent42);
     }
 
-    public double getBrightness() {
-        return _brightness;
+    public Animation getAnimation() {
+        return _animation;
     }
-
 }

@@ -38,6 +38,8 @@ import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
+import org.frc5687.robot.subsystems.lights.HardwareLightsIO;
+import org.frc5687.robot.subsystems.lights.LightSubsystem;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
 import org.frc5687.robot.subsystems.vision.PhotonVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
@@ -57,6 +59,7 @@ public class RobotContainer implements EpilogueLog {
     private final AlgaeArmSubsystem _algaeArm;
     private final CoralArmSubsystem _coralArm;
     private final ClimberSubsystem _climber;
+    private final LightSubsystem _lights;
 
     private final VisionSubsystem _vision;
 
@@ -73,6 +76,10 @@ public class RobotContainer implements EpilogueLog {
         _oi = new OperatorInterface();
         _field = new Field2d();
         _questNav = new QuestNav();
+
+        // TODO implement simulation io
+        _lights = new LightSubsystem(this, new HardwareLightsIO());
+
         DriveIO driveIO =
                 RobotBase.isSimulation()
                         ? new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON)
