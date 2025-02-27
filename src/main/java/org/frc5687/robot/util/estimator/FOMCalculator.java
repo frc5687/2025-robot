@@ -95,11 +95,11 @@ public class FOMCalculator implements EstimatorLoggable {
             visionFOM *= 0.8; // Close tags are reliable
         }
 
-        if (poseEstimate.confidence < 0.8) {
-            visionFOM *= 1.0 + ((0.8 - poseEstimate.confidence) * 2.0);
-        } else if (poseEstimate.confidence > 0.95) {
-            visionFOM *= 0.9; // Very high confidence is good
-        }
+        // if (poseEstimate.confidence < 0.8) {
+        //     visionFOM *= 1.0 + ((0.8 - poseEstimate.confidence) * 2.0);
+        // } else if (poseEstimate.confidence > 0.95) {
+        //     visionFOM *= 0.9; // Very high confidence is good
+        // }
 
         if (poseEstimate.tagCount >= 2 && poseEstimate.tagSpan > 0.5) {
             double spanFactor = Math.min(poseEstimate.tagSpan, 3.0) / 3.0;

@@ -389,7 +389,7 @@ public class Constants {
         public static final double ARM_MASS = Units.lbsToKilograms(4.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 2.094;
-        public static final double MAX_ANGLE = 5.45;
+        public static final double MAX_ANGLE = 5.255;
 
         // public static final double MAX_VELOCITY_RAD_PER_SEC = 2;
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 15 * Math.PI;
@@ -411,8 +411,13 @@ public class Constants {
     public static class Vision {
         public static final double MIN_AMBIGUITY = 0.3;
 
+        // PV version
+        // public static final Transform3d ROBOT_TO_NORTH_CAM =
+        //         new Transform3d(0.281, -0.025, 0.234, new Rotation3d(0, Units.degreesToRadians(-15),
+        // 0));
+
         public static final Transform3d ROBOT_TO_NORTH_CAM =
-                new Transform3d(0.281, -0.025, 0.234, new Rotation3d(0, Units.degreesToRadians(-15), 0));
+                new Transform3d(0.254, -0.025, 0.226092, new Rotation3d(0, Units.degreesToRadians(-15), 0));
 
         public static final Matrix<N3, N3> simCalibrationMatrix = new Matrix<>(Nat.N3(), Nat.N3());
         public static final double simFocalLength =

@@ -3,6 +3,8 @@ package org.frc5687.robot.subsystems.vision;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -25,6 +27,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     public VisionSubsystem(RobotContainer container, VisionIO io) {
         super(container, io, new VisionInputs(), new VisionOutputs());
     }
+
     public static boolean isValidTag(AprilTagObservation observation) {
         if (observation == null) return false;
 
@@ -48,7 +51,6 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
                 && confidence >= MIN_CONFIDENCE;
     }
 
-
     public List<AprilTagObservation> getValidTags() {
         List<AprilTagObservation> validTags = new ArrayList<>();
         for (List<AprilTagObservation> observations : _inputs.cameraObservations.values()) {
@@ -69,11 +71,8 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
             String cameraName = entry.getKey();
             RobotPoseEstimate poseEstimate = entry.getValue();
             estimates.add(poseEstimate);
-
             Pose3d pose3d = poseEstimate.getPose3d();
-
             robotPoses.add(pose3d);
-
             RobotStateManager.getInstance().updateVision(poseEstimate);
         }
 
@@ -83,6 +82,10 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         List<AprilTagObservation> northTags = filterValidTags(getNorthCameraObservations());
         List<AprilTagObservation> northWestTags = filterValidTags(getNorthWestCameraObservations());
 
+        for (var tag : northTags) {
+            log("Distance", calculateDistanceWithCalibration(tag, "North_Camera"));
+        }
+
         log("NorthTags", northTags, AprilTagObservation.struct);
         log("NorthWestTags", northWestTags, AprilTagObservation.struct);
     }
@@ -91,27 +94,22 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         return observations.stream().filter(VisionSubsystem::isValidTag).collect(Collectors.toList());
     }
 
-
     public boolean hasValidTargets() {
         return !getValidTags().isEmpty();
     }
 
-  
     public List<AprilTagObservation> getNorthCameraObservations() {
         return _inputs.cameraObservations.getOrDefault("North_Camera", new ArrayList<>());
     }
-
 
     public List<AprilTagObservation> getNorthWestCameraObservations() {
         return _inputs.cameraObservations.getOrDefault("North_West_Camera", new ArrayList<>());
     }
 
-
     public Optional<AprilTagObservation> getTagFromObservations(
             List<AprilTagObservation> observations, int tagId) {
         return observations.stream().filter(tag -> (tag.getId() == tagId)).findFirst();
     }
-
 
     public AprilTagObservation getClosestTag() {
         List<AprilTagObservation> validTags = getValidTags();
@@ -121,7 +119,6 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
                 .max(Comparator.comparingDouble(AprilTagObservation::getArea))
                 .orElse(null);
     }
-
 
     public AprilTagObservation getBestTag() {
         List<AprilTagObservation> validTags = getValidTags();
@@ -170,6 +167,47 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
         // Similar triangles: distance = (actual_tag_size * focal_length) / pixel_size
         return Units.inchesToMeters(6.5) * focalLength / avgPixelSize;
+    }
+
+    public double calculateHorizontalFOV(Matrix<N3, N3> calibrationMatrix, double imageWidth) {
+        return 2 * Math.atan(imageWidth / (2 * calibrationMatrix.get(0, 0)));
+    }
+
+    public double calculateVerticalFOV(Matrix<N3, N3> calibrationMatrix, double imageHeight) {
+        return 2 * Math.atan(imageHeight / (2 * calibrationMatrix.get(1, 1)));
+    }
+
+    public double calculateDistanceFromAngles(AprilTagObservation observation, String cameraName) {
+        final double TAG_SIZE_METERS = Units.inchesToMeters(6.5);
+
+        Transform3d cameraToRobot;
+
+        if (cameraName.equals("North_Camera")) {
+            cameraToRobot = Constants.Vision.ROBOT_TO_NORTH_CAM;
+        } else if (cameraName.equals("North_West_Camera")) {
+            cameraToRobot = Constants.Vision.ROBOT_TO_NW_CAM;
+        } else {
+            System.err.println("Invalid camera " + cameraName);
+            // Default values if camera not recognized
+            cameraToRobot = new Transform3d();
+        }
+
+        return calculateDistanceFromAngles(observation, cameraToRobot, TAG_SIZE_METERS);
+    }
+
+    public double calculateDistanceFromAngles(
+            AprilTagObservation observation, Transform3d cameraToRobot, double tagSizeMeters) {
+
+        Optional<Pose3d> tagPose = FieldConstants.aprilTagLayout.getTagPose(observation.getId());
+        if (tagPose.isEmpty()) {
+            return -1;
+        }
+
+        double tyRadians = Math.toRadians(observation.getTy());
+        Rotation3d cameraMountAngle = cameraToRobot.getRotation();
+        double adjustedTy = tyRadians + cameraMountAngle.getY();
+
+        return (tagPose.get().getZ() - cameraToRobot.getZ()) / (Math.tan(adjustedTy));
     }
 
     private Matrix<N3, N3> getCalibrationMatrix(String cameraName) {

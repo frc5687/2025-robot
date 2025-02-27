@@ -2,7 +2,9 @@ package org.frc5687.robot.util.estimator;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.TimeInterpolatableBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import org.frc5687.robot.subsystems.drive.DriveInputs;
 import org.frc5687.robot.subsystems.vision.RobotPoseEstimate;
@@ -15,17 +17,23 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
             0.1; // Maximum position change per cycle in meters
     private static final double MAX_VISION_JUMP =
             0.2; // Maximum vision correction per cycle in meters
+    private static final double POSE_BUFFER_SECONDS = 1.5; // Buffer size for pose history
 
     private final ModuleState[] _moduleStates;
     private final SkidDetector _skidDetector;
     private final CollisionDetector _collisionDetector;
     private final FOMCalculator _fomCalculator;
 
+    // Pose buffer for handling latency
+    private final TimeInterpolatableBuffer<Pose2d> _poseBuffer =
+            TimeInterpolatableBuffer.createBuffer(POSE_BUFFER_SECONDS);
+
     private Pose2d _robotPose = new Pose2d();
     private Pose2d _previousRobotPose = new Pose2d();
     private Translation2d _robotVelocity = new Translation2d();
     private double _lastTimestamp = 0.0;
     private boolean _firstCycle = true;
+    private double _currentVelocity = 0.0; // Scalar velocity magnitude
 
     public RobustSwerveOdometry(Translation2d[] moduleLocations) {
         _moduleStates = new ModuleState[moduleLocations.length];
@@ -47,6 +55,9 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
         if (_firstCycle) {
             _firstCycle = false;
             _lastTimestamp = currentTime;
+
+            // Initialize pose buffer with current pose
+            _poseBuffer.addSample(currentTime, _robotPose);
             return; // Skip first cycle to establish baseline
         }
 
@@ -141,9 +152,13 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
 
         if (dt > VELOCITY_SAMPLE_TIME) {
             _robotVelocity = newTranslation.minus(_previousRobotPose.getTranslation()).times(1.0 / dt);
+            _currentVelocity = _robotVelocity.getNorm();
         }
 
         _robotPose = newPose;
+
+        // Add the new pose to our time-interpolatable buffer
+        _poseBuffer.addSample(currentTime, _robotPose);
 
         inputs.estimatedPose = _robotPose;
 
@@ -152,13 +167,15 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
         log("X", _robotPose.getX());
         log("Y", _robotPose.getY());
         log("Heading", _robotPose.getRotation().getDegrees());
-        log("Velocity", _robotVelocity.getNorm());
+        log("Velocity", _currentVelocity);
         log("DeltaTime", dt);
         log("Skidding", skidding);
     }
 
     public void addVisionMeasurement(RobotPoseEstimate poseEstimate) {
-        if (poseEstimate.getLatency() > MAX_VISION_LATENCY) {
+        double measurementTimestamp = poseEstimate.timestampSeconds;
+
+        if (Timer.getFPGATimestamp() - measurementTimestamp > MAX_VISION_LATENCY) {
             log("VisionStatus", "Rejected (Stale)");
             return;
         }
@@ -168,7 +185,17 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
             return;
         }
 
-        double visionFOM = _fomCalculator.calculateVisionFOM(poseEstimate, _robotPose);
+        var maybePose = _poseBuffer.getSample(measurementTimestamp);
+        if (maybePose.isEmpty()) {
+            log("VisionStatus", "Rejected (No historical pose)");
+            return;
+        }
+
+        Pose2d poseAtVisionTime = maybePose.get();
+
+        Transform2d odometryToCurrentTransform = new Transform2d(poseAtVisionTime, _robotPose);
+
+        double visionFOM = _fomCalculator.calculateVisionFOM(poseEstimate, poseAtVisionTime);
         double odometryFOM = _fomCalculator.getOdometryFOM();
 
         if (visionFOM < odometryFOM) {
@@ -177,7 +204,7 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
             double odometryWeight = weights[1];
 
             Translation2d poseDiff =
-                    poseEstimate.pose.getTranslation().minus(_robotPose.getTranslation());
+                    poseEstimate.pose.getTranslation().minus(poseAtVisionTime.getTranslation());
             double poseDiffNorm = poseDiff.getNorm();
 
             if (poseDiffNorm > MAX_VISION_JUMP) {
@@ -186,20 +213,20 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
                 odometryWeight = 1.0 - visionWeight;
             }
 
-            Translation2d blendedTranslation =
+            Translation2d blendedHistoricalTranslation =
                     poseEstimate
                             .pose
                             .getTranslation()
                             .times(visionWeight)
-                            .plus(_robotPose.getTranslation().times(odometryWeight));
+                            .plus(poseAtVisionTime.getTranslation().times(odometryWeight));
 
-            Rotation2d blendedRotation;
+            Rotation2d blendedHistoricalRotation;
             if (poseEstimate.tagCount >= 2) {
-                double visionRotationWeight = Math.min(0.8, visionWeight); // Cap rotation weight
+                double visionRotationWeight = Math.min(0.8, visionWeight);
                 double odometryRotationWeight = 1.0 - visionRotationWeight;
 
                 double visionAngle = poseEstimate.pose.getRotation().getRadians();
-                double odometryAngle = _robotPose.getRotation().getRadians();
+                double odometryAngle = poseAtVisionTime.getRotation().getRadians();
 
                 double angleDiff = visionAngle - odometryAngle;
                 if (angleDiff > Math.PI) {
@@ -210,10 +237,10 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
 
                 double blendedAngle =
                         (visionAngle * visionRotationWeight) + (odometryAngle * odometryRotationWeight);
-                blendedRotation = new Rotation2d(blendedAngle);
+                blendedHistoricalRotation = new Rotation2d(blendedAngle);
             } else {
                 double visionAngle = poseEstimate.pose.getRotation().getRadians();
-                double odometryAngle = _robotPose.getRotation().getRadians();
+                double odometryAngle = poseAtVisionTime.getRotation().getRadians();
 
                 double angleDiff = visionAngle - odometryAngle;
                 if (angleDiff > Math.PI) {
@@ -227,16 +254,20 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
 
                 double blendedAngle =
                         (visionAngle * visionRotationWeight) + (odometryAngle * odometryRotationWeight);
-                blendedRotation = new Rotation2d(blendedAngle);
+                blendedHistoricalRotation = new Rotation2d(blendedAngle);
             }
 
-            Pose2d blendedPose = new Pose2d(blendedTranslation, blendedRotation);
+            Pose2d blendedHistoricalPose =
+                    new Pose2d(blendedHistoricalTranslation, blendedHistoricalRotation);
 
-            _robotPose = blendedPose;
+            _robotPose = blendedHistoricalPose.plus(odometryToCurrentTransform);
 
             log("VisionStatus", "Applied (Better FOM)");
             log("VisionWeight", visionWeight);
             log("OdometryWeight", odometryWeight);
+            log("VisionTimestamp", measurementTimestamp);
+        } else {
+            log("VisionStatus", "Rejected (Worse FOM)");
         }
     }
 
@@ -244,6 +275,7 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
         _previousRobotPose = pose;
         _robotPose = pose;
         _robotVelocity = new Translation2d();
+        _currentVelocity = 0.0;
         _firstCycle = true;
 
         for (ModuleState state : _moduleStates) {
@@ -254,6 +286,10 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
         _collisionDetector.reset();
         _fomCalculator.reset();
 
+        // Clear and initialize the pose buffer
+        _poseBuffer.clear();
+        _poseBuffer.addSample(Timer.getFPGATimestamp(), pose);
+
         _lastTimestamp = Timer.getFPGATimestamp();
     }
 
@@ -263,6 +299,10 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
 
     public Translation2d getVelocity() {
         return _robotVelocity;
+    }
+
+    public double getScalarVelocity() {
+        return _currentVelocity;
     }
 
     public double getFOM() {
@@ -279,5 +319,15 @@ public class RobustSwerveOdometry implements EstimatorLoggable {
 
     public boolean isInCollisionState() {
         return _collisionDetector.isInCollisionState();
+    }
+
+    /**
+     * Get a pose from the history buffer at a specific timestamp
+     *
+     * @param timestamp The timestamp to retrieve the pose for
+     * @return The pose at the specified time, if available
+     */
+    public java.util.Optional<Pose2d> getPoseAtTime(double timestamp) {
+        return _poseBuffer.getSample(timestamp);
     }
 }

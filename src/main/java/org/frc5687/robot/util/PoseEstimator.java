@@ -31,8 +31,7 @@ public class PoseEstimator implements EpilogueLog {
     private double _currentVelocity = 0.0;
 
     // We probably want to seperate this for the different estimators
-    private final Matrix<N3, N1> _qStdDevs =
-            VecBuilder.fill(0.003 * 0.003, 0.003 * 0.003, 0.002 * 0.002);
+    private final Matrix<N3, N1> _qStdDevs = VecBuilder.fill(0.1 * 0.1, 0.01 * 0.1, 0.002 * 0.002);
 
     private final Map<Integer, Pose2d> _tagPoses = new HashMap<>();
 

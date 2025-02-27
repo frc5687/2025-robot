@@ -37,7 +37,7 @@ import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
-import org.frc5687.robot.subsystems.vision.PhotonVisionIO;
+import org.frc5687.robot.subsystems.vision.LimelightVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.subsystems.vision.VisionIO;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
@@ -113,7 +113,7 @@ public class RobotContainer implements EpilogueLog {
                 RobotBase.isSimulation() ? new SimClimberIO() : new HardwareClimberArmIO();
         _climber = new ClimberSubsystem(this, climberIO);
 
-        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new PhotonVisionIO();
+        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new LimelightVisionIO();
         _vision = new VisionSubsystem(this, visionIO);
 
         _superstructureManager = new SuperstructureManager(this);

@@ -14,7 +14,9 @@ import java.util.function.Supplier;
 import org.frc5687.robot.subsystems.drive.DriveInputs;
 import org.frc5687.robot.subsystems.vision.RobotPoseEstimate;
 import org.frc5687.robot.util.EpilogueLog;
+import org.frc5687.robot.util.PoseEstimator;
 import org.frc5687.robot.util.QuestNav;
+import org.frc5687.robot.util.WheelOdometrySource;
 import org.frc5687.robot.util.estimator.PoseTracker;
 import org.frc5687.robot.util.estimator.SwerveOdometry;
 
@@ -74,6 +76,7 @@ public class RobotStateManager implements EpilogueLog {
     // New pose trackers
     private PoseTracker _swervePoseTracker;
     private PoseTracker _simPoseTracker;
+    private PoseEstimator _estimator;
 
     private final DriveInputs _swerveInputs = new DriveInputs();
     private final DriveInputs _simInputs = new DriveInputs();
@@ -120,6 +123,7 @@ public class RobotStateManager implements EpilogueLog {
         _nav = nav;
 
         _odom = new SwerveOdometry(Constants.DriveTrain.MODULE_LOCATIONS);
+        _estimator = new PoseEstimator(new WheelOdometrySource(positionSupplier, headingSupplier));
         // Initialize the swerve pose tracker
         _swervePoseTracker = new PoseTracker(Constants.DriveTrain.MODULE_LOCATIONS, _swerveInputs);
 
@@ -134,19 +138,28 @@ public class RobotStateManager implements EpilogueLog {
         _odom.update(_swerveInputs);
         updateInputs(_swerveInputs);
         log("SkidOdom", _odom.getPose(), Pose2d.struct);
+        Pose2d robotPose = _estimator.getEstimatedPose();
+        _estimator.updateOdometry();
+        _poses.put(
+                RobotCoordinate.ROBOT_BASE_SWERVE,
+                new Pose3d(
+                        robotPose.getX(),
+                        robotPose.getY(),
+                        0,
+                        new Rotation3d(0, 0, robotPose.getRotation().getRadians())));
+        log("Old Estimator", _estimator.getEstimatedPose(), Pose2d.struct);
 
-        // Update swerve pose tracker
-        if (_swervePoseTracker != null) {
-            _swervePoseTracker.update();
-            Pose2d robotPose = _swervePoseTracker.getPose();
-            _poses.put(
-                    RobotCoordinate.ROBOT_BASE_SWERVE,
-                    new Pose3d(
-                            robotPose.getX(),
-                            robotPose.getY(),
-                            0,
-                            new Rotation3d(0, 0, robotPose.getRotation().getRadians())));
-        }
+        // if (_swervePoseTracker != null) {
+        //     _swervePoseTracker.update();
+        //     Pose2d robotPose = _swervePoseTracker.getPose();
+        //     _poses.put(
+        //             RobotCoordinate.ROBOT_BASE_SWERVE,
+        //             new Pose3d(
+        //                     robotPose.getX(),
+        //                     robotPose.getY(),
+        //                     0,
+        //                     new Rotation3d(0, 0, robotPose.getRotation().getRadians())));
+        // }
 
         // if (_nav != null) {
         //     Pose2d questNavPose = _nav.getEstimatedPose();
@@ -161,10 +174,9 @@ public class RobotStateManager implements EpilogueLog {
 
         // Update sim pose tracker if in simulation
         if (RobotBase.isSimulation() && _simPoseTracker != null) {
-            // For simulation, update with sim inputs
             updateInputs(_simInputs);
             _simPoseTracker.update();
-            Pose2d robotPose = _simPoseTracker.getPose();
+            robotPose = _simPoseTracker.getPose();
             _poses.put(
                     RobotCoordinate.ROBOT_BASE_SIM_ODOM,
                     new Pose3d(
@@ -175,13 +187,7 @@ public class RobotStateManager implements EpilogueLog {
         }
     }
 
-    /**
-     * Update DriveInputs from the suppliers
-     *
-     * @param inputs DriveInputs to update
-     */
     private void updateInputs(DriveInputs inputs) {
-        // Update module positions
         SwerveModulePosition[] positions = _modulePositionSupplier.get();
         System.arraycopy(
                 positions,
@@ -190,30 +196,22 @@ public class RobotStateManager implements EpilogueLog {
                 0,
                 Math.min(positions.length, inputs.modulePositions.length));
 
-        // Update module states from positions (this is a simplification - actual implementation
-        // would get states directly from the hardware)
         for (int i = 0; i < inputs.measuredStates.length && i < positions.length; i++) {
             inputs.measuredStates[i].angle = positions[i].angle;
-            // Velocity would be set from hardware in real implementation
         }
 
-        // Update gyro data
         Rotation2d heading = _imuRotation.get();
         inputs.yawPosition = heading;
-
-        // In a real implementation, you would also update:
-        // - inputs.pitchPosition
-        // - inputs.rollPosition
-        // - inputs.yawVelocityRadPerSec
-        // - inputs.pitchVelocityRadPerSec
-        // - inputs.rollVelocityRadPerSec
-        // These would come from the gyro/IMU
     }
 
     public synchronized void updateVision(RobotPoseEstimate estimatedRobotPose) {
         // Update the main swerve tracker with vision data
-        if (_swervePoseTracker != null) {
-            _swervePoseTracker.processVision(estimatedRobotPose);
+        // if (_swervePoseTracker != null) {
+        //     _swervePoseTracker.processVision(estimatedRobotPose);
+        // }
+
+        if (_estimator != null) {
+            _estimator.addVisionMeasurement(estimatedRobotPose);
         }
 
         // if (_nav != null && _questVisionUpdatesOn) {
@@ -228,8 +226,13 @@ public class RobotStateManager implements EpilogueLog {
 
     public synchronized void resetEstimatedPose(Pose2d pose) {
         // Reset the main swerve tracker
-        if (_swervePoseTracker != null) {
-            _swervePoseTracker.resetPose(pose);
+        // if (_swervePoseTracker != null) {
+        //     _swervePoseTracker.resetPose(pose);
+        //     _poses.put(RobotCoordinate.ROBOT_BASE_SWERVE, new Pose3d(pose));
+        // }
+
+        if (_estimator != null) {
+            _estimator.resetPose(pose);
             _poses.put(RobotCoordinate.ROBOT_BASE_SWERVE, new Pose3d(pose));
         }
 
@@ -405,11 +408,6 @@ public class RobotStateManager implements EpilogueLog {
         return _currentPlatformRotation;
     }
 
-    /**
-     * Get the Figure of Merit (confidence) for the current pose
-     *
-     * @return FOM value (lower is better)
-     */
     public double getPoseFOM() {
         if (_swervePoseTracker != null) {
             return _swervePoseTracker.getFOM();
@@ -417,11 +415,6 @@ public class RobotStateManager implements EpilogueLog {
         return Double.MAX_VALUE;
     }
 
-    /**
-     * Check if the robot's pose estimation is reliable
-     *
-     * @return true if pose is considered reliable
-     */
     public boolean isPoseReliable() {
         if (_swervePoseTracker != null) {
             return _swervePoseTracker.isPoseReliable();
@@ -429,11 +422,6 @@ public class RobotStateManager implements EpilogueLog {
         return false;
     }
 
-    /**
-     * Check if the robot is currently skidding
-     *
-     * @return true if skidding detected
-     */
     public boolean isSkidding() {
         if (_swervePoseTracker != null) {
             return _swervePoseTracker.isSkidding();
@@ -441,11 +429,6 @@ public class RobotStateManager implements EpilogueLog {
         return false;
     }
 
-    /**
-     * Check if a collision was recently detected
-     *
-     * @return true if in collision state
-     */
     public boolean isInCollision() {
         if (_swervePoseTracker != null) {
             return _swervePoseTracker.isInCollisionState();

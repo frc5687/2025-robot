@@ -94,7 +94,8 @@ public class DriveToTag extends OutliersCommand {
 
         // I tried distance calculation with just pitch, corners with the focal length from simulated
         // calibration seems better.
-        double distance = _vision.calculateDistanceWithCalibration(observation.get(), cameraName);
+        // double distance = _vision.calculateDistanceWithCalibration(observation.get(), cameraName);
+        double distance = _vision.calculateDistanceFromAngles(observation.get(), cameraName);
 
         log("Distance", distance);
 

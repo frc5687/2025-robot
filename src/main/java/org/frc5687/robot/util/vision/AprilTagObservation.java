@@ -3,7 +3,6 @@ package org.frc5687.robot.util.vision;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.util.struct.StructSerializable;
 import edu.wpi.first.wpilibj.Timer;
@@ -192,27 +191,21 @@ public class AprilTagObservation implements StructSerializable {
     }
 
     public static AprilTagObservation fromLimelight(
-            LimelightTarget_Fiducial target, double timestamp) {
+            LimelightTarget_Fiducial target, RawFiducial rawFiducial, double[] t2d, double timestamp) {
+
         Transform3d transform =
                 new Transform3d(
                         target.getTargetPose_CameraSpace().getTranslation(),
                         target.getTargetPose_CameraSpace().getRotation());
 
-        TargetCorner[] cornersArray = new TargetCorner[4];
-        for (int i = 0; i < 4; i++) {
-            cornersArray[i] = new TargetCorner();
-        }
+        TargetCorner[] cornersArray = calculateCornersFromT2D(t2d);
         TargetCorners corners = TargetCorners.fromArray(cornersArray);
 
-        double ambiguity = 0.1;
-
+        double ambiguity = rawFiducial.ambiguity;
         double area = target.ta;
-
         double tx = target.tx;
         double ty = target.ty;
-
-        double confidence = 0.9;
-
+        double confidence = 1 - ambiguity;
         double poseError = 0.05;
         double distance = transform.getTranslation().getNorm();
         poseError += distance * 0.01;
@@ -230,48 +223,84 @@ public class AprilTagObservation implements StructSerializable {
                 poseError);
     }
 
-    public static AprilTagObservation fromLimelight(RawFiducial fiducial, double timestamp) {
-        double confidence = Math.max(0.0, 1.0 - fiducial.ambiguity);
+    public static AprilTagObservation fromLimelight(
+            LimelightTarget_Fiducial target, double[] t2d, double timestamp) {
 
-        Transform3d estimatedTransform = null;
-        if (fiducial.distToCamera > 0) {
-            Translation3d translation = new Translation3d(0, 0, fiducial.distToCamera);
-            estimatedTransform =
-                    new Transform3d(translation, new edu.wpi.first.math.geometry.Rotation3d());
-        }
+        Transform3d transform =
+                new Transform3d(
+                        target.getTargetPose_CameraSpace().getTranslation(),
+                        target.getTargetPose_CameraSpace().getRotation());
 
-        TargetCorner[] cornersArray = new TargetCorner[4];
-        for (int i = 0; i < 4; i++) {
-            cornersArray[i] = new TargetCorner();
-        }
+        TargetCorner[] cornersArray = calculateCornersFromT2D(t2d);
         TargetCorners corners = TargetCorners.fromArray(cornersArray);
 
+        double area = target.ta;
+        double tx = target.tx;
+        double ty = target.ty;
+        double ambiguity = 0.1; // Default the ambiguity is we dont have it
+        double confidence = 1 - ambiguity;
+        double poseError = 0.05;
+        double distance = transform.getTranslation().getNorm();
+        poseError += distance * 0.01;
+
         return new AprilTagObservation(
-                fiducial.id,
-                estimatedTransform,
-                fiducial.ta,
-                fiducial.ambiguity,
-                fiducial.txnc,
-                fiducial.tync,
+                (int) target.fiducialID,
+                transform,
+                area,
+                ambiguity,
+                tx,
+                ty,
                 corners,
                 timestamp,
                 confidence,
-                fiducial.ambiguity * 0.1);
+                poseError);
     }
 
-    public static AprilTagObservation fromLimelight(
-            LimelightHelpers.PoseEstimate poseEstimate, int tagId) {
-        if (poseEstimate == null || poseEstimate.rawFiducials == null) {
-            return null;
-        }
+    private static TargetCorner[] calculateCornersFromT2D(double[] t2d) {
+        TargetCorner[] corners = new TargetCorner[4];
 
-        for (RawFiducial fiducial : poseEstimate.rawFiducials) {
-            if (fiducial.id == tagId) {
-                return fromLimelight(fiducial, poseEstimate.timestampSeconds);
+        if (t2d != null && t2d.length >= 17) {
+            // Extract relevant data from T2D array
+            double tx = t2d[4]; // X center
+            double ty = t2d[5]; // Y center
+            double longSide = t2d[12]; // Long side length in pixels
+            double shortSide = t2d[13]; // Short side length in pixels
+            double skewDegrees = t2d[16]; // Rotation angle
+
+            // Convert skew to radians
+            double skewRadians = Math.toRadians(skewDegrees);
+
+            // Calculate half-dimensions
+            double halfLong = longSide / 2.0;
+            double halfShort = shortSide / 2.0;
+
+            // Calculate corners (clockwise from top-left)
+            double[] topLeft = rotatePoint(-halfLong, -halfShort, skewRadians);
+            double[] topRight = rotatePoint(halfLong, -halfShort, skewRadians);
+            double[] bottomRight = rotatePoint(halfLong, halfShort, skewRadians);
+            double[] bottomLeft = rotatePoint(-halfLong, halfShort, skewRadians);
+
+            // Create TargetCorner objects with coordinates translated to target center
+            corners[0] = new TargetCorner(topLeft[0] + tx, topLeft[1] + ty);
+            corners[1] = new TargetCorner(topRight[0] + tx, topRight[1] + ty);
+            corners[2] = new TargetCorner(bottomRight[0] + tx, bottomRight[1] + ty);
+            corners[3] = new TargetCorner(bottomLeft[0] + tx, bottomLeft[1] + ty);
+        } else {
+            // If no valid T2D data, create empty corners
+            for (int i = 0; i < 4; i++) {
+                corners[i] = new TargetCorner();
             }
         }
 
-        return null;
+        return corners;
+    }
+
+    // Just use translaiton and rotation in the future but too lazy to swap right now
+    private static double[] rotatePoint(double x, double y, double angle) {
+        double[] rotated = new double[2];
+        rotated[0] = x * Math.cos(angle) - y * Math.sin(angle);
+        rotated[1] = x * Math.sin(angle) + y * Math.cos(angle);
+        return rotated;
     }
 
     public static AprilTagObservation fromPhotonVision(PhotonTrackedTarget target, double timestamp) {

@@ -142,7 +142,6 @@ public class RobotPoseEstimate implements StructSerializable {
 
     public final String source;
 
-
     public RobotPoseEstimate(
             Pose2d pose,
             double timestampSeconds,
@@ -163,7 +162,6 @@ public class RobotPoseEstimate implements StructSerializable {
         this.tagIds = tagIds != null ? tagIds : new int[0];
         this.source = source != null ? source : "";
     }
-
 
     public Pose3d getPose3d() {
         return new Pose3d(pose);
