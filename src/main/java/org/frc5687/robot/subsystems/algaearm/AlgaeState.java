@@ -1,8 +1,7 @@
 package org.frc5687.robot.subsystems.algaearm;
 
-import org.frc5687.robot.Constants;
-
 import edu.wpi.first.math.util.Units;
+import org.frc5687.robot.Constants;
 
 public enum AlgaeState {
     IDLE(1.818), // ratchet is locked in this state :)
