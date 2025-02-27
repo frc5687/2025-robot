@@ -94,9 +94,9 @@ public class OperatorInterface {
                 .rightBumper()
                 .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT));
 
-        _driverController
-                .rightBumper()
-                .whileTrue(new DriveToTag(container.getDrive(), container.getVision(), ReefSide.RIGHT));
+        // _driverController
+        //         .rightBumper()
+        //         .whileTrue(new DriveToTag(container.getDrive(), container.getVision(), ReefSide.RIGHT));
 
         _driverController
                 .leftTrigger()
