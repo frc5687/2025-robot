@@ -433,10 +433,10 @@ public class Constants {
         static {
             // https://www.mathworks.com/help/vision/ug/camera-calibration.html
             // ignoring skew in sim, maybe real life as well
-            NORTH_CALIB_MATRIX.set(0, 0, 563.25); // fx
-            NORTH_CALIB_MATRIX.set(1, 1, 563.67); // fy
-            NORTH_CALIB_MATRIX.set(0, 2, 472.60); // cx
-            NORTH_CALIB_MATRIX.set(1, 2, 254.14); // cy
+            NORTH_CALIB_MATRIX.set(0, 0, 690.40); // fx
+            NORTH_CALIB_MATRIX.set(1, 1, 690.77); // fy
+            NORTH_CALIB_MATRIX.set(0, 2, 416.00); // cx
+            NORTH_CALIB_MATRIX.set(1, 2, 314.73); // cy
             NORTH_CALIB_MATRIX.set(2, 2, 1.0);
         }
 
@@ -445,10 +445,10 @@ public class Constants {
         static {
             // https://www.mathworks.com/help/vision/ug/camera-calibration.html
             // ignoring skew in sim, maybe real life as well
-            NORTH_WEST_CALIB_MATRIX.set(0, 0, 561.10); // fx
-            NORTH_WEST_CALIB_MATRIX.set(1, 1, 561.65); // fy
-            NORTH_WEST_CALIB_MATRIX.set(0, 2, 494.00); // cx
-            NORTH_WEST_CALIB_MATRIX.set(1, 2, 324.88); // cy
+            NORTH_WEST_CALIB_MATRIX.set(0, 0, 684.42); // fx
+            NORTH_WEST_CALIB_MATRIX.set(1, 1, 687.16); // fy
+            NORTH_WEST_CALIB_MATRIX.set(0, 2, 409.14); // cx
+            NORTH_WEST_CALIB_MATRIX.set(1, 2, 280.03); // cy
             NORTH_WEST_CALIB_MATRIX.set(2, 2, 1.0);
         }
 

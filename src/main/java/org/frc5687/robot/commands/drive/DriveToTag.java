@@ -28,6 +28,8 @@ public class DriveToTag extends OutliersCommand {
     private final TunableDouble _distanceOffset =
             new TunableDouble("DriveToTag", "Distance Offset", 0.2);
 
+    private final TunableDouble mistake = new TunableDouble("DriveToTag", "mistake", 0.0);
+
     public DriveToTag(DriveSubsystem drive, VisionSubsystem vision, ReefSide reefSide) {
         _drive = drive;
         _vision = vision;
@@ -105,7 +107,7 @@ public class DriveToTag extends OutliersCommand {
 
         // negative as the error will be negative since distance is always positive away from tag.
         double vxDesired = -_driveController.calculate(distance, _distanceOffset.get());
-        double vyDesired = _lateralController.calculate(lateralOffset, 0);
+        double vyDesired = _lateralController.calculate(lateralOffset, mistake.get());
 
         log("vxDesired", vxDesired);
         log("vyDesired", vyDesired);

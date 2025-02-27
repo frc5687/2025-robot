@@ -82,7 +82,8 @@ public class PhotonVisionIO implements VisionIO {
     @Override
     public void writeOutputs(VisionOutputs outputs) {
         for (var cam : _cameras.values()) {
-            cam.camera.setPipelineIndex(outputs.pipelineIndex);
+            // cam.camera.setPipelineIndex(outputs.pipelineIndex);
+            cam.camera.setPipelineIndex(0); // FIXME remove
         }
     }
 }

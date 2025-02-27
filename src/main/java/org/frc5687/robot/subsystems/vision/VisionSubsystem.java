@@ -12,6 +12,7 @@ import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
+import org.frc5687.robot.util.FieldConstants;
 
 public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutputs> {
     private static final double MAX_LATENCY_MS = 100.0;
@@ -27,6 +28,15 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
         double ambiguityThreshold = Constants.Vision.MIN_AMBIGUITY;
         double latencyMs = observation.getLatency() * 1000.0;
+
+        boolean found = false;
+        for (int id : FieldConstants.Reef.blueAllianceTagIds) {
+            if (id == observation.getId()) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) return false;
 
         return observation.getAmbiguity() < ambiguityThreshold
                 && latencyMs < MAX_LATENCY_MS
@@ -45,23 +55,10 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     @Override
     protected void periodic(VisionInputs inputs, VisionOutputs outputs) {
         List<Pose3d> estimatedPoses = new ArrayList<>();
-        if (_outputs.pipelineIndex
-                == 0) { // FIXME this probably is not real.. there is a delay before this is actually the
-            // pipeline
-            for (var entry : inputs.estimatedPoses.entrySet()) {
-                var robotPose = entry.getValue();
-                var name = entry.getKey();
-                estimatedPoses.add(robotPose.estimatedPose);
-                RobotStateManager.getInstance().updateVision(robotPose);
-            }
-        }
-
-        if (_outputs.pipelineIndex
-                == 1) { // FIXME this probably is not real.. there is a delay before this is actually the
-            // pipeline
-            for (var obs : getNorthCameraObservations()) {
-                log("north camera distance", calculateDistanceWithCalibration(obs, "North_Camera"));
-            }
+        for (var entry : inputs.estimatedPoses.entrySet()) {
+            var robotPose = entry.getValue();
+            estimatedPoses.add(robotPose.estimatedPose);
+            RobotStateManager.getInstance().updateVision(robotPose);
         }
 
         log("VisionPoses", estimatedPoses, Pose3d.struct);
