@@ -1,4 +1,3 @@
-// SimVisionIO.java
 package org.frc5687.robot.subsystems.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -9,6 +8,7 @@ import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.util.FieldConstants;
+import org.frc5687.robot.util.vision.AprilTagObservation;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -83,7 +83,6 @@ public class SimVisionIO implements VisionIO {
         _cameras.put(name, new CameraConfig(name, robotToCamera, camera, cameraSim, estimator));
     }
 
-    // TODO: make a queue for time as well and drop old tags
     @Override
     public void updateInputs(VisionInputs inputs) {
         inputs.estimatedPoses.clear();
@@ -97,23 +96,27 @@ public class SimVisionIO implements VisionIO {
         CameraConfig cam = _cameras.get(cameraName);
         List<PhotonPipelineResult> results = cam.camera.getAllUnreadResults();
         cam.estimator.addHeadingData(Timer.getFPGATimestamp(), _robotState.getRawIMURotation());
+
         if (!results.isEmpty()) {
             PhotonPipelineResult mostRecentResult = results.get(results.size() - 1);
-            Optional<EstimatedRobotPose> estimatedPose = cam.estimator.update(mostRecentResult);
-            if (estimatedPose.isPresent()) {
-                boolean usedMultitag = mostRecentResult.multitagResult.isPresent();
-                AprilTagObservation observation =
-                        AprilTagObservation.fromPhotonVision(
-                                mostRecentResult.targets.get(0), mostRecentResult.getTimestampSeconds());
-                if (usedMultitag || VisionSubsystem.hasValidTag(observation))
-                    inputs.estimatedPoses.put(cameraName, estimatedPose.get());
-            }
+            Optional<EstimatedRobotPose> photonPoseEstimate = cam.estimator.update(mostRecentResult);
+
             for (PhotonTrackedTarget target : mostRecentResult.targets) {
                 AprilTagObservation observation =
                         AprilTagObservation.fromPhotonVision(target, mostRecentResult.getTimestampSeconds());
-                if (VisionSubsystem.hasValidTag(observation))
-                    inputs.cameraObservations.get(cameraName).add(observation);
+                inputs.cameraObservations.get(cameraName).add(observation);
             }
+
+            photonPoseEstimate.ifPresent(
+                    pose -> {
+                        boolean usedMultitag = mostRecentResult.multitagResult.isPresent();
+
+                        if (usedMultitag || mostRecentResult.targets.size() > 0) {
+                            RobotPoseEstimate robotPose =
+                                    RobotPoseEstimate.fromPhotonVision(pose, mostRecentResult, cameraName);
+                            inputs.estimatedPoses.put(cameraName, robotPose);
+                        }
+                    });
         }
     }
 

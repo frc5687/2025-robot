@@ -63,6 +63,7 @@ public class RobotContainer implements EpilogueLog {
     private SendableChooser<Command> _autoChooser;
 
     private final QuestNav _questNav;
+
     private boolean _isCoralMode;
 
     public RobotContainer(Robot robot) {

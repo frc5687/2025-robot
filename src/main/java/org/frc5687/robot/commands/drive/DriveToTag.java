@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Optional;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
-import org.frc5687.robot.subsystems.vision.AprilTagObservation;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
 import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.ReefAlignmentHelpers;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 import org.frc5687.robot.util.TunableDouble;
+import org.frc5687.robot.util.vision.AprilTagObservation;
 
 public class DriveToTag extends OutliersCommand {
     private final DriveSubsystem _drive;

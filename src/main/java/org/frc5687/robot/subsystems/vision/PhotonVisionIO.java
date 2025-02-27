@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.util.FieldConstants;
+import org.frc5687.robot.util.vision.AprilTagObservation;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -18,7 +19,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class PhotonVisionIO implements VisionIO {
-
     private static class CameraConfig {
         final PhotonCamera camera;
         final PhotonPoseEstimator estimator;
@@ -57,33 +57,33 @@ public class PhotonVisionIO implements VisionIO {
         inputs.cameraObservations.put(cameraName, new ArrayList<>());
         CameraConfig cam = _cameras.get(cameraName);
         List<PhotonPipelineResult> results = cam.camera.getAllUnreadResults();
+
         cam.estimator.addHeadingData(
                 Timer.getFPGATimestamp(), RobotStateManager.getInstance().getRawIMURotation());
+
         if (!results.isEmpty()) {
             PhotonPipelineResult mostRecentResult = results.get(results.size() - 1);
-            Optional<EstimatedRobotPose> estimatedPose = cam.estimator.update(mostRecentResult);
-            if (estimatedPose.isPresent()) {
-                boolean usedMultitag = mostRecentResult.multitagResult.isPresent();
-                AprilTagObservation observation =
-                        AprilTagObservation.fromPhotonVision(
-                                mostRecentResult.targets.get(0), mostRecentResult.getTimestampSeconds());
-                if (usedMultitag || VisionSubsystem.hasValidTag(observation))
-                    inputs.estimatedPoses.put(cameraName, estimatedPose.get());
-            }
+
             for (PhotonTrackedTarget target : mostRecentResult.targets) {
                 AprilTagObservation observation =
                         AprilTagObservation.fromPhotonVision(target, mostRecentResult.getTimestampSeconds());
-                if (VisionSubsystem.hasValidTag(observation))
-                    inputs.cameraObservations.get(cameraName).add(observation);
+                inputs.cameraObservations.get(cameraName).add(observation);
             }
+
+            Optional<EstimatedRobotPose> photonPoseEstimate = cam.estimator.update(mostRecentResult);
+
+            photonPoseEstimate.ifPresent(
+                    pose -> {
+                        RobotPoseEstimate robotPose = RobotPoseEstimate.fromPhotonVision(pose, cameraName);
+                        inputs.estimatedPoses.put(cameraName, robotPose);
+                    });
         }
     }
 
     @Override
     public void writeOutputs(VisionOutputs outputs) {
         for (var cam : _cameras.values()) {
-            // cam.camera.setPipelineIndex(outputs.pipelineIndex);
-            cam.camera.setPipelineIndex(0); // FIXME remove
+            cam.camera.setPipelineIndex(outputs.pipelineIndex);
         }
     }
 }

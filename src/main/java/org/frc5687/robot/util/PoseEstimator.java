@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.photonvision.EstimatedRobotPose;
+import org.frc5687.robot.subsystems.vision.RobotPoseEstimate;
 
 public class PoseEstimator implements EpilogueLog {
     private static final double POSE_BUFFER_SECONDS = 1.5;
@@ -55,10 +55,56 @@ public class PoseEstimator implements EpilogueLog {
         _poseBuffer.clear();
     }
 
-    public void addVisionMeasurement(EstimatedRobotPose visionPose, double timestamp) {
-        Matrix<N3, N1> stdDevs = _visionStdFilter.calculateVisionStdDevs(visionPose);
-        log("Vision Pose", visionPose.estimatedPose, Pose3d.struct);
-        processMeasurement(visionPose.estimatedPose.toPose2d(), stdDevs, timestamp);
+    /**
+     * Add a vision measurement from our unified RobotPoseEstimate format
+     *
+     * @param poseEstimate The robot pose estimate from vision
+     */
+    public void addVisionMeasurement(RobotPoseEstimate poseEstimate) {
+        // Calculate standard deviations based on vision data
+        Matrix<N3, N1> stdDevs = calculateVisionStdDevs(poseEstimate);
+
+        // Log vision pose
+        log("Vision Pose", poseEstimate.getPose3d(), Pose3d.struct);
+
+        // Process measurement with timestamp
+        processMeasurement(poseEstimate.pose, stdDevs, poseEstimate.timestampSeconds);
+    }
+
+    /**
+     * Calculate vision standard deviations based on our RobotPoseEstimate Larger deviation = less
+     * trust in the measurement
+     */
+    private Matrix<N3, N1> calculateVisionStdDevs(RobotPoseEstimate poseEstimate) {
+        // Base std devs - higher values = less weight given to vision
+        double xyStdDev = 0.1; // meters
+        double thetaStdDev = 0.05; // radians
+
+        // Decrease weight for single-tag measurements
+        if (poseEstimate.tagCount <= 1) {
+            xyStdDev *= 2.0;
+            thetaStdDev *= 1.5;
+        }
+
+        // Decrease weight for distant tags
+        if (poseEstimate.avgTagDist > 3.0) {
+            xyStdDev *= 1.0 + (poseEstimate.avgTagDist - 3.0) * 0.5;
+            thetaStdDev *= 1.0 + (poseEstimate.avgTagDist - 3.0) * 0.3;
+        }
+
+        // Decrease weight for low confidence
+        if (poseEstimate.confidence < 0.9) {
+            double confidenceFactor = 1.0 + (0.9 - poseEstimate.confidence) * 4.0;
+            xyStdDev *= confidenceFactor;
+            thetaStdDev *= confidenceFactor;
+        }
+
+        // Apply minimums
+        xyStdDev = Math.max(0.05, xyStdDev);
+        thetaStdDev = Math.max(0.02, thetaStdDev);
+
+        // Square values for matrix (variance)
+        return VecBuilder.fill(xyStdDev * xyStdDev, xyStdDev * xyStdDev, thetaStdDev * thetaStdDev);
     }
 
     public void updateOdometry() {
