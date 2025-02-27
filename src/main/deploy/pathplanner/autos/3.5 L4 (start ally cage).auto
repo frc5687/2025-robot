@@ -23,9 +23,9 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.3
+            "name": "ReceiveFunnel"
           }
         },
         {
@@ -47,9 +47,9 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.3
+            "name": "ReceiveFunnel"
           }
         },
         {
@@ -68,6 +68,12 @@
           "type": "path",
           "data": {
             "pathName": "L2 to HP_NE (slow)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ReceiveFunnel"
           }
         }
       ]
