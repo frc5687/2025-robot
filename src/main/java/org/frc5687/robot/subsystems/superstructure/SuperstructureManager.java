@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
+import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.util.FieldConstants;
 
 public class SuperstructureManager extends SubsystemBase {
@@ -90,7 +91,7 @@ public class SuperstructureManager extends SubsystemBase {
     public Command aimAtAlgaeNet() {
         return new SequentialCommandGroup(
                 createRequest(Constants.SuperstructureGoals.BARGE_HELD, RequestType.IMMEDIATE),
-                createRequest(Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE));
+                new EjectAlgae(_container.getAlgae()));
     }
 
     // Queue override controls
