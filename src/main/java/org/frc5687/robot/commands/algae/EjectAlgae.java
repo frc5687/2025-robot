@@ -1,9 +1,8 @@
 package org.frc5687.robot.commands.algae;
 
+import edu.wpi.first.wpilibj.Timer;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
-
-import edu.wpi.first.wpilibj.Timer;
 
 public class EjectAlgae extends OutliersCommand {
 
@@ -24,7 +23,7 @@ public class EjectAlgae extends OutliersCommand {
     protected void execute(double timestamp) {
         if (_algae.isAlgaeDetected()) _timeLastSeen = Timer.getFPGATimestamp();
         // if (_algae.isSafeToEject()) {
-            _algae.setWheelMotorVoltage(-12);
+        _algae.setWheelMotorVoltage(-12);
         // } else {
         //     _algae.setWheelMotorVoltage(0);
         // }
