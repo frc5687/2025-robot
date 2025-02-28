@@ -116,7 +116,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         if (outputs.wheelPositionControl) {
             _wheelMotor.setControl(_wheelPositionController.withPosition(outputs.wheelPositionCommand));
         } else {
-            _wheelMotor.setControl(_wheelDutyCycleOut.withOutput(outputs.wheelVoltageCommand));
+            _wheelMotor.setControl(_wheelDutyCycleOut.withOutput(outputs.wheelDutyCycle));
         }
     }
 

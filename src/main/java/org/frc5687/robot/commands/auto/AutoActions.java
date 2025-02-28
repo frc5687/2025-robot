@@ -14,6 +14,11 @@ public class AutoActions {
                         () -> {
                             container.getCoral().setWheelMotorDutyCycle(1);
                         }),
-                new WaitCommand(0.3));
+                new WaitCommand(0.3),
+                new InstantCommand(
+                        () -> {
+                            container.getCoral().setWheelMotorDutyCycle(0);
+                        })
+                );
     }
 }
