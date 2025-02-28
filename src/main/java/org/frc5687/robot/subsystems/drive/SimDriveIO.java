@@ -77,6 +77,11 @@ public class SimDriveIO implements DriveIO {
     }
 
     @Override
+    public void setYaw(Rotation2d heading) {
+        _imuSim.setRawYaw(heading.getDegrees());
+    }
+
+    @Override
     public void reset() {
         _imuSim.setRawYaw(0);
         _imuSim.setPitch(0);

@@ -150,7 +150,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public void zeroIMU() {
-        _driveIO.reset();
+        _driveIO.setYaw(new Rotation2d());
     }
 
     public double getAngularVelocityYaw() {
@@ -176,6 +176,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public void resetPose(Pose2d pose) {
+        _driveIO.setYaw(pose.getRotation());
         _odometry.resetPosition(_inputs.yawPosition, _inputs.modulePositions, pose);
         RobotStateManager.getInstance().resetEstimatedPose(pose);
     }

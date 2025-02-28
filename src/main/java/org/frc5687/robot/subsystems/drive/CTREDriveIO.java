@@ -105,6 +105,11 @@ public class CTREDriveIO implements DriveIO {
     }
 
     @Override
+    public void setYaw(Rotation2d heading) {
+        _imu.setYaw(heading.getDegrees());
+    }
+
+    @Override
     public void reset() {
         _imu.setYaw(0);
     }

@@ -340,7 +340,7 @@ public class Constants {
         public static final boolean WHEEL_MOTOR_INVERTED = false;
         public static final double WHEEL_CURRENT_LIMIT = 20.0;
 
-        public static final double ENCODER_OFFSET = -0.1152375;
+        public static final double ENCODER_OFFSET = -0.5974121;
 
         public static final double BOTTOM_EJECT_SAFE_ANGLE = 2.22;
         public static final double TOP_EJECT_SAFE_ANGLE = 1.5;
@@ -384,7 +384,7 @@ public class Constants {
         public static final boolean ENCODER_INVERTED = true;
 
         public static final DCMotor GEARBOX = Motors.getJohnsonElectric(1);
-        public static final double GEAR_RATIO = (48.0 / 24.0); // From Amory
+        public static final double GEAR_RATIO = 4.33; // From Amory
         public static final double ARM_LENGTH = Units.inchesToMeters(7.0);
         public static final double ARM_MASS = Units.lbsToKilograms(4.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);

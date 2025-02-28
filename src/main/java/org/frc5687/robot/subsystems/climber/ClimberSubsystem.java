@@ -30,10 +30,10 @@ public class ClimberSubsystem extends OutliersSubsystem<ClimberInputs, ClimberOu
 
     public void toggleClimberSetpoint() {
         if (_outputs.motorSetpointRads != Constants.Climber.CLIMBER_UP_RADS) {
-            // _outputs.servoSetpoint = 0.0;
+            _outputs.servoSetpoint = 0.0;
             _outputs.motorSetpointRads = Constants.Climber.CLIMBER_UP_RADS;
         } else {
-            // _outputs.servoSetpoint = 0.52;
+            _outputs.servoSetpoint = 0.52;
             _outputs.motorSetpointRads = Constants.Climber.CLIMBER_DOWN_RADS;
         }
     }

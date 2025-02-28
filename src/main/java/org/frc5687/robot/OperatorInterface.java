@@ -17,6 +17,7 @@ import java.util.Optional;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
+import org.frc5687.robot.commands.drive.DynamicDriveToLane;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
@@ -24,6 +25,7 @@ import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 import org.frc5687.robot.util.FieldConstants;
+import org.frc5687.robot.util.Helpers;
 import org.frc5687.robot.util.OutliersController;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
@@ -154,6 +156,14 @@ public class OperatorInterface {
 
         _driverController.a().onTrue(new InstantCommand(container.getClimber()::decreaseServoSetpoint));
         _driverController.y().onTrue(new InstantCommand(container.getClimber()::increaseServoSetpoint));
+        _driverController
+                .povDown()
+                .whileTrue(
+                        new DynamicDriveToLane(
+                                container.getDrive(),
+                                () ->
+                                        -modifyAxis(_driverController.getLeftY())
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED));
     }
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
@@ -269,6 +279,13 @@ public class OperatorInterface {
                                                 Optional.empty()),
                                         RequestType.IMMEDIATE),
                                 new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))));
+    }
+
+    public static double modifyAxis(double value) {
+        value = Helpers.applyDeadband(value, 0.1);
+        value = Math.copySign(value * value, value);
+
+        return value;
     }
 
     public OutliersController getDriverController() {
