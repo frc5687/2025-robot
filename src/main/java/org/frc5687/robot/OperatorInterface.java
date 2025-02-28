@@ -194,26 +194,28 @@ public class OperatorInterface {
                 .x()
                 .onTrue(
                         new ConditionalCommand(
-                                manager.grabAlgae(
-                                        Constants.SuperstructureGoals.PROCESSOR_DROPOFF, RequestType.IMMEDIATE),
-                                new ConditionalCommand(
-                                        new SequentialCommandGroup(
-                                                manager.createRequest(
-                                                        Constants.SuperstructureGoals.PLACE_CORAL_L1, RequestType.IMMEDIATE),
-                                                new WaitUntilCommand(
-                                                        () ->
-                                                                !container.getCoral().isCoralDetected()
-                                                                        && container
-                                                                                        .getDrive()
-                                                                                        .getPose()
-                                                                                        .getTranslation()
-                                                                                        .getDistance(
-                                                                                                FieldConstants.getAllianceSpecificReefCenter())
-                                                                                > 2),
-                                                manager.receiveFunnel(RequestType.IMMEDIATE)),
-                                        manager.receiveFunnel(RequestType.IMMEDIATE),
-                                        container.getCoral()::isCoralDetected),
-                                container.getAlgae()::isAlgaeDetected));
+                                        manager.grabAlgae(
+                                                Constants.SuperstructureGoals.PROCESSOR_DROPOFF, RequestType.IMMEDIATE),
+                                        new ConditionalCommand(
+                                                new SequentialCommandGroup(
+                                                        manager.createRequest(
+                                                                Constants.SuperstructureGoals.PLACE_CORAL_L1,
+                                                                RequestType.IMMEDIATE),
+                                                        new WaitUntilCommand(
+                                                                () ->
+                                                                        !container.getCoral().isCoralDetected()
+                                                                                && container
+                                                                                                .getDrive()
+                                                                                                .getPose()
+                                                                                                .getTranslation()
+                                                                                                .getDistance(
+                                                                                                        FieldConstants.getAllianceSpecificReefCenter())
+                                                                                        > 2),
+                                                        manager.receiveFunnel(RequestType.IMMEDIATE)),
+                                                manager.receiveFunnel(RequestType.IMMEDIATE),
+                                                container.getCoral()::isCoralDetected),
+                                        container.getAlgae()::isAlgaeDetected)
+                                .withName("L1 Conditional"));
 
         _operatorController
                 .y()
@@ -235,10 +237,11 @@ public class OperatorInterface {
                 .a()
                 .onTrue(
                         new ConditionalCommand(
-                                manager.aimAtAlgaeNet(),
-                                manager.createRequest(
-                                        Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED),
-                                container.getAlgae()::isAlgaeDetected));
+                                        manager.aimAtAlgaeNet(),
+                                        manager.createRequest(
+                                                Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED),
+                                        container.getAlgae()::isAlgaeDetected)
+                                .withName("L4 Conditional"));
 
         _operatorController
                 .leftBumper()
