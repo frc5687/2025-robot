@@ -121,7 +121,7 @@ public class RobotContainer implements EpilogueLog {
         _oi.configureCommandMapping(this);
 
         _isCoralMode = true;
-        // setupNamedCommand();
+        setupNamedCommand();
         configureDefaultCommands();
     }
 
@@ -173,11 +173,6 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void setupNamedCommand() {
-        NamedCommands.registerCommand(
-                "CoralL4",
-                _superstructureManager.createRequest(
-                        Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
-
         if (RobotBase.isSimulation()) {
             // NamedCommands.registerCommand( "ReceiveFunnel",
             // SuperstructureFactory.receiveFromFunnelSim(this));
@@ -193,6 +188,7 @@ public class RobotContainer implements EpilogueLog {
                 "CoralL4",
                 _superstructureManager.createRequest(
                         Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
+        // new InstantCommand(() -> System.out.println("coral l4")));
 
         NamedCommands.registerCommand(
                 "CoralL3",
