@@ -1,7 +1,6 @@
 package org.frc5687.robot.commands.drive;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -75,6 +74,6 @@ public class TeleopDriveWithSnapTo extends OutliersCommand {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(_drive.getHeading().minus(new Rotation2d(_angle)).getDegrees()) < 5.0;
+        return Math.abs(_rotationSupplier.getAsDouble()) > 0.1;
     }
 }

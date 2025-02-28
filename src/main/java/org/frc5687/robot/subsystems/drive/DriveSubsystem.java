@@ -159,7 +159,9 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     public Pose2d getPose() {
         // if (_robotContainer.getQuestNav().timeSinceLastUpdate() < 0.040) {
-        //     return RobotStateManager.getInstance().getXavierPose();
+        //     return RobotStateManager.getInstance()
+        //             .getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV)
+        //             .toPose2d();
         // } else {
         return RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
         // }

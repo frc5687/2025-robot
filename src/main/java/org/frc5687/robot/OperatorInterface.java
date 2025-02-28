@@ -1,5 +1,8 @@
 package org.frc5687.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -51,7 +54,7 @@ public class OperatorInterface {
                 .x()
                 .onTrue(
                         new TeleopDriveWithSnapTo(
-                                -60,
+                                Degrees.of(-53).in(Radians),
                                 container.getDrive(),
                                 () ->
                                         -RobotContainer.modifyAxis(getDriverController().getLeftY())
@@ -68,7 +71,7 @@ public class OperatorInterface {
                 .b()
                 .onTrue(
                         new TeleopDriveWithSnapTo(
-                                60,
+                                Degrees.of(53).in(Radians),
                                 container.getDrive(),
                                 () ->
                                         -RobotContainer.modifyAxis(getDriverController().getLeftY())

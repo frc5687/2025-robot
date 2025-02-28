@@ -16,6 +16,6 @@ public class QuestNavOdometrySource extends OdometrySource {
 
     @Override
     public void resetPose(Pose2d pose) {
-        // _nav.resetPose(pose);
+        _nav.resetPose(pose);
     }
 }

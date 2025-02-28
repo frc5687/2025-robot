@@ -43,10 +43,10 @@ public class QuestNav implements EpilogueLog {
             nt4Table.getDoubleTopic("batteryPercent").subscribe(0.0f);
 
     // Pose of the Quest when the pose was reset
-    // private Pose2d resetPoseOculus = new Pose2d();
+    private Pose2d resetPoseOculus = new Pose2d();
 
     // Pose of the robot when the pose was reset
-    // private Pose2d resetPoseRobot = new Pose2d();
+    private Pose2d resetPoseRobot = new Pose2d();
 
     private final TimeInterpolatableBuffer<Pose2d> _rawQuestPoseBuffer;
 
@@ -67,19 +67,6 @@ public class QuestNav implements EpilogueLog {
     public Pose2d getRobotPose() {
         return getQuestPose().transformBy(Constants.Vision.ROBOT_TO_QUEST.inverse());
     }
-
-    /**
-     * Gets the pose of the Quest on the field
-     *
-     * @return pose of the Quest
-     */
-    // public Pose2d getQuestPose() {
-    //     var rawPose = getUncorrectedOculusPose();
-    //     // var poseRelativeToReset = rawPose.minus(resetPoseOculus);
-
-    //     // return resetPoseRobot.transformBy(poseRelativeToReset);
-    //     return rawPose;
-    // }
 
     /*
      * Gets the battery percent of the Quest.
@@ -124,11 +111,11 @@ public class QuestNav implements EpilogueLog {
      *
      * @param newPose new robot pose
      */
-    // public void resetPose(Pose2d newPose) {
-    //     resetPoseOculus =
-    //             getUncorrectedOculusPose().transformBy(Constants.Vision.ROBOT_TO_QUEST.inverse());
-    //     resetPoseRobot = newPose;
-    // }
+    public void resetPose(Pose2d newPose) {
+        resetPoseOculus =
+                getUncorrectedOculusPose().transformBy(Constants.Vision.ROBOT_TO_QUEST.inverse());
+        resetPoseRobot = newPose;
+    }
 
     /**
      * Clean up questnav subroutine messages after processing on the headset. Call this each iteration
@@ -158,6 +145,15 @@ public class QuestNav implements EpilogueLog {
 
     public Optional<Pose2d> getQuestPose(double timestamp) {
         return _rawQuestPoseBuffer.getSample(timestamp);
+    }
+
+    public Pose2d getUncorrectedOculusPose() {
+        var eulerAngles = questEulerAngles.get();
+        var rotation = Rotation2d.fromDegrees(-Math.IEEEremainder(eulerAngles[1], 360d));
+
+        var questnavPosition = questPosition.get();
+        var translation = new Translation2d(questnavPosition[2], -questnavPosition[0]);
+        return new Pose2d(translation, rotation);
     }
 
     public Pose3d getUncorrectedOculusPose3d() {
