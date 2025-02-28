@@ -482,7 +482,7 @@ public class Constants {
                 new SuperstructureState(
                         Optional.of(ElevatorState.FUNNEL_RECEIVE),
                         Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
-                        Optional.empty(),
+                        Optional.of(AlgaeState.IDLE),
                         Optional.empty());
 
         public static final SuperstructureState PLACE_CORAL_L4 =
