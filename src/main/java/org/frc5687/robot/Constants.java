@@ -362,7 +362,7 @@ public class Constants {
 
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 20.0;
+        public static final double kP = 30.0;
         public static final double kI = 0.0;
         public static final double kD = 0.8;
         public static final double kV = 0.0;
@@ -376,7 +376,7 @@ public class Constants {
 
         public static final double WHEEL_CURRENT_LIMIT = 20;
 
-        public static final boolean PIVOT_MOTOR_INVERTED = false;
+        public static final boolean PIVOT_MOTOR_INVERTED = true;
         public static final boolean WHEEL_MOTOR_INVERTED = true;
         public static final int NUM_MOTORS = 1;
 
