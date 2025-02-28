@@ -384,7 +384,7 @@ public class Constants {
         public static final boolean ENCODER_INVERTED = true;
 
         public static final DCMotor GEARBOX = Motors.getJohnsonElectric(1);
-        public static final double GEAR_RATIO = 4.33; // From Amory
+        public static final double GEAR_RATIO = (85.0 / 18.0); // From Amory
         public static final double ARM_LENGTH = Units.inchesToMeters(7.0);
         public static final double ARM_MASS = Units.lbsToKilograms(4.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
