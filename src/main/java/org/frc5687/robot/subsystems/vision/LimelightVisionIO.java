@@ -23,7 +23,7 @@ public class LimelightVisionIO implements VisionIO {
         _cameraPoses = new HashMap<>();
 
         addCamera("North_Camera", "limelight-center", Constants.Vision.ROBOT_TO_NORTH_CAM);
-        // addCamera("North_West_Camera", "limelight-northwest", Constants.Vision.ROBOT_TO_NW_CAM);
+        addCamera("North_West_Camera", "limelight-left", Constants.Vision.ROBOT_TO_NW_CAM);
     }
 
     private void addCamera(String logicalName, String limelightName, Transform3d robotToCamera) {

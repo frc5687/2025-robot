@@ -121,7 +121,7 @@ public class RobotContainer implements EpilogueLog {
         _oi.configureCommandMapping(this);
 
         _isCoralMode = true;
-        setupNamedCommand();
+        // setupNamedCommand();
         configureDefaultCommands();
     }
 

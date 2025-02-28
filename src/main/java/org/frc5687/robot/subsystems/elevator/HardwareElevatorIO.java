@@ -43,7 +43,7 @@ public class HardwareElevatorIO implements ElevatorIO {
     private boolean _safetyTripped = false;
 
     private TunableDouble _positionDifferenceThreshold =
-            new TunableDouble("Elevator", "PositionDifferenceThreshold", 0.03);
+            new TunableDouble("Elevator", "PositionDifferenceThreshold", 0.05);
 
     public HardwareElevatorIO(int eastMotorId, int westMotorId, int laserCanId) {
         _laserCan = new LaserCan(laserCanId);

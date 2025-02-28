@@ -54,7 +54,7 @@ public class ElevatorInputs extends BaseInputs {
     public boolean isDisabled = false;
 
     @Logged(name = "Position Difference Safety Trip (m)", importance = Logged.Importance.DEBUG)
-    public double positionDifferenceSafetyThreshold = 0.03; // 3cm default, configurable
+    public double positionDifferenceSafetyThreshold = 1000000; // 3cm default, configurable
 
     @Logged(name = "Zeroed", importance = Logged.Importance.CRITICAL)
     public boolean zeroed = false;

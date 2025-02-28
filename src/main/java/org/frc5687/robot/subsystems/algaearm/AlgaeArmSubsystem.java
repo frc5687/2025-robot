@@ -30,6 +30,8 @@ public class AlgaeArmSubsystem extends OutliersSubsystem<AlgaeInputs, AlgaeOutpu
         if (algaeP.hasChanged() || algaeI.hasChanged() || algaeD.hasChanged()) {
             _io.setPID(algaeP.get(), algaeI.get(), algaeD.get(), 0.0, 0.0, 0.0, 0.0);
         }
+        var command = getCurrentCommand();
+        log("Active Command", command == null ? "null" : command.getName());
     }
 
     public void setArmAngle(AlgaeState state) {
