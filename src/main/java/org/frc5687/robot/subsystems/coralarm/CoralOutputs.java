@@ -21,8 +21,8 @@ public class CoralOutputs extends BaseOutputs {
             importance = Logged.Importance.DEBUG)
     public boolean wheelPositionControl = false;
 
-    @Logged(name = "Wheel Voltage Command", importance = Logged.Importance.DEBUG)
-    public double wheelVoltageCommand = 0.0;
+    @Logged(name = "Wheel Duty Cycle Command", importance = Logged.Importance.DEBUG)
+    public double wheelDutyCycle = 0.0;
 
     @Logged(name = "Wheel Position Command", importance = Logged.Importance.DEBUG)
     public double wheelPositionCommand = 0.0;

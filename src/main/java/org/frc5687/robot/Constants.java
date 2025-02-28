@@ -392,7 +392,9 @@ public class Constants {
         public static final double MAX_ANGLE = 5.255;
 
         // public static final double MAX_VELOCITY_RAD_PER_SEC = 2;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 15 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED =
+                (GEARBOX.stallTorqueNewtonMeters * NUM_MOTORS * GEAR_RATIO) / MOI_ARM;
+        // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 15 * Math.PI;
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;

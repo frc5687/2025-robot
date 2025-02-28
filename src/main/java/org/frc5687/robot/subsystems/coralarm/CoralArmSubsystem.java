@@ -50,14 +50,14 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
                 * Math.cos(angle);
     }
 
-    public void setWheelMotorDutyCycle(double voltage) {
+    public void setWheelMotorDutyCycle(double dutyCycle) {
         _outputs.wheelPositionControl = false;
-        _outputs.wheelVoltageCommand = voltage;
+        _outputs.wheelDutyCycle = dutyCycle;
     }
 
     public void setWheelMotorPosition(double position) {
         _outputs.wheelPositionControl = true;
-        _outputs.wheelVoltageCommand = 0;
+        _outputs.wheelDutyCycle = 0;
         _outputs.wheelPositionCommand = position;
     }
 
