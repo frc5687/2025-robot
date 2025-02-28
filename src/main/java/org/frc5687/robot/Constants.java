@@ -384,7 +384,7 @@ public class Constants {
         public static final boolean ENCODER_INVERTED = true;
 
         public static final DCMotor GEARBOX = Motors.getJohnsonElectric(1);
-        public static final double GEAR_RATIO = (48.0 / 24.0); // From Amory
+        public static final double GEAR_RATIO = 4.33; // From Amory
         public static final double ARM_LENGTH = Units.inchesToMeters(7.0);
         public static final double ARM_MASS = Units.lbsToKilograms(4.0);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
@@ -392,7 +392,9 @@ public class Constants {
         public static final double MAX_ANGLE = 5.255;
 
         // public static final double MAX_VELOCITY_RAD_PER_SEC = 2;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 15 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED =
+                (GEARBOX.stallTorqueNewtonMeters * NUM_MOTORS * GEAR_RATIO) / MOI_ARM;
+        // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 15 * Math.PI;
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
