@@ -42,11 +42,11 @@ public class LimelightVisionIO implements VisionIO {
 
     @Override
     public void resetCameraIMU(Rotation2d heading) {
-        for (String camera : _cameraNames.values()) {
-            LimelightHelpers.SetIMUMode(camera, 1);
-            LimelightHelpers.SetRobotOrientation(camera, heading.getDegrees(), 0, 0, 0, 0, 0);
-            LimelightHelpers.SetIMUMode(camera, 2);
-        }
+        // for (String camera : _cameraNames.values()) {
+        //     LimelightHelpers.SetIMUMode(camera, 1);
+        //     LimelightHelpers.SetRobotOrientation(camera, heading.getDegrees(), 0, 0, 0, 0, 0);
+        //     LimelightHelpers.SetIMUMode(camera, 2);
+        // }
     }
 
     private void updateCameraInputs(VisionInputs inputs, String logicalName) {

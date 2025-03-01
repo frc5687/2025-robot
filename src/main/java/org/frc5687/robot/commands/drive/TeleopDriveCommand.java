@@ -1,6 +1,10 @@
 package org.frc5687.robot.commands.drive;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.frc5687.robot.commands.OutliersCommand;
@@ -33,13 +37,20 @@ public class TeleopDriveCommand extends OutliersCommand {
     @Override
     public void execute(double timestamp) {
         // Calculate chassis speeds
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        Rotation2d relativeHeading = _drive.getHeading();
+        if (alliance.isPresent()) {
+            if (alliance.get() == Alliance.Red) {
+                relativeHeading = _drive.getHeading().rotateBy(Rotation2d.fromDegrees(180));
+            }
+        }
         ChassisSpeeds chassisSpeeds =
                 _fieldRelativeSupplier.getAsBoolean()
                         ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                 _xSupplier.getAsDouble(),
                                 _ySupplier.getAsDouble(),
                                 _rotationSupplier.getAsDouble(),
-                                _drive.getHeading())
+                                relativeHeading)
                         : new ChassisSpeeds(
                                 _xSupplier.getAsDouble(),
                                 _ySupplier.getAsDouble(),

@@ -36,6 +36,7 @@ import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.util.TunableDouble;
 
 public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs> {
+    private final RobotContainer _container;
     private final DriveIO _driveIO;
     @NotLogged private final SwerveDriveKinematics _kinematics;
     @NotLogged private final SwerveDriveOdometry _odometry;
@@ -58,6 +59,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     // "Hardware"
     public DriveSubsystem(RobotContainer container, DriveIO io, Translation2d[] moduleLocations) {
         super(container, io, new DriveInputs(), new DriveOutputs());
+        _container = container;
         _driveIO = io;
         _moduleLocations = moduleLocations;
 
@@ -150,7 +152,17 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public void zeroIMU() {
-        _driveIO.setYaw(new Rotation2d());
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isEmpty()) {
+            _driveIO.setYaw(new Rotation2d());
+            return;
+        }
+
+        if (alliance.get() == Alliance.Blue) {
+            _driveIO.setYaw(Rotation2d.fromDegrees(0));
+        } else {
+            _driveIO.setYaw(Rotation2d.fromDegrees(180));
+        }
     }
 
     public double getAngularVelocityYaw() {
