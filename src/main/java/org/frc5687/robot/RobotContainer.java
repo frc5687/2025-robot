@@ -2,6 +2,7 @@ package org.frc5687.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -70,6 +71,8 @@ public class RobotContainer implements EpilogueLog {
 
     private boolean _isCoralMode;
 
+    private int frameCount;
+
     public RobotContainer(Robot robot) {
         _robot = robot;
         _oi = new OperatorInterface();
@@ -132,7 +135,8 @@ public class RobotContainer implements EpilogueLog {
         _isCoralMode = true;
         setupNamedCommand();
         configureDefaultCommands();
-        _drive.zeroIMU();
+
+        frameCount = 0;
     }
 
     private void configureDefaultCommands() {
@@ -236,6 +240,10 @@ public class RobotContainer implements EpilogueLog {
     }
 
     public void periodic() {
+        if (DriverStation.isDisabled() && frameCount % 10 == 0) {
+            frameCount += 1;
+            _drive.zeroIMU();
+        }
         _questNav.timeSinceLastUpdate();
         RobotStateManager.getInstance().logComponentPoses();
         RobotStateManager.getInstance().updateOdometry();
