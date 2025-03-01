@@ -13,6 +13,7 @@ import java.util.EnumMap;
 import java.util.function.Supplier;
 import org.frc5687.robot.subsystems.drive.DriveInputs;
 import org.frc5687.robot.subsystems.vision.RobotPoseEstimate;
+import org.frc5687.robot.subsystems.vision.VisionSubsystem;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.PoseEstimator;
 import org.frc5687.robot.util.QuestNav;
@@ -77,6 +78,7 @@ public class RobotStateManager implements EpilogueLog {
     // private PoseTracker _simPoseTracker;
     private PoseEstimator _estimator;
     private PoseEstimator _questimator;
+    private VisionSubsystem _vision;
 
     private final DriveInputs _swerveInputs = new DriveInputs();
     private final DriveInputs _simInputs = new DriveInputs();
@@ -113,10 +115,12 @@ public class RobotStateManager implements EpilogueLog {
             Supplier<SwerveModulePosition[]> positionSupplier,
             Supplier<Rotation2d> headingSupplier,
             Supplier<ChassisSpeeds> chassisSpeedsSupplier,
+            VisionSubsystem vision,
             QuestNav nav) {
 
         _imuRotation = headingSupplier;
         _modulePositionSupplier = positionSupplier;
+        _vision = vision;
         _nav = nav;
 
         _odom = new SwerveOdometry(Constants.DriveTrain.MODULE_LOCATIONS);
@@ -404,6 +408,10 @@ public class RobotStateManager implements EpilogueLog {
             getPose(RobotCoordinate.INTAKE_ARM_BASE)
         };
         log("Components", componentPoses, Pose3d.struct);
+    }
+
+    public void resetLimelightIMU() {
+        _vision.resetCameraIMU(getRawIMURotation());
     }
 
     public void logEstimatedPoses() {

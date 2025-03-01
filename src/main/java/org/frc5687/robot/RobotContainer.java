@@ -85,11 +85,15 @@ public class RobotContainer implements EpilogueLog {
 
         _drive = new DriveSubsystem(this, driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
 
+        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new LimelightVisionIO();
+        _vision = new VisionSubsystem(this, visionIO);
+
         RobotStateManager.getInstance()
                 .initEstimators(
                         _drive::getModulePositions,
                         _drive::getHeading,
                         _drive::getMeasuredChassisSpeeds,
+                        _vision,
                         _questNav);
 
         ElevatorIO elevatorIO;
@@ -120,9 +124,6 @@ public class RobotContainer implements EpilogueLog {
         ClimberIO climberIO =
                 RobotBase.isSimulation() ? new SimClimberIO() : new HardwareClimberArmIO();
         _climber = new ClimberSubsystem(this, climberIO);
-
-        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new LimelightVisionIO();
-        _vision = new VisionSubsystem(this, visionIO);
 
         _superstructureManager = new SuperstructureManager(this);
 

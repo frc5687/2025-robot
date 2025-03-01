@@ -1,5 +1,6 @@
 package org.frc5687.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
@@ -36,6 +37,15 @@ public class LimelightVisionIO implements VisionIO {
         inputs.estimatedPoses.clear();
         for (String logicalName : _cameraNames.keySet()) {
             updateCameraInputs(inputs, logicalName);
+        }
+    }
+
+    @Override
+    public void resetCameraIMU(Rotation2d heading) {
+        for (String camera : _cameraNames.values()) {
+            LimelightHelpers.SetIMUMode(camera, 1);
+            LimelightHelpers.SetRobotOrientation(camera, heading.getDegrees(), 0, 0, 0, 0, 0);
+            LimelightHelpers.SetIMUMode(camera, 2);
         }
     }
 
