@@ -30,7 +30,7 @@ public class RequestHandler implements EpilogueLog {
     }
 
     public void handleNewRequest(SuperstructureRequest request) {
-        log("NewRequest", request.description());
+        // log("NewRequest", request.description());
 
         switch (request.type()) {
             case IMMEDIATE:
@@ -107,13 +107,13 @@ public class RequestHandler implements EpilogueLog {
     }
 
     private void addRequest(SuperstructureRequest request) {
-        log("AddRequest", request.description());
+        // log("AddRequest", request.description());
         _activeRequests.add(request);
     }
 
     private void handleQueuedRequest(SuperstructureRequest request) {
         _queuedRequest = request;
-        log("RequestQueued", request.description());
+        // log("RequestQueued", request.description());
     }
 
     public void execute() {
@@ -147,7 +147,7 @@ public class RequestHandler implements EpilogueLog {
         if (!_coralMovementStarted) {
             _container.getCoral().setArmAngle(CoralState.PLACING_L4);
             _coralMovementStarted = true;
-            log("ParallelMovementUp", "Started coral arm movement to safe position");
+            // log("ParallelMovementUp", "Started coral arm movement to safe position");
         }
 
         // Step 2: As soon as coral angle crosses threshold, start elevator
@@ -157,7 +157,7 @@ public class RequestHandler implements EpilogueLog {
             if (_finalTargetState.getElevator().isPresent()) {
                 _container.getElevator().setDesiredHeight(_finalTargetState.getElevator().get());
                 _elevatorMovementStarted = true;
-                log("ParallelMovementUp", "Coral arm crossed threshold, starting elevator movement");
+                // log("ParallelMovementUp", "Coral arm crossed threshold, starting elevator movement");
             }
         }
 
@@ -167,7 +167,7 @@ public class RequestHandler implements EpilogueLog {
             if (_finalTargetState.getCoral().isPresent()
                     && !_finalTargetState.getCoral().get().equals(CoralState.PLACING_L4)) {
                 _container.getCoral().setArmAngle(_finalTargetState.getCoral().get());
-                log("ParallelMovementUp", "Elevator crossed threshold, moving coral to final position");
+                // log("ParallelMovementUp", "Elevator crossed threshold, moving coral to final position");
             }
 
             if (_finalTargetState.getAlgae().isPresent()) {
@@ -184,7 +184,7 @@ public class RequestHandler implements EpilogueLog {
             if (_finalTargetState.getElevator().isPresent()) {
                 _container.getElevator().setDesiredHeight(_finalTargetState.getElevator().get());
                 _elevatorMovementStarted = true;
-                log("ParallelMovementDown", "Started elevator down movement");
+                // log("ParallelMovementDown", "Started elevator down movement");
             }
         }
 
@@ -196,9 +196,9 @@ public class RequestHandler implements EpilogueLog {
             if (_finalTargetState.getCoral().isPresent()) {
                 _container.getCoral().setArmAngle(_finalTargetState.getCoral().get());
                 _coralMovementStarted = true;
-                log(
-                        "ParallelMovementDown",
-                        "Elevator crossed below threshold, moving coral to final position");
+                // log(
+                //         "ParallelMovementDown",
+                //         "Elevator crossed below threshold, moving coral to final position");
             }
 
             if (_finalTargetState.getAlgae().isPresent()) {
@@ -234,7 +234,7 @@ public class RequestHandler implements EpilogueLog {
 
     private void checkAndStartQueuedRequest() {
         if (_queuedRequest != null && _queuedRequest.driveCondition().get()) {
-            log("StartingQueuedRequest", _queuedRequest.description());
+            // log("StartingQueuedRequest", _queuedRequest.description());
             handleImmediateRequest(_queuedRequest);
             _queuedRequest = null;
         }
@@ -244,11 +244,11 @@ public class RequestHandler implements EpilogueLog {
         var activeRequest = getActiveRequest();
         if (activeRequest == null) return;
 
-        log("ExecutingRequest", activeRequest.description());
+        // log("ExecutingRequest", activeRequest.description());
         setSubsystemStates(activeRequest.targetPosition());
 
         if (activeRequestFinished()) {
-            log("RequestCompleted", activeRequest.description());
+            // log("RequestCompleted", activeRequest.description());
             _activeRequests.remove();
         }
     }
@@ -273,17 +273,17 @@ public class RequestHandler implements EpilogueLog {
 
         if (goal.getElevator().isPresent()
                 && !_container.getElevator().isAtState(goal.getElevator().get())) {
-            log("RequestProgress", "elevator not finished");
+            // log("RequestProgress", "elevator not finished");
             return false;
         }
 
         if (goal.getAlgae().isPresent() && !_container.getAlgae().isAtState(goal.getAlgae().get())) {
-            log("RequestProgress", "algae not finished");
+            // log("RequestProgress", "algae not finished");
             return false;
         }
 
         if (goal.getCoral().isPresent() && !_container.getCoral().isAtState(goal.getCoral().get())) {
-            log("RequestProgress", "coral not finished");
+            // log("RequestProgress", "coral not finished");
             return false;
         }
 
@@ -292,7 +292,7 @@ public class RequestHandler implements EpilogueLog {
         //     return false;
         // }
 
-        log("RequestProgress", "all finished");
+        // log("RequestProgress", "all finished");
         return true;
     }
 
