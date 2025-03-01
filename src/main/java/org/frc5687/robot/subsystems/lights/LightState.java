@@ -9,6 +9,7 @@ public enum LightState {
     GREEN(0, 255, 0),
     DARK_GREEN(0, 100, 0),
     WHITE(100, 100, 100),
+    BLUE(0, 0, 255),
     FIRE(new FireAnimation());
 
     public final Optional<Animation> _animation;

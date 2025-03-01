@@ -12,4 +12,7 @@ public class ClimberInputs extends BaseInputs {
 
     @Logged(name = "Climber Stator Current (A)", importance = Logged.Importance.CRITICAL)
     public double statorCurrent = 0.0;
+
+    @Logged(name = "Climber Sensor", importance = Logged.Importance.CRITICAL)
+    public boolean sensor = false;
 }

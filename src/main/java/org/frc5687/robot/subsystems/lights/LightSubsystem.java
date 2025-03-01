@@ -29,8 +29,10 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
 
     @Override
     protected void periodic(LightInputs inputs, LightOutputs outputs) {
-        // if (_container.getAlgae().isAlgaeDetected()) {
-        if (true) {
+        if (_container.getClimber().isSensorTriggered()) {
+            outputs.desiredState = LightState.BLUE;
+        } else if (_container.getAlgae().isAlgaeDetected()) {
+
             double driveX = _container.getDrive().getPose().getX();
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent() && alliance.get() == Alliance.Red) {

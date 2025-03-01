@@ -8,5 +8,5 @@ public class ClimberOutputs extends BaseOutputs {
     public double motorSetpointRads = 0.0;
 
     @Logged(name = "Servo Setpoint (0.0-1.0)", importance = Logged.Importance.CRITICAL)
-    public double servoSetpoint = 0.52;
+    public double servoSetpoint = 0.6;
 }

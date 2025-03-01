@@ -64,12 +64,10 @@ public class RobotMap {
      */
     public static class PWM {
         public static final int CORAL_PIVOT_MOTOR = 7;
-        public static final int CORAL_WHEEL_MOTOR = 8;
 
         public static final int ALGAE_PIVOT_MOTOR = 9;
-        public static final int ALGAE_WHEEL_MOTOR = 6;
 
-        public static final int CLIMBER_SERVO = 5;
+        public static final int CLIMBER_SERVO = 6;
     }
 
     /**
@@ -100,8 +98,10 @@ public class RobotMap {
 
         public static final int ALGAE_SENSOR = 5;
 
-        public static final int INTAKE_ENCODER = 9;
-        public static final int INTAKE_SENSOR = 7;
+        public static final int INTAKE_ENCODER = 1; // not real
+        public static final int INTAKE_SENSOR = 0; // not real
+
+        public static final int CLIMBER_SENSOR = 7;
     }
 
     public static class SIM {
@@ -115,8 +115,8 @@ public class RobotMap {
             public static final int ELEVATOR_ENCODER_A = 4;
             public static final int ELEVATOR_ENCODER_B = 5;
 
-            public static final int INTAKE_ENCODER_A = 6;
-            public static final int INTAKE_ENCODER_B = 7;
+            public static final int INTAKE_ENCODER_A = 8;
+            public static final int INTAKE_ENCODER_B = 9;
         }
     }
 }

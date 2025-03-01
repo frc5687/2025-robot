@@ -154,7 +154,6 @@ public class OperatorInterface {
                                         RobotStateManager.getInstance()
                                                 .resetEstimatedPose(new Pose2d(3.169, 4.021, new Rotation2d()))));
 
-        
         _driverController
                 .povDown()
                 .whileTrue(

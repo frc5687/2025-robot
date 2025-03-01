@@ -25,8 +25,12 @@ public class ClimberSubsystem extends OutliersSubsystem<ClimberInputs, ClimberOu
             _outputs.servoSetpoint = 0.0;
             _outputs.motorSetpointRads = Constants.Climber.CLIMBER_UP_RADS;
         } else {
-            _outputs.servoSetpoint = 0.52;
+            _outputs.servoSetpoint = 0.6;
             _outputs.motorSetpointRads = Constants.Climber.CLIMBER_DOWN_RADS;
         }
+    }
+
+    public boolean isSensorTriggered() {
+        return _inputs.sensor;
     }
 }

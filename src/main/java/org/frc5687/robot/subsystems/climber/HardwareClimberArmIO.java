@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Servo;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
 import org.frc5687.robot.util.TunableDouble;
+import org.frc5687.robot.util.sensors.ProximitySensor;
 
 public class HardwareClimberArmIO implements ClimberIO {
 
@@ -22,9 +23,10 @@ public class HardwareClimberArmIO implements ClimberIO {
     private final StatusSignal<Current> _supplyCurrent;
     private final StatusSignal<Current> _statorCurrent;
     private final PositionVoltage _winchPositionRequest;
+    private final ProximitySensor _sensor;
     private final Servo _servo;
 
-    private final TunableDouble asdf = new TunableDouble("Climber", "servo", 0.5);
+    // private final TunableDouble asdf = new TunableDouble("Climber", "servo", 0.5);
 
     public HardwareClimberArmIO() {
         _winchMotor = new TalonFX(RobotMap.CAN.TALONFX.CLIMBER_WINCH, Constants.Climber.CAN_BUS);
@@ -34,6 +36,7 @@ public class HardwareClimberArmIO implements ClimberIO {
         _supplyCurrent = _winchMotor.getSupplyCurrent();
         _statorCurrent = _winchMotor.getStatorCurrent();
         _winchPositionRequest = new PositionVoltage(0.0).withEnableFOC(true);
+        _sensor = new ProximitySensor(RobotMap.DIO.CLIMBER_SENSOR);
 
         var config = new TalonFXConfiguration();
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -50,12 +53,13 @@ public class HardwareClimberArmIO implements ClimberIO {
         inputs.motorAngleRads = _winchAngle.getValue().in(Radians);
         inputs.statorCurrent = _statorCurrent.getValue().in(Amps);
         inputs.supplyCurrent = _supplyCurrent.getValue().in(Amps);
+        inputs.sensor = _sensor.get();
     }
 
     @Override
     public void writeOutputs(ClimberOutputs outputs) {
         _winchMotor.setControl(
                 _winchPositionRequest.withPosition(Radians.of(outputs.motorSetpointRads)));
-        _servo.set(asdf.get());
+        _servo.set(outputs.servoSetpoint);
     }
 }
