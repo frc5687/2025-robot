@@ -13,7 +13,6 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.Servo;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
-import org.frc5687.robot.util.TunableDouble;
 import org.frc5687.robot.util.sensors.ProximitySensor;
 
 public class HardwareClimberArmIO implements ClimberIO {
