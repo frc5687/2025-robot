@@ -106,7 +106,7 @@ public class SuperstructureManager extends SubsystemBase {
     private boolean isPositionNearReef() {
         Translation2d currentPose = _container.getDrive().getPose().getTranslation();
         Translation2d reefCenter = FieldConstants.getAllianceSpecificReefCenter();
-        return currentPose.getDistance(reefCenter) <= 3.5;
+        return currentPose.getDistance(reefCenter) <= 2.0;
     }
 
     private boolean isElevatorGoingDown(SuperstructureState requestedState) {
