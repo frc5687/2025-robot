@@ -4,7 +4,4 @@ import edu.wpi.first.epilogue.Logged;
 import org.frc5687.robot.util.BaseInputs;
 
 @Logged
-public class LightInputs extends BaseInputs {
-    @Logged(name = "Light State", importance = Logged.Importance.CRITICAL)
-    public LightState currentState = LightState.TWINKLE_DEFAULT;
-}
+public class LightInputs extends BaseInputs {}
