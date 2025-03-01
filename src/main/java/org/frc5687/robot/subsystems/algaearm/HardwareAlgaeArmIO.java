@@ -55,8 +55,8 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
                         Constants.AlgaeArm.MAX_ACCELERATION_RAD_PER_SEC_SQUARED);
         slowConstraints =
                 new TrapezoidProfile.Constraints(
-                        Constants.AlgaeArm.MAX_VELOCITY_RAD_PER_SEC / 6.0,
-                        Constants.AlgaeArm.MAX_ACCELERATION_RAD_PER_SEC_SQUARED / 4.0);
+                        Constants.AlgaeArm.MAX_VELOCITY_RAD_PER_SEC / 3.0,
+                        Constants.AlgaeArm.MAX_ACCELERATION_RAD_PER_SEC_SQUARED / 2.0);
 
         _controller =
                 new ProfiledPIDController(
