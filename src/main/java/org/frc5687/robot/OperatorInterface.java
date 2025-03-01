@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import java.util.Optional;
 import org.frc5687.robot.commands.algae.EjectAlgae;
@@ -34,7 +33,7 @@ public class OperatorInterface {
 
     public OperatorInterface() {
         _driverController = new OutliersController(new CommandPS5Controller(0));
-        _operatorController = new OutliersController(new CommandPS4Controller(1));
+        _operatorController = new OutliersController(new CommandPS5Controller(1));
     }
 
     public void configureCommandMapping(RobotContainer container) {
