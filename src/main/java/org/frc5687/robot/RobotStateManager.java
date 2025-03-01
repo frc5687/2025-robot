@@ -410,8 +410,8 @@ public class RobotStateManager implements EpilogueLog {
         log("Components", componentPoses, Pose3d.struct);
     }
 
-    public void resetLimelightIMU() {
-        _vision.resetCameraIMU(getRawIMURotation());
+    public void resetLimelightIMU(Rotation2d rot) {
+        _vision.resetCameraIMU(rot);
     }
 
     public void logEstimatedPoses() {

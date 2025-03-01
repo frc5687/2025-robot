@@ -132,6 +132,7 @@ public class RobotContainer implements EpilogueLog {
         _isCoralMode = true;
         setupNamedCommand();
         configureDefaultCommands();
+        _drive.zeroIMU();
     }
 
     private void configureDefaultCommands() {
