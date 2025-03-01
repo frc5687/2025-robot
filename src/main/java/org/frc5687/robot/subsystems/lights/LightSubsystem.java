@@ -1,5 +1,6 @@
 package org.frc5687.robot.subsystems.lights;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -14,7 +15,9 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
     private double prevBlink;
 
     private static final double DUTY_CYCLE = 0.5;
-    private static final double BARGE_TARGET_X = 7.4;
+    private static final double BARGE_TARGET_X =
+            FieldConstants.fieldLength / 2.0
+                    - Units.inchesToMeters(64); // 64in from barge center 3/1/25 xavier
 
     public LightSubsystem(RobotContainer container, SubsystemIO<LightInputs, LightOutputs> io) {
         super(container, io, new LightInputs(), new LightOutputs());
@@ -39,7 +42,7 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
                 driveX = FieldConstants.fieldLength - driveX;
             }
             double distance = Math.abs(BARGE_TARGET_X - driveX);
-            if (distance < 0.05) {
+            if (distance < Units.inchesToMeters(4)) {
                 outputs.desiredState = LightState.FIRE;
             } else if (distance < 1.0) {
                 double period = distance * 2.0;
