@@ -35,13 +35,8 @@ public class OperatorInterface {
     private final OutliersController _operatorController;
 
     public OperatorInterface() {
-        if (RobotBase.isReal()) {
-            _driverController = new OutliersController(new CommandXboxController(0));
-            _operatorController = new OutliersController(new CommandXboxController(1));
-        } else {
-            _driverController = new OutliersController(new CommandPS5Controller(0));
-            _operatorController = new OutliersController(new CommandPS4Controller(1));
-        }
+        _driverController = new OutliersController(new CommandPS5Controller(0));
+        _operatorController = new OutliersController(new CommandPS4Controller(1));
     }
 
     public void configureCommandMapping(RobotContainer container) {
