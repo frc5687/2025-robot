@@ -88,7 +88,8 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
 
     public void setDesiredHeight(double heightMeters) {
         _outputs.controlMode = ElevatorControlMode.POSITION;
-        heightMeters = MathUtil.clamp(heightMeters, Constants.Elevator.MIN_HEIGHT, Constants.Elevator.MAX_HEIGHT);
+        heightMeters =
+                MathUtil.clamp(heightMeters, Constants.Elevator.MIN_HEIGHT, Constants.Elevator.MAX_HEIGHT);
         _newDesiredHeight = Optional.of(heightMeters);
     }
 

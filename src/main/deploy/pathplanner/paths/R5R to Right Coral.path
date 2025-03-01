@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.379,
+        "y": 3.025
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.170808305661316,
+        "y": 1.6535477847395734
+      },
+      "isLocked": false,
+      "linkedName": "Reef 5 Right"
+    },
+    {
+      "anchor": {
+        "x": 1.5455305713750034,
+        "y": 0.7363599874196086
+      },
+      "prevControl": {
+        "x": 2.3694656260331186,
+        "y": 1.8297587350551896
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Coral Station Right"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "ReadyFunnel",
+      "waypointRelativePos": 0.4358839625634521,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ReadyFunnel"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 53.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 119.99999999999999
+  },
+  "useDefaultConstraints": true
+}

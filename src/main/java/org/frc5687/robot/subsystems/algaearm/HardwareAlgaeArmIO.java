@@ -124,7 +124,8 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
 
         _controller.setGoal(safeAngle);
 
-        if (outputs.desiredAngleRad == AlgaeState.BARGE_DROPOFF.getArmAngle()) { // FIXME do less scuffed
+        if (outputs.desiredAngleRad
+                == AlgaeState.BARGE_DROPOFF.getArmAngle()) { // FIXME do less scuffed
             _controller.setConstraints(fastConstraints);
         } else {
             _controller.setConstraints(slowConstraints);

@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Opp to R5R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R5R to Right Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ReceiveFunnel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Coral to R6L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R6L to Right Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ReceiveFunnel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Right Coral to R6R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
