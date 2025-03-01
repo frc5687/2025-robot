@@ -5,19 +5,19 @@ import org.frc5687.robot.util.BaseInputs;
 
 @Logged
 public class IntakeInputs extends BaseInputs {
-    @Logged(name = "Roller Velocity(RadsPS)", importance = Logged.Importance.CRITICAL)
+    @Logged(name = "Roller Velocity(RadsPS)", importance = Logged.Importance.DEBUG)
     public double rollerVelocityRadperSec = 0;
 
     @Logged(name = "Roller Temperature C", importance = Logged.Importance.DEBUG)
     public double rollerTemperatureCelsius = 0;
 
-    @Logged(name = "Absolute Encoder Angle(Rads)", importance = Logged.Importance.CRITICAL)
+    @Logged(name = "Absolute Encoder Angle(Rads)", importance = Logged.Importance.DEBUG)
     public double absoluteEncoderAngleRads = 0;
 
-    @Logged(name = "Arm Angle(Rads)", importance = Logged.Importance.CRITICAL)
+    @Logged(name = "Arm Angle(Rads)", importance = Logged.Importance.DEBUG)
     public double armAngleRads = 0;
 
-    @Logged(name = "Intake Velocity (RadsPS)", importance = Logged.Importance.CRITICAL)
+    @Logged(name = "Intake Velocity (RadsPS)", importance = Logged.Importance.DEBUG)
     public double angularVelocityRadPerSec = 0;
 
     @Logged(name = "Intake Current Draw (A)", importance = Logged.Importance.DEBUG)
@@ -26,6 +26,6 @@ public class IntakeInputs extends BaseInputs {
     @Logged(name = "Intake Temperature C", importance = Logged.Importance.DEBUG)
     public double intakeTemperatureCelsius = 0;
 
-    @Logged(name = "Is Coral Detected", importance = Logged.Importance.CRITICAL)
+    @Logged(name = "Is Coral Detected", importance = Logged.Importance.DEBUG)
     public boolean isCoralDetected = false;
 }

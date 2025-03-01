@@ -9,7 +9,7 @@ public class AlgaeInputs extends BaseInputs {
     @Logged(name = "Arm Angle (rads)", importance = Logged.Importance.CRITICAL)
     public double angleRads = 0.0;
 
-    @Logged(name = "Arm Angular Velocity (rad per sec)", importance = Logged.Importance.CRITICAL)
+    @Logged(name = "Arm Angular Velocity (rad per sec)", importance = Logged.Importance.DEBUG)
     public double angularVelocityRadPerSec = 0.0;
 
     @Logged(name = "Motor Current (A)", importance = Logged.Importance.DEBUG)
@@ -27,6 +27,6 @@ public class AlgaeInputs extends BaseInputs {
     @Logged(name = "Algae Detected", importance = Logged.Importance.CRITICAL)
     public boolean isAlgaeDetected = false;
 
-    @Logged(name = "Encoder Connected", importance = Logged.Importance.CRITICAL)
+    @Logged(name = "Encoder Connected", importance = Logged.Importance.DEBUG)
     public boolean isEncoderConnected = false;
 }
