@@ -37,7 +37,6 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
                 driveX = FieldConstants.fieldLength - driveX;
             }
             double distance = Math.abs(BARGE_TARGET_X - driveX);
-            System.out.println(distance);
             if (distance < 0.05) {
                 outputs.desiredState = LightState.FIRE;
             } else if (distance < 1.0) {
