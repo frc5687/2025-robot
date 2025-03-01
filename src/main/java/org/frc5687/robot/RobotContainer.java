@@ -35,13 +35,11 @@ import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
+import org.frc5687.robot.subsystems.lights.HardwareLightsIO;
+import org.frc5687.robot.subsystems.lights.LightSubsystem;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.subsystems.vision.LimelightVisionIO;
-import org.frc5687.robot.subsystems.lights.HardwareLightsIO;
-import org.frc5687.robot.subsystems.lights.LightSubsystem;
-import org.frc5687.robot.subsystems.superstructure.SuperstructureTracker;
-import org.frc5687.robot.subsystems.vision.PhotonVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.subsystems.vision.VisionIO;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
@@ -79,9 +77,10 @@ public class RobotContainer implements EpilogueLog {
         // TODO implement simulation io
         _lights = new LightSubsystem(this, new HardwareLightsIO());
 
-        DriveIO driveIO = RobotBase.isSimulation()
-                ? new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON)
-                : new CTREDriveIO(RobotMap.CAN.PIGEON.PIGEON, Constants.SwerveModule.CAN_BUS);
+        DriveIO driveIO =
+                RobotBase.isSimulation()
+                        ? new SimDriveIO(RobotMap.CAN.PIGEON.PIGEON)
+                        : new CTREDriveIO(RobotMap.CAN.PIGEON.PIGEON, Constants.SwerveModule.CAN_BUS);
 
         _drive = new DriveSubsystem(this, driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
 
@@ -96,25 +95,29 @@ public class RobotContainer implements EpilogueLog {
         if (RobotBase.isSimulation()) {
             elevatorIO = new SimElevatorIO();
         } else {
-            elevatorIO = new HardwareElevatorIO(
-                    RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR,
-                    RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR,
-                    RobotMap.CAN.LASERCAN.LASERCAN);
+            elevatorIO =
+                    new HardwareElevatorIO(
+                            RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR,
+                            RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR,
+                            RobotMap.CAN.LASERCAN.LASERCAN);
         }
 
         _elevator = new ElevatorSubsystem(this, elevatorIO);
 
-        AlgaeArmIO algaeArmIO = RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
+        AlgaeArmIO algaeArmIO =
+                RobotBase.isSimulation() ? new SimAlgaeArmIO() : new HardwareAlgaeArmIO();
         _algaeArm = new AlgaeArmSubsystem(this, algaeArmIO);
 
-        CoralArmIO coralArmIO = RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
+        CoralArmIO coralArmIO =
+                RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
         _coralArm = new CoralArmSubsystem(this, coralArmIO);
 
         IntakeIO intakeIO = /* RobotBase.isSimulation() ? */
                 new SimIntakeIO() /* : new HardwareIntakeIO() */;
         _intake = new IntakeSubsystem(this, intakeIO);
 
-        ClimberIO climberIO = RobotBase.isSimulation() ? new SimClimberIO() : new HardwareClimberArmIO();
+        ClimberIO climberIO =
+                RobotBase.isSimulation() ? new SimClimberIO() : new HardwareClimberArmIO();
         _climber = new ClimberSubsystem(this, climberIO);
 
         VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new LimelightVisionIO();
@@ -133,14 +136,17 @@ public class RobotContainer implements EpilogueLog {
         _drive.setDefaultCommand(
                 new TeleopDriveCommand(
                         _drive,
-                        () -> -modifyAxis(_oi.getDriverController().getLeftY())
-                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
-                        () -> -modifyAxis(_oi.getDriverController().getLeftX())
-                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
-                        () -> -modifyAxis(_oi.getDriverController().getRightX())
-                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                        () ->
+                                -modifyAxis(_oi.getDriverController().getLeftY())
+                                        * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                        () ->
+                                -modifyAxis(_oi.getDriverController().getLeftX())
+                                        * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                        () ->
+                                -modifyAxis(_oi.getDriverController().getRightX())
+                                        * Constants.SwerveModule.MAX_ANGULAR_SPEED,
                         () -> true // Always field relative
-                ));
+                        ));
 
         // _drive.setDefaultCommand(
         // new TeleopDriveCommand(
@@ -184,6 +190,9 @@ public class RobotContainer implements EpilogueLog {
             NamedCommands.registerCommand(
                     "ReceiveFunnel", _superstructureManager.receiveFunnel(RequestType.IMMEDIATE));
         }
+
+        NamedCommands.registerCommand(
+                    "ReadyFunnel", _superstructureManager.receiveFunnelSim(RequestType.IMMEDIATE));
 
         NamedCommands.registerCommand(
                 "CoralL4",
