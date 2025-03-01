@@ -20,14 +20,6 @@ public class ClimberSubsystem extends OutliersSubsystem<ClimberInputs, ClimberOu
         return Math.abs(_inputs.motorAngleRads - _outputs.motorSetpointRads) < 1.0;
     }
 
-    public void increaseServoSetpoint() {
-        _outputs.servoSetpoint += 0.05;
-    }
-
-    public void decreaseServoSetpoint() {
-        _outputs.servoSetpoint += 0.05;
-    }
-
     public void toggleClimberSetpoint() {
         if (_outputs.motorSetpointRads != Constants.Climber.CLIMBER_UP_RADS) {
             _outputs.servoSetpoint = 0.0;

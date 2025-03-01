@@ -50,10 +50,10 @@ public class WheelOdometrySource extends OdometrySource {
     public void resetPose(Pose2d pose) {
         _odometryPose = pose;
 
-        Rotation2d currentGyro = _headingSupplier.get();
-        if (currentGyro != null) {
-            _gyroOffset = pose.getRotation().minus(currentGyro);
-        }
+        // Rotation2d currentGyro = _headingSupplier.get();
+        // if (currentGyro != null) {
+        //     _gyroOffset = pose.getRotation().minus(currentGyro);
+        // }
 
         SwerveModulePosition[] currentPositions = _positionSupplier.get();
         for (int i = 0; i < currentPositions.length; i++) {

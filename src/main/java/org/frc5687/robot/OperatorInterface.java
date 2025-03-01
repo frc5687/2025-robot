@@ -5,14 +5,12 @@ import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import java.util.Optional;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
@@ -130,9 +128,9 @@ public class OperatorInterface {
                                 container.getAlgae()::isAlgaeDetected));
         _driverController.rightMiddleButton().onTrue(new InstantCommand(container.getDrive()::zeroIMU));
 
-        // _driverController
-        //         .leftMiddleButton()
-        //         .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
+        _driverController
+                .leftMiddleButton()
+                .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
 
         // _driverController
         //         .leftMiddleButton()
@@ -156,8 +154,7 @@ public class OperatorInterface {
                                         RobotStateManager.getInstance()
                                                 .resetEstimatedPose(new Pose2d(3.169, 4.021, new Rotation2d()))));
 
-        _driverController.a().onTrue(new InstantCommand(container.getClimber()::decreaseServoSetpoint));
-        _driverController.y().onTrue(new InstantCommand(container.getClimber()::increaseServoSetpoint));
+        
         _driverController
                 .povDown()
                 .whileTrue(

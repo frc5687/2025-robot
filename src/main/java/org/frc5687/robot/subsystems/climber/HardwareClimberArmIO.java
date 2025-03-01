@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.Servo;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
+import org.frc5687.robot.util.TunableDouble;
 
 public class HardwareClimberArmIO implements ClimberIO {
 
@@ -22,6 +23,8 @@ public class HardwareClimberArmIO implements ClimberIO {
     private final StatusSignal<Current> _statorCurrent;
     private final PositionVoltage _winchPositionRequest;
     private final Servo _servo;
+
+    private final TunableDouble asdf = new TunableDouble("Climber", "servo", 0.5);
 
     public HardwareClimberArmIO() {
         _winchMotor = new TalonFX(RobotMap.CAN.TALONFX.CLIMBER_WINCH, Constants.Climber.CAN_BUS);
@@ -53,6 +56,6 @@ public class HardwareClimberArmIO implements ClimberIO {
     public void writeOutputs(ClimberOutputs outputs) {
         _winchMotor.setControl(
                 _winchPositionRequest.withPosition(Radians.of(outputs.motorSetpointRads)));
-        _servo.set(outputs.servoSetpoint);
+        _servo.set(asdf.get());
     }
 }
