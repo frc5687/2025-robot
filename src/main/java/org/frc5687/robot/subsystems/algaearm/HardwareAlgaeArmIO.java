@@ -38,6 +38,9 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
     private double _voltageCommand;
     private final StatusSignal<Angle> _absoluteAngle;
 
+    private final TrapezoidProfile.Constraints fastConstraints;
+    private final TrapezoidProfile.Constraints slowConstraints;
+
     private final VoltageOut _wheelVoltageRequest;
 
     public HardwareAlgaeArmIO() {
@@ -46,14 +49,18 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.ALGAE_WHEEL, "CANivore");
         _algaeDetectionSensor = new ProximitySensor(RobotMap.DIO.ALGAE_SENSOR);
 
-        TrapezoidProfile.Constraints constraints =
+        fastConstraints =
                 new TrapezoidProfile.Constraints(
                         Constants.AlgaeArm.MAX_VELOCITY_RAD_PER_SEC,
                         Constants.AlgaeArm.MAX_ACCELERATION_RAD_PER_SEC_SQUARED);
+        slowConstraints =
+                new TrapezoidProfile.Constraints(
+                        Constants.AlgaeArm.MAX_VELOCITY_RAD_PER_SEC / 6.0,
+                        Constants.AlgaeArm.MAX_ACCELERATION_RAD_PER_SEC_SQUARED / 4.0);
 
         _controller =
                 new ProfiledPIDController(
-                        Constants.AlgaeArm.kP, Constants.AlgaeArm.kI, Constants.AlgaeArm.kD, constraints);
+                        Constants.AlgaeArm.kP, Constants.AlgaeArm.kI, Constants.AlgaeArm.kD, fastConstraints);
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.AlgaeArm.PIVOT_MOTOR_INVERTED);
         _angularVelocityFilter =
@@ -116,6 +123,12 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         // calculateShortestPath(currentAngle);
 
         _controller.setGoal(safeAngle);
+
+        if (outputs.desiredAngleRad == AlgaeState.BARGE_DROPOFF.getArmAngle()) { // FIXME do less scuffed
+            _controller.setConstraints(fastConstraints);
+        } else {
+            _controller.setConstraints(slowConstraints);
+        }
 
         double pidOutput = _controller.calculate(currentAngle);
         double ffOutput = calculateFeedForward(currentAngle);
