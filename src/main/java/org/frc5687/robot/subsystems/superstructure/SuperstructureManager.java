@@ -6,28 +6,60 @@ import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.EjectAlgae;
+import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.FieldConstants;
 
-public class SuperstructureManager extends SubsystemBase {
+public class SuperstructureManager extends SubsystemBase implements EpilogueLog {
+    public enum SuperstructureMode {
+        CORAL,
+        ALGAE
+    }
+
     private final RobotContainer _container;
     private final RequestHandler _requestHandler;
     private boolean _forceQueueExecution = false;
+
+    private SuperstructureMode _currentMode = SuperstructureMode.CORAL;
 
     public SuperstructureManager(RobotContainer container) {
         _container = container;
         _requestHandler = new RequestHandler(container);
     }
 
+    public SuperstructureMode getCurrentMode() {
+        return _currentMode;
+    }
+
+    public void setMode(SuperstructureMode mode) {
+        if (_currentMode != mode) {
+            System.out.println("Switching to " + mode + " mode");
+            _currentMode = mode;
+        }
+    }
+
+    public void toggleMode() {
+        setMode(
+                _currentMode == SuperstructureMode.CORAL
+                        ? SuperstructureMode.ALGAE
+                        : SuperstructureMode.CORAL);
+    }
+
+    public boolean isCoralMode() {
+        return _currentMode == SuperstructureMode.CORAL;
+    }
+
+    public boolean isAlgaeMode() {
+        return _currentMode == SuperstructureMode.ALGAE;
+    }
+
     /**
-     * This crates a request to the superstructure for a desired state and motor values while having
-     * the option to queue
+     * This creates a request to the superstructure for a desired state while having the option to
+     * queue.
      *
-     * @param stateSupplier A supplier for the desired superstructure state positions (elevator
-     *     height, arm angles, etc)
-     * @param motors The motor values for certian actions (coral eject, algae hold etc)
+     * @param stateSupplier A supplier for the desired superstructure state positions
      * @param description debugging description of the action
-     * @param type RequestType to queue or not to queue (that is the question is it not)?
-     * @return
+     * @param type RequestType to queue or not to queue
+     * @return Command for execution
      */
     public Command createRequest(
             Supplier<SuperstructureState> stateSupplier, String description, RequestType type) {
@@ -65,7 +97,9 @@ public class SuperstructureManager extends SubsystemBase {
     }
 
     public Command receiveFunnel(RequestType type) {
+        // receiving from funnel, explicitly switch to CORAL mode
         return new SequentialCommandGroup(
+                new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
                 createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type),
                 new FunctionalCommand(
                         () -> {
@@ -81,15 +115,21 @@ public class SuperstructureManager extends SubsystemBase {
     }
 
     public Command receiveFunnelSim(RequestType type) {
-        return createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type);
+        // receiving from funnel, explicitly switch to CORAL mode
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
+                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type));
     }
 
     public Command grabAlgae(SuperstructureState state, RequestType type) {
-        return createRequest(state, type).until(() -> _container.getAlgae().isAlgaeDetected());
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
+                createRequest(state, type).until(() -> _container.getAlgae().isAlgaeDetected()));
     }
 
     public Command aimAtAlgaeNet() {
         return new SequentialCommandGroup(
+                new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
                 createRequest(Constants.SuperstructureGoals.BARGE_HELD, RequestType.IMMEDIATE),
                 new EjectAlgae(_container.getAlgae()));
     }
@@ -119,13 +159,22 @@ public class SuperstructureManager extends SubsystemBase {
     @Override
     public void periodic() {
         _requestHandler.execute();
+
+        log("Mode", getCurrentMode());
+        // TODO: I'm worried if a sensor gets hit and triggers always something bad will occur, maybe
+        // always defualt to coral over algae if this occurs
+        if (_container.getAlgae().isAlgaeDetected() && _currentMode != SuperstructureMode.ALGAE) {
+            System.out.println("Auto-detecting ALGAE mode based on sensor");
+            setMode(SuperstructureMode.ALGAE);
+        } else if (_container.getCoral().isCoralDetected()
+                && _currentMode != SuperstructureMode.CORAL) {
+            System.out.println("Auto-detecting CORAL mode based on sensor");
+            setMode(SuperstructureMode.CORAL);
+        }
     }
 
-    // private SuperstructureState getCurrentGoal() {
-    //     return new SuperstructureState(
-    //             _container.getElevator().getDesiredState(),
-    //             _container.getCoral().getDesiredState(),
-    //             _container.getAlgae().getDesiredState(),
-    //             IntakeState.IDLE); // TODO FIX INTAKE
-    // }
+    @Override
+    public String getLogBase() {
+        return "SuperstructureManager";
+    }
 }

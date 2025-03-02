@@ -44,7 +44,6 @@ public class OperatorInterface {
     }
 
     private void configureDriverControls(RobotContainer container, SuperstructureManager manager) {
-
         // Face angles with funnel receive
         _driverController
                 .x()
@@ -83,19 +82,11 @@ public class OperatorInterface {
         _driverController
                 .leftBumper()
                 .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT));
-        // _driverController
-        //         .leftBumper()
-        //         .whileTrue(new DriveToTag(container.getDrive(), container.getVision(),
-        // ReefSide.LEFT));
 
         _driverController
                 .rightBumper()
                 .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT));
 
-        // _driverController
-        //         .rightBumper()
-        //         .whileTrue(new DriveToTag(container.getDrive(), container.getVision(),
-        // ReefSide.RIGHT));
         _driverController.povUp().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpLeft().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpRight().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
@@ -103,18 +94,21 @@ public class OperatorInterface {
         _driverController
                 .leftTrigger()
                 .whileTrue(
-                        new SequentialCommandGroup(
-                                manager.grabAlgae(
-                                        Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE),
-                                new IntakeAlgae(container.getAlgae()),
-                                manager.createRequest(
-                                        new SuperstructureState(
-                                                Optional.empty(),
-                                                Optional.empty(),
-                                                Optional.of(AlgaeState.IDLE),
-                                                Optional.empty()),
-                                        RequestType.IMMEDIATE),
-                                new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))));
+                        new ConditionalCommand(
+                                new SequentialCommandGroup(
+                                        manager.grabAlgae(
+                                                Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE),
+                                        new IntakeAlgae(container.getAlgae()),
+                                        manager.createRequest(
+                                                new SuperstructureState(
+                                                        Optional.empty(),
+                                                        Optional.empty(),
+                                                        Optional.of(AlgaeState.IDLE),
+                                                        Optional.empty()),
+                                                RequestType.IMMEDIATE),
+                                        new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))),
+                                new InstantCommand(),
+                                manager::isAlgaeMode));
 
         _driverController
                 .rightTrigger()
@@ -128,26 +122,13 @@ public class OperatorInterface {
                                                 container.getElevator().getElevatorHeight()
                                                         < ElevatorState.L3_CORAL_PLACING.getHeight()),
                                 new EjectCoral(container.getCoral()),
-                                container.getAlgae()::isAlgaeDetected));
+                                manager::isAlgaeMode));
+
         _driverController.rightMiddleButton().onTrue(new InstantCommand(container.getDrive()::zeroIMU));
 
         _driverController
                 .leftMiddleButton()
                 .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
-
-        // _driverController
-        //         .leftMiddleButton()
-        //         .onTrue(
-        //                 new InstantCommand(
-        //                         () -> {
-        //                             var questVisionUpdatesOn =
-        // RobotStateManager.getInstance()._questVisionUpdatesOn;
-        //                             System.out.println(
-        //                                     "quest vision updates are now " + (questVisionUpdatesOn ?
-        // "off" : "on"));
-        //                             RobotStateManager.getInstance()._questVisionUpdatesOn =
-        // !questVisionUpdatesOn;
-        //                         }));
 
         _driverController
                 .leftMiddleButton()
@@ -169,12 +150,27 @@ public class OperatorInterface {
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
     private void configureOperatorControls(RobotContainer container, SuperstructureManager manager) {
+        // toggle mode (just in case manual override is needed)
+
+        _operatorController
+                .start()
+                .onTrue(
+                        new SequentialCommandGroup(
+                                        new InstantCommand(manager::toggleMode),
+                                        new InstantCommand(
+                                                () ->
+                                                        System.out.println(
+                                                                "Mode explicitly toggled to: " + manager.getCurrentMode())))
+                                .withName("Mode Toggle Button"));
+
         _operatorController
                 .back()
                 .onTrue(new InstantCommand(manager::forceQueueExecution))
                 .onFalse(new InstantCommand(manager::releaseQueueExecution));
 
         /*
+         * Mode-aware L1 action (x button)
+         * x() without coral should default to receiveFunnel and set CORAL mode
          * if algae held:
          *      processor dropoff
          * elif coral held:
@@ -209,19 +205,32 @@ public class OperatorInterface {
                                                 manager.receiveFunnel(RequestType.IMMEDIATE),
                                                 container.getCoral()::isCoralDetected),
                                         container.getAlgae()::isAlgaeDetected)
-                                .withName("L1 Conditional"));
+                                .withName("L1 Action"));
 
+        // L2 action (y button)
         _operatorController
                 .y()
                 .onTrue(
-                        manager.createRequest(
-                                Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.QUEUED));
+                        new ConditionalCommand(
+                                        new InstantCommand(() -> System.out.println("ALGAE mode L2 action")),
+                                        manager.createRequest(
+                                                Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.QUEUED),
+                                        manager::isAlgaeMode)
+                                .withName("L2 Height Action"));
+
+        // L3 action (b button)
         _operatorController
                 .b()
                 .onTrue(
-                        manager.createRequest(
-                                Constants.SuperstructureGoals.PLACE_CORAL_L3, RequestType.QUEUED));
+                        new ConditionalCommand(
+                                        new InstantCommand(() -> System.out.println("ALGAE mode L3 action")),
+                                        manager.createRequest(
+                                                Constants.SuperstructureGoals.PLACE_CORAL_L3, RequestType.QUEUED),
+                                        manager::isAlgaeMode)
+                                .withName("L3 Height Action"));
+
         /*
+         * L4/Net action (a button) - functionality depends on mode but doesn't change mode
          * if algae held:
          *      net dropoff
          * else:
@@ -234,55 +243,60 @@ public class OperatorInterface {
                                         manager.aimAtAlgaeNet(),
                                         manager.createRequest(
                                                 Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.QUEUED),
-                                        container.getAlgae()::isAlgaeDetected)
-                                .withName("L4 Conditional"));
+                                        manager::isAlgaeMode)
+                                .withName("L4/Net Action"));
 
+        // Low grab (left bumper) - always performs algae operations
         _operatorController
                 .leftBumper()
                 .whileTrue(
                         new SequentialCommandGroup(
-                                manager.grabAlgae(
-                                        Constants.SuperstructureGoals.LOW_ALGAE_GRAB, RequestType.IMMEDIATE),
-                                new IntakeAlgae(container.getAlgae()),
-                                new WaitUntilCommand(
-                                        () ->
-                                                container
-                                                                .getDrive()
-                                                                .getPose()
-                                                                .getTranslation()
-                                                                .getDistance(FieldConstants.getAllianceSpecificReefCenter())
-                                                        > 2),
-                                manager.createRequest(
-                                        new SuperstructureState(
-                                                Optional.empty(),
-                                                Optional.empty(),
-                                                Optional.of(AlgaeState.IDLE),
-                                                Optional.empty()),
-                                        RequestType.IMMEDIATE),
-                                new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))));
+                                        manager.grabAlgae(
+                                                Constants.SuperstructureGoals.LOW_ALGAE_GRAB, RequestType.IMMEDIATE),
+                                        new IntakeAlgae(container.getAlgae()),
+                                        new WaitUntilCommand(
+                                                () ->
+                                                        container
+                                                                        .getDrive()
+                                                                        .getPose()
+                                                                        .getTranslation()
+                                                                        .getDistance(FieldConstants.getAllianceSpecificReefCenter())
+                                                                > 2),
+                                        manager.createRequest(
+                                                new SuperstructureState(
+                                                        Optional.empty(),
+                                                        Optional.empty(),
+                                                        Optional.of(AlgaeState.IDLE),
+                                                        Optional.empty()),
+                                                RequestType.IMMEDIATE),
+                                        new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0)))
+                                .withName("Algae Low Grab"));
+
+        // High grab (right bumper) - always performs algae operations
         _operatorController
                 .rightBumper()
                 .whileTrue(
                         new SequentialCommandGroup(
-                                manager.grabAlgae(
-                                        Constants.SuperstructureGoals.HIGH_ALGAE_GRAB, RequestType.IMMEDIATE),
-                                new IntakeAlgae(container.getAlgae()),
-                                new WaitUntilCommand(
-                                        () ->
-                                                container
-                                                                .getDrive()
-                                                                .getPose()
-                                                                .getTranslation()
-                                                                .getDistance(FieldConstants.getAllianceSpecificReefCenter())
-                                                        > 2),
-                                manager.createRequest(
-                                        new SuperstructureState(
-                                                Optional.empty(),
-                                                Optional.empty(),
-                                                Optional.of(AlgaeState.IDLE),
-                                                Optional.empty()),
-                                        RequestType.IMMEDIATE),
-                                new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))));
+                                        manager.grabAlgae(
+                                                Constants.SuperstructureGoals.HIGH_ALGAE_GRAB, RequestType.IMMEDIATE),
+                                        new IntakeAlgae(container.getAlgae()),
+                                        new WaitUntilCommand(
+                                                () ->
+                                                        container
+                                                                        .getDrive()
+                                                                        .getPose()
+                                                                        .getTranslation()
+                                                                        .getDistance(FieldConstants.getAllianceSpecificReefCenter())
+                                                                > 2),
+                                        manager.createRequest(
+                                                new SuperstructureState(
+                                                        Optional.empty(),
+                                                        Optional.empty(),
+                                                        Optional.of(AlgaeState.IDLE),
+                                                        Optional.empty()),
+                                                RequestType.IMMEDIATE),
+                                        new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0)))
+                                .withName("Algae High Grab"));
     }
 
     public static double modifyAxis(double value) {
