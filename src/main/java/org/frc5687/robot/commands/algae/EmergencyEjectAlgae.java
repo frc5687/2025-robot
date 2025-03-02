@@ -18,13 +18,12 @@ public class EmergencyEjectAlgae extends OutliersCommand {
 
     @Override
     protected void execute(double timestamp) {
-
         _algae.setArmAngle(AlgaeState.BARGE_DROPOFF);
-        _algae.setAlgaeMotorVoltage(-12);
+        _algae.setWheelMotorVoltage(-12);
     }
 
     @Override
     public boolean isFinished() {
-        return !_algae.isAlgaeDetected();
+        return false;
     }
 }

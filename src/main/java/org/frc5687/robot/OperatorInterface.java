@@ -16,7 +16,6 @@ import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DriveToHP;
-import org.frc5687.robot.commands.drive.DynamicDriveToLane;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
@@ -90,6 +89,8 @@ public class OperatorInterface {
 
         _driverController.rightJoystickButton().whileTrue(new DriveToHP(container.getDrive()));
 
+        // _driverController.leftJoystickButton().whileTrue(new
+        // EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUp().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpLeft().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpRight().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
@@ -141,14 +142,14 @@ public class OperatorInterface {
                                         RobotStateManager.getInstance()
                                                 .resetEstimatedPose(new Pose2d(3.169, 4.021, new Rotation2d()))));
 
-        _driverController
-                .povDown()
-                .whileTrue(
-                        new DynamicDriveToLane(
-                                container.getDrive(),
-                                () ->
-                                        -modifyAxis(_driverController.getLeftY())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED));
+        // _driverController
+        //         .povDown()
+        //         .whileTrue(
+        //                 new DynamicDriveToLane(
+        //                         container.getDrive(),
+        //                         () ->
+        //                                 -modifyAxis(_driverController.getLeftY())
+        //                                         * Constants.SwerveModule.MAX_LINEAR_SPEED));
     }
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */

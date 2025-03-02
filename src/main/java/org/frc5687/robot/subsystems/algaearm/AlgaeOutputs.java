@@ -16,6 +16,6 @@ public class AlgaeOutputs extends BaseOutputs {
     @Logged(name = "Desired Voltage Feed Forward (V)", importance = Logged.Importance.DEBUG)
     double voltageFeedForward = 0.0;
 
-    @Logged(name = "Wheel Voltage Command", importance = Logged.Importance.DEBUG)
+    @Logged(name = "Wheel Voltage Command", importance = Logged.Importance.CRITICAL)
     public double wheelVoltageCommand = 0.0;
 }
