@@ -216,4 +216,24 @@ public class OutliersController {
             return _ps5Controller.getRightY();
         }
     }
+
+    public Trigger leftJoystickButton() {
+        if (_xboxController != null) {
+            return _xboxController.leftStick();
+        } else if (_ps4Controller != null) {
+            return _ps4Controller.L3();
+        } else {
+            return _ps5Controller.L3();
+        }
+    }
+
+    public Trigger rightJoystickButton() {
+        if (_xboxController != null) {
+            return _xboxController.rightStick();
+        } else if (_ps4Controller != null) {
+            return _ps4Controller.R3();
+        } else {
+            return _ps5Controller.R3();
+        }
+    }
 }
