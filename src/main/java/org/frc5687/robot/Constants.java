@@ -521,7 +521,7 @@ public class Constants {
 
         public static final SuperstructureState PROCESSOR_DROPOFF =
                 new SuperstructureState(
-                        Optional.of(ElevatorState.L1_CORAL_PLACING),
+                        Optional.of(ElevatorState.PROCESSOR_PLACING),
                         Optional.of(CoralState.IDLE),
                         Optional.of(AlgaeState.PROCESSOR_DROPOFF),
                         Optional.empty());
