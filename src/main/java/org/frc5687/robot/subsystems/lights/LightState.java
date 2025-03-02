@@ -2,13 +2,15 @@ package org.frc5687.robot.subsystems.lights;
 
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.FireAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
 import java.util.Optional;
 
 public enum LightState {
     OFF(0, 0, 0),
-    GREEN(0, 255, 0),
-    DARK_GREEN(0, 100, 0),
-    WHITE(100, 100, 100),
+    SOLID_GREEN(0, 255, 0),
+    FLASHING_GREEN(new StrobeAnimation(0, 255, 0)),
+    SOLID_WHITE(100, 100, 100),
+    FLASHING_WHITE(new StrobeAnimation(100, 100, 100)),
     BLUE(0, 0, 255),
     FIRE(new FireAnimation());
 

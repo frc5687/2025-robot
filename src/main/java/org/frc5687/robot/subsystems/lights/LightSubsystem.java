@@ -34,26 +34,28 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
     protected void periodic(LightInputs inputs, LightOutputs outputs) {
         if (_container.getClimber().isSensorTriggered()) {
             outputs.desiredState = LightState.BLUE;
-        } else if (_container.getAlgae().isAlgaeDetected()) {
+        } else if (_container.getSuperstructureManager().isAlgaeMode()) {
+            if (_container.getAlgae().isAlgaeDetected()) {
+                double driveX = _container.getDrive().getPose().getX();
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+                    driveX = FieldConstants.fieldLength - driveX;
+                }
+                double distance = Math.abs(BARGE_TARGET_X - driveX);
 
-            double driveX = _container.getDrive().getPose().getX();
-            var alliance = DriverStation.getAlliance();
-            if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-                driveX = FieldConstants.fieldLength - driveX;
-            }
-            double distance = Math.abs(BARGE_TARGET_X - driveX);
-            if (distance < Units.inchesToMeters(4)) {
-                outputs.desiredState = LightState.FIRE;
-            } else if (distance < 1.0) {
-                double period = distance * 2.0;
-                outputs.desiredState = blink(period, LightState.GREEN, LightState.DARK_GREEN);
+                if (distance < Units.inchesToMeters(4)) {
+                    outputs.desiredState = LightState.FIRE;
+                }
+                outputs.desiredState = LightState.FLASHING_GREEN;
             } else {
-                outputs.desiredState = LightState.DARK_GREEN;
+                outputs.desiredState = LightState.SOLID_GREEN;
             }
-        } else if (_container.getCoral().isCoralDetected()) {
-            outputs.desiredState = LightState.WHITE;
-        } else {
-            outputs.desiredState = LightState.OFF;
+        } else { // coral mode
+            if (_container.getCoral().isCoralDetected()) {
+                outputs.desiredState = LightState.FLASHING_WHITE;
+            } else {
+                outputs.desiredState = LightState.SOLID_WHITE;
+            }
         }
     }
 
