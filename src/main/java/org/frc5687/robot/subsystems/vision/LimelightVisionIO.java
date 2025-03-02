@@ -1,6 +1,5 @@
 package org.frc5687.robot.subsystems.vision;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
@@ -18,7 +17,8 @@ import org.frc5687.robot.util.vision.LimelightHelpers.RawFiducial;
 public class LimelightVisionIO implements VisionIO {
     private final Map<String, String> _cameraNames;
     private final Map<String, Transform3d> _cameraPoses;
-    private int timer;
+
+    // private int timer;
 
     public LimelightVisionIO() {
         _cameraNames = new HashMap<>();
@@ -26,7 +26,7 @@ public class LimelightVisionIO implements VisionIO {
 
         addCamera("North_Camera", "limelight-center", Constants.Vision.ROBOT_TO_NORTH_CAM);
         addCamera("North_West_Camera", "limelight-left", Constants.Vision.ROBOT_TO_NW_CAM);
-        timer = 0;
+        // timer = 0;
     }
 
     private void addCamera(String logicalName, String limelightName, Transform3d robotToCamera) {
@@ -42,27 +42,13 @@ public class LimelightVisionIO implements VisionIO {
         }
     }
 
-    @Override
-    public void resetCameraIMU(Rotation2d heading) {
-        for (String camera : _cameraNames.values()) {
-            LimelightHelpers.SetIMUMode(camera, 1);
-            LimelightHelpers.SetRobotOrientation(camera, heading.getDegrees(), 0, 0, 0, 0, 0);
-        }
-        timer = 5;
-    }
-
     private void updateCameraInputs(VisionInputs inputs, String logicalName) {
         String limelightName = _cameraNames.get(logicalName);
         inputs.cameraObservations.put(logicalName, new ArrayList<>());
 
-        // Set robot orientation for MegaTag2
-        if (timer > 0) {
-            System.out.println("TIMER LOCK: " + timer);
-            timer--;
-        } else {
-            LimelightHelpers.SetIMUMode(limelightName, 2);
-        }
+        LimelightHelpers.SetIMUMode(limelightName, 0);
         double robotYaw = RobotStateManager.getInstance().getRawIMURotation().getDegrees();
+        LimelightHelpers.SetRobotOrientation(limelightName, robotYaw, 0, 0, 0, 0, 0);
 
         // Get latest results
         LimelightResults results = LimelightHelpers.getLatestResults(limelightName);

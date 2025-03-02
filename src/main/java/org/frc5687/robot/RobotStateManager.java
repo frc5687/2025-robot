@@ -410,13 +410,9 @@ public class RobotStateManager implements EpilogueLog {
         log("Components", componentPoses, Pose3d.struct);
     }
 
-    public void resetLimelightIMU(Rotation2d rot) {
-        _vision.resetCameraIMU(rot);
-    }
-
     public void logEstimatedPoses() {
-        log("Quest Estimator Pose", getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV), Pose3d.struct);
+        // log("Quest Estimator Pose", getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV), Pose3d.struct);
         log("Swerve Estimator Pose", getPose(RobotCoordinate.ROBOT_BASE_SWERVE), Pose3d.struct);
-        log("Sim Odom Pose", getPose(RobotCoordinate.ROBOT_BASE_SIM_ODOM), Pose3d.struct);
+        // log("Sim Odom Pose", getPose(RobotCoordinate.ROBOT_BASE_SIM_ODOM), Pose3d.struct);
     }
 }

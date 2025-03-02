@@ -102,8 +102,6 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                         _inputs.measuredStates,
                         DriveFeedforwards.zeros(_robotConfig.numModules));
 
-        // zeroIMU();
-
         configureAutoBuilder(_robotConfig);
     }
 
@@ -114,6 +112,12 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     @Override
     protected void periodic(DriveInputs inputs, DriveOutputs outputs) {
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            log("alliance", alliance.get());
+        } else {
+            log("alliance", "empty");
+        }
         // Update PID if needed
         if (p.hasChanged() || i.hasChanged() || d.hasChanged() || s.hasChanged()) {
             _io.setPID(p.get(), i.get(), d.get(), 0, s.get(), 0, 0);
@@ -153,21 +157,11 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     public void zeroIMU() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
-        // if (alliance.isEmpty()) {
-        //     System.err.println("!!!!! Alliance was empty....");
-        //     _driveIO.setYaw(new Rotation2d());
-        //     RobotStateManager.getInstance().resetLimelightIMU(new Rotation2d());
-        //     return;
-        // }
-
-        // if (alliance.get() == Alliance.Blue) {
-        _driveIO.setYaw(Rotation2d.fromDegrees(0));
-        RobotStateManager.getInstance().resetLimelightIMU(new Rotation2d());
-
-        // } else {
-        //     _driveIO.setYaw(Rotation2d.fromDegrees(180));
-        //     RobotStateManager.getInstance().resetLimelightIMU(Rotation2d.fromDegrees(180));
-        // }
+        if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+            _driveIO.setYaw(Rotation2d.fromDegrees(180));
+        } else {
+            _driveIO.setYaw(Rotation2d.fromDegrees(0));
+        }
     }
 
     public double getAngularVelocityYaw() {
@@ -194,7 +188,6 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     public void resetPose(Pose2d pose) {
         _driveIO.setYaw(pose.getRotation());
-        RobotStateManager.getInstance().resetLimelightIMU(pose.getRotation());
         RobotStateManager.getInstance().resetEstimatedPose(pose);
     }
 

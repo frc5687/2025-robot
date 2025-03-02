@@ -3,7 +3,6 @@ package org.frc5687.robot.subsystems.vision;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N3;
@@ -226,10 +225,6 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
             System.err.println("Invalid camera " + cameraName);
             return Matrix.eye(Nat.N3());
         }
-    }
-
-    public void resetCameraIMU(Rotation2d rotation) {
-        _visionIO.resetCameraIMU(rotation);
     }
 
     @Override

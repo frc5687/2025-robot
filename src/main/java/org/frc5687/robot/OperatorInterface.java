@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import java.util.Optional;
 import org.frc5687.robot.commands.algae.EjectAlgae;
+import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DynamicDriveToLane;
@@ -95,6 +96,9 @@ public class OperatorInterface {
         //         .rightBumper()
         //         .whileTrue(new DriveToTag(container.getDrive(), container.getVision(),
         // ReefSide.RIGHT));
+        _driverController.povUp().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
+        _driverController.povUpLeft().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
+        _driverController.povUpRight().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
 
         _driverController
                 .leftTrigger()

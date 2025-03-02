@@ -2,7 +2,6 @@ package org.frc5687.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -240,10 +239,10 @@ public class RobotContainer implements EpilogueLog {
     }
 
     public void periodic() {
-        if (DriverStation.isDisabled() && frameCount % 10 == 0) {
-            frameCount += 1;
-            _drive.zeroIMU();
-        }
+        // if (DriverStation.isDisabled() && frameCount % 10 == 0) {
+        //     frameCount += 1;
+        //     _drive.zeroIMU();
+        // }
         _questNav.timeSinceLastUpdate();
         RobotStateManager.getInstance().logComponentPoses();
         RobotStateManager.getInstance().updateOdometry();

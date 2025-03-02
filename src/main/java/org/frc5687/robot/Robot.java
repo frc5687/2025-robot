@@ -4,6 +4,8 @@
 
 package org.frc5687.robot;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import au.grapplerobotics.CanBridge;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
@@ -16,8 +18,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.frc5687.robot.util.ReefAlignmentHelpers;
-import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -26,50 +26,22 @@ public class Robot extends TimedRobot {
     @NotLogged private final RobotContainer _robotContainer;
 
     public Robot() {
-        DataLogManager.start();
+        DataLogManager.start("", "", 0.1);
         Epilogue.configure(
                 config -> {
                     config.root = "Robot";
-                    config.minimumImportance = Logged.Importance.DEBUG;
+                    config.minimumImportance = Logged.Importance.CRITICAL;
                     config.errorHandler = ErrorHandler.printErrorMessages();
+                    config.loggingPeriod = Seconds.of(0.1);
                 });
-        _robotContainer = new RobotContainer(this);
         Epilogue.bind(this);
+        _robotContainer = new RobotContainer(this);
         Threads.setCurrentThreadPriority(true, 99);
         CanBridge.runTCP();
-        for (int i = 1; i <= 6; i++) {
-            var leftPose = ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.LEFT);
-            System.out.println(
-                    "Reef "
-                            + i
-                            + " LEFT has \t{x: "
-                            + round(leftPose.getX())
-                            + ", y:"
-                            + round(leftPose.getY())
-                            + ", angle: "
-                            + round(leftPose.getRotation().getDegrees())
-                            + "}");
-            var rightPose = ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.RIGHT);
-            System.out.println(
-                    "Reef "
-                            + i
-                            + " RIGHT has \t{x: "
-                            + round(rightPose.getX())
-                            + ", y:"
-                            + round(rightPose.getY())
-                            + ", angle: "
-                            + round(rightPose.getRotation().getDegrees())
-                            + "}");
-        }
-    }
-
-    double round(double input) {
-        return Math.round(input * 1000.0) / 1000.0;
     }
 
     @Override
     public void robotPeriodic() {
-
         CommandScheduler.getInstance().run();
         _robotContainer.periodic();
     }

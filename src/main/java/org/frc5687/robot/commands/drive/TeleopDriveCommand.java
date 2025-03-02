@@ -39,10 +39,8 @@ public class TeleopDriveCommand extends OutliersCommand {
         // Calculate chassis speeds
         Optional<Alliance> alliance = DriverStation.getAlliance();
         Rotation2d relativeHeading = _drive.getHeading();
-        if (alliance.isPresent()) {
-            if (alliance.get() == Alliance.Red) {
-                relativeHeading = _drive.getHeading().rotateBy(Rotation2d.fromDegrees(180));
-            }
+        if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+            relativeHeading = _drive.getHeading().rotateBy(Rotation2d.fromDegrees(180));
         }
         ChassisSpeeds chassisSpeeds =
                 _fieldRelativeSupplier.getAsBoolean()
