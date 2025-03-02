@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.EjectAlgae;
+import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.FieldConstants;
 
@@ -30,18 +31,12 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         return _currentMode;
     }
 
-    public void setMode(SuperstructureMode mode) {
-        if (_currentMode != mode) {
-            System.out.println("Switching to " + mode + " mode");
-            _currentMode = mode;
-        }
-    }
-
     public void toggleMode() {
-        setMode(
-                _currentMode == SuperstructureMode.CORAL
-                        ? SuperstructureMode.ALGAE
-                        : SuperstructureMode.CORAL);
+        if (_currentMode == SuperstructureMode.ALGAE) {
+            _currentMode = SuperstructureMode.CORAL;
+        } else {
+            _currentMode = SuperstructureMode.ALGAE;
+        }
     }
 
     public boolean isCoralMode() {
@@ -99,7 +94,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     public Command receiveFunnel(RequestType type) {
         // receiving from funnel, explicitly switch to CORAL mode
         return new SequentialCommandGroup(
-                new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
+                // new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
                 createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type),
                 new FunctionalCommand(
                         () -> {
@@ -117,19 +112,19 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     public Command receiveFunnelSim(RequestType type) {
         // receiving from funnel, explicitly switch to CORAL mode
         return new SequentialCommandGroup(
-                new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
+                // new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
                 createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type));
     }
 
     public Command grabAlgae(SuperstructureState state, RequestType type) {
         return new SequentialCommandGroup(
-                new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
+                // new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
                 createRequest(state, type).until(() -> _container.getAlgae().isAlgaeDetected()));
     }
 
     public Command aimAtAlgaeNet() {
         return new SequentialCommandGroup(
-                new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
+                // new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
                 createRequest(Constants.SuperstructureGoals.BARGE_HELD, RequestType.IMMEDIATE),
                 new EjectAlgae(_container.getAlgae()));
     }
@@ -159,18 +154,6 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     @Override
     public void periodic() {
         _requestHandler.execute();
-
-        log("Mode", getCurrentMode());
-        // TODO: I'm worried if a sensor gets hit and triggers always something bad will occur, maybe
-        // always defualt to coral over algae if this occurs
-        if (_container.getAlgae().isAlgaeDetected() && _currentMode != SuperstructureMode.ALGAE) {
-            System.out.println("Auto-detecting ALGAE mode based on sensor");
-            setMode(SuperstructureMode.ALGAE);
-        } else if (_container.getCoral().isCoralDetected()
-                && _currentMode != SuperstructureMode.CORAL) {
-            System.out.println("Auto-detecting CORAL mode based on sensor");
-            setMode(SuperstructureMode.CORAL);
-        }
     }
 
     @Override
