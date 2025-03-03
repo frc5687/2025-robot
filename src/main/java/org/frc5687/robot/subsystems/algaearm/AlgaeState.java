@@ -6,6 +6,8 @@ public enum AlgaeState {
     REEF_PICKUP(3.5),
     PROCESSOR_DROPOFF(3.14),
     BARGE_DROPOFF(1.575),
+    BARGE_DROPOFF_REAL(
+            1.576), // has to be differnt than barge dropoff for the constraints hack xavier
     CORAL_DODGE(2.566);
 
     private final double _armAngle;

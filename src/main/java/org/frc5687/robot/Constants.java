@@ -482,18 +482,18 @@ public class Constants {
                 new SuperstructureState(
                         Optional.of(ElevatorState.FUNNEL_RECEIVE),
                         Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
-                        Optional.of(AlgaeState.IDLE),
+                        Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.empty());
 
         public static final SuperstructureState PLACE_CORAL_L4 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4),
-                        Optional.of(AlgaeState.CORAL_DODGE), Optional.empty());
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
 
         public static final SuperstructureState PLACE_CORAL_L3 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L3_CORAL_PLACING), Optional.of(CoralState.PLACING),
-                        Optional.of(AlgaeState.CORAL_DODGE), Optional.empty());
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
 
         public static final SuperstructureState HIGH_ALGAE_GRAB =
                 new SuperstructureState(
@@ -512,12 +512,12 @@ public class Constants {
         public static final SuperstructureState PLACE_CORAL_L2 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L2_CORAL_PLACING), Optional.of(CoralState.PLACING),
-                        Optional.of(AlgaeState.CORAL_DODGE), Optional.empty());
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
 
         public static final SuperstructureState PLACE_CORAL_L1 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L1_CORAL_PLACING), Optional.of(CoralState.PLACING),
-                        Optional.of(AlgaeState.IDLE), Optional.empty());
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
 
         public static final SuperstructureState PROCESSOR_DROPOFF =
                 new SuperstructureState(
@@ -537,7 +537,7 @@ public class Constants {
                 new SuperstructureState(
                         Optional.of(ElevatorState.BARGE_PLACING),
                         Optional.of(CoralState.IDLE),
-                        Optional.of(AlgaeState.BARGE_DROPOFF),
+                        Optional.of(AlgaeState.BARGE_DROPOFF_REAL),
                         Optional.empty());
 
         public static final SuperstructureState GROUND_PICKUP =

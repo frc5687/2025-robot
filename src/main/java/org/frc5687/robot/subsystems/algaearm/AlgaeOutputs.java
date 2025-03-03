@@ -5,7 +5,7 @@ import org.frc5687.robot.util.BaseOutputs;
 
 public class AlgaeOutputs extends BaseOutputs {
     @Logged(name = "Desired Angle (rad)", importance = Logged.Importance.CRITICAL)
-    double desiredAngleRad = AlgaeState.IDLE.getArmAngle();
+    double desiredAngleRad = AlgaeState.BARGE_DROPOFF.getArmAngle();
 
     @Logged(name = "Controller Output", importance = Logged.Importance.DEBUG)
     double controllerOutput = 0.0;

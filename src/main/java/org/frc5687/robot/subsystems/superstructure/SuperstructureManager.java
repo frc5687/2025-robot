@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.EjectAlgae;
-import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.FieldConstants;
 

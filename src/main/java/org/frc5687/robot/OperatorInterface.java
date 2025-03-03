@@ -134,14 +134,6 @@ public class OperatorInterface {
                 .leftMiddleButton()
                 .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
 
-        _driverController
-                .leftMiddleButton()
-                .onTrue(
-                        new InstantCommand(
-                                () ->
-                                        RobotStateManager.getInstance()
-                                                .resetEstimatedPose(new Pose2d(3.169, 4.021, new Rotation2d()))));
-
         // _driverController
         //         .povDown()
         //         .whileTrue(
