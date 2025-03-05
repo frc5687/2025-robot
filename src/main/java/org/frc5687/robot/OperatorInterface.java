@@ -3,8 +3,6 @@ package org.frc5687.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -86,7 +84,8 @@ public class OperatorInterface {
         _driverController
                 .rightBumper()
                 .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT));
-
+        
+        _driverController.leftJoystickButton().whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.ALGAE));
         _driverController.rightJoystickButton().whileTrue(new DriveToHP(container.getDrive()));
 
         // _driverController.leftJoystickButton().whileTrue(new

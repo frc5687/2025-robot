@@ -18,6 +18,7 @@ import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.subsystems.drive.modules.SwerveModuleConfig;
 import org.frc5687.robot.subsystems.elevator.ElevatorState;
+import org.frc5687.robot.subsystems.intake.IntakeState;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 import org.frc5687.robot.util.PIDConstants;
 
@@ -484,6 +485,21 @@ public class Constants {
                         Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
                         Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.empty());
+        public static final SuperstructureState RECEIVE_FROM_GROUND_INTAKE =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.FUNNEL_RECEIVE),
+                        Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
+                        Optional.of(AlgaeState.BARGE_DROPOFF),
+                        Optional.of(IntakeState.PASSOFF_TO_CORAL));
+        public static final SuperstructureState STOW_INTAKE =
+                new SuperstructureState(
+                        Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(IntakeState.IDLE));
+        public static final SuperstructureState GROUND_INTAKE =
+                new SuperstructureState(
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.of(IntakeState.DEPLOYED));
 
         public static final SuperstructureState PLACE_CORAL_L4 =
                 new SuperstructureState(
