@@ -10,7 +10,7 @@ public class ReefAlignmentHelpers {
     public static final TunableDouble RIGHT_OFFSET =
             new TunableDouble("ReefAlignmentHelpers", "RIGHT_OFFSET", -0.27);
     public static final TunableDouble ALGAE_OFFSET = 
-            new TunableDouble("ReefAlignmentHelpers", "ALGAE_OFFSET", 0.0);
+            new TunableDouble("ReefAlignmentHelpers", "ALGAE_OFFSET", 0.152);
     public static final double SAFE_APPROACH_DISTANCE = 0.48;
 
     public enum ReefSide {
