@@ -9,7 +9,7 @@ public class IdleAlgae extends OutliersCommand {
     private final AlgaeArmSubsystem _algaeArm;
     private static final TunableDouble asdf = new TunableDouble("AlgaeArm", "wheel oomph (volts)", 2);
     private static final TunableDouble dutyCycle =
-            new TunableDouble("AlgaeArm", "duty Cycle (0-1)", 0.9);
+            new TunableDouble("AlgaeArm", "duty Cycle (0-1)", 0.0);
 
     private static final TunableDouble period = new TunableDouble("AlgaeArm", "period", 0.2);
 
