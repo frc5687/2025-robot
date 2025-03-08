@@ -559,7 +559,7 @@ public class Constants {
         public static final SuperstructureState GROUND_PICKUP =
                 new SuperstructureState(
                         Optional.of(ElevatorState.STOWED),
-                        Optional.of(CoralState.IDLE),
+                        Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
                         Optional.of(AlgaeState.GROUND_PICKUP),
                         Optional.empty());
     }
