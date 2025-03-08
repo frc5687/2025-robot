@@ -82,6 +82,7 @@ public class DriveToPoseSmooth extends OutliersCommand {
 
     @Override
     public void execute(double timestamp) {
+        log("Target Pose", _poseSupplier.get(), Pose2d.struct);
         if (_driveKp.hasChanged()
                 || _driveKi.hasChanged()
                 || _driveKd.hasChanged()

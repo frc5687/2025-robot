@@ -16,7 +16,7 @@ public class DynamicDriveToReefBranch extends DriveToPoseSmooth {
                 () -> {
                     Pose2d rawPose = drive.getPose();
                     var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+                    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
                         Pose2d mirroredPose = FlippingUtil.flipFieldPose(rawPose);
                         int currentFace = ReefAlignmentHelpers.calculateBestFace(mirroredPose);
                         Pose2d mirroredTargetPose = ReefAlignmentHelpers.calculateTargetPose(currentFace, side);
