@@ -14,6 +14,7 @@ import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DriveToHP;
+import org.frc5687.robot.commands.drive.DynamicDriveToNet;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
@@ -126,13 +127,7 @@ public class OperatorInterface {
                 .rightTrigger()
                 .whileTrue(
                         new ConditionalCommand(
-                                // new ConditionalCommand(
                                 new EjectAlgae(container.getAlgae()),
-                                // manager.createRequest(
-                                //         Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE),
-                                // () ->
-                                //         container.getElevator().getElevatorHeight()
-                                //                 < ElevatorState.L3_CORAL_PLACING.getHeight()),
                                 new EjectCoral(container.getCoral()),
                                 manager::isAlgaeMode));
 
@@ -141,6 +136,10 @@ public class OperatorInterface {
         _driverController
                 .leftMiddleButton()
                 .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
+
+        _driverController
+                .a()
+                .whileTrue(new DynamicDriveToNet(container.getDrive(), _driverController::getLeftX));
 
         // _driverController
         //         .povDown()
