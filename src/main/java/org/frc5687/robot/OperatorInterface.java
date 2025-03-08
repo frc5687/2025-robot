@@ -16,6 +16,7 @@ import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DriveToHP;
 import org.frc5687.robot.commands.drive.DynamicDriveToNet;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
+import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
@@ -81,7 +82,7 @@ public class OperatorInterface {
                 .leftBumper()
                 .whileTrue(
                         new ConditionalCommand(
-                                new DynamicDriveToReefBranch(container.getDrive(), ReefSide.ALGAE),
+                                new DynamicDriveToReefBranchAlgae(container.getDrive(), ReefSide.ALGAE),
                                 new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT),
                                 manager::isAlgaeMode));
 

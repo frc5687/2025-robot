@@ -71,24 +71,6 @@ public class ReefAlignmentHelpers {
         return new Pose2d(facePosition.plus(outwardOffset), robotRotation);
     }
 
-    // public static Pose2d getFaceAlignedAlgaePose(int faceIndex) {
-    //     Pose2d facePose = FieldConstants.Reef.centerFaces[faceIndex];
-
-    //     // Face rotation in field coordinates
-    //     Rotation2d faceAngle = facePose.getRotation();
-
-    //     // We should face opposite direction of the face angle
-    //     Rotation2d robotRotation = faceAngle.plus(new Rotation2d(Math.PI));
-
-    //     Translation2d facePosition = facePose.getTranslation();
-    //     Translation2d outwardOffset =
-    //             new Translation2d(
-    //                     SAFE_APPROACH_DISTANCE_ALGAE * Math.cos(faceAngle.getRadians()),
-    //                     SAFE_APPROACH_DISTANCE_ALGAE * Math.sin(faceAngle.getRadians()));
-
-    //     return new Pose2d(facePosition.plus(outwardOffset), robotRotation);
-    // }
-
     public static Pose2d calculateTargetPose(int faceNumber, ReefSide side) {
         if (faceNumber < 1 || faceNumber > 6) {
             throw new IllegalArgumentException("Face number must be between 1 and 6");
@@ -112,29 +94,4 @@ public class ReefAlignmentHelpers {
 
         return new Pose2d(finalPosition, basePose.getRotation());
     }
-
-    // public static Pose2d calculateTargetAlgaePose(int faceNumber, ReefSide side) {
-    //     if (faceNumber < 1 || faceNumber > 6) {
-    //         throw new IllegalArgumentException("Face number must be between 1 and 6");
-    //     }
-
-    //     int faceIndex = faceNumber - 1;
-
-    //     Pose2d basePose = getFaceAlignedAlgaePose(faceIndex);
-
-    //     double lateralOffset = (side == ReefSide.LEFT) ? LEFT_OFFSET.get() : RIGHT_OFFSET.get();
-    //     if (side == ReefSide.ALGAE) {
-    //         lateralOffset = ALGAE_OFFSET.get();
-    //     }
-
-    //     double lateralAngle = basePose.getRotation().getRadians() + Math.PI / 2;
-    //     Translation2d lateralMove =
-    //             new Translation2d(
-    //                     lateralOffset * Math.cos(lateralAngle), lateralOffset *
-    // Math.sin(lateralAngle));
-
-    //     Translation2d finalPosition = basePose.getTranslation().plus(lateralMove);
-
-    //     return new Pose2d(finalPosition, basePose.getRotation());
-    // }
 }
