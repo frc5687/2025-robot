@@ -30,6 +30,7 @@ import org.frc5687.robot.subsystems.drive.DriveIO;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 import org.frc5687.robot.subsystems.drive.SimDriveIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorIO;
+import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
@@ -140,19 +141,36 @@ public class RobotContainer implements EpilogueLog {
 
     private void configureDefaultCommands() {
         _drive.setDefaultCommand(
-                new TeleopDriveCommand(
-                        _drive,
-                        () ->
-                                -modifyAxis(_oi.getDriverController().getLeftY())
-                                        * Constants.SwerveModule.MAX_LINEAR_SPEED,
-                        () ->
-                                -modifyAxis(_oi.getDriverController().getLeftX())
-                                        * Constants.SwerveModule.MAX_LINEAR_SPEED,
-                        () ->
-                                -modifyAxis(_oi.getDriverController().getRightX())
-                                        * Constants.SwerveModule.MAX_ANGULAR_SPEED,
-                        () -> true // Always field relative
-                        ));
+                _elevator.getElevatorHeight() < ElevatorState.L3_CORAL_PLACING.getHeight()
+                        ? new TeleopDriveCommand(
+                                _drive,
+                                () ->
+                                        -modifyAxis(_oi.getDriverController().getLeftY())
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                () ->
+                                        -modifyAxis(_oi.getDriverController().getLeftX())
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                () ->
+                                        -modifyAxis(_oi.getDriverController().getRightX())
+                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                                () -> true // Always field relative
+                                )
+                        : new TeleopDriveCommand(
+                                _drive,
+                                () ->
+                                        -modifyAxis(_oi.getDriverController().getLeftY())
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED
+                                                / 3,
+                                () ->
+                                        -modifyAxis(_oi.getDriverController().getLeftX())
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED
+                                                / 3,
+                                () ->
+                                        -modifyAxis(_oi.getDriverController().getRightX())
+                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED
+                                                / 3,
+                                () -> true // Always field relative
+                                ));
 
         // _drive.setDefaultCommand(
         // new TeleopDriveCommand(
