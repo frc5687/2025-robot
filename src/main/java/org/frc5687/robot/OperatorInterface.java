@@ -33,7 +33,7 @@ public class OperatorInterface {
     private final OutliersController _operatorController;
 
     public OperatorInterface() {
-        _driverController = new OutliersController(new CommandXboxController(0));
+        _driverController = new OutliersController(new CommandPS5Controller(0));
         _operatorController = new OutliersController(new CommandPS5Controller(1));
     }
 
