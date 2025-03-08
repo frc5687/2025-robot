@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.*;
 import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
-import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.FieldConstants;
 
@@ -157,10 +156,10 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     }
 
     public Command aimAtAlgaeNet() {
-        return new SequentialCommandGroup(
-                // new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
-                createRequest(Constants.SuperstructureGoals.BARGE_HELD, RequestType.IMMEDIATE),
-                new EjectAlgae(_container.getAlgae()));
+        // return new SequentialCommandGroup(
+        //         // new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
+        return createRequest(Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE);
+        // new InstantCommand(()->_container.getAlgae().setWheelMotorVoltage(-12)));
     }
 
     // Queue override controls

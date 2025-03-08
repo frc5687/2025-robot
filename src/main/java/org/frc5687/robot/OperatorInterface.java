@@ -17,7 +17,6 @@ import org.frc5687.robot.commands.drive.DriveToHP;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
-import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
@@ -87,7 +86,11 @@ public class OperatorInterface {
 
         _driverController
                 .rightBumper()
-                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT));
+                .whileTrue(
+                        new ConditionalCommand(
+                                new DynamicDriveToReefBranch(container.getDrive(), ReefSide.ALGAE),
+                                new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT),
+                                manager::isAlgaeMode));
 
         _driverController
                 .leftJoystickButton()
@@ -123,13 +126,13 @@ public class OperatorInterface {
                 .rightTrigger()
                 .whileTrue(
                         new ConditionalCommand(
-                                new ConditionalCommand(
-                                        new EjectAlgae(container.getAlgae()),
-                                        manager.createRequest(
-                                                Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE),
-                                        () ->
-                                                container.getElevator().getElevatorHeight()
-                                                        < ElevatorState.L3_CORAL_PLACING.getHeight()),
+                                // new ConditionalCommand(
+                                new EjectAlgae(container.getAlgae()),
+                                // manager.createRequest(
+                                //         Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE),
+                                // () ->
+                                //         container.getElevator().getElevatorHeight()
+                                //                 < ElevatorState.L3_CORAL_PLACING.getHeight()),
                                 new EjectCoral(container.getCoral()),
                                 manager::isAlgaeMode));
 
