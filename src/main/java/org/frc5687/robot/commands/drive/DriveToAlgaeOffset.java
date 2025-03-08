@@ -8,9 +8,8 @@ import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 import org.frc5687.robot.util.ReefAlignmentHelpers;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
-public class DynamicDriveToReefBranch extends DriveToPoseSmooth {
-
-    public DynamicDriveToReefBranch(DriveSubsystem drive, ReefSide side) {
+public class DriveToAlgaeOffset extends DriveToPoseSmooth {
+    public DriveToAlgaeOffset(DriveSubsystem drive) {
         super(
                 drive,
                 () -> {
@@ -19,11 +18,10 @@ public class DynamicDriveToReefBranch extends DriveToPoseSmooth {
                     if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
                         Pose2d mirroredPose = FlippingUtil.flipFieldPose(rawPose);
                         int currentFace = ReefAlignmentHelpers.calculateBestFace(mirroredPose);
-                        Pose2d mirroredTargetPose = ReefAlignmentHelpers.calculateTargetPose(currentFace, side);
-                        return FlippingUtil.flipFieldPose(mirroredTargetPose);
+                        return ReefAlignmentHelpers.calculateTargetAlgaePose(currentFace, ReefSide.ALGAE);
                     } else {
                         int currentFace = ReefAlignmentHelpers.calculateBestFace(rawPose);
-                        return ReefAlignmentHelpers.calculateTargetPose(currentFace, side);
+                        return ReefAlignmentHelpers.calculateTargetAlgaePose(currentFace, ReefSide.ALGAE);
                     }
                 });
     }

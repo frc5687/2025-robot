@@ -8,11 +8,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import java.util.Optional;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
+import org.frc5687.robot.commands.drive.DriveToAlgaeOffset;
 import org.frc5687.robot.commands.drive.DriveToHP;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
@@ -31,7 +33,7 @@ public class OperatorInterface {
     private final OutliersController _operatorController;
 
     public OperatorInterface() {
-        _driverController = new OutliersController(new CommandPS5Controller(0));
+        _driverController = new OutliersController(new CommandXboxController(0));
         _operatorController = new OutliersController(new CommandPS5Controller(1));
     }
 
@@ -81,7 +83,9 @@ public class OperatorInterface {
                 .leftBumper()
                 .whileTrue(
                         new ConditionalCommand(
-                                new DynamicDriveToReefBranch(container.getDrive(), ReefSide.ALGAE),
+                                new SequentialCommandGroup(
+                                        new DriveToAlgaeOffset(container.getDrive()),
+                                        new DynamicDriveToReefBranch(container.getDrive(), ReefSide.ALGAE)),
                                 new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT),
                                 manager::isAlgaeMode));
 
@@ -99,7 +103,7 @@ public class OperatorInterface {
         _driverController.povUp().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpLeft().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpRight().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
-
+       
         _driverController
                 .leftTrigger()
                 .whileTrue(
