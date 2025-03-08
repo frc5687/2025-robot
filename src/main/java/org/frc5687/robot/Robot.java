@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.frc5687.robot.util.ReefAlignmentHelpers;
+import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -38,6 +40,14 @@ public class Robot extends TimedRobot {
         _robotContainer = new RobotContainer(this);
         Threads.setCurrentThreadPriority(true, 99);
         CanBridge.runTCP();
+        for (int i = 1; i <= 6; i++) {
+            System.out.println(
+                    String.format(
+                            "Face: %d\n Left: %s\n Right: %s\n",
+                            i,
+                            ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.LEFT),
+                            ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.RIGHT)));
+        }
     }
 
     @Override

@@ -103,7 +103,7 @@ public class OperatorInterface {
         _driverController.povUp().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpLeft().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpRight().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
-       
+
         _driverController
                 .leftTrigger()
                 .whileTrue(
