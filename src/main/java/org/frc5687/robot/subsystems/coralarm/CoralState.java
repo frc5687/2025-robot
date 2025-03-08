@@ -6,6 +6,7 @@ import org.frc5687.robot.Constants;
 public enum CoralState {
     IDLE(Units.degreesToRadians(30 + 90)),
     RECEIVE_FROM_FUNNEL(Constants.CoralArm.MAX_ANGLE),
+    PLACING_L1(4.8),
     PLACING(Units.degreesToRadians(30 + 90)), // 27.5 deg
     PLACING_L4(Units.degreesToRadians(30 + 90 + 10)); // 27.5 deg
 
