@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.*;
 import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
-import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.FieldConstants;
 
@@ -94,18 +93,21 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         // receiving from funnel, explicitly switch to CORAL mode
         return new SequentialCommandGroup(
                 // new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
-                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type),
-                new FunctionalCommand(
-                        () -> {
-                            _container.getCoral().setWheelMotorDutyCycle(0.3);
-                        },
-                        () -> {},
-                        (interrupted) -> {
-                            double currentPos = _container.getCoral().getWheelMotorPosition();
-                            _container.getCoral().setWheelMotorPosition(currentPos + 1.5);
-                        },
-                        _container.getCoral()::isCoralDetected,
-                        _container.getCoral()));
+                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type), indexCoral());
+    }
+
+    public Command indexCoral() {
+        return new FunctionalCommand(
+                () -> {
+                    _container.getCoral().setWheelMotorDutyCycle(0.3);
+                },
+                () -> {},
+                (interrupted) -> {
+                    double currentPos = _container.getCoral().getWheelMotorPosition();
+                    _container.getCoral().setWheelMotorPosition(currentPos + 1.5);
+                },
+                _container.getCoral()::isCoralDetected,
+                _container.getCoral());
     }
 
     public Command receiveFunnelSim(RequestType type) {
@@ -115,41 +117,6 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                 createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type));
     }
 
-    public Command receiveGroundIntake(RequestType type) {
-        return new SequentialCommandGroup(
-                // new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
-                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, type),
-                new FunctionalCommand(
-                        () -> {
-                            _container.getCoral().setWheelMotorDutyCycle(0.3);
-                            _container.getIntake().setIntakeVoltage(6);
-                            _container.getIntake().setRollerVoltage(6);
-                        },
-                        () -> {},
-                        (interrupted) -> {
-                            double currentPos = _container.getCoral().getWheelMotorPosition();
-                            _container.getCoral().setWheelMotorPosition(currentPos + 1.5);
-                        },
-                        _container.getCoral()::isCoralDetected,
-                        _container.getCoral()));
-    }
-
-    public Command intakeFromGround(SuperstructureState state, RequestType type) {
-        return new SequentialCommandGroup(
-                createRequest(Constants.SuperstructureGoals.GROUND_INTAKE, type),
-                new FunctionalCommand(
-                        () -> {
-                            _container.getIntake().setIntakeVoltage(-6);
-                            _container.getIntake().setRollerVoltage(-6); // FIXME
-                        },
-                        () -> {},
-                        (interrupted) -> {
-                            createRequest(Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE);
-                        },
-                        _container.getIntake()::isIntakeCoralDetected,
-                        _container.getIntake()));
-    }
-
     public Command grabAlgae(SuperstructureState state, RequestType type) {
         return new SequentialCommandGroup(
                 // new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
@@ -157,10 +124,10 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     }
 
     public Command aimAtAlgaeNet() {
-        return new SequentialCommandGroup(
-                // new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
-                createRequest(Constants.SuperstructureGoals.BARGE_HELD, RequestType.IMMEDIATE),
-                new EjectAlgae(_container.getAlgae()));
+        // return new SequentialCommandGroup(
+        //         // new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
+        return createRequest(Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE);
+        // new InstantCommand(()->_container.getAlgae().setWheelMotorVoltage(-12)));
     }
 
     // Queue override controls

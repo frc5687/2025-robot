@@ -13,12 +13,13 @@ import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
+import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
 import org.frc5687.robot.commands.drive.DriveToHP;
+import org.frc5687.robot.commands.drive.DynamicDriveToNet;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
-import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
@@ -88,7 +89,11 @@ public class OperatorInterface {
 
         _driverController
                 .rightBumper()
-                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT));
+                .whileTrue(
+                        new ConditionalCommand(
+                                new DynamicDriveToReefBranch(container.getDrive(), ReefSide.ALGAE),
+                                new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT),
+                                manager::isAlgaeMode));
 
         _driverController
                 .leftJoystickButton()
@@ -106,31 +111,51 @@ public class OperatorInterface {
                 .whileTrue(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        manager.grabAlgae(
-                                                Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE),
-                                        new IntakeAlgae(container.getAlgae()),
-                                        manager.createRequest(
-                                                new SuperstructureState(
-                                                        Optional.empty(),
-                                                        Optional.empty(),
-                                                        Optional.of(AlgaeState.IDLE),
-                                                        Optional.empty()),
-                                                RequestType.IMMEDIATE),
-                                        new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))),
+                                                manager.grabAlgae(
+                                                        Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE),
+                                                new IntakeAlgae(container.getAlgae()),
+                                                manager.createRequest(
+                                                        new SuperstructureState(
+                                                                Optional.empty(),
+                                                                Optional.empty(),
+                                                                Optional.of(AlgaeState.IDLE),
+                                                                Optional.empty()),
+                                                        RequestType.IMMEDIATE),
+                                                new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0)))
+                                        .alongWith(new DriveToGroundAlgae(container.getDrive(), container.getVision())),
                                 new InstantCommand(),
                                 manager::isAlgaeMode));
+        // .onTrue(
+        //         new SequentialCommandGroup(
+        //                 new InstantCommand(() -> container.getIntake().setVoltages(-12, 12)),
+        //                 manager.createRequest(
+        //                         Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
+        //                 new WaitUntilCommand(
+        //                         () ->
+        //                                 container.getIntake().isIntakeCoralDetected()
+        //                                         || !_driverController.leftTrigger().getAsBoolean()),
+        //                 new InstantCommand(() -> container.getIntake().setVoltages(0, 3)),
+        //                 new ConditionalCommand(
+        //                         new SequentialCommandGroup(
+        //                                 manager.createRequest(
+        //
+        // Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
+        //                                         RequestType.IMMEDIATE),
+        //                                 new InstantCommand(() -> container.getIntake().setVoltages(0,
+        // -12)),
+        //                                 manager.indexCoral(),
+        //                                 new InstantCommand(() -> container.getIntake().setVoltages(0,
+        // 0))),
+        //                         manager.createRequest(
+        //                                 Constants.SuperstructureGoals.STOW_INTAKE,
+        // RequestType.IMMEDIATE),
+        //                         container.getIntake()::isIntakeCoralDetected)));
 
         _driverController
                 .rightTrigger()
                 .whileTrue(
                         new ConditionalCommand(
-                                new ConditionalCommand(
-                                        new EjectAlgae(container.getAlgae()),
-                                        manager.createRequest(
-                                                Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE),
-                                        () ->
-                                                container.getElevator().getElevatorHeight()
-                                                        < ElevatorState.L3_CORAL_PLACING.getHeight()),
+                                new EjectAlgae(container.getAlgae()),
                                 new EjectCoral(container.getCoral()),
                                 manager::isAlgaeMode));
 
@@ -139,6 +164,14 @@ public class OperatorInterface {
         _driverController
                 .leftMiddleButton()
                 .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
+
+        _driverController
+                .a()
+                .whileTrue(new DynamicDriveToNet(container.getDrive(), _driverController::getLeftX));
+
+        // _driverController
+        //         .y()
+        //         .whileTrue(new DriveToGroundAlgae(container.getDrive(), container.getVision()));
 
         // _driverController
         //         .povDown()

@@ -12,7 +12,8 @@ public class RobotMap {
     public static class CAN {
 
         public static class LASERCAN {
-            public static final int LASERCAN = 0;
+            public static final int ELEVATOR = 0;
+            public static final int INTAKE = 1;
         }
 
         public static class TALONFX {

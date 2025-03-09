@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotStateManager;
@@ -54,7 +55,7 @@ public class PhotonVisionIO implements VisionIO {
     }
 
     private void updateCameraInputs(VisionInputs inputs, String cameraName) {
-        inputs.cameraObservations.put(cameraName, new ArrayList<>());
+        inputs.cameraAprilTagObservations.put(cameraName, new ArrayList<>());
         CameraConfig cam = _cameras.get(cameraName);
         List<PhotonPipelineResult> results = cam.camera.getAllUnreadResults();
 
@@ -67,7 +68,7 @@ public class PhotonVisionIO implements VisionIO {
             for (PhotonTrackedTarget target : mostRecentResult.targets) {
                 AprilTagObservation observation =
                         AprilTagObservation.fromPhotonVision(target, mostRecentResult.getTimestampSeconds());
-                inputs.cameraObservations.get(cameraName).add(observation);
+                inputs.cameraAprilTagObservations.get(cameraName).add(observation);
             }
 
             Optional<EstimatedRobotPose> photonPoseEstimate = cam.estimator.update(mostRecentResult);
@@ -82,8 +83,12 @@ public class PhotonVisionIO implements VisionIO {
 
     @Override
     public void writeOutputs(VisionOutputs outputs) {
-        for (var cam : _cameras.values()) {
-            cam.camera.setPipelineIndex(outputs.pipelineIndex);
+        for (Entry<String, Integer> targetPipeline : outputs.targetPipelines.entrySet()) {
+            if (_cameras.containsKey(targetPipeline.getKey())) {
+                _cameras.get(targetPipeline.getKey()).camera.setPipelineIndex(targetPipeline.getValue());
+            } else {
+                System.err.println("Invalid camera " + targetPipeline.getKey());
+            }
         }
     }
 }

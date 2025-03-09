@@ -39,7 +39,6 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
     private final StatusSignal<Angle> _absoluteAngle;
 
     private final TrapezoidProfile.Constraints fastConstraints;
-    private final TrapezoidProfile.Constraints slowConstraints;
 
     private final VoltageOut _wheelVoltageRequest;
 
@@ -53,14 +52,11 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
                 new TrapezoidProfile.Constraints(
                         Constants.AlgaeArm.MAX_VELOCITY_RAD_PER_SEC,
                         Constants.AlgaeArm.MAX_ACCELERATION_RAD_PER_SEC_SQUARED);
-        slowConstraints =
-                new TrapezoidProfile.Constraints(
-                        Constants.AlgaeArm.MAX_VELOCITY_RAD_PER_SEC / 3.0,
-                        Constants.AlgaeArm.MAX_ACCELERATION_RAD_PER_SEC_SQUARED / 2.0);
 
         _controller =
                 new ProfiledPIDController(
                         Constants.AlgaeArm.kP, Constants.AlgaeArm.kI, Constants.AlgaeArm.kD, fastConstraints);
+
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.AlgaeArm.PIVOT_MOTOR_INVERTED);
         _angularVelocityFilter =
@@ -123,13 +119,6 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         // calculateShortestPath(currentAngle);
 
         _controller.setGoal(safeAngle);
-
-        if (outputs.desiredAngleRad
-                == AlgaeState.BARGE_DROPOFF_REAL.getArmAngle()) { // FIXME do less scuffed
-            _controller.setConstraints(slowConstraints);
-        } else {
-            _controller.setConstraints(fastConstraints);
-        }
 
         double pidOutput = _controller.calculate(currentAngle);
         double ffOutput = calculateFeedForward(currentAngle);

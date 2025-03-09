@@ -13,7 +13,11 @@ public class EjectCoral extends OutliersCommand {
 
     @Override
     public void initialize() {
-        _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_EJECT_CORAL_DUTY_CYCLE);
+        double dutyCycle =
+                _coral.getArmAngleRads() < Math.PI
+                        ? Constants.CoralArm.WHEEL_EJECT_CORAL_DUTY_CYCLE
+                        : Constants.CoralArm.WHEEL_EJECT_TROTH_DUTY_CYCLE;
+        _coral.setWheelMotorDutyCycle(dutyCycle);
     }
 
     @Override
