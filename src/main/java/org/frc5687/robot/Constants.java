@@ -256,28 +256,28 @@ public class Constants {
         public static final String CAN_BUS = "CANivore";
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double ENCODER_OFFSET = -0.62;
+        public static final double ENCODER_OFFSET = 0.1394;
 
         public static final DCMotor GEARBOX = Motors.getKrakenX44(1);
-        public static final double GEAR_RATIO = 5.0 * 9.0 * 4.0;
+        public static final double GEAR_RATIO = 25.0 * 50.0 / 18.0;
         public static final double ARM_LENGTH = Units.inchesToMeters(16);
         public static final double ARM_MASS = Units.lbsToKilograms(13);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = Units.degreesToRadians(135);
+        public static final double MAX_ANGLE = 3.0;
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 5 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 200;
 
-        public static final boolean PIVOT_INVERTED = true;
+        public static final boolean PIVOT_INVERTED = false;
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
         public static final double CURRENT_LIMIT = 60;
 
-        public static final double kP = 5.0;
+        public static final double kP = 24.0;
         public static final double kI = 0.0;
-        public static final double kD = 0.0;
+        public static final double kD = 2.0;
         public static final double kS = 0.0;
         public static final double kV = 0.0;
         public static final double kA = 0.0;
@@ -489,80 +489,82 @@ public class Constants {
                         Optional.empty());
         public static final SuperstructureState RECEIVE_FROM_GROUND_INTAKE =
                 new SuperstructureState(
-                        Optional.of(ElevatorState.FUNNEL_RECEIVE),
-                        Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
+                        Optional.of(ElevatorState.GROUND_INTAKE_RECEIVE),
+                        Optional.of(CoralState.RECEIVE_FROM_GROUND_INTAKE),
                         Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.of(IntakeState.PASSOFF_TO_CORAL));
+
         public static final SuperstructureState STOW_INTAKE =
                 new SuperstructureState(
                         Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(IntakeState.IDLE));
+
         public static final SuperstructureState GROUND_INTAKE =
                 new SuperstructureState(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
+                        Optional.of(ElevatorState.GROUND_INTAKE_RECEIVE),
+                        Optional.of(CoralState.RECEIVE_FROM_GROUND_INTAKE),
+                        Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.of(IntakeState.DEPLOYED));
 
         public static final SuperstructureState PLACE_CORAL_L4 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4),
-                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.of(IntakeState.IDLE));
 
         public static final SuperstructureState PLACE_CORAL_L3 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L3_CORAL_PLACING), Optional.of(CoralState.PLACING),
-                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.of(IntakeState.IDLE));
 
         public static final SuperstructureState HIGH_ALGAE_GRAB =
                 new SuperstructureState(
                         Optional.of(ElevatorState.HIGH_ALGAE_GRAB),
                         Optional.of(CoralState.IDLE),
                         Optional.of(AlgaeState.REEF_PICKUP),
-                        Optional.empty());
+                        Optional.of(IntakeState.IDLE));
 
         public static final SuperstructureState LOW_ALGAE_GRAB =
                 new SuperstructureState(
                         Optional.of(ElevatorState.LOW_ALGAE_GRAB),
                         Optional.of(CoralState.IDLE),
                         Optional.of(AlgaeState.REEF_PICKUP),
-                        Optional.empty());
+                        Optional.of(IntakeState.IDLE));
 
         public static final SuperstructureState PLACE_CORAL_L2 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L2_CORAL_PLACING), Optional.of(CoralState.PLACING),
-                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.of(IntakeState.IDLE));
 
         public static final SuperstructureState PLACE_CORAL_L1 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L1_CORAL_PLACING), Optional.of(CoralState.PLACING_L1),
-                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.of(IntakeState.IDLE));
 
         public static final SuperstructureState PROCESSOR_DROPOFF =
                 new SuperstructureState(
                         Optional.of(ElevatorState.PROCESSOR_PLACING),
                         Optional.of(CoralState.IDLE),
                         Optional.of(AlgaeState.PROCESSOR_DROPOFF),
-                        Optional.empty());
+                        Optional.of(IntakeState.IDLE));
 
         public static final SuperstructureState BARGE_HELD =
                 new SuperstructureState(
                         Optional.of(ElevatorState.BARGE_PLACING),
                         Optional.of(CoralState.IDLE),
                         Optional.of(AlgaeState.IDLE),
-                        Optional.empty());
+                        Optional.of(IntakeState.IDLE));
 
         public static final SuperstructureState BARGE_DROPOFF =
                 new SuperstructureState(
                         Optional.of(ElevatorState.BARGE_PLACING),
                         Optional.of(CoralState.IDLE),
                         Optional.of(AlgaeState.BARGE_DROPOFF),
-                        Optional.empty());
+                        Optional.of(IntakeState.IDLE));
 
         public static final SuperstructureState GROUND_PICKUP =
                 new SuperstructureState(
                         Optional.of(ElevatorState.STOWED),
                         Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
                         Optional.of(AlgaeState.GROUND_PICKUP),
-                        Optional.empty());
+                        Optional.of(IntakeState.IDLE));
     }
 }

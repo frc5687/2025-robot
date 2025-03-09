@@ -122,7 +122,28 @@ public class OperatorInterface {
                                                 RequestType.IMMEDIATE),
                                         new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))),
                                 new InstantCommand(),
-                                manager::isAlgaeMode));
+                                manager::isAlgaeMode))
+                .onTrue(
+                        new SequentialCommandGroup(
+                                new InstantCommand(() -> container.getIntake().setVoltages(-12, 12)),
+                                manager.createRequest(
+                                        Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
+                                new WaitUntilCommand(
+                                        () ->
+                                                container.getIntake().isIntakeCoralDetected()
+                                                        || !_driverController.leftTrigger().getAsBoolean()),
+                                new InstantCommand(() -> container.getIntake().setVoltages(0, 3)),
+                                new ConditionalCommand(
+                                        new SequentialCommandGroup(
+                                                manager.createRequest(
+                                                        Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
+                                                        RequestType.IMMEDIATE),
+                                                new InstantCommand(() -> container.getIntake().setVoltages(0, -12)),
+                                                manager.indexCoral(),
+                                                new InstantCommand(() -> container.getIntake().setVoltages(0, 0))),
+                                        manager.createRequest(
+                                                Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE),
+                                        container.getIntake()::isIntakeCoralDetected)));
 
         _driverController
                 .rightTrigger()
@@ -141,6 +162,10 @@ public class OperatorInterface {
         _driverController
                 .a()
                 .whileTrue(new DynamicDriveToNet(container.getDrive(), _driverController::getLeftX));
+
+        // _driverController
+        //         .y()
+        //         .whileTrue(new DriveToGroundAlgae(container.getDrive(), container.getVision()));
 
         // _driverController
         //         .povDown()

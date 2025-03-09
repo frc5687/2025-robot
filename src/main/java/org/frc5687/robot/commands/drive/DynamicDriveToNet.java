@@ -8,7 +8,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.function.DoubleSupplier;
-
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.OutliersCommand;
@@ -59,7 +58,9 @@ public class DynamicDriveToNet extends OutliersCommand {
     public void execute(double timestamp) {
         double currentX = _drive.getPose().getX();
         Rotation2d currentTheta = _drive.getHeading();
-        double yVel = RobotContainer.modifyAxis(_joystickSupplier.getAsDouble()) * Constants.SwerveModule.MAX_LINEAR_SPEED;
+        double yVel =
+                RobotContainer.modifyAxis(_joystickSupplier.getAsDouble())
+                        * Constants.SwerveModule.MAX_LINEAR_SPEED;
         log(
                 "DriveToPose Target",
                 new Pose2d(

@@ -477,6 +477,12 @@ public class LimelightHelpers {
         public double corner3_X = 0;
         public double corner3_Y = 0;
 
+        public double[] getCorners() {
+            return new double[] {
+                corner0_X, corner0_Y, corner1_X, corner1_Y, corner2_X, corner2_Y, corner3_X, corner3_Y
+            };
+        }
+
         public RawDetection(
                 int classId,
                 double txnc,

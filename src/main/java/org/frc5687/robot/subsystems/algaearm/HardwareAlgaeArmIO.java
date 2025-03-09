@@ -56,7 +56,7 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         _controller =
                 new ProfiledPIDController(
                         Constants.AlgaeArm.kP, Constants.AlgaeArm.kI, Constants.AlgaeArm.kD, fastConstraints);
-                        
+
         _controller.setTolerance(0.01);
         _pivotMotor.setInverted(Constants.AlgaeArm.PIVOT_MOTOR_INVERTED);
         _angularVelocityFilter =

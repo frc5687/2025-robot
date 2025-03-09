@@ -34,6 +34,7 @@ import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
+import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
@@ -107,7 +108,7 @@ public class RobotContainer implements EpilogueLog {
                     new HardwareElevatorIO(
                             RobotMap.CAN.TALONFX.NORTH_WEST_ELEVATOR,
                             RobotMap.CAN.TALONFX.NORTH_EAST_ELEVATOR,
-                            RobotMap.CAN.LASERCAN.LASERCAN);
+                            RobotMap.CAN.LASERCAN.ELEVATOR);
         }
 
         _elevator = new ElevatorSubsystem(this, elevatorIO);
@@ -120,8 +121,7 @@ public class RobotContainer implements EpilogueLog {
                 RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
         _coralArm = new CoralArmSubsystem(this, coralArmIO);
 
-        IntakeIO intakeIO = /* RobotBase.isSimulation() ? */
-                new SimIntakeIO() /* : new HardwareIntakeIO() */;
+        IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
         _intake = new IntakeSubsystem(this, intakeIO);
 
         ClimberIO climberIO =

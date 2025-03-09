@@ -16,6 +16,7 @@ import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.vision.AprilTagObservation;
+import org.frc5687.robot.util.vision.NeuralPipelineObservation;
 import org.frc5687.robot.util.vision.TargetCorners;
 
 public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutputs> {
@@ -23,11 +24,11 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     private static final double MAX_AMBIGUITY = 0.2;
     private static final double MAX_DISTANCE = 4.0;
     private static final double MIN_CONFIDENCE = 0.7;
-    private final VisionIO _visionIO;
 
     public VisionSubsystem(RobotContainer container, VisionIO io) {
         super(container, io, new VisionInputs(), new VisionOutputs());
-        _visionIO = io;
+        setPipelineIndex("North_Camera", 1); // FIXME 0 by default
+        setPipelineIndex("North_West_Camera", 0);
     }
 
     public static boolean isValidTag(AprilTagObservation observation) {
@@ -55,7 +56,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
     public List<AprilTagObservation> getValidTags() {
         List<AprilTagObservation> validTags = new ArrayList<>();
-        for (List<AprilTagObservation> observations : _inputs.cameraObservations.values()) {
+        for (List<AprilTagObservation> observations : _inputs.cameraAprilTagObservations.values()) {
             for (AprilTagObservation observation : observations) {
                 if (isValidTag(observation)) {
                     validTags.add(observation);
@@ -101,11 +102,11 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     }
 
     public List<AprilTagObservation> getNorthCameraObservations() {
-        return _inputs.cameraObservations.getOrDefault("North_Camera", new ArrayList<>());
+        return _inputs.cameraAprilTagObservations.getOrDefault("North_Camera", new ArrayList<>());
     }
 
     public List<AprilTagObservation> getNorthWestCameraObservations() {
-        return _inputs.cameraObservations.getOrDefault("North_West_Camera", new ArrayList<>());
+        return _inputs.cameraAprilTagObservations.getOrDefault("North_West_Camera", new ArrayList<>());
     }
 
     public Optional<AprilTagObservation> getTagFromObservations(
@@ -230,7 +231,20 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     @Override
     protected void processInputs() {}
 
-    public void setPipelineIndex(int index) {
-        _outputs.pipelineIndex = index;
+    public void setPipelineIndex(String cameraName, int pipelineIndex) {
+        _outputs.targetPipelines.put(cameraName, pipelineIndex);
+    }
+
+    public Optional<NeuralPipelineObservation> getClosestNeuralObservationOfType(
+            String cameraName, int classId) {
+        Optional<NeuralPipelineObservation> res = Optional.empty();
+        var dist = Double.POSITIVE_INFINITY;
+        for (var obs : _inputs.cameraNeuralPipelineObservations.get(cameraName)) {
+            if (obs.getClassId() == classId && obs.getDistance() < dist) {
+                res = Optional.of(obs);
+                dist = obs.getDistance();
+            }
+        }
+        return res;
     }
 }

@@ -1,20 +1,25 @@
 package org.frc5687.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotStateManager;
+import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.vision.AprilTagObservation;
 import org.frc5687.robot.util.vision.LimelightHelpers;
 import org.frc5687.robot.util.vision.LimelightHelpers.LimelightResults;
 import org.frc5687.robot.util.vision.LimelightHelpers.LimelightTarget_Fiducial;
 import org.frc5687.robot.util.vision.LimelightHelpers.PoseEstimate;
+import org.frc5687.robot.util.vision.LimelightHelpers.RawDetection;
 import org.frc5687.robot.util.vision.LimelightHelpers.RawFiducial;
+import org.frc5687.robot.util.vision.NeuralPipelineObservation;
 
-public class LimelightVisionIO implements VisionIO {
+public class LimelightVisionIO implements VisionIO, EpilogueLog {
     private final Map<String, String> _cameraNames;
     private final Map<String, Transform3d> _cameraPoses;
 
@@ -44,7 +49,12 @@ public class LimelightVisionIO implements VisionIO {
 
     private void updateCameraInputs(VisionInputs inputs, String logicalName) {
         String limelightName = _cameraNames.get(logicalName);
-        inputs.cameraObservations.put(logicalName, new ArrayList<>());
+        if (inputs.cameraAprilTagObservations.containsKey(logicalName))
+            inputs.cameraAprilTagObservations.get(logicalName).clear();
+        else inputs.cameraAprilTagObservations.put(logicalName, new ArrayList<>());
+        if (inputs.cameraNeuralPipelineObservations.containsKey(logicalName))
+            inputs.cameraNeuralPipelineObservations.get(logicalName).clear();
+        else inputs.cameraNeuralPipelineObservations.put(logicalName, new ArrayList<>());
 
         LimelightHelpers.SetIMUMode(limelightName, 0);
         double robotYaw = RobotStateManager.getInstance().getRawIMURotation().getDegrees();
@@ -80,7 +90,7 @@ public class LimelightVisionIO implements VisionIO {
                     observation = AprilTagObservation.fromLimelight(target, t2d, timestamp);
                 }
 
-                inputs.cameraObservations.get(logicalName).add(observation);
+                inputs.cameraAprilTagObservations.get(logicalName).add(observation);
             }
 
             PoseEstimate poseEstimate =
@@ -89,6 +99,20 @@ public class LimelightVisionIO implements VisionIO {
                 RobotPoseEstimate robotPose = RobotPoseEstimate.fromLimelight(poseEstimate, logicalName);
                 inputs.estimatedPoses.put(logicalName, robotPose);
             }
+        }
+
+        Transform3d robotToLens = _cameraPoses.get(logicalName);
+
+        RawDetection[] rawDetections = LimelightHelpers.getRawDetections(limelightName);
+        // System.out.println(logicalName + " had " + rawDetections.length + " detections");
+        for (RawDetection detection : rawDetections) {
+            var obs = NeuralPipelineObservation.fromLimelight(detection, robotToLens);
+            if (obs == null) continue;
+            inputs.cameraNeuralPipelineObservations.get(logicalName).add(obs);
+            log("angle (deg)", +new Rotation2d(obs.getX(), obs.getY()).getDegrees());
+            log("distance from robot center", Math.hypot(obs.getX(), obs.getY()));
+            log("x", obs.getX());
+            log("y", obs.getY());
         }
     }
 
@@ -136,8 +160,18 @@ public class LimelightVisionIO implements VisionIO {
 
     @Override
     public void writeOutputs(VisionOutputs outputs) {
-        for (String limelightName : _cameraNames.values()) {
-            LimelightHelpers.setPipelineIndex(limelightName, outputs.pipelineIndex);
+        for (Entry<String, Integer> targetPipeline : outputs.targetPipelines.entrySet()) {
+            if (_cameraNames.containsKey(targetPipeline.getKey())) {
+                String limelightName = _cameraNames.get(targetPipeline.getKey());
+                LimelightHelpers.setPipelineIndex(limelightName, targetPipeline.getValue());
+            } else {
+                System.err.println("Invalid camera " + targetPipeline.getKey());
+            }
         }
+    }
+
+    @Override
+    public String getLogBase() {
+        return "LimelightVisionIO";
     }
 }

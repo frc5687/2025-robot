@@ -92,7 +92,7 @@ public class SimVisionIO implements VisionIO {
     }
 
     private void updateCameraInputs(VisionInputs inputs, String cameraName) {
-        inputs.cameraObservations.put(cameraName, new ArrayList<>());
+        inputs.cameraAprilTagObservations.put(cameraName, new ArrayList<>());
         CameraConfig cam = _cameras.get(cameraName);
         List<PhotonPipelineResult> results = cam.camera.getAllUnreadResults();
         cam.estimator.addHeadingData(Timer.getFPGATimestamp(), _robotState.getRawIMURotation());
@@ -104,7 +104,7 @@ public class SimVisionIO implements VisionIO {
             for (PhotonTrackedTarget target : mostRecentResult.targets) {
                 AprilTagObservation observation =
                         AprilTagObservation.fromPhotonVision(target, mostRecentResult.getTimestampSeconds());
-                inputs.cameraObservations.get(cameraName).add(observation);
+                inputs.cameraAprilTagObservations.get(cameraName).add(observation);
             }
 
             photonPoseEstimate.ifPresent(
@@ -122,9 +122,9 @@ public class SimVisionIO implements VisionIO {
 
     @Override
     public void writeOutputs(VisionOutputs outputs) {
-        for (CameraConfig config : _cameras.values()) {
-            config.camera.setPipelineIndex(outputs.pipelineIndex);
-        }
+        // for (CameraConfig config : _cameras.values()) {
+        //     config.camera.setPipelineIndex(outputs.pipelineIndex);
+        // }
     }
 
     public void resetSimulation(Pose2d pose) {

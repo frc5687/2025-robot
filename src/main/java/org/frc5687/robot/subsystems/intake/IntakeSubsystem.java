@@ -2,6 +2,7 @@ package org.frc5687.robot.subsystems.intake;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
@@ -20,7 +21,9 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     }
 
     @Override
-    protected void periodic(IntakeInputs inputs, IntakeOutputs outputs) {}
+    protected void periodic(IntakeInputs inputs, IntakeOutputs outputs) {
+        _outputs.dynamicsFF = calculateGravityFeedForward(getPivotArmAngleRads());
+    }
 
     public void setDesiredPivotAngle(IntakeState state) {
         setDesiredPivotAngle(state.getValue());
@@ -30,6 +33,11 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
         double desiredAngleClamped =
                 MathUtil.clamp(angle, Constants.Intake.MIN_ANGLE, Constants.Intake.MAX_ANGLE);
         _outputs.desiredAngleRad = desiredAngleClamped;
+    }
+
+    public void setVoltages(double rollerVoltage, double intakeVoltage) {
+        setRollerVoltage(rollerVoltage);
+        setIntakeVoltage(intakeVoltage);
     }
 
     public void setRollerVoltage(double voltage) {
@@ -50,6 +58,19 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
                                 .minus(new Rotation2d(_outputs.desiredAngleRad))
                                 .getDegrees())
                 < 5;
+    }
+
+    public boolean isAtState(IntakeState state) {
+        double angleDiff = Math.abs(state.getValue() - getPivotArmAngleRads());
+        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(5.0);
+        return isWithinPositionTolerance;
+    }
+
+    private double calculateGravityFeedForward(double angle) {
+        return ((Constants.Intake.ARM_LENGTH / 2.0)
+                        * (Constants.Intake.GEARBOX.rOhms * Constants.Intake.ARM_MASS * 9.81)
+                        / (Constants.Intake.GEAR_RATIO * Constants.Intake.GEARBOX.KtNMPerAmp))
+                * Math.cos(angle);
     }
 
     public boolean isIntakeCoralDetected() {
