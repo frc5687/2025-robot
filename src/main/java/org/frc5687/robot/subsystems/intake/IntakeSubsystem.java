@@ -1,7 +1,6 @@
 package org.frc5687.robot.subsystems.intake;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
@@ -53,11 +52,12 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     }
 
     public boolean isAtDesiredAngle() {
-        return Math.abs(
-                        new Rotation2d(_inputs.armAngleRads)
-                                .minus(new Rotation2d(_outputs.desiredAngleRad))
-                                .getDegrees())
-                < 1.0;
+        // return Math.abs(
+        //                 new Rotation2d(_inputs.armAngleRads)
+        //                         .minus(new Rotation2d(_outputs.desiredAngleRad))
+        //                         .getDegrees())
+        //         < 1.0;
+        return true;
     }
 
     public boolean isAtState(IntakeState state) {
