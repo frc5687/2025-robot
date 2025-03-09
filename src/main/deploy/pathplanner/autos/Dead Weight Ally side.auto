@@ -1,0 +1,79 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "(PUSH) Ally to R3R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R3R to Left Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ReceiveFunnel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Coral to R2R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R2R to Left Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ReceiveFunnel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left Coral to R2L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R2L to Left Coral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

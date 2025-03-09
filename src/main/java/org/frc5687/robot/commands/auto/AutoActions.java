@@ -17,7 +17,7 @@ public class AutoActions {
                                     .getCoral()
                                     .setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_EJECT_CORAL_DUTY_CYCLE);
                         }),
-                new WaitCommand(0.3),
+                new WaitCommand(0.225),
                 new InstantCommand(
                         () -> {
                             container.getCoral().setWheelMotorDutyCycle(0);

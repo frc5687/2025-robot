@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.303,
-        "y": 2.040974596215561
+        "x": 2.9966856060606064,
+        "y": 1.989630681818181
       },
       "isLocked": false,
       "linkedName": "Reef 6 Left"
@@ -20,8 +20,8 @@
         "y": 0.7363599874196086
       },
       "prevControl": {
-        "x": 2.1473455945270516,
-        "y": 1.5349954974669013
+        "x": 2.356344696969697,
+        "y": 1.4483901515151514
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "ReadyFunnel",
-      "waypointRelativePos": 0.3076122303299493,
+      "waypointRelativePos": 0.04651162790697674,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

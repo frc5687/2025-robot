@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.91,
-        "y": 5.3
+        "x": 4.911,
+        "y": 5.297
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.55458193496919,
-        "y": 6.193645466549295
+        "x": 4.430829545454545,
+        "y": 6.103107954545455
       },
       "isLocked": false,
       "linkedName": "Reef 3 Right"
@@ -20,8 +20,8 @@
         "y": 7.21267227387764
       },
       "prevControl": {
-        "x": 2.6847663173692995,
-        "y": 6.520096931327779
+        "x": 2.7298768939393936,
+        "y": 6.670217803030303
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "ReadyFunnel",
-      "waypointRelativePos": 0.16096815952034885,
+      "waypointRelativePos": 0.04817275747508315,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
