@@ -229,7 +229,7 @@ public class RequestHandler implements EpilogueLog {
                 !_finalTargetState.getIntake().isPresent()
                         || _container.getIntake().isAtState(_finalTargetState.getIntake().get());
 
-        return elevatorDone && coralDone && algaeDone && intakeDone;
+        return elevatorDone && coralDone && algaeDone /*&& intakeDone*/; // FIXME
     }
 
     private void checkAndStartQueuedRequest() {
@@ -287,9 +287,10 @@ public class RequestHandler implements EpilogueLog {
             return false;
         }
 
+        /*
         if (goal.getIntake().isPresent() && !_container.getIntake().isAtState(goal.getIntake().get())) {
             return false;
-        }
+        } */ // FIXME
 
         // log("RequestProgress", "all finished");
         return true;

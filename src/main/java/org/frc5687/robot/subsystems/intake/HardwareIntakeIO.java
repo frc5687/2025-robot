@@ -73,20 +73,22 @@ public class HardwareIntakeIO implements IntakeIO {
             inputs.isCoralDetected = measurement.distance_mm < detectionRange.get();
         }
         inputs.armAngleRads = _pivotMotorAngle.getValue().in(Radians);
+        inputs.encoderAngleRads = _encoderAngle.getValue().in(Radians);
     }
 
     @Override
     public void writeOutputs(IntakeOutputs outputs) {
-        _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
-        _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
-        double safeDesiredAngle =
-                Math.min(
-                        Math.max(outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE),
-                        Constants.Intake.MAX_ANGLE);
-        _pivotMotor.setControl(
-                _pivotPositionReq
-                        .withPosition(Units.radiansToRotations(safeDesiredAngle))
-                        .withFeedForward(outputs.dynamicsFF));
+        // FIXME put this back
+        // _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
+        // _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
+        // double safeDesiredAngle =
+        //         Math.min(
+        //                 Math.max(outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE),
+        //                 Constants.Intake.MAX_ANGLE);
+        // _pivotMotor.setControl(
+        //         _pivotPositionReq
+        //                 .withPosition(Units.radiansToRotations(safeDesiredAngle))
+        //                 .withFeedForward(outputs.dynamicsFF));
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted, boolean attachCANcoder) {

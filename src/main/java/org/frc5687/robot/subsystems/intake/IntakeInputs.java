@@ -8,6 +8,9 @@ public class IntakeInputs extends BaseInputs {
     @Logged(name = "Arm Angle(Rads)", importance = Logged.Importance.CRITICAL)
     public double armAngleRads = 0;
 
+    @Logged(name = "Encoder Angle(Rads)", importance = Logged.Importance.CRITICAL)
+    public double encoderAngleRads = 0;
+
     @Logged(name = "Is Coral Detected", importance = Logged.Importance.CRITICAL)
     public boolean isCoralDetected = false;
 }

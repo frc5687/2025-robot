@@ -13,6 +13,7 @@ import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
+import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
 import org.frc5687.robot.commands.drive.DriveToHP;
 import org.frc5687.robot.commands.drive.DynamicDriveToNet;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
@@ -110,40 +111,45 @@ public class OperatorInterface {
                 .whileTrue(
                         new ConditionalCommand(
                                 new SequentialCommandGroup(
-                                        manager.grabAlgae(
-                                                Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE),
-                                        new IntakeAlgae(container.getAlgae()),
-                                        manager.createRequest(
-                                                new SuperstructureState(
-                                                        Optional.empty(),
-                                                        Optional.empty(),
-                                                        Optional.of(AlgaeState.IDLE),
-                                                        Optional.empty()),
-                                                RequestType.IMMEDIATE),
-                                        new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0))),
-                                new InstantCommand(),
-                                manager::isAlgaeMode))
-                .onTrue(
-                        new SequentialCommandGroup(
-                                new InstantCommand(() -> container.getIntake().setVoltages(-12, 12)),
-                                manager.createRequest(
-                                        Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
-                                new WaitUntilCommand(
-                                        () ->
-                                                container.getIntake().isIntakeCoralDetected()
-                                                        || !_driverController.leftTrigger().getAsBoolean()),
-                                new InstantCommand(() -> container.getIntake().setVoltages(0, 3)),
-                                new ConditionalCommand(
-                                        new SequentialCommandGroup(
+                                                manager.grabAlgae(
+                                                        Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE),
+                                                new IntakeAlgae(container.getAlgae()),
                                                 manager.createRequest(
-                                                        Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
+                                                        new SuperstructureState(
+                                                                Optional.empty(),
+                                                                Optional.empty(),
+                                                                Optional.of(AlgaeState.IDLE),
+                                                                Optional.empty()),
                                                         RequestType.IMMEDIATE),
-                                                new InstantCommand(() -> container.getIntake().setVoltages(0, -12)),
-                                                manager.indexCoral(),
-                                                new InstantCommand(() -> container.getIntake().setVoltages(0, 0))),
-                                        manager.createRequest(
-                                                Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE),
-                                        container.getIntake()::isIntakeCoralDetected)));
+                                                new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0)))
+                                        .alongWith(new DriveToGroundAlgae(container.getDrive(), container.getVision())),
+                                new InstantCommand(),
+                                manager::isAlgaeMode));
+        // .onTrue(
+        //         new SequentialCommandGroup(
+        //                 new InstantCommand(() -> container.getIntake().setVoltages(-12, 12)),
+        //                 manager.createRequest(
+        //                         Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
+        //                 new WaitUntilCommand(
+        //                         () ->
+        //                                 container.getIntake().isIntakeCoralDetected()
+        //                                         || !_driverController.leftTrigger().getAsBoolean()),
+        //                 new InstantCommand(() -> container.getIntake().setVoltages(0, 3)),
+        //                 new ConditionalCommand(
+        //                         new SequentialCommandGroup(
+        //                                 manager.createRequest(
+        //
+        // Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
+        //                                         RequestType.IMMEDIATE),
+        //                                 new InstantCommand(() -> container.getIntake().setVoltages(0,
+        // -12)),
+        //                                 manager.indexCoral(),
+        //                                 new InstantCommand(() -> container.getIntake().setVoltages(0,
+        // 0))),
+        //                         manager.createRequest(
+        //                                 Constants.SuperstructureGoals.STOW_INTAKE,
+        // RequestType.IMMEDIATE),
+        //                         container.getIntake()::isIntakeCoralDetected)));
 
         _driverController
                 .rightTrigger()
