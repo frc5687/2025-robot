@@ -260,11 +260,11 @@ public class Constants {
 
         public static final DCMotor GEARBOX = Motors.getKrakenX44(1);
         public static final double GEAR_RATIO = 25.0 * 50.0 / 18.0;
-        public static final double ARM_LENGTH = Units.inchesToMeters(16);
+        public static final double ARM_LENGTH = Units.inchesToMeters(18);
         public static final double ARM_MASS = Units.lbsToKilograms(13);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = 3.0;
+        public static final double MAX_ANGLE = 2.925;
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 200;

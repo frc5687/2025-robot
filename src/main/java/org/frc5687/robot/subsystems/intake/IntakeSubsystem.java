@@ -57,12 +57,12 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
                         new Rotation2d(_inputs.armAngleRads)
                                 .minus(new Rotation2d(_outputs.desiredAngleRad))
                                 .getDegrees())
-                < 5;
+                < 1.0;
     }
 
     public boolean isAtState(IntakeState state) {
         double angleDiff = Math.abs(state.getValue() - getPivotArmAngleRads());
-        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(5.0);
+        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(1.0);
         return isWithinPositionTolerance;
     }
 

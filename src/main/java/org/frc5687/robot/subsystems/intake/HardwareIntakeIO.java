@@ -79,9 +79,13 @@ public class HardwareIntakeIO implements IntakeIO {
     public void writeOutputs(IntakeOutputs outputs) {
         _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
         _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
+        double safeDesiredAngle =
+                Math.min(
+                        Math.max(outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE),
+                        Constants.Intake.MAX_ANGLE);
         _pivotMotor.setControl(
                 _pivotPositionReq
-                        .withPosition(Units.radiansToRotations(outputs.desiredAngleRad))
+                        .withPosition(Units.radiansToRotations(safeDesiredAngle))
                         .withFeedForward(outputs.dynamicsFF));
     }
 
@@ -112,6 +116,11 @@ public class HardwareIntakeIO implements IntakeIO {
             config.Feedback.RotorToSensorRatio = Constants.Intake.GEAR_RATIO;
             config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
             config.ClosedLoopGeneral.ContinuousWrap = false;
+            config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+            config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+                    Units.radiansToRotations(Constants.Intake.MAX_ANGLE * Constants.Intake.GEAR_RATIO);
+            config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+            config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
         }
         motor.getConfigurator().apply(config);
         // CTREUtil.applyConfiguration(motor, config);
