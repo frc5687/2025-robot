@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "R3R to Left Coral"
+            "pathName": "R1R to Left Coral Offset"
           }
         },
         {
@@ -31,31 +31,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left Coral to R2R"
+            "pathName": "Left Coral Offset to R1L"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "AutoPlace"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "R2R to Left Coral"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ReceiveFunnel"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Left Coral to R2L"
           }
         }
       ]
