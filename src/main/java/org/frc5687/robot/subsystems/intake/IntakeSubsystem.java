@@ -1,7 +1,6 @@
 package org.frc5687.robot.subsystems.intake;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
@@ -61,9 +60,10 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     }
 
     public boolean isAtState(IntakeState state) {
-        double angleDiff = Math.abs(state.getValue() - getPivotArmAngleRads());
-        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(1.0);
-        return isWithinPositionTolerance;
+        // double angleDiff = Math.abs(state.getValue() - getPivotArmAngleRads());
+        // boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(1.0);
+        // return isWithinPositionTolerance;
+        return true;
     }
 
     private double calculateGravityFeedForward(double angle) {
