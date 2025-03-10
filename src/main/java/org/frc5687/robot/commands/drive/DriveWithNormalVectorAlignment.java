@@ -5,14 +5,17 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import java.util.Optional;
 import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.util.TunableDouble;
 
 public class DriveWithNormalVectorAlignment extends OutliersCommand {
-    protected final DriveSubsystem _drive;
+    private final DriveSubsystem _drive;
+    private final SuperstructureManager _manager;
     private final Supplier<Pose2d> _finalPoseSupplier;
 
     private final TunableDouble _normalVectorOffset =
@@ -54,8 +57,10 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
     private final TunableDouble _rotKi = new TunableDouble("DriveToPose", "rotKi", 0.0);
     private final TunableDouble _rotKd = new TunableDouble("DriveToPose", "rotKd", 0.1);
 
-    public DriveWithNormalVectorAlignment(DriveSubsystem drive, Supplier<Pose2d> finalPoseSupplier) {
+    public DriveWithNormalVectorAlignment(
+            DriveSubsystem drive, SuperstructureManager manager, Supplier<Pose2d> finalPoseSupplier) {
         _drive = drive;
+        _manager = manager;
         _finalPoseSupplier = finalPoseSupplier;
 
         _xController = new PIDController(_driveKp.get(), _driveKi.get(), _driveKd.get());
@@ -94,6 +99,8 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
         _alignmentPose =
                 new Pose2d(
                         _finalPose.getX() + offsetX, _finalPose.getY() + offsetY, _finalPose.getRotation());
+        // Set in intialize but also in execute for reference
+        _manager.setGoalPose(Optional.of(_alignmentPose));
     }
 
     private Pose2d getCurrentTargetPose() {
@@ -164,6 +171,7 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
     @Override
     public void execute(double timestamp) {
         Pose2d targetPose = getCurrentTargetPose();
+
         log("Target Pose", targetPose, Pose2d.struct);
         log("Alignment Pose", _alignmentPose, Pose2d.struct);
         log("Final Pose", _finalPose, Pose2d.struct);
@@ -268,6 +276,7 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
     @Override
     public void end(boolean interrupted) {
         _drive.setDesiredChassisSpeeds(new ChassisSpeeds());
+        _manager.setGoalPose(Optional.empty());
     }
 
     @Override

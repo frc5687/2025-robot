@@ -144,16 +144,19 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void configureDefaultCommands() {
+        double slowFactor = 0.75;
         _drive.setDefaultCommand(
                 _elevator.getElevatorHeight() < ElevatorState.L3_CORAL_PLACING.getHeight()
                         ? new TeleopDriveCommand(
                                 _drive,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftY())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED
+                                                * slowFactor,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftX())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED
+                                                * slowFactor,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getRightX())
                                                 * Constants.SwerveModule.MAX_ANGULAR_SPEED,
@@ -229,13 +232,17 @@ public class RobotContainer implements EpilogueLog {
                 "LowAlgaeIntake",
                 _superstructureManager
                         .algaeIntake(Constants.SuperstructureGoals.LOW_ALGAE_GRAB)
-                        .alongWith(new DynamicDriveToReefBranch(getDrive(), ReefSide.ALGAE)));
+                        .alongWith(
+                                new DynamicDriveToReefBranch(
+                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE)));
 
         NamedCommands.registerCommand(
                 "HighAlgaeIntake",
                 _superstructureManager
                         .algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB)
-                        .alongWith(new DynamicDriveToReefBranch(getDrive(), ReefSide.ALGAE)));
+                        .alongWith(
+                                new DynamicDriveToReefBranch(
+                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE)));
 
         NamedCommands.registerCommand(
                 "CoralL4",

@@ -83,21 +83,21 @@ public class OperatorInterface {
                 .leftBumper()
                 .whileTrue(
                         new ConditionalCommand(
-                                new DynamicDriveToReefBranchAlgae(container.getDrive(), ReefSide.ALGAE),
-                                new DynamicDriveToReefBranch(container.getDrive(), ReefSide.LEFT),
+                                new DynamicDriveToReefBranchAlgae(container.getDrive(), manager, ReefSide.ALGAE),
+                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.LEFT),
                                 manager::isAlgaeMode));
 
         _driverController
                 .rightBumper()
                 .whileTrue(
                         new ConditionalCommand(
-                                new DynamicDriveToReefBranch(container.getDrive(), ReefSide.ALGAE),
-                                new DynamicDriveToReefBranch(container.getDrive(), ReefSide.RIGHT),
+                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.ALGAE),
+                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT),
                                 manager::isAlgaeMode));
 
         _driverController
                 .leftJoystickButton()
-                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), ReefSide.ALGAE));
+                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.ALGAE));
         _driverController.rightJoystickButton().whileTrue(new DriveToHP(container.getDrive()));
 
         // _driverController.leftJoystickButton().whileTrue(new
