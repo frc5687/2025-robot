@@ -8,7 +8,7 @@ import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 import org.frc5687.robot.util.ReefAlignmentHelpers;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
-public class DynamicDriveToReefBranch extends DriveToPoseSmooth {
+public class DynamicDriveToReefBranch extends DriveWithNormalVectorAlignment {
 
     public DynamicDriveToReefBranch(DriveSubsystem drive, ReefSide side) {
         super(
