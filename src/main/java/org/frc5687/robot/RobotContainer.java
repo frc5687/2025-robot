@@ -144,7 +144,7 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void configureDefaultCommands() {
-        double slowFactor = 0.75;
+        double slowFactor = 0.85;
         _drive.setDefaultCommand(
                 _elevator.getElevatorHeight() < ElevatorState.L3_CORAL_PLACING.getHeight()
                         ? new TeleopDriveCommand(
