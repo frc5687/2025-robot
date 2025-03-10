@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.frc5687.robot.commands.algae.IdleAlgae;
 import org.frc5687.robot.commands.auto.AutoActions;
 import org.frc5687.robot.commands.coral.IdleCoral;
+import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.elevator.IdleElevator;
 import org.frc5687.robot.commands.intake.IdleIntake;
@@ -48,6 +49,7 @@ import org.frc5687.robot.subsystems.vision.VisionSubsystem;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.Helpers;
 import org.frc5687.robot.util.QuestNav;
+import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class RobotContainer implements EpilogueLog {
 
@@ -222,6 +224,18 @@ public class RobotContainer implements EpilogueLog {
 
         NamedCommands.registerCommand(
                 "ReadyFunnel", _superstructureManager.receiveFunnelSim(RequestType.IMMEDIATE));
+
+        NamedCommands.registerCommand(
+                "LowAlgaeIntake",
+                _superstructureManager
+                        .algaeIntake(Constants.SuperstructureGoals.LOW_ALGAE_GRAB)
+                        .alongWith(new DynamicDriveToReefBranch(getDrive(), ReefSide.ALGAE)));
+
+        NamedCommands.registerCommand(
+                "HighAlgaeIntake",
+                _superstructureManager
+                        .algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB)
+                        .alongWith(new DynamicDriveToReefBranch(getDrive(), ReefSide.ALGAE)));
 
         NamedCommands.registerCommand(
                 "CoralL4",

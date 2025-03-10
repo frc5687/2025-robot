@@ -27,7 +27,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
     public VisionSubsystem(RobotContainer container, VisionIO io) {
         super(container, io, new VisionInputs(), new VisionOutputs());
-        setPipelineIndex("North_Camera", 1); // FIXME 0 by default
+        setPipelineIndex("North_Camera", 0);
         setPipelineIndex("North_West_Camera", 0);
     }
 

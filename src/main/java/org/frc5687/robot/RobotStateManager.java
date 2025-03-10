@@ -239,6 +239,18 @@ public class RobotStateManager implements EpilogueLog {
         // }
     }
 
+    public synchronized void resetEstimatedPoseWithoutRotation(Pose2d pose) {
+        if (_estimator != null) {
+            _estimator.resetPoseWithoutRotation(pose);
+            _poses.put(RobotCoordinate.ROBOT_BASE_SWERVE, new Pose3d(pose));
+        }
+
+        if (_questimator != null) {
+            _questimator.resetPoseWithoutRotation(pose);
+            _poses.put(RobotCoordinate.ROBOT_BASE_QUESTNAV, new Pose3d(pose));
+        }
+    }
+
     public synchronized void updateCoralArm(double angleRadians) {
         Pose3d currentArm = _poses.get(RobotCoordinate.CORAL_ARM_BASE);
         if (currentArm != null && Math.abs(currentArm.getRotation().getY() - angleRadians) < EPSILON) {

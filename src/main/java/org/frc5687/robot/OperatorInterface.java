@@ -284,54 +284,12 @@ public class OperatorInterface {
         // Low grab (left bumper) - always performs algae operations
         _operatorController
                 .leftBumper()
-                .whileTrue(
-                        new SequentialCommandGroup(
-                                        manager.grabAlgae(
-                                                Constants.SuperstructureGoals.LOW_ALGAE_GRAB, RequestType.IMMEDIATE),
-                                        new IntakeAlgae(container.getAlgae()),
-                                        new WaitUntilCommand(
-                                                () ->
-                                                        container
-                                                                        .getDrive()
-                                                                        .getPose()
-                                                                        .getTranslation()
-                                                                        .getDistance(FieldConstants.getAllianceSpecificReefCenter())
-                                                                > 2),
-                                        manager.createRequest(
-                                                new SuperstructureState(
-                                                        Optional.empty(),
-                                                        Optional.empty(),
-                                                        Optional.of(AlgaeState.IDLE),
-                                                        Optional.empty()),
-                                                RequestType.IMMEDIATE),
-                                        new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0)))
-                                .withName("Algae Low Grab"));
+                .whileTrue(manager.algaeIntake(Constants.SuperstructureGoals.LOW_ALGAE_GRAB));
 
         // High grab (right bumper) - always performs algae operations
         _operatorController
                 .rightBumper()
-                .whileTrue(
-                        new SequentialCommandGroup(
-                                        manager.grabAlgae(
-                                                Constants.SuperstructureGoals.HIGH_ALGAE_GRAB, RequestType.IMMEDIATE),
-                                        new IntakeAlgae(container.getAlgae()),
-                                        new WaitUntilCommand(
-                                                () ->
-                                                        container
-                                                                        .getDrive()
-                                                                        .getPose()
-                                                                        .getTranslation()
-                                                                        .getDistance(FieldConstants.getAllianceSpecificReefCenter())
-                                                                > 2),
-                                        manager.createRequest(
-                                                new SuperstructureState(
-                                                        Optional.empty(),
-                                                        Optional.empty(),
-                                                        Optional.of(AlgaeState.IDLE),
-                                                        Optional.empty()),
-                                                RequestType.IMMEDIATE),
-                                        new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0)))
-                                .withName("Algae High Grab"));
+                .whileTrue(manager.algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB));
     }
 
     public static double modifyAxis(double value) {

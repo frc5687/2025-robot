@@ -55,6 +55,11 @@ public class PoseEstimator implements EpilogueLog {
         _poseBuffer.clear();
     }
 
+    public void resetPoseWithoutRotation(Pose2d pose) {
+        Pose2d newPose = new Pose2d(pose.getX(), pose.getY(), _estimatedPose.getRotation());
+        resetPose(newPose);
+    }
+
     /**
      * Add a vision measurement from our unified RobotPoseEstimate format
      *

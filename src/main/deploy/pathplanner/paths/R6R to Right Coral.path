@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8518465909090907,
-        "y": 1.7456912878787874
+        "x": 3.5669999999999997,
+        "y": 1.888974596215562
       },
       "isLocked": false,
       "linkedName": "Reef 6 Right"
     },
     {
       "anchor": {
-        "x": 1.7236268939393937,
-        "y": 0.6555871212121213
+        "x": 1.5455305713750034,
+        "y": 0.7363599874196086
       },
       "prevControl": {
-        "x": 2.8622345801401474,
-        "y": 1.5048331943985727
+        "x": 2.1473455945270516,
+        "y": 1.5349954974669013
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,26 +29,12 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7541528239202655,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 5.0,
-        "maxAcceleration": 2.5,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "ReadyFunnel",
-      "waypointRelativePos": 0.049833887043189334,
+      "waypointRelativePos": 0.3204711294416243,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -59,8 +45,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.5,
-    "maxAcceleration": 3.75,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -68,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 54.86580694308439
+    "rotation": 53.0
   },
   "reversed": false,
   "folder": null,

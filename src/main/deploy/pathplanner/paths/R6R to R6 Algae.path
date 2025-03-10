@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.803,
-        "y": 2.907
+        "x": 4.067,
+        "y": 2.755
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.303,
-        "y": 2.040974596215561
+        "x": 3.6702611400462954,
+        "y": 2.4863342737268512
       },
       "isLocked": false,
-      "linkedName": "Reef 6 Left"
+      "linkedName": "Reef 6 Right"
     },
     {
       "anchor": {
-        "x": 1.5455305713750034,
-        "y": 0.7363599874196086
+        "x": 3.8098433883101843,
+        "y": 2.8944245515046294
       },
       "prevControl": {
-        "x": 2.1473455945270516,
-        "y": 1.5349954974669013
+        "x": 3.580874927662036,
+        "y": 2.530124782986111
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Coral Station Right"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,20 +33,20 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ReadyFunnel",
-      "waypointRelativePos": 0.0690926079734219,
+      "name": "LowAlgaeIntake",
+      "waypointRelativePos": 0.33489929401993357,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "ReadyFunnel"
+          "name": "LowAlgaeIntake"
         }
       }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.0
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": null,
@@ -62,5 +62,5 @@
     "velocity": 0,
     "rotation": 59.99999999999999
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

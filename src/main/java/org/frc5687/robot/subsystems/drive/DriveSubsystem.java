@@ -187,7 +187,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public void resetPose(Pose2d pose) {
-        _driveIO.setYaw(pose.getRotation());
+        // _driveIO.setYaw(pose.getRotation());
         RobotStateManager.getInstance().resetEstimatedPose(pose);
     }
 

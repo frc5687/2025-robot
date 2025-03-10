@@ -9,7 +9,7 @@ public enum CoralState {
     RECEIVE_FROM_GROUND_INTAKE(4.55),
     PLACING_L1(4.8),
     PLACING(Units.degreesToRadians(30 + 90)), // 27.5 deg
-    PLACING_L4(Units.degreesToRadians(30 + 90)); // 27.5 deg
+    PLACING_L4(Units.degreesToRadians(30 + 90 + 10)); // 27.5 deg
 
     private final double _armAngle;
 

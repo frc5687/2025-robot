@@ -2,9 +2,12 @@ package org.frc5687.robot.subsystems.superstructure;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.*;
+import java.util.Optional;
 import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
+import org.frc5687.robot.commands.algae.IntakeAlgae;
+import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.FieldConstants;
 
@@ -121,6 +124,29 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         return new SequentialCommandGroup(
                 // new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
                 createRequest(state, type).until(() -> _container.getAlgae().isAlgaeDetected()));
+    }
+
+    public Command algaeIntake(SuperstructureState state) {
+        return new SequentialCommandGroup(
+                        grabAlgae(Constants.SuperstructureGoals.LOW_ALGAE_GRAB, RequestType.IMMEDIATE),
+                        new IntakeAlgae(_container.getAlgae()),
+                        new WaitUntilCommand(
+                                () ->
+                                        _container
+                                                        .getDrive()
+                                                        .getPose()
+                                                        .getTranslation()
+                                                        .getDistance(FieldConstants.getAllianceSpecificReefCenter())
+                                                > 2),
+                        createRequest(
+                                new SuperstructureState(
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.of(AlgaeState.IDLE),
+                                        Optional.empty()),
+                                RequestType.IMMEDIATE),
+                        new InstantCommand(() -> _container.getAlgae().setWheelMotorVoltage(0)))
+                .withName("Algae Reef Intake");
     }
 
     public Command aimAtAlgaeNet() {
