@@ -66,6 +66,7 @@ public class AlgaeTracker {
             algae.y += posLerp.get() * errorY;
             algae.xVel += velLerp.get() / Constants.UPDATE_PERIOD * errorX;
             algae.yVel += velLerp.get() / Constants.UPDATE_PERIOD * errorY;
+            algae.prob = algae.prob * 0.7 + 1.0 * 0.3;
         } else {
             _algae.add(new Algae(obs.getX(), obs.getY()));
         }
