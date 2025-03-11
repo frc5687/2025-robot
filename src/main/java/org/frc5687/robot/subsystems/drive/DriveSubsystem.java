@@ -92,7 +92,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
         _setpointGenerator =
                 new SwerveSetpointGenerator(
                         _robotConfig,
-                        DCMotor.getKrakenX60(1).freeSpeedRadPerSec
+                        Constants.Motors.getKrakenX44(1).freeSpeedRadPerSec
                                 / (Constants.SwerveModule
                                         .GEAR_RATIO_STEER) // steer motor max speed divided by reduction
                         );
