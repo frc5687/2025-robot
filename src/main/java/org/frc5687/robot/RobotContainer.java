@@ -31,7 +31,6 @@ import org.frc5687.robot.subsystems.drive.DriveIO;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 import org.frc5687.robot.subsystems.drive.SimDriveIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorIO;
-import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
@@ -70,10 +69,6 @@ public class RobotContainer implements EpilogueLog {
     private SendableChooser<Command> _autoChooser;
 
     private final QuestNav _questNav;
-
-    private boolean _isCoralMode;
-
-    private int frameCount;
 
     public RobotContainer(Robot robot) {
         _robot = robot;
@@ -136,68 +131,27 @@ public class RobotContainer implements EpilogueLog {
 
         _oi.configureCommandMapping(this);
 
-        _isCoralMode = true;
         setupNamedCommand();
         configureDefaultCommands();
 
-        frameCount = 0;
+        _autoChooser = AutoBuilder.buildAutoChooser("test");
+        SmartDashboard.putData("Auto Chooser", _autoChooser);
     }
 
     private void configureDefaultCommands() {
         _drive.setDefaultCommand(
-                _elevator.getElevatorHeight() < ElevatorState.L3_CORAL_PLACING.getHeight()
-                        ? new TeleopDriveCommand(
-                                _drive,
-                                () ->
-                                        -modifyAxis(_oi.getDriverController().getLeftY())
-                                                * Constants.DriveTrain.MAX_MPS,
-                                () ->
-                                        -modifyAxis(_oi.getDriverController().getLeftX())
-                                                * Constants.DriveTrain.MAX_MPS,
-                                () ->
-                                        -modifyAxis(_oi.getDriverController().getRightX())
-                                                * Constants.DriveTrain.MAX_MPS,
-                                () -> true // Always field relative
-                                )
-                        : new TeleopDriveCommand(
-                                _drive,
-                                () ->
-                                        -modifyAxis(_oi.getDriverController().getLeftY())
-                                                * Constants.DriveTrain.MAX_MPS,
-                                () ->
-                                        -modifyAxis(_oi.getDriverController().getLeftX())
-                                                * Constants.DriveTrain.MAX_MPS,
-                                () ->
-                                        -modifyAxis(_oi.getDriverController().getRightX())
-                                                * Constants.DriveTrain.MAX_MPS,
-                                () -> true // Always field relative
-                                ));
-
-        // _drive.setDefaultCommand(
-        // new TeleopDriveCommand(
-        // _drive, () -> 0, () -> 0, () -> 0, () -> true // Always field relative
-        // ));
+                new TeleopDriveCommand(
+                        _drive,
+                        () -> -modifyAxis(_oi.getDriverController().getLeftY()) * Constants.DriveTrain.MAX_MPS,
+                        () -> -modifyAxis(_oi.getDriverController().getLeftX()) * Constants.DriveTrain.MAX_MPS,
+                        () -> -modifyAxis(_oi.getDriverController().getRightX()) * Constants.DriveTrain.MAX_MPS,
+                        () -> true // Always field relative
+                        ));
 
         _elevator.setDefaultCommand(new IdleElevator(_elevator));
-        // _elevator.setDefaultCommand(new SetElevatorPosition(
-        // _elevator,
-        // () -> -modifyAxis(_oi.getDriverController().getLeftY())
-        // ));
-
         _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
-        // _algaeArm.setDefaultCommand(new IdleAlgae(_algaeArm));
         _coralArm.setDefaultCommand(new IdleCoral(_coralArm));
-        // _coralArm.setDefaultCommand(new setCoralArmAngle(_coralArm))
         _intake.setDefaultCommand(new IdleIntake(_intake));
-        // _intake.setDefaultCommand(
-        // new RunIntake(
-        // _intake,
-        // 0,
-        // 0,
-        // () -> MathUtil.clamp(-modifyAxis(_oi.getDriverController().getLeftX()), -12,
-        // 12)));
-        _autoChooser = AutoBuilder.buildAutoChooser("test");
-        SmartDashboard.putData("Auto Chooser", _autoChooser);
     }
 
     public Command getAutonomousCommand() {
@@ -206,9 +160,6 @@ public class RobotContainer implements EpilogueLog {
 
     private void setupNamedCommand() {
         if (RobotBase.isSimulation()) {
-            // NamedCommands.registerCommand( "ReceiveFunnel",
-            // SuperstructureFactory.receiveFromFunnelSim(this));
-
             NamedCommands.registerCommand(
                     "ReceiveFunnel",
                     _superstructureManager
@@ -242,7 +193,6 @@ public class RobotContainer implements EpilogueLog {
                 "CoralL4",
                 _superstructureManager.createRequest(
                         Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
-        // new InstantCommand(() -> System.out.println("coral l4")));
 
         NamedCommands.registerCommand(
                 "CoralL3",
@@ -255,36 +205,15 @@ public class RobotContainer implements EpilogueLog {
                         Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.IMMEDIATE));
 
         NamedCommands.registerCommand("AutoPlace", AutoActions.autoPlace(this));
-
-        // NamedCommands.registerCommand(
-        // "Place", _superstructureManager.placeAtCurrentHeight(RequestType.IMMEDIATE));
-
-        // Supplier<Boolean> falseSupplier =
-        // () -> {
-        // return false;
-        // };
-        // NamedCommands.registerCommand(
-        // "CoralL4", SuperstructureFactory.placeCoralL4(this, false, falseSupplier));
-        // NamedCommands.registerCommand(
-        // "CoralL3", SuperstructureFactory.placeCoralL3(this, false, falseSupplier));
-        // NamedCommands.registerCommand(
-        // "CoralL2", SuperstructureFactory.placeCoralL2(this, falseSupplier));
-        // NamedCommands.registerCommand("Place", SuperstructureFactory.place(this));
-        // place shoots it out
     }
 
     public void periodic() {
-        // if (DriverStation.isDisabled() && frameCount % 10 == 0) {
-        //     frameCount += 1;
-        //     _drive.zeroIMU();
-        // }
         _questNav.timeSinceLastUpdate();
         RobotStateManager.getInstance().logComponentPoses();
         RobotStateManager.getInstance().updateOdometry();
         RobotStateManager.getInstance().logEstimatedPoses();
     }
 
-    // for not be lazy and just square input TODO: DONT
     public static double modifyAxis(double value) {
         value = Helpers.applyDeadband(value, 0.1);
         value = Math.copySign(value * value, value);
@@ -322,14 +251,6 @@ public class RobotContainer implements EpilogueLog {
 
     public QuestNav getQuestNav() {
         return _questNav;
-    }
-
-    public void setIntakeMode() {
-        _isCoralMode = !_isCoralMode;
-    }
-
-    public boolean getIntakeMode() {
-        return _isCoralMode;
     }
 
     public SuperstructureManager getSuperstructureManager() {

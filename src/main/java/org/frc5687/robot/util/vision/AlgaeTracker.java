@@ -1,18 +1,17 @@
 package org.frc5687.robot.util.vision;
 
-import java.lang.constant.Constable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.frc5687.robot.util.TunableDouble;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.util.TunableDouble;
 
 public class AlgaeTracker {
     private static AlgaeTracker _instance;
     private static List<Algae> _algae;
 
     private static final TunableDouble decay = new TunableDouble("AlgaeTracker", "decay", 0.95);
-    private static final TunableDouble closeEnough = new TunableDouble("AlgaeTracker", "closeEnough", 0.3);
+    private static final TunableDouble closeEnough =
+            new TunableDouble("AlgaeTracker", "closeEnough", 0.3);
     private static final TunableDouble posLerp = new TunableDouble("AlgaeTracker", "posLerp", 0.5);
     private static final TunableDouble velLerp = new TunableDouble("AlgaeTracker", "velLerp", 0.5);
 
@@ -31,8 +30,7 @@ public class AlgaeTracker {
 
     public synchronized void update(List<NeuralPipelineObservation> observations) {
         for (var obs : observations) {
-            if (obs.getClassId() == ALGAE_CLASS_ID)
-                processObservation(obs);
+            if (obs.getClassId() == ALGAE_CLASS_ID) processObservation(obs);
         }
         // iterate backwards, updating all algae & deleting improbable algae
         for (int i = _algae.size() - 1; i >= 0; i--) {
@@ -86,5 +84,6 @@ public class AlgaeTracker {
             this.yVel = 0;
             this.prob = 0.7;
         }
-    };
+    }
+    ;
 }

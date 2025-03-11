@@ -70,9 +70,9 @@ public class SimVisionIO implements VisionIO {
         cameraProp.setLatencyStdDevMs(5);
 
         PhotonCameraSim cameraSim = new PhotonCameraSim(camera, cameraProp);
-        cameraSim.enableDrawWireframe(true);
-        cameraSim.enableProcessedStream(true);
-        cameraSim.enableRawStream(true);
+        cameraSim.enableDrawWireframe(false);
+        cameraSim.enableProcessedStream(false);
+        cameraSim.enableRawStream(false);
         cameraSim.setMaxSightRange(4.0);
 
         PhotonPoseEstimator estimator =

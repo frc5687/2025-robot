@@ -11,6 +11,7 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -114,9 +115,9 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     protected void periodic(DriveInputs inputs, DriveOutputs outputs) {
         var alliance = DriverStation.getAlliance();
         if (alliance.isPresent()) {
-            log("alliance", alliance.get());
+            log("alliance", alliance.get(), Importance.CRITICAL);
         } else {
-            log("alliance", "empty");
+            log("alliance", "empty", Importance.CRITICAL);
         }
         // Update PID if needed
         if (p.hasChanged() || i.hasChanged() || d.hasChanged() || s.hasChanged()) {
