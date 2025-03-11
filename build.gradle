@@ -29,8 +29,6 @@ deploy {
         roborio(getTargetTypeClass('RoboRIO')) {
             team = project.frc.getTeamNumber()
             debug = project.frc.getDebugOrDefault(false)
-            mirrorAllPaths()
-            mirrorAllAutos()
             artifacts {
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
                     project.logger.lifecycle('Checking if profile mode...')
@@ -60,12 +58,23 @@ deploy {
                     jvmArgs.add("-XX:+AlwaysPreTouch")
                 }
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
+                    predeploy << {
+                        mirrorAllPaths()
+                        mirrorAllAutos()
+                    }
                     files = project.fileTree('src/main/deploy')
                     directory = '/home/lvuser/deploy'
-                    deleteOldFiles = false
+                    deleteOldFiles = true
                 }
             }
         }
+    }
+}
+
+def mirrorPaths = tasks.register('mirrorPaths') {
+    doLast {
+        mirrorAllPaths()
+        mirrorAllAutos()
     }
 }
 
@@ -110,8 +119,11 @@ void mirrorAllPaths() {
     println "Found $waypointCount named waypoints."
     pathDirectory.eachFile { file ->
         if (file.name.contains("(Flipped)")) {
-            file.delete()
-        } else if (file.name.endsWith('.path')) {
+            delete file
+        }
+    }
+    pathDirectory.eachFile {file ->
+        if (file.name.endsWith('.path')) {
             flipCount += 1
             try {
                 def jsonNode = jsonSlurper.parse(file)
@@ -192,7 +204,7 @@ def mirrorAllAutos() {
     }
     pathDirectory.eachFile { file ->
         if (file.name.contains("(Flipped)")) {
-            file.delete()
+            delete file
         } else if (file.name.endsWith('.auto')) {
             flipCount += 1
             try {
@@ -272,6 +284,10 @@ jar {
 deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
+
+simulateExternalJavaRelease {
+    dependsOn mirrorPaths
+}
 
 tasks.withType(JavaCompile) {
     dependsOn spotlessApply
