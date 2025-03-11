@@ -144,19 +144,16 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void configureDefaultCommands() {
-        double slowFactor = 0.85;
         _drive.setDefaultCommand(
                 _elevator.getElevatorHeight() < ElevatorState.L3_CORAL_PLACING.getHeight()
                         ? new TeleopDriveCommand(
                                 _drive,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftY())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED
-                                                * slowFactor,
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftX())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED
-                                                * slowFactor,
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getRightX())
                                                 * Constants.SwerveModule.MAX_ANGULAR_SPEED,
@@ -166,16 +163,13 @@ public class RobotContainer implements EpilogueLog {
                                 _drive,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftY())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED
-                                                / 3,
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftX())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED
-                                                / 3,
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getRightX())
-                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED
-                                                / 3,
+                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
                                 () -> true // Always field relative
                                 ));
 
