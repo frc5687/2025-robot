@@ -5,13 +5,16 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.util.ReefAlignmentHelpers;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class DynamicDriveToReefBranchAlgae extends DriveWithNormalVectorAlignment {
-    public DynamicDriveToReefBranchAlgae(DriveSubsystem drive, ReefSide side) {
+    public DynamicDriveToReefBranchAlgae(
+            DriveSubsystem drive, SuperstructureManager manager, ReefSide side) {
         super(
                 drive,
+                manager,
                 () -> {
                     Pose2d robotPose = drive.getPose();
 

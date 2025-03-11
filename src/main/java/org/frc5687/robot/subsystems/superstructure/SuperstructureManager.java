@@ -1,5 +1,6 @@
 package org.frc5687.robot.subsystems.superstructure;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import java.util.Optional;
@@ -22,6 +23,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     private boolean _forceQueueExecution = false;
 
     private SuperstructureMode _currentMode = SuperstructureMode.CORAL;
+    private Optional<Pose2d> _goalPose = Optional.empty();
 
     public SuperstructureManager(RobotContainer container) {
         _container = container;
@@ -69,7 +71,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                                         () ->
                                                 type != RequestType.QUEUED
                                                         || _forceQueueExecution
-                                                        || isPositionNearReef()
+                                                        || isRobotWithinGoalPose()
                                                         || isElevatorGoingDown(stateSupplier.get()),
                                         description)),
                 // execute
@@ -128,7 +130,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
 
     public Command algaeIntake(SuperstructureState state) {
         return new SequentialCommandGroup(
-                        grabAlgae(Constants.SuperstructureGoals.LOW_ALGAE_GRAB, RequestType.IMMEDIATE),
+                        grabAlgae(state, RequestType.IMMEDIATE),
                         new IntakeAlgae(_container.getAlgae()),
                         new WaitUntilCommand(
                                 () ->
@@ -171,6 +173,41 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         return currentPose.getDistance(reefCenter) <= 2.0;
     }
 
+    public void setGoalPose(Optional<Pose2d> goalPose) {
+        _goalPose = goalPose;
+    }
+
+    private boolean isRobotWithinGoalPose() {
+        if (_goalPose.isEmpty()) {
+            return false;
+        }
+
+        Translation2d allianceReefCenter = FieldConstants.getAllianceSpecificReefCenter();
+        Translation2d currentPose = _container.getDrive().getPose().getTranslation();
+        Translation2d goalPose = _goalPose.get().getTranslation();
+
+        double distanceFromCenterToRobot = currentPose.getDistance(allianceReefCenter);
+        double distanceFromCenterToGoal = goalPose.getDistance(allianceReefCenter);
+
+        // Return true if either:
+        // 1. Robot is at the goal pose (within a small threshold)
+        // 2. Robot is between the center and goal (robot is closer to center than goal is)
+        double atGoalThreshold = 0.2;
+
+        return currentPose.getDistance(goalPose) < atGoalThreshold
+                || (distanceFromCenterToRobot <= distanceFromCenterToGoal
+                        && isBetweenCenterAndGoal(currentPose, goalPose, allianceReefCenter));
+    }
+
+    private boolean isBetweenCenterAndGoal(
+            Translation2d robotPose, Translation2d goalPose, Translation2d centerPose) {
+        Translation2d centerToGoal = goalPose.minus(centerPose);
+        Translation2d centerToRobot = robotPose.minus(centerPose);
+
+        return centerToGoal.getX() * centerToRobot.getX() + centerToGoal.getY() * centerToRobot.getY()
+                > 0;
+    }
+
     private boolean isElevatorGoingDown(SuperstructureState requestedState) {
         if (requestedState.getElevator().isEmpty()) return false; // FIXME is this the correct behavior?
 
@@ -181,6 +218,9 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     @Override
     public void periodic() {
         _requestHandler.execute();
+        if (_goalPose.isPresent()) {
+            log("Current Goal Pose", _goalPose.get(), Pose2d.struct);
+        }
     }
 
     @Override

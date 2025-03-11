@@ -418,6 +418,12 @@ public class Constants {
         // public static final Transform3d ROBOT_TO_NORTH_CAM =
         //         new Transform3d(0.281, -0.025, 0.234, new Rotation3d(0, Units.degreesToRadians(-15),
         // 0));
+        // east and west 0.32876
+        // north 0.22643
+        // z: 0.24084
+        // angles: yaw 20 degs
+        // pitch: 10 degs
+        // new LL
 
         public static final Transform3d ROBOT_TO_NORTH_CAM =
                 new Transform3d(0.254, -0.025, 0.226092, new Rotation3d(0, Units.degreesToRadians(-15), 0));

@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class ReefAlignmentHelpers {
     public static final TunableDouble LEFT_OFFSET =
-            new TunableDouble("ReefAlignmentHelpers", "LEFT_OFFSET", 0.035);
+            new TunableDouble("ReefAlignmentHelpers", "LEFT_OFFSET", 0.04);
     public static final TunableDouble RIGHT_OFFSET =
             new TunableDouble("ReefAlignmentHelpers", "RIGHT_OFFSET", -0.27);
     public static final TunableDouble ALGAE_OFFSET =

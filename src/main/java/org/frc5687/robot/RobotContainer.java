@@ -150,29 +150,26 @@ public class RobotContainer implements EpilogueLog {
                                 _drive,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftY())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftX())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getRightX())
-                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () -> true // Always field relative
                                 )
                         : new TeleopDriveCommand(
                                 _drive,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftY())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED
-                                                / 3,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftX())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED
-                                                / 3,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getRightX())
-                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED
-                                                / 3,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () -> true // Always field relative
                                 ));
 
@@ -229,13 +226,17 @@ public class RobotContainer implements EpilogueLog {
                 "LowAlgaeIntake",
                 _superstructureManager
                         .algaeIntake(Constants.SuperstructureGoals.LOW_ALGAE_GRAB)
-                        .alongWith(new DynamicDriveToReefBranch(getDrive(), ReefSide.ALGAE)));
+                        .alongWith(
+                                new DynamicDriveToReefBranch(
+                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE)));
 
         NamedCommands.registerCommand(
                 "HighAlgaeIntake",
                 _superstructureManager
                         .algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB)
-                        .alongWith(new DynamicDriveToReefBranch(getDrive(), ReefSide.ALGAE)));
+                        .alongWith(
+                                new DynamicDriveToReefBranch(
+                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE)));
 
         NamedCommands.registerCommand(
                 "CoralL4",
