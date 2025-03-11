@@ -34,9 +34,9 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
             }
 
             double errorDeg = targetHeading.minus(heading).getDegrees();
-            if (errorDeg < -1.0) {
+            if (errorDeg < -2.5) {
                 outputs.desiredState = LightState.SOLID_GREEN;
-            } else if (errorDeg > 1.0) {
+            } else if (errorDeg > 2.5) {
                 outputs.desiredState = LightState.PURPLE;
             } else { // just right
                 if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
