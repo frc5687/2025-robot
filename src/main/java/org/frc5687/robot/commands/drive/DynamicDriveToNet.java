@@ -59,8 +59,7 @@ public class DynamicDriveToNet extends OutliersCommand {
         double currentX = _drive.getPose().getX();
         Rotation2d currentTheta = _drive.getHeading();
         double yVel =
-                RobotContainer.modifyAxis(_joystickSupplier.getAsDouble())
-                        * Constants.DriveTrain.MAX_MPS;
+                RobotContainer.modifyAxis(_joystickSupplier.getAsDouble()) * Constants.DriveTrain.MAX_MPS;
         log(
                 "DriveToPose Target",
                 new Pose2d(

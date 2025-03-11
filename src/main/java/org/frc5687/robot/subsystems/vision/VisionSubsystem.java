@@ -36,8 +36,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     }
 
     public static boolean isValidTag(AprilTagObservation observation) {
-        if (observation == null)
-            return false;
+        if (observation == null) return false;
 
         boolean isValidId = false;
         for (int id : FieldConstants.Reef.blueAllianceTagIds) {
@@ -46,8 +45,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
                 break;
             }
         }
-        if (!isValidId)
-            return false;
+        if (!isValidId) return false;
 
         double latencyMs = observation.getLatency() * 1000.0;
         double ambiguity = observation.getAmbiguity();
@@ -131,8 +129,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
     public AprilTagObservation getClosestTag() {
         List<AprilTagObservation> validTags = getValidTags();
-        if (validTags.isEmpty())
-            return null;
+        if (validTags.isEmpty()) return null;
 
         return validTags.stream()
                 .max(Comparator.comparingDouble(AprilTagObservation::getArea))
@@ -141,8 +138,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
     public AprilTagObservation getBestTag() {
         List<AprilTagObservation> validTags = getValidTags();
-        if (validTags.isEmpty())
-            return null;
+        if (validTags.isEmpty()) return null;
 
         return validTags.stream()
                 .min(Comparator.comparingDouble(AprilTagObservation::getAmbiguity))
@@ -153,11 +149,12 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         TargetCorners corners = observation.getCorners();
 
         // Calculate center X coordinate from all four corners
-        double centerX = (corners.topLeft.getX()
-                + corners.topRight.getX()
-                + corners.bottomLeft.getX()
-                + corners.bottomRight.getX())
-                / 4.0;
+        double centerX =
+                (corners.topLeft.getX()
+                                + corners.topRight.getX()
+                                + corners.bottomLeft.getX()
+                                + corners.bottomRight.getX())
+                        / 4.0;
 
         Matrix<N3, N3> calibrationMatrix = getCalibrationMatrix(cameraName);
         double principalX = calibrationMatrix.get(0, 2);
@@ -245,8 +242,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     }
 
     @Override
-    protected void processInputs() {
-    }
+    protected void processInputs() {}
 
     public void setPipelineIndex(String cameraName, int pipelineIndex) {
         _outputs.targetPipelines.put(cameraName, pipelineIndex);
