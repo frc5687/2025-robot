@@ -37,7 +37,7 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
 
     private final TunableDouble _smoothingFactor =
             new TunableDouble("DriveToPose", "smoothingFactor", 0.6);
-    private final TunableDouble _maxVelocity = new TunableDouble("DriveToPose", "maxVelocity", 3.0);
+    private final TunableDouble _maxVelocity = new TunableDouble("DriveToPose", "maxVelocity", 4.0);
     private final TunableDouble _maxAcceleration =
             new TunableDouble("DriveToPose", "maxAcceleration", 9.0);
     private final TunableDouble _positionTolerance =

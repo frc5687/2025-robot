@@ -15,6 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.util.CTREUtil;
 import org.frc5687.robot.util.TunableDouble;
@@ -29,6 +30,8 @@ public class HardwareElevatorIO implements ElevatorIO {
     private final StatusSignal<AngularAcceleration> _eastAcceleration;
     private final StatusSignal<AngularVelocity> _eastVelocity;
     private final StatusSignal<Angle> _eastPosition;
+    private final StatusSignal<Current> _eastCurrent;
+    private final StatusSignal<Current> _westCurrent;
 
     private final MotionMagicExpoTorqueCurrentFOC _westPositionTorqueRequest;
     private final MotionMagicExpoTorqueCurrentFOC _eastPositionTorqueRequest;
@@ -53,8 +56,10 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         _westVelocity = _westMotor.getVelocity();
         _westPosition = _westMotor.getPosition();
+        _westCurrent = _westMotor.getSupplyCurrent();
         _eastVelocity = _eastMotor.getVelocity();
         _eastPosition = _eastMotor.getPosition();
+        _eastCurrent = _eastMotor.getSupplyCurrent();
 
         _westPositionTorqueRequest = new MotionMagicExpoTorqueCurrentFOC(0).withSlot(0);
         _eastPositionTorqueRequest = new MotionMagicExpoTorqueCurrentFOC(0).withSlot(0);
@@ -70,6 +75,8 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         configureMotor(_eastMotor, Constants.Elevator.EAST_INVERTED);
         configureMotor(_westMotor, Constants.Elevator.WEST_INVERTED);
+        _westMotor.optimizeBusUtilization();
+        _eastMotor.optimizeBusUtilization();
     }
 
     private void setControlFrequency() {
@@ -81,10 +88,12 @@ public class HardwareElevatorIO implements ElevatorIO {
         _westPosition.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
         _westVelocity.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
         _westAcceleration.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
+        _westCurrent.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
 
         _eastPosition.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
         _eastVelocity.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
         _eastAcceleration.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
+        _eastCurrent.setUpdateFrequency(1.0 / Constants.UPDATE_PERIOD);
     }
 
     @Override
@@ -93,11 +102,11 @@ public class HardwareElevatorIO implements ElevatorIO {
                 _westAcceleration,
                 _westVelocity,
                 _westPosition,
+                _westCurrent,
                 _eastAcceleration,
                 _eastVelocity,
                 _eastPosition,
-                _eastMotor.getSupplyCurrent(),
-                _westMotor.getSupplyCurrent());
+                _eastCurrent);
 
         double eastPosition =
                 Units.rotationsToRadians(_eastPosition.getValueAsDouble())
@@ -153,8 +162,7 @@ public class HardwareElevatorIO implements ElevatorIO {
         inputs.firstStageVelocityMPS = _platformVelocity / 2.0;
         inputs.platformMotorCurrents =
                 new double[] {
-                    _eastMotor.getSupplyCurrent().getValueAsDouble(),
-                    _westMotor.getSupplyCurrent().getValueAsDouble(),
+                    _eastCurrent.getValueAsDouble(), _westCurrent.getValueAsDouble(),
                 };
 
         inputs.isDisabled = _safetyTripped;

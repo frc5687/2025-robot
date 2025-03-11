@@ -29,8 +29,8 @@ deploy {
         roborio(getTargetTypeClass('RoboRIO')) {
             team = project.frc.getTeamNumber()
             debug = project.frc.getDebugOrDefault(false)
-            mirrorAllPaths()
-            mirrorAllAutos()
+            // mirrorAllPaths()
+            // mirrorAllAutos()
             artifacts {
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
                     project.logger.lifecycle('Checking if profile mode...')

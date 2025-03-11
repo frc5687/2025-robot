@@ -161,7 +161,7 @@ public class Constants {
         public static final double ROBOT_RADIUS = Math.sqrt(WIDTH * WIDTH + LENGTH * LENGTH) / 2.0;
 
         // The motors can only go 85% speed under load
-        public static final double EFFICIENCY = 0.85;
+        public static final double EFFICIENCY = 0.90;
         public static final double MAX_MPS =
                 DCMotor.getKrakenX60Foc(1)
                                 .withReduction(Constants.SwerveModule.GEAR_RATIO_DRIVE)
@@ -405,8 +405,13 @@ public class Constants {
 
     public static class Climber {
         public static final String CAN_BUS = "CANivore";
-        public static final double CLIMBER_UP_RADS = 155;
+        public static final double CLIMBER_UP_RADS = 200;
         public static final double CLIMBER_DOWN_RADS = 1300;
+
+        public static final double SLOW_VELOCITY_RAD_PER_SEC = 100; // Slow initial deployment
+        public static final double MEDIUM_VELOCITY_RAD_PER_SEC = 500; // Normal deployment speed
+        public static final double FAST_VELOCITY_RAD_PER_SEC = 1000; // Fast retraction speed
+
         public static final double kP = 6.0;
         public static final double kD = 0.3;
     }

@@ -1,5 +1,6 @@
 package org.frc5687.robot;
 
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -18,7 +19,6 @@ import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.PoseEstimator;
 import org.frc5687.robot.util.QuestNav;
 import org.frc5687.robot.util.WheelOdometrySource;
-import org.frc5687.robot.util.estimator.SwerveOdometry;
 
 public class RobotStateManager implements EpilogueLog {
     @Override
@@ -86,7 +86,6 @@ public class RobotStateManager implements EpilogueLog {
     private Supplier<Rotation2d> _imuRotation;
     private Supplier<SwerveModulePosition[]> _modulePositionSupplier;
 
-    private SwerveOdometry _odom;
     private QuestNav _nav;
 
     private RobotStateManager() {
@@ -123,7 +122,6 @@ public class RobotStateManager implements EpilogueLog {
         _vision = vision;
         _nav = nav;
 
-        _odom = new SwerveOdometry(Constants.DriveTrain.MODULE_LOCATIONS);
         _estimator =
                 new PoseEstimator(
                         new WheelOdometrySource(positionSupplier, headingSupplier),
@@ -137,7 +135,6 @@ public class RobotStateManager implements EpilogueLog {
 
     public synchronized void updateOdometry() {
         // Update swerve inputs from suppliers
-        _odom.update(_swerveInputs);
         updateInputs(_swerveInputs);
         if (_estimator != null) {
             _estimator.updateOdometry();
@@ -424,7 +421,11 @@ public class RobotStateManager implements EpilogueLog {
 
     public void logEstimatedPoses() {
         // log("Quest Estimator Pose", getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV), Pose3d.struct);
-        log("Swerve Estimator Pose", getPose(RobotCoordinate.ROBOT_BASE_SWERVE), Pose3d.struct);
+        log(
+                "Swerve Estimator Pose",
+                getPose(RobotCoordinate.ROBOT_BASE_SWERVE),
+                Pose3d.struct,
+                Importance.CRITICAL);
         // log("Sim Odom Pose", getPose(RobotCoordinate.ROBOT_BASE_SIM_ODOM), Pose3d.struct);
     }
 }
