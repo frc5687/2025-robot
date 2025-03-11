@@ -2,7 +2,9 @@ package org.frc5687.robot.subsystems.vision;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N3;
@@ -15,6 +17,7 @@ import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.util.FieldConstants;
+import org.frc5687.robot.util.vision.AlgaeTracker;
 import org.frc5687.robot.util.vision.AprilTagObservation;
 import org.frc5687.robot.util.vision.NeuralPipelineObservation;
 import org.frc5687.robot.util.vision.TargetCorners;
@@ -24,6 +27,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     private static final double MAX_AMBIGUITY = 0.2;
     private static final double MAX_DISTANCE = 4.0;
     private static final double MIN_CONFIDENCE = 0.7;
+    private static final AlgaeTracker _algaeTracker = AlgaeTracker.getInstance();
 
     public VisionSubsystem(RobotContainer container, VisionIO io) {
         super(container, io, new VisionInputs(), new VisionOutputs());
@@ -32,7 +36,8 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     }
 
     public static boolean isValidTag(AprilTagObservation observation) {
-        if (observation == null) return false;
+        if (observation == null)
+            return false;
 
         boolean isValidId = false;
         for (int id : FieldConstants.Reef.blueAllianceTagIds) {
@@ -41,7 +46,8 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
                 break;
             }
         }
-        if (!isValidId) return false;
+        if (!isValidId)
+            return false;
 
         double latencyMs = observation.getLatency() * 1000.0;
         double ambiguity = observation.getAmbiguity();
@@ -91,6 +97,15 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
         log("NorthTags", northTags, AprilTagObservation.struct);
         log("NorthWestTags", northWestTags, AprilTagObservation.struct);
+
+        List<Pose2d> neuralDetections = new ArrayList<>();
+        for (var observations : inputs.cameraNeuralPipelineObservations.values()) {
+            for (var obs : observations) {
+                neuralDetections.add(new Pose2d(obs.getX(), obs.getY(), new Rotation2d(obs.getAngle())));
+            }
+        }
+        log("Raw Neural Detections", neuralDetections, Pose2d.struct);
+        // _algaeTracker.update(inputs.cameraNeuralPipelineObservations);
     }
 
     private List<AprilTagObservation> filterValidTags(List<AprilTagObservation> observations) {
@@ -116,7 +131,8 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
     public AprilTagObservation getClosestTag() {
         List<AprilTagObservation> validTags = getValidTags();
-        if (validTags.isEmpty()) return null;
+        if (validTags.isEmpty())
+            return null;
 
         return validTags.stream()
                 .max(Comparator.comparingDouble(AprilTagObservation::getArea))
@@ -125,7 +141,8 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
     public AprilTagObservation getBestTag() {
         List<AprilTagObservation> validTags = getValidTags();
-        if (validTags.isEmpty()) return null;
+        if (validTags.isEmpty())
+            return null;
 
         return validTags.stream()
                 .min(Comparator.comparingDouble(AprilTagObservation::getAmbiguity))
@@ -136,12 +153,11 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         TargetCorners corners = observation.getCorners();
 
         // Calculate center X coordinate from all four corners
-        double centerX =
-                (corners.topLeft.getX()
-                                + corners.topRight.getX()
-                                + corners.bottomLeft.getX()
-                                + corners.bottomRight.getX())
-                        / 4.0;
+        double centerX = (corners.topLeft.getX()
+                + corners.topRight.getX()
+                + corners.bottomLeft.getX()
+                + corners.bottomRight.getX())
+                / 4.0;
 
         Matrix<N3, N3> calibrationMatrix = getCalibrationMatrix(cameraName);
         double principalX = calibrationMatrix.get(0, 2);
@@ -229,7 +245,8 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     }
 
     @Override
-    protected void processInputs() {}
+    protected void processInputs() {
+    }
 
     public void setPipelineIndex(String cameraName, int pipelineIndex) {
         _outputs.targetPipelines.put(cameraName, pipelineIndex);
