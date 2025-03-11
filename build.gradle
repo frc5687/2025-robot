@@ -119,6 +119,7 @@ void mirrorAllPaths() {
                 def newFile = new File("src/main/deploy/pathplanner/paths/(Flipped) $file.name")
                 newFile.createNewFile()
                 newFile.setText(new groovy.json.JsonBuilder(jsonNode).toString())
+                newFile.setLastModified(0)
             } catch (Exception e) {
                 println "Error flipping path file $file: $e"
             }
@@ -200,6 +201,7 @@ def mirrorAllAutos() {
                 def newFile = new File("src/main/deploy/pathplanner/autos/(Flipped) $file.name")
                 newFile.createNewFile()
                 newFile.setText(new groovy.json.JsonBuilder(jsonNode).toString())
+                newFile.setLastModified(0)
             } catch (Exception e) {
                 println "Error flipping path file $file: $e"
             }
