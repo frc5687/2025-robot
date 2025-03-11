@@ -150,26 +150,26 @@ public class RobotContainer implements EpilogueLog {
                                 _drive,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftY())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftX())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getRightX())
-                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () -> true // Always field relative
                                 )
                         : new TeleopDriveCommand(
                                 _drive,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftY())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getLeftX())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -modifyAxis(_oi.getDriverController().getRightX())
-                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () -> true // Always field relative
                                 ));
 

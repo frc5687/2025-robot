@@ -53,13 +53,13 @@ public class OperatorInterface {
                                 container.getDrive(),
                                 () ->
                                         -RobotContainer.modifyAxis(getDriverController().getLeftY())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -RobotContainer.modifyAxis(getDriverController().getLeftX())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -RobotContainer.modifyAxis(getDriverController().getRightX())
-                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () -> true)); // Always field relative
 
         _driverController
@@ -70,13 +70,13 @@ public class OperatorInterface {
                                 container.getDrive(),
                                 () ->
                                         -RobotContainer.modifyAxis(getDriverController().getLeftY())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -RobotContainer.modifyAxis(getDriverController().getLeftX())
-                                                * Constants.SwerveModule.MAX_LINEAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () ->
                                         -RobotContainer.modifyAxis(getDriverController().getRightX())
-                                                * Constants.SwerveModule.MAX_ANGULAR_SPEED,
+                                                * Constants.DriveTrain.MAX_MPS,
                                 () -> true)); // Always field relative
 
         _driverController
