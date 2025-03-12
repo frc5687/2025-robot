@@ -416,7 +416,7 @@ public class RobotStateManager implements EpilogueLog {
             getPose(RobotCoordinate.ALGAE_ARM_BASE),
             getPose(RobotCoordinate.INTAKE_ARM_BASE)
         };
-        log("Components", componentPoses, Pose3d.struct);
+        log("Components", componentPoses, Pose3d.struct, Importance.CRITICAL);
     }
 
     public void logEstimatedPoses() {

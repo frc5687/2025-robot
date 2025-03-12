@@ -27,7 +27,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
 
     public SuperstructureManager(RobotContainer container) {
         _container = container;
-        _requestHandler = new RequestHandler(container, this::isCoralMode);
+        _requestHandler = new RequestHandler(container);
     }
 
     public SuperstructureMode getCurrentMode() {
@@ -71,7 +71,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                                         () ->
                                                 type != RequestType.QUEUED
                                                         || _forceQueueExecution
-                                                        || isRobotWithinGoalPose()
+                                                        || (isRobotWithinGoalPose() && canElevatorGoUp(stateSupplier.get()))
                                                         || isElevatorGoingDown(stateSupplier.get()),
                                         description)),
                 // execute
@@ -95,9 +95,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     }
 
     public Command receiveFunnel(RequestType type) {
-        // receiving from funnel, explicitly switch to CORAL mode
         return new SequentialCommandGroup(
-                // new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
                 createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type), indexCoral());
     }
 
@@ -116,16 +114,11 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     }
 
     public Command receiveFunnelSim(RequestType type) {
-        // receiving from funnel, explicitly switch to CORAL mode
-        return new SequentialCommandGroup(
-                // new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
-                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type));
+        return createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type);
     }
 
     public Command grabAlgae(SuperstructureState state, RequestType type) {
-        return new SequentialCommandGroup(
-                // new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
-                createRequest(state, type).until(() -> _container.getAlgae().isAlgaeDetected()));
+        return createRequest(state, type).until(() -> _container.getAlgae().isAlgaeDetected());
     }
 
     public Command algaeIntake(SuperstructureState state) {
@@ -152,25 +145,15 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     }
 
     public Command aimAtAlgaeNet() {
-        // return new SequentialCommandGroup(
-        //         // new InstantCommand(() -> setMode(SuperstructureMode.ALGAE)),
         return createRequest(Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE);
-        // new InstantCommand(()->_container.getAlgae().setWheelMotorVoltage(-12)));
     }
 
-    // Queue override controls
     public void forceQueueExecution() {
         _forceQueueExecution = true;
     }
 
     public void releaseQueueExecution() {
         _forceQueueExecution = false;
-    }
-
-    private boolean isPositionNearReef() {
-        Translation2d currentPose = _container.getDrive().getPose().getTranslation();
-        Translation2d reefCenter = FieldConstants.getAllianceSpecificReefCenter();
-        return currentPose.getDistance(reefCenter) <= 2.0;
     }
 
     public void setGoalPose(Optional<Pose2d> goalPose) {
@@ -189,9 +172,6 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         double distanceFromCenterToRobot = currentPose.getDistance(allianceReefCenter);
         double distanceFromCenterToGoal = goalPose.getDistance(allianceReefCenter);
 
-        // Return true if either:
-        // 1. Robot is at the goal pose (within a small threshold)
-        // 2. Robot is between the center and goal (robot is closer to center than goal is)
         double atGoalThreshold = 0.2;
 
         return currentPose.getDistance(goalPose) < atGoalThreshold
@@ -206,6 +186,22 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
 
         return centerToGoal.getX() * centerToRobot.getX() + centerToGoal.getY() * centerToRobot.getY()
                 > 0;
+    }
+
+    private boolean canElevatorGoUp(SuperstructureState requestedState) {
+        if (requestedState.getElevator().isEmpty()) return false;
+
+        double currentElevatorHeight = _container.getElevator().getElevatorHeight();
+        double requestedHeight = requestedState.getElevator().get().getHeight();
+        boolean isMovingUp = requestedHeight > currentElevatorHeight;
+
+        if (!isMovingUp) return false;
+
+        if (isCoralMode()) {
+            return _container.getCoral().isCoralDetected();
+        }
+
+        return true;
     }
 
     private boolean isElevatorGoingDown(SuperstructureState requestedState) {

@@ -57,6 +57,7 @@ public class SimCoralArmIO implements CoralArmIO {
         inputs.angularVelocityRadPerSec = _armSim.getVelocityRadPerSec();
         _armEncoderSim.setDistance(inputs.angleRads);
         _armEncoderSim.setRate(inputs.angularVelocityRadPerSec);
+        inputs.isCoralDetected = false;
 
         inputs.motorCurrent = _armSim.getCurrentDrawAmps();
         inputs.motorTorque = inputs.motorCurrent * Constants.CoralArm.GEARBOX.KtNMPerAmp;
