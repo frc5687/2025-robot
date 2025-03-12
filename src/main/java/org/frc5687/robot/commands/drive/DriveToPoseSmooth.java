@@ -12,7 +12,7 @@ import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 import org.frc5687.robot.util.TunableDouble;
 
 public class DriveToPoseSmooth extends OutliersCommand {
-    private final DriveSubsystem _drive;
+    protected final DriveSubsystem _drive;
     private final Supplier<Pose2d> _poseSupplier;
 
     private ChassisSpeeds _fieldRelativeVelocity;

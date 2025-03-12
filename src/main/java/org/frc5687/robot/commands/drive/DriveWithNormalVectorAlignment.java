@@ -37,7 +37,7 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
 
     private final TunableDouble _smoothingFactor =
             new TunableDouble("DriveToPose", "smoothingFactor", 0.6);
-    private final TunableDouble _maxVelocity = new TunableDouble("DriveToPose", "maxVelocity", 4.0);
+    private final TunableDouble _maxVelocity = new TunableDouble("DriveToPose", "maxVelocity", 3.5);
     private final TunableDouble _maxAcceleration =
             new TunableDouble("DriveToPose", "maxAcceleration", 9.0);
     private final TunableDouble _positionTolerance =
@@ -50,10 +50,10 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
     private final TunableDouble _aggressiveAccelMultiplier =
             new TunableDouble("DriveToPose", "aggressiveAccelMultiplier", 2.0);
 
-    private final TunableDouble _driveKp = new TunableDouble("DriveToPose", "driveKp", 3.0);
+    private final TunableDouble _driveKp = new TunableDouble("DriveToPose", "driveKp", 4.0);
     private final TunableDouble _driveKi = new TunableDouble("DriveToPose", "driveKi", 0.0);
-    private final TunableDouble _driveKd = new TunableDouble("DriveToPose", "driveKd", 0.1);
-    private final TunableDouble _rotKp = new TunableDouble("DriveToPose", "rotKp", 3.0);
+    private final TunableDouble _driveKd = new TunableDouble("DriveToPose", "driveKd", 0.22);
+    private final TunableDouble _rotKp = new TunableDouble("DriveToPose", "rotKp", 3.3);
     private final TunableDouble _rotKi = new TunableDouble("DriveToPose", "rotKi", 0.0);
     private final TunableDouble _rotKd = new TunableDouble("DriveToPose", "rotKd", 0.1);
 

@@ -27,7 +27,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
 
     public SuperstructureManager(RobotContainer container) {
         _container = container;
-        _requestHandler = new RequestHandler(container);
+        _requestHandler = new RequestHandler(container, this::isCoralMode);
     }
 
     public SuperstructureMode getCurrentMode() {

@@ -4,6 +4,7 @@ import edu.wpi.first.math.util.Units;
 import java.util.ArrayDeque;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.function.BooleanSupplier;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.subsystems.coralarm.CoralState;
 import org.frc5687.robot.util.EpilogueLog;
@@ -15,6 +16,7 @@ public class RequestHandler implements EpilogueLog {
     private SuperstructureRequest _queuedRequest = null;
 
     private static final double ELEVATOR_THRESHOLD = 0.3; // L3
+    private static final double ELEVATOR_GOING_UP_THRESHOLD = 0.05;
     private static final double CORAL_ANGLE_THRESHOLD = Units.degreesToRadians(250);
 
     private boolean _elevatorMovementStarted = false;
@@ -23,10 +25,13 @@ public class RequestHandler implements EpilogueLog {
     private boolean _inParallelMovement = false;
     private boolean _movingUp = false;
 
-    public RequestHandler(RobotContainer container) {
+    private BooleanSupplier _isCoralModeSupplier;
+
+    public RequestHandler(RobotContainer container, BooleanSupplier isCoralModeSupplier) {
         _container = container;
         _activeRequests = new ArrayDeque<>();
         _queuedRequest = null;
+        _isCoralModeSupplier = isCoralModeSupplier;
     }
 
     public void handleNewRequest(SuperstructureRequest request) {
@@ -143,6 +148,17 @@ public class RequestHandler implements EpilogueLog {
     private void handleParallelMovementUp() {
         double currentCoralAngle = _container.getCoral().getArmAngleRads();
 
+        // Check if coral is detected before allowing upward movement
+        if (_isCoralModeSupplier.getAsBoolean()) {
+            // In coral mode - check for coral detection
+            if (!_container.getCoral().isCoralDetected()) {
+                log(
+                        "RequestWaiting",
+                        "In coral mode - waiting for coral detection before upward elevator movement");
+                return; // Keep request in queue but don't execute until coral is detected
+            }
+        }
+
         // Step 1: Start moving coral arm to safe position if not started
         if (!_coralMovementStarted) {
             _container.getCoral().setArmAngle(CoralState.PLACING_L4);
@@ -244,6 +260,15 @@ public class RequestHandler implements EpilogueLog {
         var activeRequest = getActiveRequest();
         if (activeRequest == null) return;
 
+        // Check if this is an upward elevator movement with coral mode
+        if (isUpwardElevatorWithCoral(activeRequest)) {
+            if (_isCoralModeSupplier.getAsBoolean()) {
+                if (!_container.getCoral().isCoralDetected()) {
+                    return; // Wait here until coral is detected
+                }
+            }
+        }
+
         // log("ExecutingRequest", activeRequest.description());
         setSubsystemStates(activeRequest.targetPosition());
 
@@ -251,6 +276,20 @@ public class RequestHandler implements EpilogueLog {
             // log("RequestCompleted", activeRequest.description());
             _activeRequests.remove();
         }
+    }
+
+    private boolean isUpwardElevatorWithCoral(SuperstructureRequest request) {
+        var elevatorRequest = request.targetPosition().getElevator();
+        var coralRequest = request.targetPosition().getCoral();
+
+        if (elevatorRequest.isEmpty() || coralRequest.isEmpty()) return false;
+
+        double requestedElevatorHeight = elevatorRequest.get().getHeight();
+        double currentElevatorHeight = _container.getElevator().getElevatorHeight();
+
+        // Check if elevator is moving up past the threshold
+        return currentElevatorHeight < requestedElevatorHeight
+                && requestedElevatorHeight > ELEVATOR_GOING_UP_THRESHOLD;
     }
 
     private void setSubsystemStates(SuperstructureState state) {
