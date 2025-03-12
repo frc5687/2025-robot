@@ -50,6 +50,7 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
 
             return;
         }
+
         if (_container.getClimber().isSensorTriggered()) {
             outputs.desiredState = LightState.BLUE;
         } else if (_container.getSuperstructureManager().isAlgaeMode()) {
