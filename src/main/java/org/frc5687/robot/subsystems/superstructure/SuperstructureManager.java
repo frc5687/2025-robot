@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
+import org.frc5687.robot.commands.coral.IntakeAndIndexCoral;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.FieldConstants;
@@ -94,23 +95,25 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         return createRequest(() -> placeState, "Set place height " + placeState.getElevator(), type);
     }
 
+    public RequestHandler getRequestHandler() {
+        return _requestHandler;
+    }
+
     public Command receiveFunnel(RequestType type) {
-        return new SequentialCommandGroup(
-                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type), indexCoral());
+        return createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type)
+                .andThen(
+                        new InstantCommand(
+                                () -> {
+                                    SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
+                                    // This only has worked if a schedule, I'm not sure why???
+                                    new IntakeAndIndexCoral(_container.getCoral(), _requestHandler, currentRequest)
+                                            .schedule();
+                                }));
     }
 
     public Command indexCoral() {
-        return new FunctionalCommand(
-                () -> {
-                    _container.getCoral().setWheelMotorDutyCycle(0.3);
-                },
-                () -> {},
-                (interrupted) -> {
-                    double currentPos = _container.getCoral().getWheelMotorPosition();
-                    _container.getCoral().setWheelMotorPosition(currentPos + 1.5);
-                },
-                _container.getCoral()::isCoralDetected,
-                _container.getCoral());
+        return new IntakeAndIndexCoral(
+                _container.getCoral(), _requestHandler, _requestHandler.getActiveRequest());
     }
 
     public Command receiveFunnelSim(RequestType type) {
