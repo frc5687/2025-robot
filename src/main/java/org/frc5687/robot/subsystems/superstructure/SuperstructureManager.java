@@ -106,14 +106,12 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                                 () -> {
                                     SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
                                     // This only has worked if a schedule, I'm not sure why???
-                                    new IntakeAndIndexCoral(_container.getCoral(), _requestHandler, currentRequest)
-                                            .schedule();
+                                    new IntakeAndIndexCoral(_container.getCoral(), this, currentRequest).schedule();
                                 }));
     }
 
     public Command indexCoral() {
-        return new IntakeAndIndexCoral(
-                _container.getCoral(), _requestHandler, _requestHandler.getActiveRequest());
+        return new IntakeAndIndexCoral(_container.getCoral(), this, _requestHandler.getActiveRequest());
     }
 
     public Command receiveFunnelSim(RequestType type) {

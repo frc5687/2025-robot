@@ -2,20 +2,20 @@ package org.frc5687.robot.commands.coral;
 
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
-import org.frc5687.robot.subsystems.superstructure.RequestHandler;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureRequest;
 
 public class IntakeAndIndexCoral extends OutliersCommand {
     private final CoralArmSubsystem _coral;
-    private final RequestHandler _requestHandler;
+    private final SuperstructureManager _manager;
     private final SuperstructureRequest _initialRequest;
 
     public IntakeAndIndexCoral(
             CoralArmSubsystem coral,
-            RequestHandler requestHandler,
+            SuperstructureManager manager,
             SuperstructureRequest initialRequest) {
         _coral = coral;
-        _requestHandler = requestHandler;
+        _manager = manager;
         _initialRequest = initialRequest;
         addRequirements(_coral);
     }
@@ -37,7 +37,7 @@ public class IntakeAndIndexCoral extends OutliersCommand {
         }
 
         // We need to check if the active (which should always be receive from funnel) is the same
-        SuperstructureRequest activeRequest = _requestHandler.getActiveRequest();
+        SuperstructureRequest activeRequest = _manager.getRequestHandler().getActiveRequest();
         return activeRequest != null && activeRequest != _initialRequest;
     }
 
