@@ -41,6 +41,8 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
                 || coralS.hasChanged()) {
             _io.setPID(coralP.get(), coralI.get(), coralD.get(), coralV.get(), coralS.get(), 0.0, 0.0);
         }
+        var command = getCurrentCommand();
+        log("Active Command", command == null ? "null" : command.getName());
     }
 
     private double calculateGravityFeedForward(double angle, double gravityAcceleration) {

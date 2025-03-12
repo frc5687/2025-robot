@@ -18,6 +18,11 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
+import java.util.ArrayList;
+import java.util.List;
 import org.frc5687.robot.util.CTREUtil;
 
 public class CTRESwerveModuleIO implements SwerveModuleIO {
@@ -30,6 +35,14 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
     private final StatusSignal<Angle> _steerPosition;
     private final StatusSignal<AngularVelocity> _steerVelocity;
 
+    private final StatusSignal<Voltage> _driveMotorVoltage;
+    private final StatusSignal<Current> _driveStatorCurrent;
+    private final StatusSignal<Temperature> _driveTemp;
+    private final StatusSignal<Voltage> _steerMotorVoltage;
+    private final StatusSignal<Current> _steerStatorCurrent;
+    private final StatusSignal<Temperature> _steerTemp;
+    private final StatusSignal<Angle> _cancoderAbsolutePosition;
+
     private final PositionTorqueCurrentFOC _steerMotionMagicReq =
             new PositionTorqueCurrentFOC(0).withUpdateFreqHz(1000.0).withSlot(0);
     private final VelocityTorqueCurrentFOC _driveVelocityReq =
@@ -38,6 +51,8 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
 
     private final double _driveRotationsPerMeter;
     private final double _couplingRatio;
+
+    private final List<BaseStatusSignal> _allStatusSignals = new ArrayList<>();
 
     public CTRESwerveModuleIO(
             SwerveModuleConfig config,
@@ -57,23 +72,49 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         _driveVelocity = _driveMotor.getVelocity();
         _steerPosition = _steerMotor.getPosition();
         _steerVelocity = _steerMotor.getVelocity();
+        _driveMotorVoltage = _driveMotor.getMotorVoltage();
+        _driveStatorCurrent = _driveMotor.getStatorCurrent();
+        _driveTemp = _driveMotor.getDeviceTemp();
+        _steerMotorVoltage = _steerMotor.getMotorVoltage();
+        _steerStatorCurrent = _steerMotor.getStatorCurrent();
+        _steerTemp = _steerMotor.getDeviceTemp();
+        _cancoderAbsolutePosition = _cancoder.getAbsolutePosition();
 
         double wheelCircumference = 2 * Math.PI * config.wheelRadius();
         _driveRotationsPerMeter = config.driveGearRatio() / wheelCircumference;
         _couplingRatio = config.couplingRatio();
 
+        _allStatusSignals.add(_drivePosition);
+        _allStatusSignals.add(_driveVelocity);
+        _allStatusSignals.add(_steerPosition);
+        _allStatusSignals.add(_steerVelocity);
+        _allStatusSignals.add(_driveMotorVoltage);
+        _allStatusSignals.add(_driveStatorCurrent);
+        _allStatusSignals.add(_driveTemp);
+        _allStatusSignals.add(_steerMotorVoltage);
+        _allStatusSignals.add(_steerStatorCurrent);
+        _allStatusSignals.add(_steerTemp);
+        _allStatusSignals.add(_cancoderAbsolutePosition);
+
         BaseStatusSignal.setUpdateFrequencyForAll(
                 250.0, _drivePosition, _driveVelocity, _steerPosition);
+        BaseStatusSignal.setUpdateFrequencyForAll(
+                50.0, _steerVelocity, _cancoderAbsolutePosition, _driveMotorVoltage, _steerMotorVoltage);
+        BaseStatusSignal.setUpdateFrequencyForAll(
+                10.0, _driveStatorCurrent, _steerStatorCurrent, _driveTemp, _steerTemp);
 
-        BaseStatusSignal.setUpdateFrequencyForAll(50, _steerVelocity);
+        _driveMotor.optimizeBusUtilization();
+        _steerMotor.optimizeBusUtilization();
+        _cancoder.optimizeBusUtilization();
+    }
 
-        // _driveMotor.optimizeBusUtilization();
-        // _steerMotor.optimizeBusUtilization();
+    public List<BaseStatusSignal> getStatusSignals() {
+        return _allStatusSignals;
     }
 
     @Override
     public void updateInputs(SwerveModuleInputs inputs) {
-        BaseStatusSignal.refreshAll(_drivePosition, _driveVelocity, _steerPosition, _steerVelocity);
+        BaseStatusSignal.refreshAll(_allStatusSignals.toArray(new BaseStatusSignal[0]));
 
         double driveRot =
                 BaseStatusSignal.getLatencyCompensatedValueAsDouble(_drivePosition, _driveVelocity);
@@ -85,18 +126,17 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
 
         inputs.drivePositionMeters = driveRot / _driveRotationsPerMeter;
         inputs.driveVelocityMPS = _driveVelocity.getValueAsDouble() / _driveRotationsPerMeter;
-        inputs.driveAppliedVolts = _driveMotor.getMotorVoltage().getValueAsDouble();
-        inputs.driveCurrentAmps = _driveMotor.getStatorCurrent().getValueAsDouble();
-        inputs.driveTempCelsius = _driveMotor.getDeviceTemp().getValueAsDouble();
+        inputs.driveAppliedVolts = _driveMotorVoltage.getValueAsDouble();
+        inputs.driveCurrentAmps = _driveStatorCurrent.getValueAsDouble();
+        inputs.driveTempCelsius = _driveTemp.getValueAsDouble();
 
         inputs.steerAngle = Rotation2d.fromRotations(steerRot);
         inputs.steerVelocityRadPerSec = _steerVelocity.getValueAsDouble() * 2.0 * Math.PI;
-        inputs.steerAppliedVolts = _steerMotor.getMotorVoltage().refresh().getValueAsDouble();
-        inputs.steerCurrentAmps = _steerMotor.getStatorCurrent().getValueAsDouble();
-        inputs.steerTempCelsius = _steerMotor.getDeviceTemp().getValueAsDouble();
+        inputs.steerAppliedVolts = _steerMotorVoltage.getValueAsDouble();
+        inputs.steerCurrentAmps = _steerStatorCurrent.getValueAsDouble();
+        inputs.steerTempCelsius = _steerTemp.getValueAsDouble();
 
-        inputs.absoluteAngle =
-                Rotation2d.fromRotations(_cancoder.getAbsolutePosition().getValueAsDouble());
+        inputs.absoluteAngle = Rotation2d.fromRotations(_cancoderAbsolutePosition.getValueAsDouble());
     }
 
     @Override
@@ -108,7 +148,6 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
             case VELOCITY:
                 double velocitySetpoint = outputs.driveVelocitySetpointMPS * _driveRotationsPerMeter;
                 _driveMotor.setControl(_driveVelocityReq.withVelocity(velocitySetpoint));
-                // .withFeedForward(outputs.driveFeedforwardVolts));
                 break;
             default:
                 _driveMotor.setControl(new VoltageOut(0));
@@ -119,7 +158,6 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
             case POSITION:
                 _steerMotor.setControl(
                         _steerMotionMagicReq.withPosition(outputs.steerAngleSetpoint.getRotations()));
-                // .withFeedForward(outputs.steerFeedforwardVolts));
                 break;
             case VOLTAGE:
                 _steerMotor.setControl(new VoltageOut(outputs.steerVoltage));
@@ -132,7 +170,7 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
 
     @Override
     public void reset() {
-        _steerMotor.setPosition(_cancoder.getAbsolutePosition().getValue());
+        _steerMotor.setPosition(_cancoderAbsolutePosition.getValue());
     }
 
     private void configureDriveMotor(SwerveModuleConfig config) {
@@ -159,7 +197,6 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
 
         driveConfigs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.02;
         _driveMotor.getConfigurator().apply(driveConfigs);
-        // CTREUtil.applyConfiguration(_driveMotor, driveConfigs);
     }
 
     private void configureSteerMotor(SwerveModuleConfig config) {
@@ -190,10 +227,8 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
 
         steerConfigs.TorqueCurrent.PeakForwardTorqueCurrent = config.steerCurrentLimit();
         steerConfigs.TorqueCurrent.PeakReverseTorqueCurrent = -config.steerCurrentLimit();
-        // steerConfigs.CurrentLimits.SupplyCurrentLimit = config.steerCurrentLimit();
 
         _steerMotor.getConfigurator().apply(steerConfigs);
-        // CTREUtil.applyConfiguration(_steerMotor, steerConfigs);
     }
 
     private void configureCancoder(SwerveModuleConfig config) {
@@ -201,7 +236,6 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         _cancoderConfigs.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(0.5));
         _cancoderConfigs.MagnetSensor.MagnetOffset = config.absoluteEncoderOffset();
         _cancoder.getConfigurator().apply(_cancoderConfigs);
-        // CTREUtil.applyConfiguration(_cancoder, _cancoderConfigs);
     }
 
     @Override
@@ -216,5 +250,14 @@ public class CTRESwerveModuleIO implements SwerveModuleIO {
         config.kG = kG;
 
         CTREUtil.applyConfiguration(_driveMotor, config);
+    }
+
+    /**
+     * Run characterization on the drive motor
+     *
+     * @param voltage Voltage to apply
+     */
+    public void runCharacterization(double voltage) {
+        _driveMotor.setControl(new VoltageOut(voltage));
     }
 }

@@ -1,5 +1,6 @@
 package org.frc5687.robot.commands.drive;
 
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,7 +13,7 @@ import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 import org.frc5687.robot.util.TunableDouble;
 
 public class DriveToPoseSmooth extends OutliersCommand {
-    private final DriveSubsystem _drive;
+    protected final DriveSubsystem _drive;
     private final Supplier<Pose2d> _poseSupplier;
 
     private ChassisSpeeds _fieldRelativeVelocity;
@@ -82,7 +83,7 @@ public class DriveToPoseSmooth extends OutliersCommand {
 
     @Override
     public void execute(double timestamp) {
-        log("Target Pose", _poseSupplier.get(), Pose2d.struct);
+        log("Target Pose", _poseSupplier.get(), Pose2d.struct, Importance.CRITICAL);
         if (_driveKp.hasChanged()
                 || _driveKi.hasChanged()
                 || _driveKd.hasChanged()
