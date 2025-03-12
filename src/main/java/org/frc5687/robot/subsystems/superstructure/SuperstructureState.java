@@ -44,10 +44,10 @@ public class SuperstructureState {
         if (this == obj) return true;
         if (!(obj instanceof SuperstructureState)) return false;
         SuperstructureState other = (SuperstructureState) obj;
-        return _elevator == other._elevator
-                && _coral == other._coral
-                && _algae == other._algae
-                && _intake == other._intake;
+        return _elevator.equals(other._elevator)
+                && _coral.equals(other._coral)
+                && _algae.equals(other._algae)
+                && _intake.equals(other._intake);
     }
 
     @Override

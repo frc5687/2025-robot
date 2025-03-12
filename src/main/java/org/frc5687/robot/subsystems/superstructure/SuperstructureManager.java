@@ -110,6 +110,12 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                                 }));
     }
 
+    public Command autoReceiveFunnel() {
+        return new SequentialCommandGroup(
+                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, RequestType.IMMEDIATE),
+                new IntakeAndIndexCoral(_container.getCoral(), this, _requestHandler.getActiveRequest()));
+    }
+
     public Command indexCoral() {
         return new IntakeAndIndexCoral(_container.getCoral(), this, _requestHandler.getActiveRequest());
     }

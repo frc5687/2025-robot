@@ -166,8 +166,7 @@ public class RobotContainer implements EpilogueLog {
                             .receiveFunnelSim(RequestType.IMMEDIATE)
                             .andThen(new WaitCommand(1)));
         } else {
-            NamedCommands.registerCommand(
-                    "ReceiveFunnel", _superstructureManager.receiveFunnel(RequestType.IMMEDIATE));
+            NamedCommands.registerCommand("ReceiveFunnel", _superstructureManager.autoReceiveFunnel());
         }
 
         NamedCommands.registerCommand(
