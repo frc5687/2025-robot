@@ -306,8 +306,8 @@ public class Constants {
         // public static final double MOTION_MAGIC_EXPO_KV = .09;
         // public static final double MOTION_MAGIC_EXPO_KA = .02;
 
-        public static final double MOTION_MAGIC_EXPO_KV = 0.05;
-        public static final double MOTION_MAGIC_EXPO_KA = 0.04;
+        public static final double MOTION_MAGIC_EXPO_KV = 0.03;
+        public static final double MOTION_MAGIC_EXPO_KA = 0.035;
 
         // This needs to be tuned with real PID values
         public static final double kP = 100.0;
