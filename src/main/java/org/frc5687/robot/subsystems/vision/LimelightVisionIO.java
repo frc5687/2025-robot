@@ -1,5 +1,7 @@
 package org.frc5687.robot.subsystems.vision;
 
+import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Timer;
@@ -31,7 +33,6 @@ public class LimelightVisionIO implements VisionIO, EpilogueLog {
 
         addCamera("North_Camera", "limelight-center", Constants.Vision.ROBOT_TO_NORTH_CAM);
         addCamera("North_West_Camera", "limelight-left", Constants.Vision.ROBOT_TO_NW_CAM);
-        // timer = 0;
     }
 
     private void addCamera(String logicalName, String limelightName, Transform3d robotToCamera) {
@@ -109,10 +110,16 @@ public class LimelightVisionIO implements VisionIO, EpilogueLog {
             var obs = NeuralPipelineObservation.fromLimelight(detection, robotToLens);
             if (obs == null) continue;
             inputs.cameraNeuralPipelineObservations.get(logicalName).add(obs);
-            log("angle (deg)", +new Rotation2d(obs.getX(), obs.getY()).getDegrees());
-            log("distance from robot center", Math.hypot(obs.getX(), obs.getY()));
-            log("x", obs.getX());
-            log("y", obs.getY());
+            log("pose zero for rreffefnec", Pose2d.kZero, Pose2d.struct, Importance.CRITICAL);
+            log(
+                    "algaae",
+                    new Pose2d(obs.getX(), obs.getY(), new Rotation2d()),
+                    Pose2d.struct,
+                    Importance.CRITICAL);
+            log("angle (deg)", +new Rotation2d(obs.getX(), obs.getY()).getDegrees(), Importance.CRITICAL);
+            log("distance from robot center", Math.hypot(obs.getX(), obs.getY()), Importance.CRITICAL);
+            log("x", obs.getX(), Importance.CRITICAL);
+            log("y", obs.getY(), Importance.CRITICAL);
         }
     }
 

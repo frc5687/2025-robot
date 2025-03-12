@@ -408,8 +408,8 @@ public class Constants {
         public static final double CLIMBER_UP_RADS = 250;
         public static final double CLIMBER_DOWN_RADS = 1300;
 
-        public static final double SLOW_VELOCITY_RAD_PER_SEC = 100; 
-        public static final double FAST_VELOCITY_RAD_PER_SEC = 1000; 
+        public static final double SLOW_VELOCITY_RAD_PER_SEC = 100;
+        public static final double FAST_VELOCITY_RAD_PER_SEC = 1000;
 
         public static final double kP = 6.0;
         public static final double kD = 0.3;
@@ -430,7 +430,11 @@ public class Constants {
         // new LL
 
         public static final Transform3d ROBOT_TO_NORTH_CAM =
-                new Transform3d(0.254, -0.025, 0.226092, new Rotation3d(0, Units.degreesToRadians(-15), 0));
+                new Transform3d(
+                        0.22643,
+                        -0.32876,
+                        0.24084,
+                        new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(20)));
 
         public static final Matrix<N3, N3> simCalibrationMatrix = new Matrix<>(Nat.N3(), Nat.N3());
         public static final double simFocalLength =

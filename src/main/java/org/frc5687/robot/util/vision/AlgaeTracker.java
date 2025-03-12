@@ -1,11 +1,15 @@
 package org.frc5687.robot.util.vision;
 
+import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.ArrayList;
 import java.util.List;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.TunableDouble;
 
-public class AlgaeTracker {
+public class AlgaeTracker implements EpilogueLog {
     private static AlgaeTracker _instance;
     private static List<Algae> _algae;
 
@@ -13,7 +17,7 @@ public class AlgaeTracker {
     private static final TunableDouble closeEnough =
             new TunableDouble("AlgaeTracker", "closeEnough", 0.3);
     private static final TunableDouble posLerp = new TunableDouble("AlgaeTracker", "posLerp", 0.5);
-    private static final TunableDouble velLerp = new TunableDouble("AlgaeTracker", "velLerp", 0.5);
+    private static final TunableDouble velLerp = new TunableDouble("AlgaeTracker", "velLerp", 0.005);
 
     private static final int ALGAE_CLASS_ID = 0;
 
@@ -32,6 +36,7 @@ public class AlgaeTracker {
         for (var obs : observations) {
             if (obs.getClassId() == ALGAE_CLASS_ID) processObservation(obs);
         }
+        List<Pose2d> poses = new ArrayList<>();
         // iterate backwards, updating all algae & deleting improbable algae
         for (int i = _algae.size() - 1; i >= 0; i--) {
             var algae = _algae.get(i);
@@ -40,8 +45,11 @@ public class AlgaeTracker {
             algae.prob *= decay.get();
             if (algae.prob < 0.2) {
                 _algae.remove(i); // remove the index i
+            } else {
+                poses.add(new Pose2d(algae.x, algae.y, new Rotation2d()));
             }
         }
+        log("algae poses", poses, Pose2d.struct, Importance.CRITICAL);
     }
 
     private synchronized void processObservation(NeuralPipelineObservation obs) {
@@ -85,5 +93,9 @@ public class AlgaeTracker {
             this.prob = 0.7;
         }
     }
-    ;
+
+    @Override
+    public String getLogBase() {
+        return "AlgaeTracker";
+    }
 }

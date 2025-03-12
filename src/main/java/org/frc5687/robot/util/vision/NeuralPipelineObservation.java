@@ -1,5 +1,7 @@
 package org.frc5687.robot.util.vision;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.util.EpilogueLog;
@@ -35,18 +37,26 @@ public class NeuralPipelineObservation implements EpilogueLog {
             return null;
         }
 
+        Transform2d robotToCamera2d =
+                new Transform2d(
+                        robotToCamera.getX(), robotToCamera.getY(), robotToCamera.getRotation().toRotation2d());
+
         double detectionWidth = rawDetection.corner2_X - rawDetection.corner0_X;
         double detectionHeight = rawDetection.corner2_Y - rawDetection.corner0_Y;
         double detectionSizePixels = Math.max(detectionWidth, detectionHeight);
         double radiansPerPixel = Units.degreesToRadians(81.984) / 640;
         double detectionSizeAngle = detectionSizePixels * radiansPerPixel;
         double distanceMeters = Units.inchesToMeters(17) / Math.tan(detectionSizeAngle);
-        double x =
-                robotToCamera.getX() + distanceMeters * Math.cos(Units.degreesToRadians(rawDetection.txnc));
-        double y =
-                robotToCamera.getY() + distanceMeters * Math.sin(Units.degreesToRadians(rawDetection.txnc));
+        double cameraX = distanceMeters * Math.cos(Units.degreesToRadians(rawDetection.txnc));
+        double cameraY = -distanceMeters * Math.sin(Units.degreesToRadians(rawDetection.txnc));
 
-        return new NeuralPipelineObservation(rawDetection.classId, x, y);
+        Transform2d camToGamePiece = new Transform2d(cameraX, cameraY, new Rotation2d());
+        Transform2d robotToGamePiece = robotToCamera2d.plus(camToGamePiece);
+
+        // worldToRobot + robotToCam + camToGamePiece
+
+        return new NeuralPipelineObservation(
+                rawDetection.classId, robotToGamePiece.getX(), robotToGamePiece.getY());
     }
 
     public static AprilTagObservation fromPhotonVision(PhotonTrackedTarget target, double timestamp) {

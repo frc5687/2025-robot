@@ -1,11 +1,13 @@
 package org.frc5687.robot.subsystems.vision;
 
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
+import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.vision.AlgaeTracker;
@@ -99,11 +102,15 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         List<Pose2d> neuralDetections = new ArrayList<>();
         for (var observations : inputs.cameraNeuralPipelineObservations.values()) {
             for (var obs : observations) {
-                neuralDetections.add(new Pose2d(obs.getX(), obs.getY(), new Rotation2d(obs.getAngle())));
+                neuralDetections.add(
+                        RobotStateManager.getInstance()
+                                .getPose(RobotCoordinate.ROBOT_BASE_SWERVE)
+                                .toPose2d()
+                                .plus(new Transform2d(obs.getX(), obs.getY(), new Rotation2d())));
             }
         }
-        log("Raw Neural Detections", neuralDetections, Pose2d.struct);
-        // _algaeTracker.update(inputs.cameraNeuralPipelineObservations);
+        log("Raw Neural Detections", neuralDetections, Pose2d.struct, Importance.CRITICAL);
+        _algaeTracker.update(inputs.cameraNeuralPipelineObservations.get("North_Camera"));
     }
 
     private List<AprilTagObservation> filterValidTags(List<AprilTagObservation> observations) {
