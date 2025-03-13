@@ -1,5 +1,7 @@
 package org.frc5687.robot.subsystems.superstructure;
 
+import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import java.util.ArrayDeque;
 import java.util.Optional;
@@ -234,6 +236,11 @@ public class RequestHandler implements EpilogueLog {
 
     private void checkAndStartQueuedRequest() {
         if (_queuedRequest != null && _queuedRequest.driveCondition().get()) {
+            log(
+                    "Request Start Pose",
+                    _container.getDrive().getPose(),
+                    Pose2d.struct,
+                    Importance.CRITICAL);
             // log("StartingQueuedRequest", _queuedRequest.description());
             handleImmediateRequest(_queuedRequest);
             _queuedRequest = null;
