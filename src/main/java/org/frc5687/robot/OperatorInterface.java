@@ -15,7 +15,7 @@ import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
 import org.frc5687.robot.commands.drive.DriveToHP;
-import org.frc5687.robot.commands.drive.DynamicDriveToNet;
+import org.frc5687.robot.commands.drive.DynamicDriveToLane;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
@@ -165,22 +165,34 @@ public class OperatorInterface {
                 .leftMiddleButton()
                 .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
 
+        // _driverController
+        //         .a()
+        //         .whileTrue(new DynamicDriveToNet(container.getDrive(), _driverController::getLeftX));
+
+        _driverController
+                .y()
+                .onTrue(
+                        new TeleopDriveWithSnapTo(
+                                Degrees.of(180).in(Radians),
+                                container.getDrive(),
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftY())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftX())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getRightX())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () -> true)); // Always field relative
         _driverController
                 .a()
-                .whileTrue(new DynamicDriveToNet(container.getDrive(), _driverController::getLeftX));
-
-        // _driverController
-        //         .y()
-        //         .whileTrue(new DriveToGroundAlgae(container.getDrive(), container.getVision()));
-
-        // _driverController
-        //         .povDown()
-        //         .whileTrue(
-        //                 new DynamicDriveToLane(
-        //                         container.getDrive(),
-        //                         () ->
-        //                                 -modifyAxis(_driverController.getLeftY())
-        //                                         * Constants.SwerveModule.MAX_LINEAR_SPEED));
+                .whileTrue(
+                        new DynamicDriveToLane(
+                                container.getDrive(),
+                                () ->
+                                        -modifyAxis(_driverController.getLeftY())
+                                                * Constants.SwerveModule.MAX_LINEAR_SPEED));
     }
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */

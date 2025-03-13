@@ -33,7 +33,7 @@ public class LaneAlignmentHelpers {
             targetY = farCage.getY();
         }
 
-        Translation2d targetTranslation = new Translation2d(robotPosition.getX(), targetY);
+        Translation2d targetTranslation = new Translation2d(robotPosition.getX(), targetY + .03);
 
         return new Pose2d(targetTranslation, Rotation2d.fromDegrees(180));
     }

@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
@@ -68,8 +69,19 @@ public class DynamicDriveToLane extends OutliersCommand {
     @Override
     public void execute(double timestamp) {
         Pose2d currentPose = _drive.getPose();
+
         Pose2d targetPose = _lanePose;
         log("DriveToPose Target", targetPose, Pose2d.struct);
+
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            if (alliance.get() == Alliance.Red) {
+                currentPose =
+                        new Pose2d(
+                                currentPose.getTranslation(),
+                                currentPose.getRotation().rotateBy(Rotation2d.fromDegrees(180)));
+            }
+        }
 
         double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
         double ffScaler =
