@@ -105,6 +105,14 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                         new InstantCommand(
                                 () -> {
                                     SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
+                                    if (currentRequest == null) {
+                                        currentRequest =
+                                                new SuperstructureRequest(
+                                                        Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL,
+                                                        type,
+                                                        () -> true,
+                                                        "req");
+                                    }
                                     // This only has worked if a schedule, I'm not sure why???
                                     new IntakeAndIndexCoral(_container.getCoral(), this, currentRequest).schedule();
                                 }));
@@ -179,7 +187,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         double distanceFromCenterToRobot = currentPose.getDistance(allianceReefCenter);
         double distanceFromCenterToGoal = goalPose.getDistance(allianceReefCenter);
 
-        double atGoalThreshold = 0.2;
+        double atGoalThreshold = 0.3;
 
         return currentPose.getDistance(goalPose) < atGoalThreshold
                 || (distanceFromCenterToRobot <= distanceFromCenterToGoal

@@ -8,7 +8,7 @@ import org.frc5687.robot.subsystems.superstructure.SuperstructureRequest;
 public class IntakeAndIndexCoral extends OutliersCommand {
     private final CoralArmSubsystem _coral;
     private final SuperstructureManager _manager;
-    private final SuperstructureRequest _initialRequest;
+    private SuperstructureRequest _initialRequest;
 
     public IntakeAndIndexCoral(
             CoralArmSubsystem coral,
@@ -23,6 +23,9 @@ public class IntakeAndIndexCoral extends OutliersCommand {
     @Override
     public void initialize() {
         System.out.println("Starting index command");
+        // if (_initialRequest == null) {
+        //     _initialRequest = _manager.getRequestHandler().getActiveRequest();
+        // }
         _coral.setWheelMotorDutyCycle(0.3);
     }
 
@@ -41,6 +44,11 @@ public class IntakeAndIndexCoral extends OutliersCommand {
         SuperstructureRequest activeRequest = _manager.getRequestHandler().getActiveRequest();
 
         // check if there's a new active request with a different target position
+        // if (_initialRequest == null) {
+        //     System.out.println("Request is null");
+        //     return true;
+        // }
+
         boolean differentRequest =
                 activeRequest != null
                         && !_initialRequest.targetPosition().equals(activeRequest.targetPosition());

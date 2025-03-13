@@ -1,5 +1,6 @@
 package org.frc5687.robot.commands.drive;
 
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,11 +20,11 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
     private final Supplier<Pose2d> _finalPoseSupplier;
 
     private final TunableDouble _normalVectorOffset =
-            new TunableDouble("NormalVectorAlignment", "offset", 0.5);
+            new TunableDouble("NormalVectorAlignment", "offset", 0.6);
 
     // We blend the start and end for smooth transition
     private final TunableDouble _blendStartDistance =
-            new TunableDouble("NormalVectorAlignment", "blendStart", 0.3);
+            new TunableDouble("NormalVectorAlignment", "blendStart", 0.5);
     private final TunableDouble _blendEndDistance =
             new TunableDouble("NormalVectorAlignment", "blendEnd", 0.05);
 
@@ -37,25 +38,25 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
 
     private final TunableDouble _smoothingFactor =
             new TunableDouble("DriveToPose", "smoothingFactor", 0.6);
-    private final TunableDouble _maxVelocity = new TunableDouble("DriveToPose", "maxVelocity", 3.5);
+    private final TunableDouble _maxVelocity = new TunableDouble("DriveToPose", "maxVelocity", 3.0);
     private final TunableDouble _maxAcceleration =
-            new TunableDouble("DriveToPose", "maxAcceleration", 9.0);
+            new TunableDouble("DriveToPose", "maxAcceleration", 12.0);
     private final TunableDouble _positionTolerance =
-            new TunableDouble("DriveToPose", "positionTolerance", 0.01);
+            new TunableDouble("DriveToPose", "positionTolerance", 0.03);
     private final TunableDouble _velocityTolerance =
             new TunableDouble("DriveToPose", "velocityTolerance", 0.1);
     private final TunableDouble _minOutput = new TunableDouble("DriveToPose", "minOutput", 0.1);
     private final TunableDouble _counteractGain =
             new TunableDouble("DriveToPose", "counteractGain", 0.5);
     private final TunableDouble _aggressiveAccelMultiplier =
-            new TunableDouble("DriveToPose", "aggressiveAccelMultiplier", 2.0);
+            new TunableDouble("DriveToPose", "aggressiveAccelMultiplier", 3.0);
 
     private final TunableDouble _driveKp = new TunableDouble("DriveToPose", "driveKp", 4.0);
     private final TunableDouble _driveKi = new TunableDouble("DriveToPose", "driveKi", 0.0);
-    private final TunableDouble _driveKd = new TunableDouble("DriveToPose", "driveKd", 0.22);
-    private final TunableDouble _rotKp = new TunableDouble("DriveToPose", "rotKp", 3.3);
+    private final TunableDouble _driveKd = new TunableDouble("DriveToPose", "driveKd", 0.4);
+    private final TunableDouble _rotKp = new TunableDouble("DriveToPose", "rotKp", 4.0);
     private final TunableDouble _rotKi = new TunableDouble("DriveToPose", "rotKi", 0.0);
-    private final TunableDouble _rotKd = new TunableDouble("DriveToPose", "rotKd", 0.1);
+    private final TunableDouble _rotKd = new TunableDouble("DriveToPose", "rotKd", 0.0);
 
     public DriveWithNormalVectorAlignment(
             DriveSubsystem drive, SuperstructureManager manager, Supplier<Pose2d> finalPoseSupplier) {
@@ -172,9 +173,9 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
     public void execute(double timestamp) {
         Pose2d targetPose = getCurrentTargetPose();
 
-        log("Target Pose", targetPose, Pose2d.struct);
-        log("Alignment Pose", _alignmentPose, Pose2d.struct);
-        log("Final Pose", _finalPose, Pose2d.struct);
+        log("Target Pose", targetPose, Pose2d.struct, Importance.CRITICAL);
+        log("Alignment Pose", _alignmentPose, Pose2d.struct, Importance.CRITICAL);
+        log("Final Pose", _finalPose, Pose2d.struct, Importance.CRITICAL);
 
         if (_driveKp.hasChanged()
                 || _driveKi.hasChanged()

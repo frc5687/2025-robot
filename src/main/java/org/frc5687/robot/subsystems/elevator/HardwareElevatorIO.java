@@ -2,7 +2,6 @@ package org.frc5687.robot.subsystems.elevator;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -39,21 +38,23 @@ public class HardwareElevatorIO implements ElevatorIO {
     private final VoltageOut _westVoltageRequest;
     private final VoltageOut _eastVoltageRequest;
 
-    private final LaserCan _laserCan;
+    // private final LaserCan _laserCan;
 
     private double _platformVelocity = 0.0;
-    private boolean _zeroed = false;
+    // private boolean _zeroed = false;
     private boolean _safetyTripped = false;
 
     private TunableDouble _positionDifferenceThreshold =
             new TunableDouble("Elevator", "PositionDifferenceThreshold", 0.05);
 
     public HardwareElevatorIO(int eastMotorId, int westMotorId, int laserCanId) {
-        _laserCan = new LaserCan(laserCanId);
+        // _laserCan = new LaserCan(laserCanId);
 
         _eastMotor = new TalonFX(eastMotorId, Constants.Elevator.CANBUS);
         _westMotor = new TalonFX(westMotorId, Constants.Elevator.CANBUS);
 
+        _westMotor.setPosition(0);
+        _eastMotor.setPosition(0);
         _westVelocity = _westMotor.getVelocity();
         _westPosition = _westMotor.getPosition();
         _westCurrent = _westMotor.getSupplyCurrent();
@@ -141,7 +142,8 @@ public class HardwareElevatorIO implements ElevatorIO {
 
         inputs.positionDifferenceSafetyThreshold = _positionDifferenceThreshold.get();
 
-        if (_zeroed && positionDifference > _positionDifferenceThreshold.get()) {
+        if (
+        /* _zeroed &&  */ positionDifference > _positionDifferenceThreshold.get()) {
             _safetyTripped = true;
             inputs.safetyStatus =
                     String.format(
@@ -166,43 +168,46 @@ public class HardwareElevatorIO implements ElevatorIO {
                 };
 
         inputs.isDisabled = _safetyTripped;
-        inputs.zeroed = _zeroed;
+        // inputs.zeroed = _zeroed;
 
         if (!_safetyTripped) {
             inputs.safetyStatus = "OK";
         }
 
-        LaserCan.Measurement measurement = _laserCan.getMeasurement();
+        // LaserCan.Measurement measurement = _laserCan.getMeasurement();
 
-        if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-            inputs.laserSensorElevatorHeightMeters = measurement.distance_mm / 1000.0;
+        // if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)
+        // {
+        //     inputs.laserSensorElevatorHeightMeters = measurement.distance_mm / 1000.0;
 
-            if (!_zeroed && !_safetyTripped) {
-                double laserMotorMeters = inputs.laserSensorElevatorHeightMeters - 0.020;
-                double rotations =
-                        laserMotorMeters
-                                / Constants.Elevator.DRUM_RADIUS
-                                * Constants.Elevator.GEAR_RATIO
-                                / (2 * Math.PI);
+        //     if (!_zeroed && !_safetyTripped) {
+        //         double laserMotorMeters = inputs.laserSensorElevatorHeightMeters - 0.020;
+        //         double rotations =
+        //                 laserMotorMeters
+        //                         / Constants.Elevator.DRUM_RADIUS
+        //                         * Constants.Elevator.GEAR_RATIO
+        //                         / (2 * Math.PI);
 
-                _eastMotor.setPosition(rotations);
-                _westMotor.setPosition(rotations);
-                _zeroed = true;
-                inputs.zeroed = true;
-                inputs.safetyStatus = "Zeroed successfully";
-                System.out.println("Elevator zeroed successfully at height: " + laserMotorMeters + "m");
-            }
-        } else {
-            inputs.laserSensorElevatorHeightMeters = -1;
-        }
+        //         _eastMotor.setPosition(rotations);
+        //         _westMotor.setPosition(rotations);
+        //         _zeroed = true;
+        //         inputs.zeroed = true;
+        //         inputs.safetyStatus = "Zeroed successfully";
+        //         System.out.println("Elevator zeroed successfully at height: " + laserMotorMeters +
+        // "m");
+        //     }
+        // } else {
+        //     inputs.laserSensorElevatorHeightMeters = -1;
+        // }
     }
 
     @Override
     public void writeOutputs(ElevatorOutputs outputs) {
-        if (!_zeroed) {
-            System.err.println("ERROR: ELEVATOR HAS NOT BEEN ZEROED, NO CONTROL COMMANDS WILL BE SENT");
-            return;
-        }
+        // if (!_zeroed) {
+        //     System.err.println("ERROR: ELEVATOR HAS NOT BEEN ZEROED, NO CONTROL COMMANDS WILL BE
+        // SENT");
+        //     return;
+        // }
 
         if (_safetyTripped) {
             System.err.println("ERROR: ELEVATOR SAFETY TRIPPED - MOTORS DISABLED UNTIL RESET");

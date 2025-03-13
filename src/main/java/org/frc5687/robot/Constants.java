@@ -546,7 +546,7 @@ public class Constants {
 
         public static final SuperstructureState PLACE_CORAL_L1 =
                 new SuperstructureState(
-                        Optional.of(ElevatorState.L1_CORAL_PLACING), Optional.of(CoralState.PLACING),
+                        Optional.of(ElevatorState.L1_CORAL_PLACING), Optional.of(CoralState.PLACING_L1),
                         Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
 
         public static final SuperstructureState PROCESSOR_DROPOFF =

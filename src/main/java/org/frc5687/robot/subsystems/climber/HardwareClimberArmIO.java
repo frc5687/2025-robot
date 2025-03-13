@@ -7,6 +7,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
@@ -22,6 +23,7 @@ public class HardwareClimberArmIO implements ClimberIO {
     private final StatusSignal<Current> _supplyCurrent;
     private final StatusSignal<Current> _statorCurrent;
     private final PositionVoltage _winchPositionRequest;
+    private final VoltageOut _voltageRequest;
     private final ProximitySensor _sensor;
     private final Servo _servo;
 
@@ -34,6 +36,7 @@ public class HardwareClimberArmIO implements ClimberIO {
         _supplyCurrent = _winchMotor.getSupplyCurrent();
         _statorCurrent = _winchMotor.getStatorCurrent();
         _winchPositionRequest = new PositionVoltage(0.0).withEnableFOC(true);
+        _voltageRequest = new VoltageOut(0.0).withEnableFOC(true);
         _sensor = new ProximitySensor(RobotMap.DIO.CLIMBER_SENSOR);
         var config = new TalonFXConfiguration();
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
