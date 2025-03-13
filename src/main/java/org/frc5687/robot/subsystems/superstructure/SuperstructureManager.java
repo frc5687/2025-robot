@@ -69,11 +69,19 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                                 new SuperstructureRequest(
                                         stateSupplier.get(),
                                         type,
-                                        () ->
-                                                type != RequestType.QUEUED
-                                                        || _forceQueueExecution
+                                        () -> {
+                                            if (type == RequestType.QUEUED) {
+                                                return _forceQueueExecution
                                                         || (isRobotWithinGoalPose() && canElevatorGoUp(stateSupplier.get()))
-                                                        || isElevatorGoingDown(stateSupplier.get()),
+                                                        || isElevatorGoingDown(stateSupplier.get());
+                                            } else if (type == RequestType.AUTO_SEQUENCE) {
+                                                return canElevatorGoUp(stateSupplier.get());
+                                            } else if (type == RequestType.IMMEDIATE) {
+                                                return true;
+                                            }
+
+                                            return _forceQueueExecution || isElevatorGoingDown(stateSupplier.get());
+                                        },
                                         description)),
                 // execute
                 () -> {},

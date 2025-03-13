@@ -33,6 +33,9 @@ public class AlgaeTracker implements EpilogueLog {
     }
 
     public synchronized void update(List<NeuralPipelineObservation> observations) {
+        if (observations == null) {
+            return;
+        }
         for (var obs : observations) {
             if (obs.getClassId() == ALGAE_CLASS_ID) processObservation(obs);
         }

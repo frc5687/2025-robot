@@ -41,6 +41,9 @@ public class RequestHandler implements EpilogueLog {
             case QUEUED:
                 handleQueuedRequest(request);
                 break;
+            case AUTO_SEQUENCE:
+                handleQueuedRequest(request);
+                break;
         }
     }
 
