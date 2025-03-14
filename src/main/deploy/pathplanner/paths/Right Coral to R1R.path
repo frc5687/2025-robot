@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.803,
-        "y": 2.907
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 3.303,
-        "y": 2.040974596215561
-      },
-      "isLocked": false,
-      "linkedName": "Reef 6 Left"
-    },
-    {
-      "anchor": {
         "x": 1.5455305713750034,
         "y": 0.7363599874196086
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.2497151952298173,
+        "y": 2.028763748903556
+      },
+      "isLocked": false,
+      "linkedName": "Coral Station Right"
+    },
+    {
+      "anchor": {
+        "x": 3.178,
+        "y": 3.756
+      },
       "prevControl": {
-        "x": 2.1473455945270516,
-        "y": 1.5349954974669013
+        "x": 2.2776639344262293,
+        "y": 3.623411885245902
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Coral Station Right"
+      "linkedName": "Reef 1 Right"
     }
   ],
   "rotationTargets": [],
@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ReadyFunnel",
-      "waypointRelativePos": 0.0690926079734219,
+      "name": "CoralL4",
+      "waypointRelativePos": 0.6227217496962316,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "ReadyFunnel"
+          "name": "CoralL4"
         }
       }
     }
@@ -54,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 53.0
   },
   "useDefaultConstraints": true
 }
