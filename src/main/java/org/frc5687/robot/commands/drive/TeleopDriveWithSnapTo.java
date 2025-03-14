@@ -20,8 +20,6 @@ public class TeleopDriveWithSnapTo extends OutliersCommand {
     private final BooleanSupplier _fieldRelativeSupplier;
     private final double _angle;
 
-    private boolean _rightStickCentered;
-
     private final PIDController _headingController;
 
     public TeleopDriveWithSnapTo(
@@ -36,7 +34,6 @@ public class TeleopDriveWithSnapTo extends OutliersCommand {
         _ySupplier = ySupplier;
         _rotationSupplier = rotationSupplier;
         _fieldRelativeSupplier = fieldRelativeSupplier;
-        _rightStickCentered = true;
         _angle = angle;
 
         _headingController =
@@ -45,7 +42,6 @@ public class TeleopDriveWithSnapTo extends OutliersCommand {
                         Constants.DriveTrain.HEADING_kI,
                         Constants.DriveTrain.HEADING_kD);
         _headingController.enableContinuousInput(-Math.PI, Math.PI);
-        _headingController.setTolerance(0.0175 * 5);
         addRequirements(drive);
     }
 
@@ -85,6 +81,7 @@ public class TeleopDriveWithSnapTo extends OutliersCommand {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(_rotationSupplier.getAsDouble()) > 0.1;
+        return Math.abs(_rotationSupplier.getAsDouble())
+                > 0.1; // user input desired angvel -- we should end the control here
     }
 }
