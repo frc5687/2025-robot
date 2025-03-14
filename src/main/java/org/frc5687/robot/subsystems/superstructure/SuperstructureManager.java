@@ -75,12 +75,9 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                                                         || (isRobotWithinGoalPose() && canElevatorGoUp(stateSupplier.get()))
                                                         || isElevatorGoingDown(stateSupplier.get());
                                             } else if (type == RequestType.AUTO_SEQUENCE) {
-                                                return canElevatorGoUp(stateSupplier.get());
-                                            } else if (type == RequestType.IMMEDIATE) {
-                                                return true;
-                                            }
-
-                                            return _forceQueueExecution || isElevatorGoingDown(stateSupplier.get());
+                                                return canElevatorGoUpAuto(stateSupplier.get())
+                                                        || isElevatorGoingDown(stateSupplier.get());
+                                            } else return true;
                                         },
                                         description)),
                 // execute
@@ -227,12 +224,34 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         return true;
     }
 
+    private boolean canElevatorGoUpAuto(SuperstructureState requestedState) {
+        // if (requestedState.getElevator().isEmpty()) return false;
+
+        // double currentElevatorHeight = _container.getElevator().getElevatorHeight();
+        // double requestedHeight = requestedState.getElevator().get().getHeight();
+        // boolean isMovingUp = requestedHeight > currentElevatorHeight;
+
+        // if (!isMovingUp) return false;
+        System.out.println(_container.getCoral().isCoralDetected());
+        return _container.getCoral().isCoralDetected();
+    }
+
     private boolean isElevatorGoingDown(SuperstructureState requestedState) {
         if (requestedState.getElevator().isEmpty()) return false; // FIXME is this the correct behavior?
 
         double elevatorHeight = _container.getElevator().getElevatorHeight();
         return requestedState.getElevator().get().getHeight() < elevatorHeight;
     }
+
+    // public boolean isSafe(RequestType type, Supplier<SuperstructureState> stateSupplier) {
+    //     if (type == RequestType.QUEUED) {
+    //         return _forceQueueExecution
+    //         || (isRobotWithinGoalPose() && canElevatorGoUp(stateSupplier.get()))
+    //         || isElevatorGoingDown(stateSupplier.get());  }
+    //     else if (type == RequestType.AUTO_SEQUENCE){
+    //         return canElevatorGoUp(stateSupplier.get())
+    //         || isElevatorGoingDown(stateSupplier.get());
+    //     } else return true; }
 
     @Override
     public void periodic() {

@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "ReadyFunnel",
-      "waypointRelativePos": 0.3204711294416243,
+      "waypointRelativePos": 0.1755771567436269,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

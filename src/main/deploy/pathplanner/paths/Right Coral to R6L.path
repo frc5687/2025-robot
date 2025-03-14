@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1473455945270516,
-        "y": 1.5349954974669013
+        "x": 2.25194651952269,
+        "y": 1.4203124028790004
       },
       "isLocked": false,
       "linkedName": "Coral Station Right"
@@ -20,8 +20,8 @@
         "y": 2.907
       },
       "prevControl": {
-        "x": 3.303,
-        "y": 2.0409745962155617
+        "x": 3.403358598922239,
+        "y": 2.5061776543124585
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,11 +32,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7049159053156147,
+      "minWaypointRelativePos": 0.7653238171728971,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 2.0,
+        "maxVelocity": 2.5,
+        "maxAcceleration": 2.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -68,7 +68,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -59.99999999999999
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": null,
