@@ -1,11 +1,8 @@
 package org.frc5687.robot.subsystems.lights;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import java.util.Optional;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
@@ -52,7 +49,8 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
     private boolean withinNetTolerance() {
         double targetX = FieldConstants.fieldLength / 2.0 - Units.inchesToMeters(42); // FIXME test
 
-        double fieldX = RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).getX();
+        double fieldX =
+                RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).getX();
         if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
             fieldX = FieldConstants.fieldLength - fieldX;
         }
