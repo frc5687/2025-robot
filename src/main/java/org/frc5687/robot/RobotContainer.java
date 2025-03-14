@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.frc5687.robot.commands.algae.IdleAlgae;
 import org.frc5687.robot.commands.auto.AutoActions;
 import org.frc5687.robot.commands.coral.IdleCoral;
@@ -159,16 +158,16 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void setupNamedCommand() {
-        if (RobotBase.isSimulation()) {
-            NamedCommands.registerCommand(
-                    "ReceiveFunnel",
-                    _superstructureManager
-                            .receiveFunnelSim(RequestType.IMMEDIATE)
-                            .andThen(new WaitCommand(1)));
-        } else {
-            NamedCommands.registerCommand(
-                    "ReceiveFunnel", _superstructureManager.receiveFunnel(RequestType.IMMEDIATE));
-        }
+        // if (RobotBase.isSimulation()) {
+        //     NamedCommands.registerCommand(
+        //             "ReceiveFunnel",
+        //             _superstructureManager
+        //                     .receiveFunnelSim(RequestType.IMMEDIATE)
+        //                     .andThen(new WaitCommand(1)));
+        // } else {
+        NamedCommands.registerCommand(
+                "ReceiveFunnel", _superstructureManager.receiveFunnel(RequestType.IMMEDIATE));
+        // }
 
         NamedCommands.registerCommand(
                 "ReadyFunnel", _superstructureManager.receiveFunnelSim(RequestType.IMMEDIATE));
@@ -192,7 +191,7 @@ public class RobotContainer implements EpilogueLog {
         NamedCommands.registerCommand(
                 "CoralL4",
                 _superstructureManager.createRequest(
-                        Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
+                        Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.AUTO_SEQUENCE));
 
         NamedCommands.registerCommand(
                 "CoralL3",

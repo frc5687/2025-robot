@@ -56,6 +56,7 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
         } else if (_container.getSuperstructureManager().isAlgaeMode()) {
             if (_container.getAlgae().isAlgaeDetected()) {
                 outputs.desiredState = LightState.FLASHING_GREEN;
+
             } else {
                 outputs.desiredState = LightState.SOLID_GREEN;
             }

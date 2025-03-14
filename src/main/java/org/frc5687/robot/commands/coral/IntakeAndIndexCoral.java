@@ -8,7 +8,7 @@ import org.frc5687.robot.subsystems.superstructure.SuperstructureRequest;
 public class IntakeAndIndexCoral extends OutliersCommand {
     private final CoralArmSubsystem _coral;
     private final SuperstructureManager _manager;
-    private final SuperstructureRequest _initialRequest;
+    private SuperstructureRequest _initialRequest;
 
     public IntakeAndIndexCoral(
             CoralArmSubsystem coral,
@@ -22,6 +22,10 @@ public class IntakeAndIndexCoral extends OutliersCommand {
 
     @Override
     public void initialize() {
+        System.out.println("Starting index command");
+        // if (_initialRequest == null) {
+        //     _initialRequest = _manager.getRequestHandler().getActiveRequest();
+        // }
         _coral.setWheelMotorDutyCycle(0.3);
     }
 
@@ -33,12 +37,29 @@ public class IntakeAndIndexCoral extends OutliersCommand {
     @Override
     public boolean isFinished() {
         if (_coral.isCoralDetected()) {
+            System.out.println("Index complete due to seeing coral");
             return true;
         }
 
-        // We need to check if the active (which should always be receive from funnel) is the same
         SuperstructureRequest activeRequest = _manager.getRequestHandler().getActiveRequest();
-        return activeRequest != null && activeRequest != _initialRequest;
+
+        // check if there's a new active request with a different target position
+        // if (_initialRequest == null) {
+        //     System.out.println("Request is null");
+        //     return true;
+        // }
+
+        boolean differentRequest =
+                activeRequest != null
+                        && !_initialRequest.targetPosition().equals(activeRequest.targetPosition());
+
+        if (differentRequest) {
+            System.out.println("Request has changed");
+            System.out.println("Initial target position: " + _initialRequest.targetPosition());
+            System.out.println("Active target position: " + activeRequest.targetPosition());
+        }
+
+        return differentRequest;
     }
 
     @Override

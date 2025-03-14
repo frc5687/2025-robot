@@ -9,6 +9,7 @@ public class EjectCoral extends OutliersCommand {
 
     public EjectCoral(CoralArmSubsystem coral) {
         _coral = coral;
+        addRequirements(_coral);
     }
 
     @Override

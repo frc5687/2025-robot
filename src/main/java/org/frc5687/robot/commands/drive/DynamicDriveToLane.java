@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
@@ -16,10 +17,9 @@ import org.frc5687.robot.util.LaneAlignmentHelpers;
 public class DynamicDriveToLane extends OutliersCommand {
     private final DriveSubsystem _drive;
     private final DoubleSupplier _xSupplier;
-
     private final ProfiledPIDController _driveController;
     private final ProfiledPIDController _thetaController;
-
+    private double _x;
     private Translation2d _lastSetpointTranslation;
 
     private Pose2d _lanePose;
@@ -31,7 +31,6 @@ public class DynamicDriveToLane extends OutliersCommand {
         _xSupplier = xSupplier;
 
         _lanePose = new Pose2d();
-
         _driveController =
                 new ProfiledPIDController(3, 0.0, 0.001, new TrapezoidProfile.Constraints(3.0, 3.0));
 
@@ -68,8 +67,18 @@ public class DynamicDriveToLane extends OutliersCommand {
     @Override
     public void execute(double timestamp) {
         Pose2d currentPose = _drive.getPose();
+
         Pose2d targetPose = _lanePose;
         log("DriveToPose Target", targetPose, Pose2d.struct);
+
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent()) {
+            if (alliance.get() == Alliance.Red) {
+                _x = _xSupplier.getAsDouble() * -1;
+            } else {
+                _x = _xSupplier.getAsDouble();
+            }
+        }
 
         double currentDistance = currentPose.getTranslation().getDistance(targetPose.getTranslation());
         double ffScaler =
@@ -119,10 +128,7 @@ public class DynamicDriveToLane extends OutliersCommand {
 
         _drive.setDesiredChassisSpeeds(
                 ChassisSpeeds.fromFieldRelativeSpeeds(
-                        _xSupplier.getAsDouble(),
-                        driveVelocity.getY(),
-                        thetaVelocity,
-                        currentPose.getRotation()));
+                        _x, driveVelocity.getY(), thetaVelocity, currentPose.getRotation()));
     }
 
     @Override

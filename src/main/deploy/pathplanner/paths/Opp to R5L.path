@@ -3,42 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5455305713750034,
-        "y": 0.7363599874196086
+        "x": 7.001891999421296,
+        "y": 2.055009403935185
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1473455945270516,
-        "y": 1.5349954974669018
+        "x": 5.993603877314814,
+        "y": 2.531289424189814
       },
       "isLocked": false,
-      "linkedName": "Coral Station Right"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.067,
-        "y": 2.755
+        "x": 5.115,
+        "y": 2.872
       },
       "prevControl": {
-        "x": 3.567,
-        "y": 1.8889745962155615
+        "x": 5.560963831018518,
+        "y": 2.4878821614583324
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef 6 Right"
+      "linkedName": "Reef 5 Left"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7140131852159468,
+      "minWaypointRelativePos": 0.6889555350953208,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 3.0,
-        "maxAcceleration": 2.0,
+        "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
+        "maxAngularAcceleration": 300.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "CoralL4",
-      "waypointRelativePos": 0.7513285215736043,
+      "waypointRelativePos": 0.4,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -59,22 +59,22 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.3,
-    "maxAcceleration": 3.5,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 300.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 53.0
+    "rotation": 119.99999999999999
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

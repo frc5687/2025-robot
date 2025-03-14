@@ -69,11 +69,19 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                                 new SuperstructureRequest(
                                         stateSupplier.get(),
                                         type,
-                                        () ->
-                                                type != RequestType.QUEUED
-                                                        || _forceQueueExecution
+                                        () -> {
+                                            if (type == RequestType.QUEUED) {
+                                                return _forceQueueExecution
                                                         || (isRobotWithinGoalPose() && canElevatorGoUp(stateSupplier.get()))
-                                                        || isElevatorGoingDown(stateSupplier.get()),
+                                                        || isElevatorGoingDown(stateSupplier.get());
+                                            } else if (type == RequestType.AUTO_SEQUENCE) {
+                                                return canElevatorGoUp(stateSupplier.get());
+                                            } else if (type == RequestType.IMMEDIATE) {
+                                                return true;
+                                            }
+
+                                            return _forceQueueExecution || isElevatorGoingDown(stateSupplier.get());
+                                        },
                                         description)),
                 // execute
                 () -> {},
@@ -105,9 +113,23 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                         new InstantCommand(
                                 () -> {
                                     SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
+                                    if (currentRequest == null) {
+                                        currentRequest =
+                                                new SuperstructureRequest(
+                                                        Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL,
+                                                        type,
+                                                        () -> true,
+                                                        "req");
+                                    }
                                     // This only has worked if a schedule, I'm not sure why???
                                     new IntakeAndIndexCoral(_container.getCoral(), this, currentRequest).schedule();
                                 }));
+    }
+
+    public Command autoReceiveFunnel() {
+        return new SequentialCommandGroup(
+                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, RequestType.IMMEDIATE),
+                new IntakeAndIndexCoral(_container.getCoral(), this, _requestHandler.getActiveRequest()));
     }
 
     public Command indexCoral() {
@@ -173,7 +195,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         double distanceFromCenterToRobot = currentPose.getDistance(allianceReefCenter);
         double distanceFromCenterToGoal = goalPose.getDistance(allianceReefCenter);
 
-        double atGoalThreshold = 0.2;
+        double atGoalThreshold = 0.3;
 
         return currentPose.getDistance(goalPose) < atGoalThreshold
                 || (distanceFromCenterToRobot <= distanceFromCenterToGoal
