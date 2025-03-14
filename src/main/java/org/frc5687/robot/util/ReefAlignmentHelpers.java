@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class ReefAlignmentHelpers {
     public static final TunableDouble LEFT_OFFSET =
-            new TunableDouble("ReefAlignmentHelpers", "LEFT_OFFSET", 0.04);
+            new TunableDouble("ReefAlignmentHelpers", "LEFT_OFFSET", 0.055);
     public static final TunableDouble RIGHT_OFFSET =
             new TunableDouble("ReefAlignmentHelpers", "RIGHT_OFFSET", -0.29);
     public static final TunableDouble ALGAE_OFFSET =
