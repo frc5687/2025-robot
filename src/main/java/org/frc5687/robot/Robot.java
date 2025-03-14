@@ -13,6 +13,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.errors.ErrorHandler;
 import edu.wpi.first.hal.AllianceStationID;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
@@ -41,13 +42,16 @@ public class Robot extends TimedRobot {
         _robotContainer = new RobotContainer(this);
         Threads.setCurrentThreadPriority(true, 99);
         CanBridge.runTCP();
+
         for (int i = 1; i <= 6; i++) {
+            Pose2d left = ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.LEFT);
+            Pose2d right = ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.RIGHT);
             System.out.println(
                     String.format(
                             "Face: %d\n Left: %s\n Right: %s\n",
                             i,
-                            ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.LEFT),
-                            ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.RIGHT)));
+                            "X: " + left.getX() + ", Y: " + left.getY() + " Heading: " + left.getRotation(),
+                            "X: " + right.getX() + ", Y: " + right.getY() + " Heading: " + right.getRotation()));
         }
     }
 

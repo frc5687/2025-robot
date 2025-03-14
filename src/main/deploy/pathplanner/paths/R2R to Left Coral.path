@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6,
-        "y": 5.03
+        "x": 3.58232,
+        "y": 5.01685
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.950305691571303,
-        "y": 5.859199975242077
+        "x": 2.932625691571303,
+        "y": 5.846049975242076
       },
       "isLocked": false,
       "linkedName": "Reef 2 Right"
