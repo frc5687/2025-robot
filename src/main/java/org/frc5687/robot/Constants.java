@@ -405,14 +405,15 @@ public class Constants {
 
     public static class Climber {
         public static final String CAN_BUS = "CANivore";
-        public static final double CLIMBER_UP_RADS = 250;
-        public static final double CLIMBER_DOWN_RADS = 1300;
+        public static final double CLIMBER_UP_RADS = 300;
+        public static final double CLIMBER_DOWN_RADS = 1450;
 
-        public static final double SLOW_VELOCITY_RAD_PER_SEC = 100;
+        public static final double SLOW_VELOCITY_RAD_PER_SEC = 120;
         public static final double FAST_VELOCITY_RAD_PER_SEC = 1000;
+        public static final double MAX_ACCELERATION = 1000;
 
-        public static final double kP = 6.0;
-        public static final double kD = 0.3;
+        public static final double kP = 0.3;
+        public static final double kD = 0.0;
     }
 
     public static class Vision {

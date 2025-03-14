@@ -7,6 +7,7 @@ package org.frc5687.robot;
 import static edu.wpi.first.units.Units.Seconds;
 
 import au.grapplerobotics.CanBridge;
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -28,6 +29,7 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         // DataLogManager.start("", "", 0.1);
+        SignalLogger.enableAutoLogging(false);
         Epilogue.configure(
                 config -> {
                     config.root = "Robot";

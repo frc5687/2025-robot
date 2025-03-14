@@ -2,11 +2,9 @@ package org.frc5687.robot.subsystems.climber;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -22,12 +20,10 @@ public class HardwareClimberArmIO implements ClimberIO {
     private final StatusSignal<Angle> _winchAngle;
     private final StatusSignal<Current> _supplyCurrent;
     private final StatusSignal<Current> _statorCurrent;
-    private final PositionVoltage _winchPositionRequest;
     private final VoltageOut _voltageRequest;
     private final ProximitySensor _sensor;
     private final Servo _servo;
 
-    // private final TunableDouble asdf = new TunableDouble("Climber", "servo", 0.5);
     public HardwareClimberArmIO() {
         _winchMotor = new TalonFX(RobotMap.CAN.TALONFX.CLIMBER_WINCH, Constants.Climber.CAN_BUS);
         _winchMotor.setPosition(0);
@@ -35,13 +31,11 @@ public class HardwareClimberArmIO implements ClimberIO {
         _winchAngle = _winchMotor.getPosition();
         _supplyCurrent = _winchMotor.getSupplyCurrent();
         _statorCurrent = _winchMotor.getStatorCurrent();
-        _winchPositionRequest = new PositionVoltage(0.0).withEnableFOC(true);
         _voltageRequest = new VoltageOut(0.0).withEnableFOC(true);
         _sensor = new ProximitySensor(RobotMap.DIO.CLIMBER_SENSOR);
+
         var config = new TalonFXConfiguration();
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.Slot0.kP = Constants.Climber.kP;
-        config.Slot0.kD = Constants.Climber.kD;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = 120;
         _winchMotor.getConfigurator().apply(config);
@@ -58,10 +52,7 @@ public class HardwareClimberArmIO implements ClimberIO {
 
     @Override
     public void writeOutputs(ClimberOutputs outputs) {
-        _winchMotor.setControl(
-                _winchPositionRequest
-                        .withPosition(Radians.of(outputs.motorSetpointRads))
-                        .withVelocity(RadiansPerSecond.of(outputs.motorVelocityRadPerSec)));
+        _winchMotor.setControl(_voltageRequest.withOutput(outputs.climberVoltage));
         _servo.set(outputs.servoSetpoint);
     }
 }
