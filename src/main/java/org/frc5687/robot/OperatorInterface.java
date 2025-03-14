@@ -80,6 +80,23 @@ public class OperatorInterface {
                                 () -> true)); // Always field relative
 
         _driverController
+                .y()
+                .onTrue(
+                        new TeleopDriveWithSnapTo(
+                                Degrees.of(0).in(Radians),
+                                container.getDrive(),
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftY())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftX())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getRightX())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () -> true)); // Always field relative
+
+        _driverController
                 .leftBumper()
                 .whileTrue(
                         new ConditionalCommand(
