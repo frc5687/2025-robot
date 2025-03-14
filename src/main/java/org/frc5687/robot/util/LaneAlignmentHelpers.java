@@ -5,6 +5,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class LaneAlignmentHelpers {
+    public static final TunableDouble OFFSET =
+            new TunableDouble("LaneAlignmentHelpers", "OFFSET", 0.02);
 
     public static Pose2d calculateBestLanePose(Pose2d robotPose) {
         Translation2d robotPosition = robotPose.getTranslation();
@@ -33,7 +35,8 @@ public class LaneAlignmentHelpers {
             targetY = farCage.getY();
         }
 
-        Translation2d targetTranslation = new Translation2d(robotPosition.getX(), targetY);
+        Translation2d targetTranslation =
+                new Translation2d(robotPosition.getX(), targetY + OFFSET.get());
 
         return new Pose2d(targetTranslation, Rotation2d.fromDegrees(180));
     }
