@@ -400,7 +400,7 @@ public class Constants {
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
         public static final double WHEEL_EJECT_CORAL_DUTY_CYCLE = -1.0;
-        public static final double WHEEL_EJECT_TROTH_DUTY_CYCLE = 1.0;
+        public static final double WHEEL_EJECT_TROTH_DUTY_CYCLE = 0.75;
     }
 
     public static class Climber {
@@ -577,5 +577,28 @@ public class Constants {
                         Optional.of(CoralState.IDLE),
                         Optional.of(AlgaeState.GROUND_PICKUP),
                         Optional.empty());
+    }
+
+    public static class DriveToPose {
+        public static final double AGGRESSIVE_ACCEL_MULTIPLIER = 3;
+        public static final double COUNTERACT_GAIN = 0.5;
+        public static final double DRIVE_KP = 4.0;
+        public static final double DRIVE_KI = 0.0;
+        public static final double DRIVE_KD = 0.2;
+        public static final double ROT_KP = 4.0;
+        public static final double ROT_KI = 0.0;
+        public static final double ROT_KD = 0.0;
+        public static final double MAX_ACCELERATION = 13;
+        public static final double MAX_VELOCITY = 3.5;
+        public static final double MIN_OUTPUT = 0.0;
+        public static final double POSITION_TOLERANCE = 0.01;
+        public static final double SMOOTHING_FACTOR = 0.6;
+        public static final double VELOCITY_TOLERANCE = 0.1;
+    }
+
+    public static class DriveWithNormalVectorAlignment {
+        public static final double NORMAL_VECTOR_OFFSET = 0.6;
+        public static final double BLEND_START = 0.5;
+        public static final double BLEND_END = 0.05;
     }
 }
