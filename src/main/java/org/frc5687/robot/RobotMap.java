@@ -103,6 +103,8 @@ public class RobotMap {
         public static final int INTAKE_SENSOR = 0; // not real
 
         public static final int CLIMBER_SENSOR = 7;
+
+        public static final int PLACE_CORAL_SENSOR = 2;
     }
 
     public static class SIM {

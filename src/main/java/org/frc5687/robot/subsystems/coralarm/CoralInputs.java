@@ -32,4 +32,10 @@ public class CoralInputs extends BaseInputs {
 
     @Logged(name = "Coral Detected Raw", importance = Logged.Importance.DEBUG)
     public boolean isCoralDetectedRaw = false;
+
+    @Logged(name = "Place Coral Detected", importance = Logged.Importance.CRITICAL)
+    public boolean isPlaceCoralDetected = false;
+
+    @Logged(name = "Place Coral Detected Raw", importance = Logged.Importance.DEBUG)
+    public boolean isPlaceCoralDetectedRaw = false;
 }

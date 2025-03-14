@@ -32,7 +32,9 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
     private final ProfiledPIDController _controller;
     private final ProximitySensor _coralDetectionSensor;
+    private final ProximitySensor _placeCoralDetectionSensor;
     private final Debouncer _debouncer;
+    private final Debouncer _placeDebouncer;
 
     private final StatusSignal<Angle> _absoluteAngle;
     private final StatusSignal<Angle> _wheelAngle;
@@ -48,7 +50,9 @@ public class HardwareCoralArmIO implements CoralArmIO {
         _pivotMotor = new VictorSP(RobotMap.PWM.CORAL_PIVOT_MOTOR);
         _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.CORAL_WHEEL_MOTOR, "CANivore");
         _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
+        _placeCoralDetectionSensor = new ProximitySensor(RobotMap.DIO.PLACE_CORAL_SENSOR);
         _debouncer = new Debouncer(0.050, Debouncer.DebounceType.kRising);
+        _placeDebouncer = new Debouncer(0.050, Debouncer.DebounceType.kFalling);
         TrapezoidProfile.Constraints constraints =
                 new TrapezoidProfile.Constraints(
                         Constants.CoralArm.MAX_VELOCITY_RAD_PER_SEC,
@@ -92,6 +96,8 @@ public class HardwareCoralArmIO implements CoralArmIO {
         inputs.angleRads = getAngleRads();
         inputs.isCoralDetectedRaw = _coralDetectionSensor.get();
         inputs.isCoralDetected = _debouncer.calculate(inputs.isCoralDetectedRaw);
+        inputs.isPlaceCoralDetectedRaw = _placeCoralDetectionSensor.get();
+        inputs.isPlaceCoralDetected = _placeDebouncer.calculate(inputs.isPlaceCoralDetectedRaw);
         inputs.wheelAngle = _wheelAngle.getValueAsDouble();
         inputs.motorCurrent = 0.0;
     }

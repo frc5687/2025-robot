@@ -100,4 +100,8 @@ public class CoralArmSubsystem extends OutliersSubsystem<CoralInputs, CoralOutpu
     public boolean isCoralDetected() {
         return _inputs.isCoralDetected;
     }
+
+    public boolean isPlaceCoralPlaced() {
+        return !_inputs.isPlaceCoralDetected;
+    }
 }
