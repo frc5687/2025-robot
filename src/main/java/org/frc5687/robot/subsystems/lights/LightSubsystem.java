@@ -1,13 +1,17 @@
 package org.frc5687.robot.subsystems.lights;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.Optional;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
+import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.subsystems.SubsystemIO;
+import org.frc5687.robot.util.FieldConstants;
 
 public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs> {
     private final RobotContainer _container;
@@ -24,39 +28,15 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
 
     @Override
     protected void periodic(LightInputs inputs, LightOutputs outputs) {
-        if (DriverStation.isDisabled()) {
-            Rotation2d heading = _container.getDrive().getHeading();
-            Rotation2d targetHeading = Rotation2d.fromDegrees(120);
-
-            Optional<Alliance> alliance = DriverStation.getAlliance();
-            if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-                targetHeading = Rotation2d.fromDegrees(-60);
-            }
-
-            double errorDeg = targetHeading.minus(heading).getDegrees();
-            if (errorDeg < -2.5) {
-                outputs.desiredState = LightState.SOLID_GREEN;
-            } else if (errorDeg > 2.5) {
-                outputs.desiredState = LightState.PURPLE;
-            } else { // just right
-                if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-                    outputs.desiredState = LightState.BLUE;
-                } else if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-                    outputs.desiredState = LightState.RED;
-                } else {
-                    outputs.desiredState = LightState.SOLID_WHITE;
-                }
-            }
-
-            return;
-        }
-
         if (_container.getClimber().isSensorTriggered()) {
             outputs.desiredState = LightState.BLUE;
         } else if (_container.getSuperstructureManager().isAlgaeMode()) {
             if (_container.getAlgae().isAlgaeDetected()) {
-                outputs.desiredState = LightState.FLASHING_GREEN;
-
+                if (withinNetTolerance()) {
+                    outputs.desiredState = LightState.PURPLE;
+                } else {
+                    outputs.desiredState = LightState.FLASHING_GREEN;
+                }
             } else {
                 outputs.desiredState = LightState.SOLID_GREEN;
             }
@@ -67,5 +47,16 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
                 outputs.desiredState = LightState.SOLID_WHITE;
             }
         }
+    }
+
+    private boolean withinNetTolerance() {
+        double targetX = FieldConstants.fieldLength / 2.0 - Units.inchesToMeters(42); // FIXME test
+
+        double fieldX = RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).getX();
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+            fieldX = FieldConstants.fieldLength - fieldX;
+        }
+        double err = Math.abs(fieldX - targetX);
+        return err < Units.inchesToMeters(4);
     }
 }
