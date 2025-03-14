@@ -83,7 +83,7 @@ public class OperatorInterface {
                 .y()
                 .onTrue(
                         new TeleopDriveWithSnapTo(
-                                Degrees.of(0).in(Radians),
+                                Degrees.of(180).in(Radians),
                                 container.getDrive(),
                                 () ->
                                         -RobotContainer.modifyAxis(getDriverController().getLeftY())
