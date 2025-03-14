@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.1473455945270516,
-        "y": 1.5349954974669018
+        "x": 2.5231173209336943,
+        "y": 1.533067474220178
       },
       "isLocked": false,
       "linkedName": "Coral Station Right"
@@ -20,8 +20,8 @@
         "y": 2.755
       },
       "prevControl": {
-        "x": 3.567,
-        "y": 1.8889745962155615
+        "x": 3.8754463536051147,
+        "y": 2.5943538031797106
       },
       "nextControl": null,
       "isLocked": false,
