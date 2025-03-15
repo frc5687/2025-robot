@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import java.util.function.Supplier;
-
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
@@ -28,11 +27,18 @@ public class DriveToPose extends OutliersCommand {
         _poseSupplier = poseSupplier;
 
         _driveController =
-                new ProfiledPIDController(Constants.DriveToPose.DRIVE_KP, Constants.DriveToPose.DRIVE_KI, Constants.DriveToPose.DRIVE_KD, new TrapezoidProfile.Constraints(3.0, 3.0));
+                new ProfiledPIDController(
+                        Constants.DriveToPose.DRIVE_KP,
+                        Constants.DriveToPose.DRIVE_KI,
+                        Constants.DriveToPose.DRIVE_KD,
+                        new TrapezoidProfile.Constraints(3.0, 3.0));
 
         _thetaController =
                 new ProfiledPIDController(
-                        Constants.DriveToPose.ROT_KP, Constants.DriveToPose.ROT_KI, Constants.DriveToPose.ROT_KI, new TrapezoidProfile.Constraints(2.0 * Math.PI, 4 * Math.PI));
+                        Constants.DriveToPose.ROT_KP,
+                        Constants.DriveToPose.ROT_KI,
+                        Constants.DriveToPose.ROT_KI,
+                        new TrapezoidProfile.Constraints(2.0 * Math.PI, 4 * Math.PI));
 
         _thetaController.enableContinuousInput(-Math.PI, Math.PI);
 

@@ -20,13 +20,20 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
     private final Supplier<Pose2d> _finalPoseSupplier;
 
     private final TunableDouble _normalVectorOffset =
-            new TunableDouble("NormalVectorAlignment", "offset", Constants.DriveWithNormalVectorAlignment.NORMAL_VECTOR_OFFSET);
+            new TunableDouble(
+                    "NormalVectorAlignment",
+                    "offset",
+                    Constants.DriveWithNormalVectorAlignment.NORMAL_VECTOR_OFFSET);
 
     // We blend the start and end for smooth transition
     private final TunableDouble _blendStartDistance =
-            new TunableDouble("NormalVectorAlignment", "blendStart", Constants.DriveWithNormalVectorAlignment.BLEND_START);
+            new TunableDouble(
+                    "NormalVectorAlignment",
+                    "blendStart",
+                    Constants.DriveWithNormalVectorAlignment.BLEND_START);
     private final TunableDouble _blendEndDistance =
-            new TunableDouble("NormalVectorAlignment", "blendEnd", Constants.DriveWithNormalVectorAlignment.BLEND_END);
+            new TunableDouble(
+                    "NormalVectorAlignment", "blendEnd", Constants.DriveWithNormalVectorAlignment.BLEND_END);
 
     private Pose2d _alignmentPose = null;
     private Pose2d _finalPose = null;
@@ -38,25 +45,38 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
 
     private final TunableDouble _smoothingFactor =
             new TunableDouble("DriveToPose", "smoothingFactor", Constants.DriveToPose.SMOOTHING_FACTOR);
-    private final TunableDouble _maxVelocity = new TunableDouble("DriveToPose", "maxVelocity", Constants.DriveToPose.MAX_VELOCITY);
+    private final TunableDouble _maxVelocity =
+            new TunableDouble("DriveToPose", "maxVelocity", Constants.DriveToPose.MAX_VELOCITY);
     private final TunableDouble _maxAcceleration =
             new TunableDouble("DriveToPose", "maxAcceleration", Constants.DriveToPose.MAX_ACCELERATION);
     private final TunableDouble _positionTolerance =
-            new TunableDouble("DriveToPose", "positionTolerance", Constants.DriveToPose.POSITION_TOLERANCE);
+            new TunableDouble(
+                    "DriveToPose", "positionTolerance", Constants.DriveToPose.POSITION_TOLERANCE);
     private final TunableDouble _velocityTolerance =
-            new TunableDouble("DriveToPose", "velocityTolerance", Constants.DriveToPose.VELOCITY_TOLERANCE);
-    private final TunableDouble _minOutput = new TunableDouble("DriveToPose", "minOutput", Constants.DriveToPose.MIN_OUTPUT);
+            new TunableDouble(
+                    "DriveToPose", "velocityTolerance", Constants.DriveToPose.VELOCITY_TOLERANCE);
+    private final TunableDouble _minOutput =
+            new TunableDouble("DriveToPose", "minOutput", Constants.DriveToPose.MIN_OUTPUT);
     private final TunableDouble _counteractGain =
             new TunableDouble("DriveToPose", "counteractGain", Constants.DriveToPose.COUNTERACT_GAIN);
     private final TunableDouble _aggressiveAccelMultiplier =
-            new TunableDouble("DriveToPose", "aggressiveAccelMultiplier", Constants.DriveToPose.AGGRESSIVE_ACCEL_MULTIPLIER);
+            new TunableDouble(
+                    "DriveToPose",
+                    "aggressiveAccelMultiplier",
+                    Constants.DriveToPose.AGGRESSIVE_ACCEL_MULTIPLIER);
 
-    private final TunableDouble _driveKp = new TunableDouble("DriveToPose", "driveKp", Constants.DriveToPose.DRIVE_KP);
-    private final TunableDouble _driveKi = new TunableDouble("DriveToPose", "driveKi", Constants.DriveToPose.DRIVE_KI);
-    private final TunableDouble _driveKd = new TunableDouble("DriveToPose", "driveKd", Constants.DriveToPose.DRIVE_KD);
-    private final TunableDouble _rotKp = new TunableDouble("DriveToPose", "rotKp", Constants.DriveToPose.ROT_KP);
-    private final TunableDouble _rotKi = new TunableDouble("DriveToPose", "rotKi", Constants.DriveToPose.ROT_KI);
-    private final TunableDouble _rotKd = new TunableDouble("DriveToPose", "rotKd", Constants.DriveToPose.ROT_KD);
+    private final TunableDouble _driveKp =
+            new TunableDouble("DriveToPose", "driveKp", Constants.DriveToPose.DRIVE_KP);
+    private final TunableDouble _driveKi =
+            new TunableDouble("DriveToPose", "driveKi", Constants.DriveToPose.DRIVE_KI);
+    private final TunableDouble _driveKd =
+            new TunableDouble("DriveToPose", "driveKd", Constants.DriveToPose.DRIVE_KD);
+    private final TunableDouble _rotKp =
+            new TunableDouble("DriveToPose", "rotKp", Constants.DriveToPose.ROT_KP);
+    private final TunableDouble _rotKi =
+            new TunableDouble("DriveToPose", "rotKi", Constants.DriveToPose.ROT_KI);
+    private final TunableDouble _rotKd =
+            new TunableDouble("DriveToPose", "rotKd", Constants.DriveToPose.ROT_KD);
 
     public DriveWithNormalVectorAlignment(
             DriveSubsystem drive, SuperstructureManager manager, Supplier<Pose2d> finalPoseSupplier) {

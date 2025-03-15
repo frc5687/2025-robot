@@ -23,25 +23,38 @@ public class DriveToPoseSmooth extends OutliersCommand {
 
     private final TunableDouble _smoothingFactor =
             new TunableDouble("DriveToPose", "smoothingFactor", Constants.DriveToPose.SMOOTHING_FACTOR);
-    private final TunableDouble _maxVelocity = new TunableDouble("DriveToPose", "maxVelocity", Constants.DriveToPose.MAX_VELOCITY);
+    private final TunableDouble _maxVelocity =
+            new TunableDouble("DriveToPose", "maxVelocity", Constants.DriveToPose.MAX_VELOCITY);
     private final TunableDouble _maxAcceleration =
             new TunableDouble("DriveToPose", "maxAcceleration", Constants.DriveToPose.MAX_ACCELERATION);
     private final TunableDouble _positionTolerance =
-            new TunableDouble("DriveToPose", "positionTolerance", Constants.DriveToPose.POSITION_TOLERANCE);
+            new TunableDouble(
+                    "DriveToPose", "positionTolerance", Constants.DriveToPose.POSITION_TOLERANCE);
     private final TunableDouble _velocityTolerance =
-            new TunableDouble("DriveToPose", "velocityTolerance", Constants.DriveToPose.VELOCITY_TOLERANCE);
-    private final TunableDouble _minOutput = new TunableDouble("DriveToPose", "minOutput", Constants.DriveToPose.MIN_OUTPUT);
+            new TunableDouble(
+                    "DriveToPose", "velocityTolerance", Constants.DriveToPose.VELOCITY_TOLERANCE);
+    private final TunableDouble _minOutput =
+            new TunableDouble("DriveToPose", "minOutput", Constants.DriveToPose.MIN_OUTPUT);
     private final TunableDouble _counteractGain =
             new TunableDouble("DriveToPose", "counteractGain", Constants.DriveToPose.COUNTERACT_GAIN);
     private final TunableDouble _aggressiveAccelMultiplier =
-            new TunableDouble("DriveToPose", "aggressiveAccelMultiplier", Constants.DriveToPose.AGGRESSIVE_ACCEL_MULTIPLIER);
+            new TunableDouble(
+                    "DriveToPose",
+                    "aggressiveAccelMultiplier",
+                    Constants.DriveToPose.AGGRESSIVE_ACCEL_MULTIPLIER);
 
-    private final TunableDouble _driveKp = new TunableDouble("DriveToPose", "driveKp", Constants.DriveToPose.DRIVE_KP);
-    private final TunableDouble _driveKi = new TunableDouble("DriveToPose", "driveKi", Constants.DriveToPose.DRIVE_KI);
-    private final TunableDouble _driveKd = new TunableDouble("DriveToPose", "driveKd", Constants.DriveToPose.DRIVE_KD);
-    private final TunableDouble _rotKp = new TunableDouble("DriveToPose", "rotKp", Constants.DriveToPose.ROT_KP);
-    private final TunableDouble _rotKi = new TunableDouble("DriveToPose", "rotKi", Constants.DriveToPose.ROT_KI);
-    private final TunableDouble _rotKd = new TunableDouble("DriveToPose", "rotKd", Constants.DriveToPose.ROT_KD);
+    private final TunableDouble _driveKp =
+            new TunableDouble("DriveToPose", "driveKp", Constants.DriveToPose.DRIVE_KP);
+    private final TunableDouble _driveKi =
+            new TunableDouble("DriveToPose", "driveKi", Constants.DriveToPose.DRIVE_KI);
+    private final TunableDouble _driveKd =
+            new TunableDouble("DriveToPose", "driveKd", Constants.DriveToPose.DRIVE_KD);
+    private final TunableDouble _rotKp =
+            new TunableDouble("DriveToPose", "rotKp", Constants.DriveToPose.ROT_KP);
+    private final TunableDouble _rotKi =
+            new TunableDouble("DriveToPose", "rotKi", Constants.DriveToPose.ROT_KI);
+    private final TunableDouble _rotKd =
+            new TunableDouble("DriveToPose", "rotKd", Constants.DriveToPose.ROT_KD);
 
     public DriveToPoseSmooth(DriveSubsystem drive, Supplier<Pose2d> poseSupplier) {
         _drive = drive;
