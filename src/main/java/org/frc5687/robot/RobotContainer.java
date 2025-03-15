@@ -206,7 +206,7 @@ public class RobotContainer implements EpilogueLog {
         NamedCommands.registerCommand(
                 "CoralL2",
                 _superstructureManager.createRequest(
-                        Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.IMMEDIATE));
+                        Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.AUTO_SEQUENCE));
 
         NamedCommands.registerCommand("AutoPlace", AutoActions.autoPlace(this));
     }
