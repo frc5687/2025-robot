@@ -3,29 +3,29 @@
     "waypoints": [
         {
             "anchor": {
-                "x": 7.036782786885246,
-                "y": 5.219776639344262
+                "x": 4.911,
+                "y": 5.297
             },
             "prevControl": null,
             "nextControl": {
-                "x": 5.877063749532763,
-                "y": 5.091540268386408
+                "x": 4.227028935185184,
+                "y": 6.179584273726852
             },
             "isLocked": false,
-            "linkedName": null
+            "linkedName": "Reef 3 Right"
         },
         {
             "anchor": {
-                "x": 5.175,
-                "y": 5.144
+                "x": 1.5455305713750034,
+                "y": 7.315640012580391
             },
             "prevControl": {
-                "x": 5.485201664307734,
-                "y": 5.183431340708677
+                "x": 2.3694656260331186,
+                "y": 6.22224126494481
             },
             "nextControl": null,
             "isLocked": false,
-            "linkedName": "Reef 3 Left"
+            "linkedName": "Coral Station Right"
         }
     ],
     "rotationTargets": [
@@ -39,28 +39,28 @@
     ],
     "eventMarkers": [
         {
-            "name": "CoralL4",
-            "waypointRelativePos": 0.45468567464953263,
+            "name": "ReadyFunnel",
+            "waypointRelativePos": 0.07652875830564784,
             "endWaypointRelativePos": null,
             "command": {
                 "type": "named",
                 "data": {
-                    "name": "CoralL4"
+                    "name": "ReadyFunnel"
                 }
             }
         }
     ],
     "globalConstraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 3.0,
+        "maxVelocity": 3.3,
+        "maxAcceleration": 3.5,
         "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 300.0,
+        "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
         "unlimited": false
     },
     "goalEndState": {
         "velocity": 0,
-        "rotation": -119.99999999999999
+        "rotation": -53.0
     },
     "reversed": false,
     "folder": null,
@@ -68,5 +68,5 @@
         "velocity": 0,
         "rotation": -119.99999999999999
     },
-    "useDefaultConstraints": false
+    "useDefaultConstraints": true
 }

@@ -8,8 +8,8 @@
             },
             "prevControl": null,
             "nextControl": {
-                "x": 3.1,
-                "y": 5.8960254037844395
+                "x": 2.685084346064814,
+                "y": 5.898936125578705
             },
             "isLocked": false,
             "linkedName": "Reef 2 Right"
@@ -20,8 +20,8 @@
                 "y": 7.315640012580391
             },
             "prevControl": {
-                "x": 2.1473455945270516,
-                "y": 6.517004502533098
+                "x": 2.4091294126157394,
+                "y": 6.47647337962963
             },
             "nextControl": null,
             "isLocked": false,
