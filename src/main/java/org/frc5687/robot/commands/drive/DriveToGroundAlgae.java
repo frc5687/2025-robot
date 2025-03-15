@@ -1,5 +1,6 @@
 package org.frc5687.robot.commands.drive;
 
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
@@ -54,7 +55,7 @@ public class DriveToGroundAlgae extends OutliersCommand {
 
         if (Timer.getFPGATimestamp() - lastDetected > BLIND_DRIVE_TIME) {
             ChassisSpeeds speeds = new ChassisSpeeds();
-            log("desired robot relative speeds", speeds, ChassisSpeeds.struct);
+            log("desired robot relative speeds", speeds, ChassisSpeeds.struct, Importance.CRITICAL);
             _drive.setDesiredChassisSpeeds(speeds);
         } else if (detection.isPresent()) {
             double x = detection.get().getX();
@@ -64,7 +65,7 @@ public class DriveToGroundAlgae extends OutliersCommand {
                             -_distanceController.calculate(Math.hypot(x, y)),
                             _yController.calculate(Math.atan2(y, x)),
                             _thetaController.calculate(Math.atan2(y, x)));
-            log("desired robot relative speeds", speeds, ChassisSpeeds.struct);
+            log("desired robot relative speeds", speeds, ChassisSpeeds.struct, Importance.CRITICAL);
             _drive.setDesiredChassisSpeeds(speeds);
         }
     }

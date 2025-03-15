@@ -23,7 +23,7 @@ public class EjectAlgae extends OutliersCommand {
     protected void execute(double timestamp) {
         if (_algae.isAlgaeDetected()) _timeLastSeen = Timer.getFPGATimestamp();
         // if (_algae.isSafeToEject()) {
-        _algae.setWheelMotorVoltage(-12);
+        _algae.setWheelMotorVoltage(-10);
         // } else {
         //     _algae.setWheelMotorVoltage(0);
         // }
