@@ -1,0 +1,72 @@
+{
+    "version": "2025.0",
+    "waypoints": [
+        {
+            "anchor": {
+                "x": 3.86,
+                "y": 5.18
+            },
+            "prevControl": null,
+            "nextControl": {
+                "x": 3.463261140046295,
+                "y": 5.448665726273148
+            },
+            "isLocked": false,
+            "linkedName": "Reef 2 Left"
+        },
+        {
+            "anchor": {
+                "x": 3.8098433883101843,
+                "y": 5.15757544849537
+            },
+            "prevControl": {
+                "x": 3.580874927662036,
+                "y": 5.521875217013889
+            },
+            "nextControl": null,
+            "isLocked": false,
+            "linkedName": null
+        }
+    ],
+    "rotationTargets": [
+        
+    ],
+    "constraintZones": [
+        
+    ],
+    "pointTowardsZones": [
+        
+    ],
+    "eventMarkers": [
+        {
+            "name": "LowAlgaeIntake",
+            "waypointRelativePos": 0.33489929401993357,
+            "endWaypointRelativePos": null,
+            "command": {
+                "type": "named",
+                "data": {
+                    "name": "LowAlgaeIntake"
+                }
+            }
+        }
+    ],
+    "globalConstraints": {
+        "maxVelocity": 0.5,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+    },
+    "goalEndState": {
+        "velocity": 0,
+        "rotation": -59.99999999999999
+    },
+    "reversed": false,
+    "folder": null,
+    "idealStartingState": {
+        "velocity": 0,
+        "rotation": -59.99999999999999
+    },
+    "useDefaultConstraints": false
+}

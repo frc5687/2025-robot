@@ -87,6 +87,8 @@ task(replayWatch, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+ext.FLIPPED_PREFIX = "(Alliance) "
+
 void mirrorAllPaths() {
     def pathDirectory = file("src/main/deploy/pathplanner/paths")
     def jsonSlurper = new groovy.json.JsonSlurper()
@@ -97,39 +99,45 @@ void mirrorAllPaths() {
     if (!pathDirectory.exists() || !pathDirectory.isDirectory()) {
         throw new GradleException("Invalid directory: $pathDirectory")
     }
+    
     pathDirectory.eachFile { file ->
-        if (file.name.endsWith('.path')) {
+        if (file.name.endsWith('.path') && !file.name.startsWith(FLIPPED_PREFIX)) {
             try {
                 def jsonNode = jsonSlurper.parse(file)
-                jsonNode.waypoints.each {item -> 
+                jsonNode.waypoints.each { item -> 
                     if (item.linkedName != null) {
                         namedWaypointCoords.put(item.linkedName, item)
                     }
                 }
             } catch (Exception e) {
-                println "Error flipping path file $file: $e"
+                println "Error reading path file $file: $e"
             }
         }
     }
     int waypointCount = namedWaypointCoords.keySet().size()
     println "Found $waypointCount named waypoints."
+    
     pathDirectory.eachFile { file ->
-        if (file.name.contains("(Flipped)")) {
-            delete file
+        if (file.name.startsWith(FLIPPED_PREFIX)) {
+            file.delete()
         }
     }
-    pathDirectory.eachFile {file ->
-        if (file.name.endsWith('.path')) {
-            flipCount += 1
+    
+    pathDirectory.eachFile { file ->
+        if (file.name.endsWith('.path') && !file.name.startsWith(FLIPPED_PREFIX)) {
             try {
-                def jsonNode = jsonSlurper.parse(file)
+                def jsonText = file.getText('UTF-8')
+                def jsonNode = jsonSlurper.parseText(jsonText)
                 flipPath(jsonNode, namedWaypointCoords)
-                def newFile = new File("src/main/deploy/pathplanner/paths/(Flipped) $file.name")
-                newFile.createNewFile()
-                newFile.setText(new groovy.json.JsonBuilder(jsonNode).toString())
-                newFile.setLastModified(0)
+                
+                def newFile = new File(pathDirectory, "${FLIPPED_PREFIX}${file.name}")
+                def prettyJson = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(jsonNode))
+                newFile.setText(prettyJson, 'UTF-8')
+                
+                flipCount++
             } catch (Exception e) {
                 println "Error flipping path file $file: $e"
+                e.printStackTrace()
             }
         }
     }
@@ -145,33 +153,34 @@ void flipPath(Map node, Map namedWaypointCoords) {
         else if (key == "waypoints" && value instanceof List) {
             value.each { item ->
                 if (item.linkedName != null && item.linkedName.contains("Reef")) {
-                    // we need to use the other named waypoint so the coral arm lines up
                     int reefSide = Integer.valueOf(item.linkedName.tokenize().get(1))
                     int newReefSide = (7-reefSide) % 6 + 1
                     String newLeftRight = item.linkedName.contains("Left") ? "Right" : "Left"
                     String waypointName = "Reef $newReefSide $newLeftRight"
                     Map waypoint = namedWaypointCoords.get(waypointName)
-                    if (item.prevControl != null) {
-                        double diffX = item.prevControl.x - item.anchor.x
-                        double diffY = item.prevControl.y - item.anchor.y
-                        item.prevControl.x = waypoint.anchor.x + diffX
-                        item.prevControl.y = waypoint.anchor.y - diffY // mirrored
+                    
+                    if (waypoint != null) {
+                        if (item.prevControl != null) {
+                            double diffX = item.prevControl.x - item.anchor.x
+                            double diffY = item.prevControl.y - item.anchor.y
+                            item.prevControl.x = waypoint.anchor.x + diffX
+                            item.prevControl.y = waypoint.anchor.y - diffY
+                        }
+                        if (item.nextControl != null) {
+                            double diffX = item.nextControl.x - item.anchor.x
+                            double diffY = item.nextControl.y - item.anchor.y
+                            item.nextControl.x = waypoint.anchor.x + diffX
+                            item.nextControl.y = waypoint.anchor.y - diffY
+                        }
+                        item.anchor.x = waypoint.anchor.x
+                        item.anchor.y = waypoint.anchor.y
+                        item.linkedName = waypointName
+                    } else {
+                        println "Warning: Could not find matching waypoint for: $waypointName"
+                        mirrorWaypoint(item, FIELD_WIDTH)
                     }
-                    if (item.nextControl != null) {
-                        double diffX = item.nextControl.x - item.anchor.x
-                        double diffY = item.nextControl.y - item.anchor.y
-                        item.nextControl.x = waypoint.anchor.x + diffX
-                        item.nextControl.y = waypoint.anchor.y - diffY // mirrored
-                    }
-                    item.anchor.x = waypoint.anchor.x
-                    item.anchor.y = waypoint.anchor.y
-                    item.linkedName = waypointName
                 } else {
-                    // no worries, just vanilla mirror it
-                    item.anchor.y = FIELD_WIDTH - item.anchor.y
-                    if (item.prevControl != null) item.prevControl.y = FIELD_WIDTH - item.prevControl.y
-                    if (item.nextControl != null) item.nextControl.y = FIELD_WIDTH - item.nextControl.y
-                    item.linkedName = null
+                    mirrorWaypoint(item, FIELD_WIDTH)
                 }
             }
         }
@@ -188,7 +197,13 @@ void flipPath(Map node, Map namedWaypointCoords) {
     }
 }
 
-def mirrorAllAutos() {
+void mirrorWaypoint(Map waypoint, double fieldWidth) {
+    waypoint.anchor.y = fieldWidth - waypoint.anchor.y
+    if (waypoint.prevControl != null) waypoint.prevControl.y = fieldWidth - waypoint.prevControl.y
+    if (waypoint.nextControl != null) waypoint.nextControl.y = fieldWidth - waypoint.nextControl.y
+}
+
+void mirrorAllAutos() {
     def pathDirectory = file("src/main/deploy/pathplanner/autos")
     def jsonSlurper = new groovy.json.JsonSlurper()
 
@@ -198,20 +213,28 @@ def mirrorAllAutos() {
     if (!pathDirectory.exists() || !pathDirectory.isDirectory()) {
         throw new GradleException("Invalid directory: $pathDirectory")
     }
+    
     pathDirectory.eachFile { file ->
-        if (file.name.contains("(Flipped)")) {
-            delete file
-        } else if (file.name.endsWith('.auto')) {
-            flipCount += 1
+        if (file.name.startsWith(FLIPPED_PREFIX)) {
+            file.delete()
+        }
+    }
+    
+    pathDirectory.eachFile { file ->
+        if (file.name.endsWith('.auto') && !file.name.startsWith(FLIPPED_PREFIX)) {
             try {
-                def jsonNode = jsonSlurper.parse(file)
+                def jsonText = file.getText('UTF-8')
+                def jsonNode = jsonSlurper.parseText(jsonText)
                 flipAuto(jsonNode)
-                def newFile = new File("src/main/deploy/pathplanner/autos/(Flipped) $file.name")
-                newFile.createNewFile()
-                newFile.setText(new groovy.json.JsonBuilder(jsonNode).toString())
-                newFile.setLastModified(0)
+                
+                def newFile = new File(pathDirectory, "${FLIPPED_PREFIX}${file.name}")
+                def prettyJson = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(jsonNode))
+                newFile.setText(prettyJson, 'UTF-8')
+                
+                flipCount++
             } catch (Exception e) {
-                println "Error flipping path file $file: $e"
+                println "Error flipping auto file $file: $e"
+                e.printStackTrace()
             }
         }
     }
@@ -220,8 +243,10 @@ def mirrorAllAutos() {
 
 void flipAuto(Map node) {
     node.each { key, value ->
-        if (key == "pathName") {
-            node[key] = "(Flipped) $value"
+        if (key == "pathName" && value instanceof String) {
+            if (!value.startsWith(FLIPPED_PREFIX)) {
+                node[key] = "${FLIPPED_PREFIX}${value}"
+            }
         }
         else if (value instanceof Map) {
             flipAuto(value)
@@ -235,6 +260,7 @@ void flipAuto(Map node) {
         }
     }
 }
+
 
 dependencies {
     annotationProcessor wpi.java.deps.wpilibAnnotations()
