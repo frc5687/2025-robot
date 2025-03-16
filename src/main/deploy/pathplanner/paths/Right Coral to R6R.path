@@ -20,8 +20,8 @@
         "y": 2.744965
       },
       "prevControl": {
-        "x": 3.8931163536051145,
-        "y": 2.584318803179711
+        "x": 3.262927879050925,
+        "y": 1.6196665219907402
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,11 +32,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.6573087032710281,
+      "minWaypointRelativePos": 0.61,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 2.5,
-        "maxAcceleration": 2.25,
+        "maxAcceleration": 1.4,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "eventMarkers": [
     {
       "name": "CoralL4",
-      "waypointRelativePos": 0.7513285215736043,
+      "waypointRelativePos": 0.7,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
