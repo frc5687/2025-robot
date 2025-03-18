@@ -148,7 +148,7 @@ public class OperatorInterface {
                 .rightTrigger()
                 .whileTrue(
                         new ConditionalCommand(
-                                new EjectAlgae(container.getAlgae()),
+                                new EjectAlgae(container.getAlgae(), container.getElevator()),
                                 new EjectCoral(container.getCoral()),
                                 manager::isAlgaeMode));
 
