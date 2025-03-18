@@ -26,7 +26,7 @@ public class ReefAlignmentHelpers {
         RIGHT,
         ALGAE,
         LEFT_L1,
-        RIGHT_L1,
+        RIGHT_L1
     }
 
     public static int calculateBestFace(Pose2d robotPose) {
