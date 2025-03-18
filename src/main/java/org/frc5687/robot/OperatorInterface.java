@@ -6,8 +6,11 @@ import static edu.wpi.first.units.Units.Radians;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import java.util.Optional;
+import org.frc5687.robot.commands.algae.AutoNetScore;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
@@ -17,7 +20,6 @@ import org.frc5687.robot.commands.drive.DriveToHP;
 import org.frc5687.robot.commands.drive.DynamicDriveToLane;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
-import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchNoNormalVector;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
@@ -44,15 +46,6 @@ public class OperatorInterface {
 
     private void configureDriverControls(RobotContainer container, SuperstructureManager manager) {
         // Face angles with funnel receive
-        _driverController
-                .x()
-                .whileTrue(
-                        new DynamicDriveToReefBranchNoNormalVector(container.getDrive(), ReefSide.LEFT_L1));
-
-        _driverController
-                .b()
-                .whileTrue(
-                        new DynamicDriveToReefBranchNoNormalVector(container.getDrive(), ReefSide.RIGHT_L1));
 
         _driverController
                 .y()
@@ -172,6 +165,22 @@ public class OperatorInterface {
                         new DynamicDriveToLane(
                                 container.getDrive(),
                                 () -> -modifyAxis(_driverController.getLeftY()) * Constants.DriveTrain.MAX_MPS));
+
+        _driverController
+                .b()
+                .onTrue(
+                        new WaitUntilCommand(AutoNetScore::isCloseEnoughToRaise)
+                                .andThen(manager.aimAtAlgaeNet())
+                                .andThen(
+                                        new WaitUntilCommand(AutoNetScore::isCloseEnoughToShoot)
+                                                .alongWith(new WaitCommand(0.25)))
+                                .andThen(new EjectAlgae(container.getAlgae(), container.getElevator()))
+                                .deadlineFor(
+                                        new AutoNetScore(
+                                                container,
+                                                () ->
+                                                        -RobotContainer.modifyAxis(getDriverController().getLeftX())
+                                                                * Constants.DriveTrain.MAX_MPS)));
     }
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
