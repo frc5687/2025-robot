@@ -1,0 +1,214 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.1776,
+        "y": 3.7359
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.177600000000001,
+        "y": 3.7359
+      },
+      "isLocked": false,
+      "linkedName": "Reef 1 Right"
+    },
+    {
+      "anchor": {
+        "x": 3.18,
+        "y": 4.08
+      },
+      "prevControl": {
+        "x": 3.583997679448781,
+        "y": 4.08
+      },
+      "nextControl": {
+        "x": 2.7760023205512194,
+        "y": 4.08
+      },
+      "isLocked": false,
+      "linkedName": "Reef 1 Left"
+    },
+    {
+      "anchor": {
+        "x": 3.58232,
+        "y": 5.01685
+      },
+      "prevControl": {
+        "x": 3.430647511193551,
+        "y": 5.279554456723192
+      },
+      "nextControl": {
+        "x": 3.7339924888064493,
+        "y": 4.754145543276808
+      },
+      "isLocked": false,
+      "linkedName": "Reef 2 Right"
+    },
+    {
+      "anchor": {
+        "x": 3.88,
+        "y": 5.19
+      },
+      "prevControl": {
+        "x": 4.064147652752014,
+        "y": 5.638654857274003
+      },
+      "nextControl": {
+        "x": 3.6958523472479845,
+        "y": 4.741345142725998
+      },
+      "isLocked": false,
+      "linkedName": "Reef 2 Left"
+    },
+    {
+      "anchor": {
+        "x": 4.893999,
+        "y": 5.306885
+      },
+      "prevControl": {
+        "x": 5.038202858514995,
+        "y": 5.734930357101875
+      },
+      "nextControl": {
+        "x": 4.749795141485005,
+        "y": 4.878839642898126
+      },
+      "isLocked": false,
+      "linkedName": "Reef 3 Right"
+    },
+    {
+      "anchor": {
+        "x": 5.193,
+        "y": 5.134
+      },
+      "prevControl": {
+        "x": 5.318,
+        "y": 5.350506350946111
+      },
+      "nextControl": {
+        "x": 5.068,
+        "y": 4.91749364905389
+      },
+      "isLocked": false,
+      "linkedName": "Reef 3 Left"
+    },
+    {
+      "anchor": {
+        "x": 5.80102,
+        "y": 4.31595
+      },
+      "prevControl": {
+        "x": 6.49612666817825,
+        "y": 4.31595
+      },
+      "nextControl": {
+        "x": 5.105913331821751,
+        "y": 4.31595
+      },
+      "isLocked": false,
+      "linkedName": "Reef 4 Right"
+    },
+    {
+      "anchor": {
+        "x": 5.801,
+        "y": 3.971
+      },
+      "prevControl": {
+        "x": 6.385187493438716,
+        "y": 3.971
+      },
+      "nextControl": {
+        "x": 5.2168125065612845,
+        "y": 3.971
+      },
+      "isLocked": false,
+      "linkedName": "Reef 4 Left"
+    },
+    {
+      "anchor": {
+        "x": 5.3963,
+        "y": 3.03499
+      },
+      "prevControl": {
+        "x": 5.9007414083004015,
+        "y": 3.30599
+      },
+      "nextControl": {
+        "x": 4.891858591699599,
+        "y": 2.76399
+      },
+      "isLocked": false,
+      "linkedName": "Reef 5 Right"
+    },
+    {
+      "anchor": {
+        "x": 5.098,
+        "y": 2.862
+      },
+      "prevControl": {
+        "x": 5.311719855175012,
+        "y": 2.4918263522506168
+      },
+      "nextControl": {
+        "x": 4.884280144824988,
+        "y": 3.2321736477493834
+      },
+      "isLocked": false,
+      "linkedName": "Reef 5 Left"
+    },
+    {
+      "anchor": {
+        "x": 4.08467,
+        "y": 2.744965
+      },
+      "prevControl": {
+        "x": 4.533382545257809,
+        "y": 2.8518942649216825
+      },
+      "nextControl": {
+        "x": 3.635957454742191,
+        "y": 2.6380357350783177
+      },
+      "isLocked": false,
+      "linkedName": "Reef 6 Right"
+    },
+    {
+      "anchor": {
+        "x": 3.786,
+        "y": 2.917
+      },
+      "prevControl": {
+        "x": 2.786,
+        "y": 2.917
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef 6 Left"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.3,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 59.99999999999999
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

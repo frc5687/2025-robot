@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2025.2.1"
+    id "edu.wpi.first.GradleRIO" version "2025.3.1"
     id "com.diffplug.spotless" version "7.0.2"
 }
 
@@ -10,54 +10,67 @@ java {
 }
 
 def ROBOT_MAIN_CLASS = "org.frc5687.robot.Main"
+def TEAM_IP = "10.56.87.2"
 
 spotless {
   java {
     importOrder()
     removeUnusedImports()
-    cleanthat()          // has its own section below
+    cleanthat()          
     googleJavaFormat()
     leadingSpacesToTabs(2)
     leadingTabsToSpaces(4)
-
-    // eclipse()            // has its own section below
-    // prettier()           // has its own section below
-    // clangFormat()        // has its own section below
-    formatAnnotations()  // fixes formatting of type annotations, see below
-
-    // licenseHeader '/* (C) $YEAR */' // or licenseHeaderFile
+    formatAnnotations()  
   }
 }
 
-
-// Define my targets (RoboRIO) and artifacts (deployable files)
-// This is added by GradleRIO's backing project DeployUtils.
 deploy {
     targets {
         roborio(getTargetTypeClass('RoboRIO')) {
-            // Team number is loaded either from the .wpilib/wpilib_preferences.json
-            // or from command line. If not found an exception will be thrown.
-            // You can use getTeamOrDefault(team) instead of getTeamNumber if you
-            // want to store a team number in this file.
             team = project.frc.getTeamNumber()
             debug = project.frc.getDebugOrDefault(false)
-
             artifacts {
-                // First part is artifact name, 2nd is artifact type
-                // getTargetTypeClass is a shortcut to get the class type using a string
-
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                }
+                    project.logger.lifecycle('Checking if profile mode...')
 
-                // Static files artifact
+                    //Enter profile mode with ./gradlew deploy -PprofileMode
+                    if (project.hasProperty("profileMode")) {
+                        project.logger.lifecycle('Profile mode enabled!')
+                        project.logger.lifecycle("Connect JMX client to ${TEAM_IP}:1099 for RoboRIO profiling with VisualVM.")
+                        jvmArgs.add("-Dcom.sun.management.jmxremote=true")
+                        jvmArgs.add("-Dcom.sun.management.jmxremote.port=1099")
+                        jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
+                        jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
+                        jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
+                        jvmArgs.add("-Djava.rmi.server.hostname=${TEAM_IP}")
+                    } else {
+                        project.logger.lifecycle('Normal mode, profiling disabled.')
+                    }
+
+                    jvmArgs.add("-XX:+UnlockExperimentalVMOptions")
+                    jvmArgs.add("-XX:GCTimeRatio=5")
+                    jvmArgs.add("-XX:+UseSerialGC")
+                    jvmArgs.add("-XX:MaxGCPauseMillis=50")
+
+                    final MAX_JAVA_HEAP_SIZE_MB = 100
+                    jvmArgs.add("-Xmx" + MAX_JAVA_HEAP_SIZE_MB + "M")
+                    jvmArgs.add("-Xms" + MAX_JAVA_HEAP_SIZE_MB + "M")
+                    jvmArgs.add("-XX:+AlwaysPreTouch")
+                }
                 frcStaticFileDeploy(getArtifactTypeClass('FileTreeArtifact')) {
                     files = project.fileTree('src/main/deploy')
                     directory = '/home/lvuser/deploy'
-                    deleteOldFiles = false // Change to true to delete files on roboRIO that no
-                                           // longer exist in deploy directory of this project
+                    deleteOldFiles = true
                 }
             }
         }
+    }
+}
+
+def mirrorPaths = tasks.register('mirrorPaths') {
+    doLast {
+        mirrorAllPaths()
+        mirrorAllAutos()
     }
 }
 
@@ -74,9 +87,155 @@ task(replayWatch, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+void mirrorAllPaths() {
+    def pathDirectory = file("src/main/deploy/pathplanner/paths")
+    def jsonSlurper = new groovy.json.JsonSlurper()
 
-// Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
-// Also defines JUnit 5.
+    println "Mirroring paths..."
+    int flipCount = 0
+    Map namedWaypointCoords = new HashMap<String, Map>()
+    if (!pathDirectory.exists() || !pathDirectory.isDirectory()) {
+        throw new GradleException("Invalid directory: $pathDirectory")
+    }
+    pathDirectory.eachFile { file ->
+        if (file.name.endsWith('.path')) {
+            try {
+                def jsonNode = jsonSlurper.parse(file)
+                jsonNode.waypoints.each {item -> 
+                    if (item.linkedName != null) {
+                        namedWaypointCoords.put(item.linkedName, item)
+                    }
+                }
+            } catch (Exception e) {
+                println "Error flipping path file $file: $e"
+            }
+        }
+    }
+    int waypointCount = namedWaypointCoords.keySet().size()
+    println "Found $waypointCount named waypoints."
+    pathDirectory.eachFile { file ->
+        if (file.name.contains("(Flipped)")) {
+            delete file
+        }
+    }
+    pathDirectory.eachFile {file ->
+        if (file.name.endsWith('.path')) {
+            flipCount += 1
+            try {
+                def jsonNode = jsonSlurper.parse(file)
+                flipPath(jsonNode, namedWaypointCoords)
+                def newFile = new File("src/main/deploy/pathplanner/paths/(Flipped) $file.name")
+                newFile.createNewFile()
+                newFile.setText(new groovy.json.JsonBuilder(jsonNode).toString())
+                newFile.setLastModified(0)
+            } catch (Exception e) {
+                println "Error flipping path file $file: $e"
+            }
+        }
+    }
+    println "Mirrored $flipCount paths."
+}
+
+void flipPath(Map node, Map namedWaypointCoords) {
+    final double FIELD_WIDTH = 8.052
+    node.each { key, value ->
+        if (key == "rotation" && value instanceof Number) {
+            node[key] = -value
+        }
+        else if (key == "waypoints" && value instanceof List) {
+            value.each { item ->
+                if (item.linkedName != null && item.linkedName.contains("Reef")) {
+                    // we need to use the other named waypoint so the coral arm lines up
+                    int reefSide = Integer.valueOf(item.linkedName.tokenize().get(1))
+                    int newReefSide = (7-reefSide) % 6 + 1
+                    String newLeftRight = item.linkedName.contains("Left") ? "Right" : "Left"
+                    String waypointName = "Reef $newReefSide $newLeftRight"
+                    Map waypoint = namedWaypointCoords.get(waypointName)
+                    if (item.prevControl != null) {
+                        double diffX = item.prevControl.x - item.anchor.x
+                        double diffY = item.prevControl.y - item.anchor.y
+                        item.prevControl.x = waypoint.anchor.x + diffX
+                        item.prevControl.y = waypoint.anchor.y - diffY // mirrored
+                    }
+                    if (item.nextControl != null) {
+                        double diffX = item.nextControl.x - item.anchor.x
+                        double diffY = item.nextControl.y - item.anchor.y
+                        item.nextControl.x = waypoint.anchor.x + diffX
+                        item.nextControl.y = waypoint.anchor.y - diffY // mirrored
+                    }
+                    item.anchor.x = waypoint.anchor.x
+                    item.anchor.y = waypoint.anchor.y
+                    item.linkedName = waypointName
+                } else {
+                    // no worries, just vanilla mirror it
+                    item.anchor.y = FIELD_WIDTH - item.anchor.y
+                    if (item.prevControl != null) item.prevControl.y = FIELD_WIDTH - item.prevControl.y
+                    if (item.nextControl != null) item.nextControl.y = FIELD_WIDTH - item.nextControl.y
+                    item.linkedName = null
+                }
+            }
+        }
+        else if (value instanceof Map) {
+            flipPath(value, namedWaypointCoords)
+        }
+        else if (value instanceof List) {
+            value.each { item ->
+                if (item instanceof Map) {
+                    flipPath(item, namedWaypointCoords)
+                }
+            }
+        }
+    }
+}
+
+def mirrorAllAutos() {
+    def pathDirectory = file("src/main/deploy/pathplanner/autos")
+    def jsonSlurper = new groovy.json.JsonSlurper()
+
+    println "Mirroring autos..."
+    int flipCount = 0
+
+    if (!pathDirectory.exists() || !pathDirectory.isDirectory()) {
+        throw new GradleException("Invalid directory: $pathDirectory")
+    }
+    pathDirectory.eachFile { file ->
+        if (file.name.contains("(Flipped)")) {
+            delete file
+        } else if (file.name.endsWith('.auto')) {
+            flipCount += 1
+            try {
+                def jsonNode = jsonSlurper.parse(file)
+                flipAuto(jsonNode)
+                def newFile = new File("src/main/deploy/pathplanner/autos/(Flipped) $file.name")
+                newFile.createNewFile()
+                newFile.setText(new groovy.json.JsonBuilder(jsonNode).toString())
+                newFile.setLastModified(0)
+            } catch (Exception e) {
+                println "Error flipping path file $file: $e"
+            }
+        }
+    }
+    println "Mirrored $flipCount autos."
+}
+
+void flipAuto(Map node) {
+    node.each { key, value ->
+        if (key == "pathName") {
+            node[key] = "(Flipped) $value"
+        }
+        else if (value instanceof Map) {
+            flipAuto(value)
+        }
+        else if (value instanceof List) {
+            value.each { item ->
+                if (item instanceof Map) {
+                    flipAuto(item)
+                }
+            }
+        }
+    }
+}
+
 dependencies {
     annotationProcessor wpi.java.deps.wpilibAnnotations()
     implementation wpi.java.deps.wpilib()
@@ -108,13 +267,9 @@ test {
     systemProperty 'junit.jupiter.extensions.autodetection.enabled', 'true'
 }
 
-// Simulation configuration (e.g. environment variables).
 wpi.sim.addGui().defaultEnabled = true
 wpi.sim.addDriverstation()
 
-// Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
-// in order to make them all available at runtime. Also adding the manifest so WPILib
-// knows where to look for our Robot Class.
 jar {
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     from sourceSets.main.allSource
@@ -122,12 +277,10 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
-// Configure jar and deploy tasks
 deployArtifact.jarTask = jar
 wpi.java.configureExecutableTasks(jar)
 wpi.java.configureTestTasks(test)
 
-// Configure string concat to always inline compile
 tasks.withType(JavaCompile) {
     dependsOn spotlessApply
     options.compilerArgs.add '-XDstringConcat=inline'

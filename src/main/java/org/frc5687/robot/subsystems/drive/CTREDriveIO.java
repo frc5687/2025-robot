@@ -67,10 +67,10 @@ public class CTREDriveIO implements DriveIO {
                         RobotMap.CAN.TALONFX.SOUTH_EAST_ROTATION,
                         RobotMap.CAN.CANCODER.ENCODER_SE,
                         Constants.DriveTrain.CAN_BUS);
-        _modules[0] = new SwerveModule(Constants.DriveTrain.NW_CONFIG, northWestIO);
-        _modules[1] = new SwerveModule(Constants.DriveTrain.NE_CONFIG, northEastIO);
-        _modules[2] = new SwerveModule(Constants.DriveTrain.SW_CONFIG, southWestIO);
-        _modules[3] = new SwerveModule(Constants.DriveTrain.SE_CONFIG, southEastIO);
+        _modules[0] = new SwerveModule(null, Constants.DriveTrain.NW_CONFIG, northWestIO);
+        _modules[1] = new SwerveModule(null, Constants.DriveTrain.NE_CONFIG, northEastIO);
+        _modules[2] = new SwerveModule(null, Constants.DriveTrain.SW_CONFIG, southWestIO);
+        _modules[3] = new SwerveModule(null, Constants.DriveTrain.SE_CONFIG, southEastIO);
 
         // Set up synchronized signals
         BaseStatusSignal.setUpdateFrequencyForAll(
@@ -105,6 +105,11 @@ public class CTREDriveIO implements DriveIO {
     }
 
     @Override
+    public void setYaw(Rotation2d heading) {
+        _imu.setYaw(heading.getDegrees());
+    }
+
+    @Override
     public void reset() {
         _imu.setYaw(0);
     }
@@ -113,6 +118,13 @@ public class CTREDriveIO implements DriveIO {
     public void runCharacterization(double output) {
         for (int i = 0; i < Constants.DriveTrain.NUM_MODULES; i++) {
             _modules[i].runCharacterization(output);
+        }
+    }
+
+    @Override
+    public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {
+        for (var module : _modules) {
+            module.setPID(kP, kI, kD, kV, kS, kA, kG);
         }
     }
 }

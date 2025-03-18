@@ -3,19 +3,29 @@ package org.frc5687.robot.subsystems;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.util.BaseInputs;
 import org.frc5687.robot.util.BaseOutputs;
+import org.frc5687.robot.util.EpilogueLog;
 
 public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs extends BaseOutputs>
-        extends SubsystemBase {
+        extends SubsystemBase implements EpilogueLog {
     protected final SubsystemIO<Inputs, Outputs> _io;
     protected final Inputs _inputs;
     protected final Outputs _outputs;
+    protected final RobotContainer _robotContainer;
 
     private final Object inputLogger;
     private final Object outputLogger;
 
-    public OutliersSubsystem(SubsystemIO<Inputs, Outputs> io, Inputs inputs, Outputs outputs) {
+    @Override
+    public String getLogBase() {
+        return this.getName();
+    }
+
+    public OutliersSubsystem(
+            RobotContainer container, SubsystemIO<Inputs, Outputs> io, Inputs inputs, Outputs outputs) {
+        _robotContainer = container;
         _io = io;
         _inputs = inputs;
         _outputs = outputs;
@@ -39,14 +49,18 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
         System.out.println(inputLoggerName);
     }
 
+    public Inputs getInputs() {
+        return _inputs;
+    }
+
     protected abstract void processInputs();
 
     protected abstract void periodic(Inputs inputs, Outputs outputs);
 
-    @Override
-    public final void periodic() {
+    protected void process() {
         _io.updateInputs(_inputs);
-        // reflection to call update() on the logger, We are hacking in functionallity due to Epilgue
+        // reflection to call update() on the logger, We are hacking in functionallity
+        // due to Epilgue
         // stuggling to find necessary IO classes
         try {
             inputLogger
@@ -74,6 +88,11 @@ public abstract class OutliersSubsystem<Inputs extends BaseInputs, Outputs exten
         }
 
         _io.writeOutputs(_outputs);
+    }
+
+    @Override
+    public final void periodic() {
+        process();
     }
 
     private String firstCharToLowerCase(String str) {

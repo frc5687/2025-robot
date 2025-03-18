@@ -2,6 +2,7 @@ package org.frc5687.robot.subsystems.drive.modules;
 
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 
 public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveModuleOutputs> {
@@ -10,8 +11,8 @@ public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveMo
     private boolean _hasReset = false;
     private boolean _isCharacterization = false;
 
-    public SwerveModule(SwerveModuleConfig config, SwerveModuleIO io) {
-        super(io, new SwerveModuleInputs(), new SwerveModuleOutputs());
+    public SwerveModule(RobotContainer container, SwerveModuleConfig config, SwerveModuleIO io) {
+        super(container, io, new SwerveModuleInputs(), new SwerveModuleOutputs());
         _config = config;
         _inputs.setLogRootName(config.moduleName());
         _outputs.setLogRootName(config.moduleName());
@@ -78,5 +79,9 @@ public class SwerveModule extends OutliersSubsystem<SwerveModuleInputs, SwerveMo
     public void stopCharacterization() {
         _isCharacterization = false;
         _outputs.driveVoltage = 0.0;
+    }
+
+    public void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG) {
+        _io.setPID(kP, kI, kD, kV, kS, kA, kG);
     }
 }

@@ -2,6 +2,7 @@ package org.frc5687.robot.subsystems.drive.modules;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -9,17 +10,13 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class SimSwerveModuleIO implements SwerveModuleIO {
-    private static final double SIM_DRIVE_KP = 0.25;
-    private static final double SIM_DRIVE_KD = 0.0;
-    private static final double SIM_STEER_KP = 8.0;
-    private static final double SIM_STEER_KD = 0.0;
     private static final double LOOP_PERIOD_SECS = 0.02; // 50Hz
 
     private final DCMotorSim _driveSim;
     private final DCMotorSim _steerSim;
 
-    private final PIDController _driveController = new PIDController(SIM_DRIVE_KP, 0, SIM_DRIVE_KD);
-    private final PIDController _steerController = new PIDController(SIM_STEER_KP, 0, SIM_STEER_KD);
+    private final PIDController _driveController;
+    private final PIDController _steerController;
 
     private final double _driveGearRatio;
     private final double _wheelCircumference;
@@ -29,14 +26,22 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
     private double _driveFeedforwardVolts = 0.0;
     private double _driveAppliedVolts = 0.0;
     private double _steerAppliedVolts = 0.0;
+    private double _wheelRadius = 0.0;
+    private SimpleMotorFeedforward _ffDrive;
 
     public SimSwerveModuleIO(SwerveModuleConfig config) {
         _driveGearRatio = config.driveGearRatio();
+        _driveController =
+                new PIDController(config.drivePID().kP(), config.drivePID().kI(), config.drivePID().kD());
+        _steerController =
+                new PIDController(config.steerPID().kP(), config.steerPID().kI(), config.steerPID().kD());
 
         _driveSim =
                 new DCMotorSim(
                         LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60Foc(1), 0.025, _driveGearRatio),
                         DCMotor.getKrakenX60Foc(1));
+
+        _ffDrive = new SimpleMotorFeedforward(config.driveKs(), config.driveKv());
 
         _steerSim =
                 new DCMotorSim(
@@ -44,6 +49,7 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
                                 DCMotor.getKrakenX60Foc(1), 0.004, config.steerGearRatio()),
                         DCMotor.getKrakenX60Foc(1));
 
+        _wheelRadius = config.wheelRadius();
         _wheelCircumference = 2 * Math.PI * config.wheelRadius();
         _steerController.enableContinuousInput(-Math.PI, Math.PI);
     }
@@ -68,10 +74,10 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
         _steerSim.update(LOOP_PERIOD_SECS);
 
         double drivePositionRad = _driveSim.getAngularPositionRad();
-        inputs.drivePositionMeters = drivePositionRad * _wheelCircumference;
+        inputs.drivePositionMeters = drivePositionRad * _wheelRadius;
 
         double driveVelocityRadPerSec = _driveSim.getAngularVelocityRadPerSec();
-        inputs.driveVelocityMPS = driveVelocityRadPerSec * _wheelCircumference;
+        inputs.driveVelocityMPS = driveVelocityRadPerSec * _wheelRadius;
 
         inputs.driveAppliedVolts = _driveAppliedVolts;
         inputs.driveCurrentAmps = Math.abs(_driveSim.getCurrentDrawAmps());
@@ -97,8 +103,8 @@ public class SimSwerveModuleIO implements SwerveModuleIO {
                 break;
             case VELOCITY:
                 _driveClosedLoop = true;
-                _driveFeedforwardVolts = outputs.driveFeedforwardVolts;
-                double targetRadPerSec = outputs.driveVelocitySetpointMPS / _wheelCircumference;
+                double targetRadPerSec = outputs.driveVelocitySetpointMPS / _wheelRadius;
+                _driveFeedforwardVolts = _ffDrive.calculate(targetRadPerSec);
                 _driveController.setSetpoint(targetRadPerSec);
                 break;
             default:
