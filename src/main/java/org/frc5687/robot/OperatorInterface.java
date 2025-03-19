@@ -3,6 +3,11 @@ package org.frc5687.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 
+import com.pathplanner.lib.util.FlippingUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -17,6 +22,7 @@ import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
 import org.frc5687.robot.commands.drive.DriveToHP;
+import org.frc5687.robot.commands.drive.DriveToPose;
 import org.frc5687.robot.commands.drive.DynamicDriveToLane;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
@@ -76,7 +82,7 @@ public class OperatorInterface {
                 .rightBumper()
                 .whileTrue(
                         new ConditionalCommand(
-                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.ALGAE),
+                                new DriveToPose(container.getDrive(), OperatorInterface::getProcessorLineupPose),
                                 new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT),
                                 manager::isAlgaeMode));
 
@@ -149,7 +155,9 @@ public class OperatorInterface {
 
         _driverController
                 .leftMiddleButton()
-                .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
+                .onTrue(
+                        new InstantCommand(() -> container.getVision().setPipelineIndex("South_Cam", -1))
+                                .alongWith(new InstantCommand(container.getClimber()::toggleClimberSetpoint)));
 
         // _driverController
         //         .a()
@@ -284,6 +292,14 @@ public class OperatorInterface {
         value = Math.copySign(value * value, value);
 
         return value;
+    }
+
+    public static Pose2d getProcessorLineupPose() {
+        Pose2d processorPose = new Pose2d(6.2, 0.6, Rotation2d.kCW_90deg);
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+            processorPose = FlippingUtil.flipFieldPose(processorPose);
+        }
+        return processorPose;
     }
 
     public OutliersController getDriverController() {

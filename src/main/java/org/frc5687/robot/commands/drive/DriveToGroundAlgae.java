@@ -40,7 +40,7 @@ public class DriveToGroundAlgae extends OutliersCommand {
 
     @Override
     public void initialize() {
-        _vision.setPipelineIndex("North_Camera", 1);
+        _vision.setPipelineIndex("limelight-center", 1);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class DriveToGroundAlgae extends OutliersCommand {
             _yController.setP(yP.get());
             _thetaController.setP(angleP.get());
         }
-        var detection = _vision.getClosestNeuralObservationOfType("North_Camera", 0);
+        var detection = _vision.getClosestNeuralObservationOfType("limelight-center", 0);
         if (detection.isPresent()) lastDetected = Timer.getFPGATimestamp();
 
         if (Timer.getFPGATimestamp() - lastDetected > BLIND_DRIVE_TIME) {
@@ -72,6 +72,6 @@ public class DriveToGroundAlgae extends OutliersCommand {
 
     @Override
     public void end(boolean interrupted) {
-        _vision.setPipelineIndex("North_Camera", 0);
+        _vision.setPipelineIndex("limelight-center", 0);
     }
 }

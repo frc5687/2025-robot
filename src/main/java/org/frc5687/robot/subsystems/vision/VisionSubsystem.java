@@ -34,8 +34,8 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
     public VisionSubsystem(RobotContainer container, VisionIO io) {
         super(container, io, new VisionInputs(), new VisionOutputs());
-        setPipelineIndex("North_Camera", 0);
-        setPipelineIndex("North_West_Camera", 0);
+        setPipelineIndex("limelight-center", 0);
+        setPipelineIndex("limelight-left", 0);
     }
 
     public static boolean isValidTag(AprilTagObservation observation) {
@@ -86,14 +86,14 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
             RobotStateManager.getInstance().updateVision(poseEstimate);
         }
 
-        log("Pose Estimates", estimates, RobotPoseEstimate.struct);
-        log("VisionPoses", robotPoses, Pose3d.struct);
+        log("Pose Estimates", estimates, RobotPoseEstimate.struct, Importance.CRITICAL);
+        log("VisionPoses", robotPoses, Pose3d.struct, Importance.CRITICAL);
 
         List<AprilTagObservation> northTags = filterValidTags(getNorthCameraObservations());
         List<AprilTagObservation> northWestTags = filterValidTags(getNorthWestCameraObservations());
 
         for (var tag : northTags) {
-            log("Distance", calculateDistanceWithCalibration(tag, "North_Camera"));
+            log("Distance", calculateDistanceWithCalibration(tag, "limelight-center"));
         }
 
         log("NorthTags", northTags, AprilTagObservation.struct);
@@ -110,7 +110,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
             }
         }
         log("Raw Neural Detections", neuralDetections, Pose2d.struct, Importance.CRITICAL);
-        _algaeTracker.update(inputs.cameraNeuralPipelineObservations.get("North_Camera"));
+        _algaeTracker.update(inputs.cameraNeuralPipelineObservations.get("limelight-center"));
     }
 
     private List<AprilTagObservation> filterValidTags(List<AprilTagObservation> observations) {
@@ -122,11 +122,11 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     }
 
     public List<AprilTagObservation> getNorthCameraObservations() {
-        return _inputs.cameraAprilTagObservations.getOrDefault("North_Camera", new ArrayList<>());
+        return _inputs.cameraAprilTagObservations.getOrDefault("limelight-center", new ArrayList<>());
     }
 
     public List<AprilTagObservation> getNorthWestCameraObservations() {
-        return _inputs.cameraAprilTagObservations.getOrDefault("North_West_Camera", new ArrayList<>());
+        return _inputs.cameraAprilTagObservations.getOrDefault("limelight-left", new ArrayList<>());
     }
 
     public Optional<AprilTagObservation> getTagFromObservations(
@@ -205,9 +205,9 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
         Transform3d cameraToRobot;
 
-        if (cameraName.equals("North_Camera")) {
-            cameraToRobot = Constants.Vision.ROBOT_TO_NORTH_CAM;
-        } else if (cameraName.equals("North_West_Camera")) {
+        if (cameraName.equals("limelight-center")) {
+            cameraToRobot = Constants.Vision.ROBOT_TO_NE_CAM;
+        } else if (cameraName.equals("limelight-left")) {
             cameraToRobot = Constants.Vision.ROBOT_TO_NW_CAM;
         } else {
             System.err.println("Invalid camera " + cameraName);
@@ -238,9 +238,9 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
             return Constants.Vision.simCalibrationMatrix;
         }
 
-        if (cameraName.equals("North_Camera")) {
+        if (cameraName.equals("limelight-center")) {
             return Constants.Vision.NORTH_CALIB_MATRIX;
-        } else if (cameraName.equals("North_West_Camera")) {
+        } else if (cameraName.equals("limelight-left")) {
             return Constants.Vision.NORTH_WEST_CALIB_MATRIX;
         } else {
             System.err.println("Invalid camera " + cameraName);

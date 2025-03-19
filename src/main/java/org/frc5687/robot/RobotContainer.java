@@ -40,13 +40,12 @@ import org.frc5687.robot.subsystems.lights.HardwareLightsIO;
 import org.frc5687.robot.subsystems.lights.LightSubsystem;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
-import org.frc5687.robot.subsystems.vision.LimelightVisionIO;
+import org.frc5687.robot.subsystems.vision.HardwareVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.subsystems.vision.VisionIO;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.Helpers;
-import org.frc5687.robot.util.QuestNav;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class RobotContainer implements EpilogueLog {
@@ -67,12 +66,9 @@ public class RobotContainer implements EpilogueLog {
 
     private SendableChooser<Command> _autoChooser;
 
-    private final QuestNav _questNav;
-
     public RobotContainer(Robot robot) {
         _robot = robot;
         _oi = new OperatorInterface();
-        _questNav = new QuestNav();
 
         // TODO implement simulation io
         _lights = new LightSubsystem(this, new HardwareLightsIO());
@@ -84,7 +80,7 @@ public class RobotContainer implements EpilogueLog {
 
         _drive = new DriveSubsystem(this, driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
 
-        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new LimelightVisionIO();
+        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new HardwareVisionIO();
         _vision = new VisionSubsystem(this, visionIO);
 
         RobotStateManager.getInstance()
@@ -92,8 +88,7 @@ public class RobotContainer implements EpilogueLog {
                         _drive::getModulePositions,
                         _drive::getHeading,
                         _drive::getMeasuredChassisSpeeds,
-                        _vision,
-                        _questNav);
+                        _vision);
 
         ElevatorIO elevatorIO;
         if (RobotBase.isSimulation()) {
@@ -212,7 +207,6 @@ public class RobotContainer implements EpilogueLog {
     }
 
     public void periodic() {
-        _questNav.timeSinceLastUpdate();
         RobotStateManager.getInstance().logComponentPoses();
         RobotStateManager.getInstance().updateOdometry();
         RobotStateManager.getInstance().logEstimatedPoses();
@@ -251,10 +245,6 @@ public class RobotContainer implements EpilogueLog {
 
     public VisionSubsystem getVision() {
         return _vision;
-    }
-
-    public QuestNav getQuestNav() {
-        return _questNav;
     }
 
     public SuperstructureManager getSuperstructureManager() {

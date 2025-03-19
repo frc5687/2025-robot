@@ -3,9 +3,7 @@ package org.frc5687.robot;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -429,13 +427,20 @@ public class Constants {
         // angles: yaw 20 degs
         // pitch: 10 degs
         // new LL
-
-        public static final Transform3d ROBOT_TO_NORTH_CAM =
+        public static final Transform3d ROBOT_TO_NE_CAM =
                 new Transform3d(
                         0.22643,
                         -0.32876,
                         0.24084,
                         new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(20)));
+        public static final Transform3d ROBOT_TO_NW_CAM =
+                new Transform3d(
+                        0.22643,
+                        0.32876,
+                        0.24084,
+                        new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
+        public static final Transform3d ROBOT_TO_SOUTH_CAM =
+                new Transform3d(); // FIXME put the real value here
 
         public static final Matrix<N3, N3> simCalibrationMatrix = new Matrix<>(Nat.N3(), Nat.N3());
         public static final double simFocalLength =
@@ -486,11 +491,6 @@ public class Constants {
             //     NORTH_WEST_CALIB_MATRIX.set(1, 2, 280.03); // cy
             //     NORTH_WEST_CALIB_MATRIX.set(2, 2, 1.0);
         }
-
-        public static final Transform3d ROBOT_TO_NW_CAM =
-                new Transform3d(0.281, 0.279, 0.234, new Rotation3d(0, Units.degreesToRadians(-15), 0));
-        public static final Transform2d ROBOT_TO_QUEST = // 0.776m up
-                new Transform2d(-0.149, -0.347, Rotation2d.fromDegrees(-105));
     }
 
     public class SuperstructureGoals {
