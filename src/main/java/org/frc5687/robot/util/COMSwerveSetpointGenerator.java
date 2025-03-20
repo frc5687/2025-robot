@@ -17,9 +17,9 @@ public class COMSwerveSetpointGenerator {
     private final TunableDouble _accelScalingMultiplier =
             new TunableDouble("COMSetpoint", "AccelScalingMultiplier", 0.8);
     private final TunableDouble _angularVelScalingMultiplier =
-            new TunableDouble("COMSetpoint", "AngularVelScalingMultiplier", 0.7);
+            new TunableDouble("COMSetpoint", "AngularVelScalingMultiplier", 2.0);
     private final TunableDouble _angularAccelScalingMultiplier =
-            new TunableDouble("COMSetpoint", "AngularAccelScalingMultiplier", 0.6);
+            new TunableDouble("COMSetpoint", "AngularAccelScalingMultiplier", 0.7);
 
     public COMSwerveSetpointGenerator(
             RobotConfig config,
