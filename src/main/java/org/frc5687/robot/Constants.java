@@ -256,31 +256,40 @@ public class Constants {
         public static final String CAN_BUS = "CANivore";
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(50, 0, 0.5);
 
-        public static final double ENCODER_OFFSET = -0.62;
+        public static final double ENCODER_OFFSET = -0.4377;
 
         public static final DCMotor GEARBOX = Motors.getKrakenX44(1);
-        public static final double GEAR_RATIO = 35.4;
+        public static final double GEAR_RATIO = 64.3;
         public static final double ARM_LENGTH = Units.inchesToMeters(18);
-        public static final double ARM_MASS = Units.lbsToKilograms(15);
+        public static final double ARM_MASS = Units.lbsToKilograms(15); // fake probably
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = Units.degreesToRadians(200);
+        public static final double MAX_ANGLE = 2.865;
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 1 * Math.PI;
 
-        public static final boolean PIVOT_INVERTED = true;
+        public static final boolean PIVOT_INVERTED = false;
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
         public static final double CURRENT_LIMIT = 60;
 
-        public static final double kP = 5.0;
+        public static final double kP = 40.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double kS = 0.0;
-        public static final double kV = 0.0;
+        public static final double kS = 0.2;
+        public static final double kV = 0.1;
         public static final double kA = 0.0;
+        public static final double kG = 0.001;
+
+        public static final double POS_kP = 40.0;
+        public static final double POS_kI = 0.0;
+        public static final double POS_kD = 0.0;
+        public static final double POS_kS = 0.2;
+        public static final double POS_kV = 0.1;
+        public static final double POS_kA = 0.0;
+        public static final double POS_kG = 0.001;
     }
 
     public static class Elevator {

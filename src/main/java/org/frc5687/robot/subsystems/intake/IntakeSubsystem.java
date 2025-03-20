@@ -10,7 +10,7 @@ import org.frc5687.robot.subsystems.SubsystemIO;
 
 public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutputs> {
 
-    private static final double POSITION_TOLERANCE_RAD = Units.degreesToRadians(2.0);
+    private static final double POSITION_TOLERANCE_RAD = Units.degreesToRadians(1.0);
 
     public IntakeSubsystem(RobotContainer container, SubsystemIO<IntakeInputs, IntakeOutputs> io) {
         super(container, io, new IntakeInputs(), new IntakeOutputs());
@@ -65,10 +65,11 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     }
 
     private double calculateGravityFeedForward(double angle) {
-        return ((Constants.Intake.ARM_LENGTH / 2.0)
-                        * (Constants.Intake.GEARBOX.rOhms * Constants.Intake.ARM_MASS * 9.81)
-                        / (Constants.Intake.GEAR_RATIO * Constants.Intake.GEARBOX.KtNMPerAmp))
-                * Math.cos(angle);
+        // return ((Constants.Intake.ARM_LENGTH / 2.0)
+        //                 * (Constants.Intake.GEARBOX.rOhms * Constants.Intake.ARM_MASS * 9.81)
+        //                 / (Constants.Intake.GEAR_RATIO * Constants.Intake.GEARBOX.KtNMPerAmp))
+        //         * Math.cos(angle);
+        return 0.0;
     }
 
     public boolean isIntakeCoralDetected() {

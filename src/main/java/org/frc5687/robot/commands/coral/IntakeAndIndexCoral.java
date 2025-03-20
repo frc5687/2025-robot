@@ -23,9 +23,9 @@ public class IntakeAndIndexCoral extends OutliersCommand {
     @Override
     public void initialize() {
         System.out.println("Starting index command");
-        // if (_initialRequest == null) {
-        //     _initialRequest = _manager.getRequestHandler().getActiveRequest();
-        // }
+        if (_initialRequest == null) {
+            _initialRequest = _manager.getRequestHandler().getActiveRequest();
+        }
         _coral.setWheelMotorDutyCycle(0.3);
     }
 

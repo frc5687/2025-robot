@@ -105,7 +105,7 @@ public class OperatorInterface {
                         Commands.sequence(
                                         manager.createRequest(
                                                 Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
-                                        Commands.run(() -> container.getIntake().setVoltages(-12, 12)))
+                                        Commands.run(() -> container.getIntake().setVoltages(-12, 4)))
                                 .finallyDo(
                                         (interrupted) -> {
                                             container.getIntake().setVoltages(0, 0);
@@ -116,15 +116,20 @@ public class OperatorInterface {
                                                                 Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE)
                                                         .schedule();
                                             }
+                                        })
+                                .handleInterrupt(
+                                        () -> {
+                                            container.getIntake().setVoltages(0, 0);
                                         }));
 
         // This was the only way I got this to work the way I would like it too.
         _intakeCoralDetectedTrigger.onTrue(
                 Commands.sequence(
-                        Commands.runOnce(() -> container.getIntake().setVoltages(0, 3)),
+                        Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
                         manager.createRequest(
                                 Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, RequestType.IMMEDIATE),
-                        Commands.runOnce(() -> container.getIntake().setVoltages(0, -12)),
+                        Commands.waitSeconds(1.0),
+                        Commands.runOnce(() -> container.getIntake().setVoltages(0, -6.0)),
                         manager.indexCoral(),
                         Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
                         manager.createRequest(
