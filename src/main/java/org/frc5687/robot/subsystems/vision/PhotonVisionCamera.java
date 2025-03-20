@@ -50,12 +50,21 @@ public class PhotonVisionCamera extends Camera {
         if (!results.isEmpty()) {
             PhotonPipelineResult mostRecentResult = results.get(results.size() - 1);
             for (PhotonTrackedTarget target : mostRecentResult.targets) {
-                AprilTagObservation observation =
-                        AprilTagObservation.fromPhotonVision(target, mostRecentResult.getTimestampSeconds());
-                tags.add(observation);
+                if (target.objDetectId == -1) {
+                    // apriltag detection
+                    AprilTagObservation observation =
+                            AprilTagObservation.fromPhotonVision(target, mostRecentResult.getTimestampSeconds());
+                    tags.add(observation);
+                } else {
+                    // neural detection
+                    var observation =
+                            NeuralPipelineObservation.fromPhotonVision(
+                                    _cam, _robotToCam, target, mostRecentResult.getTimestampSeconds());
+                    if (observation.isPresent()) {
+                        neuralObservations.add(observation.get());
+                    }
+                }
             }
-
-            // TODO add neural pipeline estimates
 
             Optional<EstimatedRobotPose> pose = _estimator.update(mostRecentResult);
             if (pose.isPresent()) {

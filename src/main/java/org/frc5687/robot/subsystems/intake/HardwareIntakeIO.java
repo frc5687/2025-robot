@@ -42,6 +42,8 @@ public class HardwareIntakeIO implements IntakeIO {
     private static final TunableDouble detectionRange =
             new TunableDouble("Intake", "detection range", 50);
 
+    private static final TunableDouble asdf = new TunableDouble("Intake", "ff", 2);
+
     public HardwareIntakeIO() {
         _pivotMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ARM, Constants.Intake.CAN_BUS);
         _rollerMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ROLLER, Constants.Intake.CAN_BUS);
@@ -78,17 +80,19 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void writeOutputs(IntakeOutputs outputs) {
-        // FIXME put this back
-        // _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
-        // _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
-        // double safeDesiredAngle =
-        //         Math.min(
-        //                 Math.max(outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE),
-        //                 Constants.Intake.MAX_ANGLE);
-        // _pivotMotor.setControl(
-        //         _pivotPositionReq
-        //                 .withPosition(Units.radiansToRotations(safeDesiredAngle))
-        //                 .withFeedForward(outputs.dynamicsFF));
+        _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
+        _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
+        double safeDesiredAngle =
+                Math.min(
+                        Math.max(outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE),
+                        Constants.Intake.MAX_ANGLE);
+        _pivotMotor.setControl(
+                _pivotPositionReq
+                        .withPosition(Units.radiansToRotations(safeDesiredAngle))
+                        .withFeedForward(
+                                outputs.desiredAngleRad == IntakeState.PASSOFF_TO_CORAL.getValue()
+                                        ? asdf.get()
+                                        : 0.0));
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted, boolean attachCANcoder) {
@@ -118,10 +122,10 @@ public class HardwareIntakeIO implements IntakeIO {
             config.Feedback.RotorToSensorRatio = Constants.Intake.GEAR_RATIO;
             config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
             config.ClosedLoopGeneral.ContinuousWrap = false;
-            config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+            config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
             config.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
                     Units.radiansToRotations(Constants.Intake.MAX_ANGLE * Constants.Intake.GEAR_RATIO);
-            config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+            config.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
             config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
         }
         motor.getConfigurator().apply(config);

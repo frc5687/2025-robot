@@ -2,7 +2,7 @@ package org.frc5687.robot.subsystems.intake;
 
 public enum IntakeState {
     DEPLOYED(0.00),
-    PASSOFF_TO_CORAL(2.925),
+    PASSOFF_TO_CORAL(2.865),
     IDLE(2.38);
 
     private final double _value;

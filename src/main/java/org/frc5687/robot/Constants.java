@@ -254,28 +254,28 @@ public class Constants {
         public static final String CAN_BUS = "CANivore";
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double ENCODER_OFFSET = -0.62;
+        public static final double ENCODER_OFFSET = -0.4377;
 
         public static final DCMotor GEARBOX = Motors.getKrakenX44(1);
-        public static final double GEAR_RATIO = 5.0 * 9.0 * 4.0;
+        public static final double GEAR_RATIO = 64.3;
         public static final double ARM_LENGTH = Units.inchesToMeters(16);
         public static final double ARM_MASS = Units.lbsToKilograms(13);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = Units.degreesToRadians(135);
+        public static final double MAX_ANGLE = IntakeState.PASSOFF_TO_CORAL.getValue();
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 5 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 1 * Math.PI;
 
-        public static final boolean PIVOT_INVERTED = true;
+        public static final boolean PIVOT_INVERTED = false;
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
         public static final double CURRENT_LIMIT = 60;
 
-        public static final double kP = 5.0;
+        public static final double kP = 150.0;
         public static final double kI = 0.0;
-        public static final double kD = 0.0;
+        public static final double kD = 10.0;
         public static final double kS = 0.0;
         public static final double kV = 0.0;
         public static final double kA = 0.0;
@@ -440,7 +440,14 @@ public class Constants {
                         0.24084,
                         new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
         public static final Transform3d ROBOT_TO_SOUTH_CAM =
-                new Transform3d(); // FIXME put the real value here
+                new Transform3d(
+                        -0.072,
+                        -0.265,
+                        0.662,
+                        new Rotation3d( // ROUGHLY, the mount is insane
+                                Units.degreesToRadians(4),
+                                Units.degreesToRadians(12),
+                                Units.degreesToRadians(180 - 15)));
 
         public static final Matrix<N3, N3> simCalibrationMatrix = new Matrix<>(Nat.N3(), Nat.N3());
         public static final double simFocalLength =
@@ -502,8 +509,8 @@ public class Constants {
                         Optional.empty());
         public static final SuperstructureState RECEIVE_FROM_GROUND_INTAKE =
                 new SuperstructureState(
-                        Optional.of(ElevatorState.FUNNEL_RECEIVE),
-                        Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
+                        Optional.of(ElevatorState.GROUND_INTAKE_RECEIVE),
+                        Optional.of(CoralState.RECEIVE_FROM_GROUND_INTAKE),
                         Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.of(IntakeState.PASSOFF_TO_CORAL));
         public static final SuperstructureState STOW_INTAKE =

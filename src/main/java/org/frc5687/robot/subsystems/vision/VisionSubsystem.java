@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
-import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.vision.AlgaeTracker;
@@ -75,19 +73,17 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
 
     @Override
     protected void periodic(VisionInputs inputs, VisionOutputs outputs) {
-        List<Pose3d> robotPoses = new ArrayList<>();
+        List<Pose2d> robotPoses = new ArrayList<>();
         List<RobotPoseEstimate> estimates = new ArrayList<>();
-        for (var entry : inputs.estimatedPoses.entrySet()) {
-            String cameraName = entry.getKey();
-            RobotPoseEstimate poseEstimate = entry.getValue();
+        for (var poseEstimate : inputs.estimatedPoses.values()) {
             estimates.add(poseEstimate);
-            Pose3d pose3d = poseEstimate.getPose3d();
-            robotPoses.add(pose3d);
+            Pose2d pose = poseEstimate.getPose3d().toPose2d();
+            robotPoses.add(pose);
             RobotStateManager.getInstance().updateVision(poseEstimate);
         }
 
         log("Pose Estimates", estimates, RobotPoseEstimate.struct, Importance.CRITICAL);
-        log("VisionPoses", robotPoses, Pose3d.struct, Importance.CRITICAL);
+        log("VisionPoses", robotPoses, Pose2d.struct, Importance.CRITICAL);
 
         List<AprilTagObservation> northTags = filterValidTags(getNorthCameraObservations());
         List<AprilTagObservation> northWestTags = filterValidTags(getNorthWestCameraObservations());
@@ -102,11 +98,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         List<Pose2d> neuralDetections = new ArrayList<>();
         for (var observations : inputs.cameraNeuralPipelineObservations.values()) {
             for (var obs : observations) {
-                neuralDetections.add(
-                        RobotStateManager.getInstance()
-                                .getPose(RobotCoordinate.ROBOT_BASE_SWERVE)
-                                .toPose2d()
-                                .plus(new Transform2d(obs.getX(), obs.getY(), new Rotation2d())));
+                neuralDetections.add(new Pose2d(obs.getX(), obs.getY(), new Rotation2d()));
             }
         }
         log("Raw Neural Detections", neuralDetections, Pose2d.struct, Importance.CRITICAL);
