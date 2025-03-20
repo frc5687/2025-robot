@@ -2,7 +2,9 @@ package org.frc5687.robot.subsystems.intake;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.frc5687.robot.Constants;
@@ -12,8 +14,15 @@ public class SimIntakeIO implements IntakeIO {
     private final SingleJointedArmSim _armSim;
     private final Encoder _armEncoder;
     private final EncoderSim _armEncoderSim;
+    private final ProfiledPIDController _profiledPIDController;
 
-    private final ProfiledPIDController _controller;
+    private double _rollerVoltage = 0.0;
+    private double _intakeVoltage = 0.0;
+
+    private boolean _previouslyInIntakePosition = false;
+    private double _timeEnteredIntakePosition = 0;
+    private static final double SIM_CORAL_DETECTION_DELAY = 1.0;
+    private boolean _simulatedCoralDetected = false;
 
     public SimIntakeIO() {
         _armSim =
@@ -38,7 +47,7 @@ public class SimIntakeIO implements IntakeIO {
                         Constants.Intake.MAX_VELOCITY_RAD_PER_SEC,
                         Constants.Intake.MAX_ACCELERATION_RAD_PER_SEC_SQUARED);
 
-        _controller =
+        _profiledPIDController =
                 new ProfiledPIDController(
                         Constants.Intake.SIM_PID_CONSTANTS.kP(),
                         Constants.Intake.SIM_PID_CONSTANTS.kI(),
@@ -48,24 +57,63 @@ public class SimIntakeIO implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
-        // Update arm sim
-        // _armSim.update(Constants.UPDATE_PERIOD);
+        _armSim.update(Constants.UPDATE_PERIOD);
 
-        // Update the raw encoders with the sim positoin
-        // inputs.armAngleRads = _armSim.getAngleRads();
-        // inputs.angularVelocityRadPerSec = _armSim.getVelocityRadPerSec();
-        // _armEncoderSim.setDistance(inputs.armAngleRads);
-        // _armEncoderSim.setRate(inputs.angularVelocityRadPerSec);
+        double position = _armSim.getAngleRads();
+        double velocity = _armSim.getVelocityRadPerSec();
 
-        // inputs.intakeCurrentDraw = _armSim.getCurrentDrawAmps();
+        _armEncoderSim.setDistance(position);
+        _armEncoderSim.setRate(velocity);
+
+        inputs.armAngleRads = position;
+
+        updateSimulatedCoralDetection(inputs);
     }
 
     @Override
     public void writeOutputs(IntakeOutputs outputs) {
-        // double batteryVoltage = RobotController.getBatteryVoltage();
+        _rollerVoltage = outputs.rollerVoltage;
+        _intakeVoltage = outputs.intakeVoltage;
 
-        // _controller.setGoal(outputs.desiredAngleRad);
-        // outputs.controllerOutput = _controller.calculate(_armSim.getAngleRads());
-        // _armSim.setInputVoltage(outputs.controllerOutput);
+        _profiledPIDController.setGoal(outputs.desiredAngleRad);
+        double voltage = _profiledPIDController.calculate(_armSim.getAngleRads());
+        voltage += outputs.dynamicsFF;
+
+        _armSim.setInputVoltage(voltage);
+
+        if (_rollerVoltage < -5.0) {
+            _simulatedCoralDetected = false;
+        }
+    }
+
+    private void updateSimulatedCoralDetection(IntakeInputs inputs) {
+        double currentAngle = _armSim.getAngleRads();
+
+        boolean inIntakePosition = isNearAngle(currentAngle, IntakeState.DEPLOYED.getValue());
+
+        if (inIntakePosition && !_previouslyInIntakePosition) {
+            _timeEnteredIntakePosition = Timer.getFPGATimestamp();
+        }
+
+        if (inIntakePosition
+                && (Timer.getFPGATimestamp() - _timeEnteredIntakePosition) > SIM_CORAL_DETECTION_DELAY) {
+            _simulatedCoralDetected = true;
+        }
+
+        if (isNearAngle(currentAngle, IntakeState.PASSOFF_TO_CORAL.getValue())
+                || isNearAngle(currentAngle, IntakeState.IDLE.getValue())) {
+            _simulatedCoralDetected = false;
+        }
+
+        _previouslyInIntakePosition = inIntakePosition;
+        inputs.isCoralDetected = _simulatedCoralDetected;
+    }
+
+    private boolean isNearAngle(double currentAngle, double targetAngle) {
+        return Math.abs(currentAngle - targetAngle) < Units.degreesToRadians(10.0);
+    }
+
+    public void setCoralDetected(boolean detected) {
+        _simulatedCoralDetected = detected;
     }
 }

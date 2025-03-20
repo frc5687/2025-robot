@@ -18,7 +18,7 @@ public class SimCoralArmIO implements CoralArmIO {
 
     private boolean _previouslyInFunnelPosition = false;
     private double _timeEnteredFunnelPosition = 0;
-    private static final double SIM_CORAL_DETECTION_DELAY = 1.0;
+    private static final double SIM_CORAL_DETECTION_DELAY = 2.0;
     private boolean _simulatedCoralDetected = false;
     private double _wheelPosition = 0.0;
 
@@ -72,11 +72,15 @@ public class SimCoralArmIO implements CoralArmIO {
         boolean inFunnelPosition =
                 isNearAngle(currentAngle, CoralState.RECEIVE_FROM_FUNNEL.getArmAngle());
 
-        if (inFunnelPosition && !_previouslyInFunnelPosition) {
+        boolean inGroundIntakePosition =
+                isNearAngle(currentAngle, CoralState.RECEIVE_FROM_GROUND_INTAKE.getArmAngle());
+        boolean inAnyReceivePosition = inFunnelPosition || inGroundIntakePosition;
+
+        if (inAnyReceivePosition && !_previouslyInFunnelPosition) {
             _timeEnteredFunnelPosition = Timer.getFPGATimestamp();
         }
 
-        if (inFunnelPosition
+        if (inAnyReceivePosition
                 && (Timer.getFPGATimestamp() - _timeEnteredFunnelPosition) > SIM_CORAL_DETECTION_DELAY) {
             _simulatedCoralDetected = true;
         }
@@ -85,7 +89,8 @@ public class SimCoralArmIO implements CoralArmIO {
             _simulatedCoralDetected = false;
         }
 
-        _previouslyInFunnelPosition = inFunnelPosition;
+        _previouslyInFunnelPosition = inAnyReceivePosition;
+
         inputs.isCoralDetected = _simulatedCoralDetected;
     }
 

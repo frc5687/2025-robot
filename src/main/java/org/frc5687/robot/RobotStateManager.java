@@ -62,10 +62,10 @@ public class RobotStateManager implements EpilogueLog {
         public static final double ALGAE_ARM_Z_OFFSET = 0.381; // this is from elevator stage 2 height
         public static final double ALGAE_ARM_LENGTH = Units.inchesToMeters(12);
 
-        public static final double INTAKE_ARM_X_OFFSET = -0.330200;
+        public static final double INTAKE_ARM_X_OFFSET = -0.32385;
         public static final double INTAKE_ARM_Y_OFFSET = 0.03;
-        public static final double INTAKE_ARM_Z_OFFSET = 0.193675;
-        public static final double INTAKE_ARM_LENGTH = Units.inchesToMeters(12);
+        public static final double INTAKE_ARM_Z_OFFSET = 0.206375;
+        public static final double INTAKE_ARM_LENGTH = Units.inchesToMeters(18);
     }
 
     private static final double EPSILON = 1e-6;
