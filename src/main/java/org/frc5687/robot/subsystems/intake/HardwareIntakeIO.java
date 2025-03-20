@@ -25,7 +25,6 @@ import org.frc5687.robot.util.TunableDouble;
 // import org.frc5687.robot.util.CTREUtil;
 
 public class HardwareIntakeIO implements IntakeIO {
-
     private final TalonFX _pivotMotor;
     private final TalonFX _rollerMotor;
     private final TalonFX _beltMotor;
@@ -78,17 +77,16 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void writeOutputs(IntakeOutputs outputs) {
-        // FIXME put this back
-        // _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
-        // _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
-        // double safeDesiredAngle =
-        //         Math.min(
-        //                 Math.max(outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE),
-        //                 Constants.Intake.MAX_ANGLE);
-        // _pivotMotor.setControl(
-        //         _pivotPositionReq
-        //                 .withPosition(Units.radiansToRotations(safeDesiredAngle))
-        //                 .withFeedForward(outputs.dynamicsFF));
+        _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
+        _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
+        double safeDesiredAngle =
+                Math.min(
+                        Math.max(outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE),
+                        Constants.Intake.MAX_ANGLE);
+        _pivotMotor.setControl(
+                _pivotPositionReq.withPosition(Units.radiansToRotations(safeDesiredAngle))
+                // .withFeedForward(outputs.dynamicsFF)
+                );
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted, boolean attachCANcoder) {
@@ -103,7 +101,7 @@ public class HardwareIntakeIO implements IntakeIO {
         config.MotionMagic.MotionMagicCruiseVelocity = Constants.Intake.MAX_VELOCITY_RAD_PER_SEC;
         config.MotionMagic.MotionMagicAcceleration =
                 Constants.Intake.MAX_ACCELERATION_RAD_PER_SEC_SQUARED;
-        config.MotionMagic.MotionMagicJerk = 7000;
+        config.MotionMagic.MotionMagicJerk = 4000;
         config.Slot0.kP = Constants.Intake.kP;
         config.Slot0.kI = Constants.Intake.kI;
         config.Slot0.kD = Constants.Intake.kD;

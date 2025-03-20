@@ -164,6 +164,39 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                 .withName("Algae Reef Intake");
     }
 
+    public Command intakeFromGround(SuperstructureState state, RequestType type) {
+        return new SequentialCommandGroup(
+                createRequest(Constants.SuperstructureGoals.GROUND_INTAKE, type),
+                new FunctionalCommand(
+                        () -> {
+                            _container.getIntake().setVoltages(-12, 6);
+                        },
+                        () -> {},
+                        (interrupted) -> {
+                            createRequest(Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE);
+                        },
+                        _container.getIntake()::isIntakeCoralDetected,
+                        _container.getIntake()));
+    }
+
+    public Command receiveGroundIntake(RequestType type) {
+        return new SequentialCommandGroup(
+                // new InstantCommand(() -> setMode(SuperstructureMode.CORAL)),
+                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, type),
+                new FunctionalCommand(
+                        () -> {
+                            _container.getCoral().setWheelMotorDutyCycle(0.3);
+                            _container.getIntake().setVoltages(3, -3);
+                        },
+                        () -> {},
+                        (interrupted) -> {
+                            double currentPos = _container.getCoral().getWheelMotorPosition();
+                            _container.getCoral().setWheelMotorPosition(currentPos + 1.5);
+                        },
+                        _container.getCoral()::isCoralDetected,
+                        _container.getCoral()));
+    }
+
     public Command aimAtAlgaeNet() {
         return createRequest(Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE);
     }

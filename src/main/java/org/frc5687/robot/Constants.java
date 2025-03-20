@@ -256,26 +256,26 @@ public class Constants {
         public static final String CAN_BUS = "CANivore";
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double ENCODER_OFFSET = -0.62;
+        public static final double ENCODER_OFFSET = -0.437744140625;
 
         public static final DCMotor GEARBOX = Motors.getKrakenX44(1);
-        public static final double GEAR_RATIO = 5.0 * 9.0 * 4.0;
+        public static final double GEAR_RATIO = 35.7;
         public static final double ARM_LENGTH = Units.inchesToMeters(16);
-        public static final double ARM_MASS = Units.lbsToKilograms(13);
+        public static final double ARM_MASS = Units.lbsToKilograms(14);
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
         public static final double MAX_ANGLE = Units.degreesToRadians(135);
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 5 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 1 * Math.PI;
 
-        public static final boolean PIVOT_INVERTED = true;
+        public static final boolean PIVOT_INVERTED = false;
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
         public static final double CURRENT_LIMIT = 60;
 
-        public static final double kP = 5.0;
+        public static final double kP = 40.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double kS = 0.0;
@@ -503,7 +503,7 @@ public class Constants {
         public static final SuperstructureState RECEIVE_FROM_GROUND_INTAKE =
                 new SuperstructureState(
                         Optional.of(ElevatorState.FUNNEL_RECEIVE),
-                        Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
+                        Optional.of(CoralState.RECEIVE_FROM_GROUND_INTAKE),
                         Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.of(IntakeState.PASSOFF_TO_CORAL));
         public static final SuperstructureState STOW_INTAKE =
