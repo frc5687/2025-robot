@@ -5,7 +5,7 @@ import org.frc5687.robot.Constants;
 public enum ElevatorState {
     STOWED(Constants.Elevator.MIN_HEIGHT),
     FUNNEL_RECEIVE(0.00),
-    GROUND_INTAKE_RECEIVE(0.024),
+    GROUND_INTAKE_RECEIVE(0.012),
     L1_CORAL_PLACING(0.035),
     PROCESSOR_PLACING(Constants.Elevator.MIN_HEIGHT),
     L2_CORAL_PLACING(0.128),

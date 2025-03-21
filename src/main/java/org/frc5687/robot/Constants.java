@@ -264,10 +264,10 @@ public class Constants {
         public static final double ARM_MASS = Units.lbsToKilograms(15); // fake probably
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = 2.865;
+        public static final double MAX_ANGLE = 2.875;
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
-        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 1 * Math.PI;
+        public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 1.5 * Math.PI;
 
         public static final boolean PIVOT_INVERTED = false;
         public static final boolean INTAKE_INVERTED = true;
@@ -275,21 +275,21 @@ public class Constants {
 
         public static final double CURRENT_LIMIT = 60;
 
-        public static final double kP = 40.0;
+        public static final double kP = 70.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double kS = 0.2;
+        public static final double kS = 0.5;
         public static final double kV = 0.1;
         public static final double kA = 0.0;
-        public static final double kG = 0.001;
+        public static final double kG = 0.0;
 
-        public static final double POS_kP = 40.0;
-        public static final double POS_kI = 0.0;
+        public static final double POS_kP = 60.0;
+        public static final double POS_kI = 1.0;
         public static final double POS_kD = 0.0;
-        public static final double POS_kS = 0.2;
+        public static final double POS_kS = 0.4;
         public static final double POS_kV = 0.1;
         public static final double POS_kA = 0.0;
-        public static final double POS_kG = 0.001;
+        public static final double POS_kG = 0.0;
     }
 
     public static class Elevator {
@@ -520,9 +520,9 @@ public class Constants {
                         Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(IntakeState.IDLE));
         public static final SuperstructureState GROUND_INTAKE =
                 new SuperstructureState(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
+                        Optional.of(ElevatorState.GROUND_INTAKE_RECEIVE),
+                        Optional.of(CoralState.RECEIVE_FROM_GROUND_INTAKE),
+                        Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.of(IntakeState.DEPLOYED));
 
         public static final SuperstructureState PLACE_CORAL_L4 =

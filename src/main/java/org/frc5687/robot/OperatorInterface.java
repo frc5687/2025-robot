@@ -128,8 +128,8 @@ public class OperatorInterface {
                         Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
                         manager.createRequest(
                                 Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, RequestType.IMMEDIATE),
-                        Commands.waitSeconds(1.0),
-                        Commands.runOnce(() -> container.getIntake().setVoltages(0, -6.0)),
+                        Commands.waitSeconds(0.3),
+                        Commands.runOnce(() -> container.getIntake().setVoltages(0, -3.0)),
                         manager.indexCoral(),
                         Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
                         manager.createRequest(

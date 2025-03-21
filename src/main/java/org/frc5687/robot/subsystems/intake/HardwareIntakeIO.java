@@ -105,15 +105,15 @@ public class HardwareIntakeIO implements IntakeIO {
 
         double error = Math.abs(currentAngle - safeDesiredAngle);
 
-        if (error > positionTolerance.get()) {
-            _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
+        // if (error > positionTolerance.get()) {
+        _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
 
-            _usingPositionControl = false;
-        } else {
-            _pivotMotor.setControl(_positionReq.withPosition(desiredRotations));
+        //     _usingPositionControl = false;
+        // } else {
+        //     _pivotMotor.setControl(_positionReq.withPosition(desiredRotations));
 
-            _usingPositionControl = true;
-        }
+        //     _usingPositionControl = true;
+        // }
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted, boolean attachCANcoder) {
