@@ -126,14 +126,24 @@ public class OperatorInterface {
         _intakeCoralDetectedTrigger.onTrue(
                 Commands.sequence(
                         Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
-                        manager.createRequest(
-                                Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, RequestType.IMMEDIATE),
+                        manager.receiveFromGroundIntake(RequestType.IMMEDIATE),
                         Commands.waitSeconds(0.3),
                         Commands.runOnce(() -> container.getIntake().setVoltages(0, -3.0)),
-                        manager.indexCoral(),
+                        Commands.waitUntil(container.getCoral()::isCoralDetected),
                         Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
                         manager.createRequest(
                                 Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE)));
+        // _intakeCoralDetectedTrigger.onTrue(
+        //         Commands.sequence(
+        //                 Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
+        //                 manager.createRequest(
+        //                         Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, RequestType.IMMEDIATE),
+        //                 Commands.waitSeconds(0.3),
+        //                 Commands.runOnce(() -> container.getIntake().setVoltages(0, -3.0)),
+        //                 manager.indexCoral(),
+        //                 Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
+        //                 manager.createRequest(
+        //                         Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE)));
 
         // _driverController
         //         .leftTrigger()

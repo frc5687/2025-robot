@@ -156,16 +156,8 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void setupNamedCommand() {
-        // if (RobotBase.isSimulation()) {
-        //     NamedCommands.registerCommand(
-        //             "ReceiveFunnel",
-        //             _superstructureManager
-        //                     .receiveFunnelSim(RequestType.IMMEDIATE)
-        //                     .andThen(new WaitCommand(1)));
-        // } else {
         NamedCommands.registerCommand(
                 "ReceiveFunnel", _superstructureManager.receiveFunnel(RequestType.IMMEDIATE));
-        // }
 
         NamedCommands.registerCommand(
                 "ReadyFunnel", _superstructureManager.receiveFunnelSim(RequestType.IMMEDIATE));
