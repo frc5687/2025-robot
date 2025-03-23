@@ -16,6 +16,13 @@ public class RobotMap {
             public static final int INTAKE = 1;
         }
 
+        public static class CANRANGE {
+            public static final int INTAKE_CORAL = 3;
+            public static final int CORAL_ARM_PICKUP = 2;
+            public static final int CORAL_ARM_EJECT = 1;
+            public static final int ALGAE_PICKUP = 0;
+        }
+
         public static class TALONFX {
 
             // Ordered in order of CAN connection in loop.
@@ -33,7 +40,7 @@ public class RobotMap {
             public static final int NORTH_EAST_ELEVATOR = 12;
 
             public static final int INTAKE_ARM = 16;
-            public static final int INTAKE_ROLLER = 17;
+            // public static final int INTAKE_ROLLER = 17;
             public static final int INTAKE_BELT = 18;
 
             public static final int CLIMBER_WINCH = 19;

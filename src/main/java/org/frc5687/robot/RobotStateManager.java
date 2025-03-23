@@ -14,7 +14,6 @@ import java.util.EnumMap;
 import java.util.function.Supplier;
 import org.frc5687.robot.subsystems.drive.DriveInputs;
 import org.frc5687.robot.subsystems.vision.RobotPoseEstimate;
-import org.frc5687.robot.subsystems.vision.VisionSubsystem;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.PoseEstimator;
 import org.frc5687.robot.util.WheelOdometrySource;
@@ -60,10 +59,10 @@ public class RobotStateManager implements EpilogueLog {
         public static final double ALGAE_ARM_Z_OFFSET = 0.381; // this is from elevator stage 2 height
         public static final double ALGAE_ARM_LENGTH = Units.inchesToMeters(12);
 
-        public static final double INTAKE_ARM_X_OFFSET = -0.330200;
+        public static final double INTAKE_ARM_X_OFFSET = -0.32385;
         public static final double INTAKE_ARM_Y_OFFSET = 0.03;
-        public static final double INTAKE_ARM_Z_OFFSET = 0.193675;
-        public static final double INTAKE_ARM_LENGTH = Units.inchesToMeters(12);
+        public static final double INTAKE_ARM_Z_OFFSET = 0.206375;
+        public static final double INTAKE_ARM_LENGTH = Units.inchesToMeters(18);
     }
 
     private static final double EPSILON = 1e-6;
@@ -75,7 +74,6 @@ public class RobotStateManager implements EpilogueLog {
     // private PoseTracker _swervePoseTracker;
     private PoseEstimator _odomOnly;
     private PoseEstimator _estimator;
-    private VisionSubsystem _vision;
 
     private final DriveInputs _swerveInputs = new DriveInputs();
 
@@ -106,12 +104,10 @@ public class RobotStateManager implements EpilogueLog {
     public void initEstimators(
             Supplier<SwerveModulePosition[]> positionSupplier,
             Supplier<Rotation2d> headingSupplier,
-            Supplier<ChassisSpeeds> chassisSpeedsSupplier,
-            VisionSubsystem vision) {
+            Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
 
         _imuRotation = headingSupplier;
         _modulePositionSupplier = positionSupplier;
-        _vision = vision;
 
         _estimator =
                 new PoseEstimator(

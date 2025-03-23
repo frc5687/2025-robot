@@ -71,7 +71,6 @@ public class RobotContainer implements EpilogueLog {
         _robot = robot;
         _oi = new OperatorInterface();
 
-        // TODO implement simulation io
         _lights = new LightSubsystem(this, new HardwareLightsIO());
 
         DriveIO driveIO =
@@ -88,8 +87,7 @@ public class RobotContainer implements EpilogueLog {
                 .initEstimators(
                         _drive::getModulePositions,
                         _drive::getHeading,
-                        _drive::getMeasuredChassisSpeeds,
-                        _vision);
+                        _drive::getMeasuredChassisSpeeds);
 
         ElevatorIO elevatorIO;
         if (RobotBase.isSimulation()) {
@@ -112,7 +110,8 @@ public class RobotContainer implements EpilogueLog {
                 RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
         _coralArm = new CoralArmSubsystem(this, coralArmIO);
 
-        IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
+        // IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
+        IntakeIO intakeIO = new SimIntakeIO();
         _intake = new IntakeSubsystem(this, intakeIO);
 
         ClimberIO climberIO =
@@ -151,16 +150,8 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void setupNamedCommand() {
-        // if (RobotBase.isSimulation()) {
-        //     NamedCommands.registerCommand(
-        //             "ReceiveFunnel",
-        //             _superstructureManager
-        //                     .receiveFunnelSim(RequestType.IMMEDIATE)
-        //                     .andThen(new WaitCommand(1)));
-        // } else {
         NamedCommands.registerCommand(
                 "ReceiveFunnel", _superstructureManager.receiveFunnel(RequestType.IMMEDIATE));
-        // }
 
         NamedCommands.registerCommand(
                 "ReadyFunnel", _superstructureManager.receiveFunnelSim(RequestType.IMMEDIATE));

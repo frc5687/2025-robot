@@ -11,8 +11,11 @@ import org.frc5687.robot.subsystems.SubsystemIO;
 
 public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutputs> {
 
+    private static final double POSITION_TOLERANCE_RAD = Units.degreesToRadians(1.0);
+
     public IntakeSubsystem(RobotContainer container, SubsystemIO<IntakeInputs, IntakeOutputs> io) {
         super(container, io, new IntakeInputs(), new IntakeOutputs());
+        _outputs.desiredAngleRad = IntakeState.IDLE.getValue();
     }
 
     @Override
@@ -22,7 +25,7 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
 
     @Override
     protected void periodic(IntakeInputs inputs, IntakeOutputs outputs) {
-        _outputs.dynamicsFF = calculateGravityFeedForward(getPivotArmAngleRads());
+        outputs.dynamicsFF = calculateGravityFeedForward(getPivotArmAngleRads());
     }
 
     public void setDesiredPivotAngle(IntakeState state) {
@@ -32,20 +35,16 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     public void setDesiredPivotAngle(double angle) {
         double desiredAngleClamped =
                 MathUtil.clamp(angle, Constants.Intake.MIN_ANGLE, Constants.Intake.MAX_ANGLE);
+
         _outputs.desiredAngleRad = desiredAngleClamped;
     }
 
-    public void setVoltages(double rollerVoltage, double intakeVoltage) {
-        setRollerVoltage(rollerVoltage);
+    public void setVoltages(double intakeVoltage) {
         setIntakeVoltage(intakeVoltage);
     }
 
-    public void setRollerVoltage(double voltage) {
-        _outputs.rollerVoltage = voltage;
-    }
-
     public void setIntakeVoltage(double voltage) {
-        _outputs.intakeVoltage = voltage;
+        _outputs.intakeVoltage = MathUtil.clamp(voltage, -12.0, 12.0);
     }
 
     public double getPivotArmAngleRads() {
@@ -53,17 +52,13 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
     }
 
     public boolean isAtDesiredAngle() {
-        return Math.abs(
-                        new Rotation2d(_inputs.armAngleRads)
-                                .minus(new Rotation2d(_outputs.desiredAngleRad))
-                                .getDegrees())
-                < 1.0;
+        double positionError = Math.abs(_inputs.armAngleRads - _outputs.desiredAngleRad);
+        return positionError < POSITION_TOLERANCE_RAD;
     }
 
     public boolean isAtState(IntakeState state) {
         double angleDiff = Math.abs(state.getValue() - getPivotArmAngleRads());
-        boolean isWithinPositionTolerance = angleDiff < Units.degreesToRadians(1.0);
-        return isWithinPositionTolerance;
+        return angleDiff < POSITION_TOLERANCE_RAD;
     }
 
     private double calculateGravityFeedForward(double angle) {
