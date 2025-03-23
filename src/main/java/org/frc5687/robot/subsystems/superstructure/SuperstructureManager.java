@@ -9,6 +9,7 @@ import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.IntakeAndIndexCoral;
+import org.frc5687.robot.commands.intake.GroundIndexCoral;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.FieldConstants;
@@ -128,19 +129,26 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                 createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, type),
                 new InstantCommand(
                         () -> {
-                            SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
-                            if (currentRequest == null) {
-                                currentRequest = _requestHandler.getLastActiveRequest();
+                            // Only schedule if not already running
+                            if (!GroundIndexCoral.isRunning()) {
+                                SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
                                 if (currentRequest == null) {
-                                    currentRequest =
-                                            new SuperstructureRequest(
-                                                    Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
-                                                    type,
-                                                    () -> true,
-                                                    "groundIntakeReq");
+                                    currentRequest = _requestHandler.getLastActiveRequest();
+                                    if (currentRequest == null) {
+                                        currentRequest =
+                                                new SuperstructureRequest(
+                                                        Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
+                                                        type,
+                                                        () -> true,
+                                                        "groundIntakeReq");
+                                    }
                                 }
+                                new GroundIndexCoral(
+                                                _container.getCoral(), _container.getIntake(), this, currentRequest)
+                                        .schedule();
+                            } else {
+                                System.out.println("Skipping GroundIndexCoral scheduling - already running");
                             }
-                            new IntakeAndIndexCoral(_container.getCoral(), this, currentRequest).schedule();
                         }));
     }
 
