@@ -117,14 +117,14 @@ public class OperatorInterface {
         _driverController.povDownLeft().whileTrue(new EmergencyEjectIntake(container.getIntake()));
         _driverController.povDownRight().whileTrue(new EmergencyEjectIntake(container.getIntake()));
 
-        // Ground intake with left trigger
         _driverController
                 .leftTrigger()
                 .whileTrue(
                         Commands.sequence(
                                         manager.createRequest(
                                                 Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
-                                        Commands.run(() -> container.getIntake().setVoltages(12)))
+                                        Commands.run(
+                                                () -> container.getIntake().setVoltages(Constants.Intake.INTAKE_VOLTAGE)))
                                 .finallyDo(
                                         (interrupted) -> {
                                             container.getIntake().setVoltages(0);
@@ -140,36 +140,12 @@ public class OperatorInterface {
                                             container.getIntake().setVoltages(0);
                                         }));
 
-        // When coral is detected in intake, just use the receiveFromGroundIntake method
-        // which now handles the indexing with our state machine
         _intakeCoralDetectedTrigger.onTrue(
                 Commands.sequence(
-                        Commands.runOnce(() -> container.getIntake().setVoltages(2)),
+                        Commands.runOnce(
+                                () -> container.getIntake().setVoltages(Constants.Intake.SLOW_CENETERING_VOLTAGE)),
                         manager.receiveFromGroundIntake(RequestType.IMMEDIATE)));
 
-        // _coralTransferredCondition.onTrue(
-        //         Commands.sequence(
-        //                 Commands.waitSeconds(Constants.Intake.INTAKE_PASSOFF_DELAY),
-        //                 Commands.runOnce(() -> container.getIntake().setVoltages(0)),
-        //                 Commands.runOnce(
-        //                         () -> {
-        //                             System.out.println("Coral transferred successfully - auto stowing
-        // intake");
-        //                         }),
-        //                 Commands.runOnce(() ->
-        // container.getIntake().setDesiredPivotAngle(IntakeState.IDLE))));
-
-        // _intakeCoralDetectedTrigger.onFalse(
-        //         Commands.sequence(
-        //                 Commands.waitSeconds(Constants.Intake.INTAKE_PASSOFF_DELAY),
-        //                 Commands.runOnce(() -> container.getIntake().setVoltages(0)),
-        //                 Commands.runOnce(() ->
-        // container.getIntake().setDesiredPivotAngle(IntakeState.IDLE))));
-        // _intakeCoralDetectedTrigger.onTrue(
-        //         Commands.sequence(
-        //                 Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
-        //                 manager.createRequest(
-        //                         Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
         // RequestType.IMMEDIATE),
         //                 Commands.waitSeconds(0.3),
         //                 Commands.runOnce(() -> container.getIntake().setVoltages(0, -3.0)),

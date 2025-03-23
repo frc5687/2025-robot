@@ -7,7 +7,6 @@ import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
 import org.frc5687.robot.subsystems.intake.IntakeState;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
-import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureRequest;
 
@@ -80,24 +79,28 @@ public class GroundIndexCoral extends OutliersCommand {
 
         switch (_currentState) {
             case INITIALIZE:
-                _intake.setVoltages(2.0);
-                _manager.receiveFromGroundIntake(RequestType.IMMEDIATE).schedule();
-                _currentState = State.PREPARE_FOR_TRANSFER;
-                _stateTimer.reset();
-                System.out.println("State: INITIALIZE -> PREPARE_FOR_TRANSFER");
+                _intake.setVoltages(Constants.Intake.SLOW_CENETERING_VOLTAGE);
+                // _manager.receiveFromGroundIntake(RequestType.IMMEDIATE).schedule();
+                if (_manager.getRequestHandler().getActiveRequest() == null) {
+                    _currentState = State.PREPARE_FOR_TRANSFER;
+                    _stateTimer.reset();
+                    System.out.println("State: INITIALIZE -> PREPARE_FOR_TRANSFER");
+                    break;
+                }
                 break;
 
             case PREPARE_FOR_TRANSFER:
-                if ((_intake.isAtState(
-                                        Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE.getIntake().get())
-                                || _stateTimer.hasElapsed(1.5))
-                        && _stateTimer.hasElapsed(Constants.Intake.INTAKE_PASSOFF_DELAY)) {
-                    _coral.setWheelMotorDutyCycle(0.6);
-                    _intake.setVoltages(-3.0);
-                    _currentState = State.TRANSFERRING_CORAL;
-                    _stateTimer.reset();
-                    System.out.println("State: PREPARE_FOR_TRANSFER -> TRANSFERRING_CORAL");
-                }
+                // if ((_intake.isAtState(
+                //
+                // Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE.getIntake().get())
+                //         || _stateTimer.hasElapsed(0.5))
+                // && _stateTimer.hasElapsed(Constants.Intake.INTAKE_PASSOFF_DELAY)) {
+                _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_GROUND_INDEX_DUTY_CYCLE);
+                _intake.setVoltages(Constants.Intake.INDEX_VOLTAGE);
+                _currentState = State.TRANSFERRING_CORAL;
+                _stateTimer.reset();
+                System.out.println("State: PREPARE_FOR_TRANSFER -> TRANSFERRING_CORAL");
+                // }
                 break;
 
             case TRANSFERRING_CORAL:
@@ -113,18 +116,18 @@ public class GroundIndexCoral extends OutliersCommand {
                 break;
 
             case COMPLETING_TRANSFER:
-                if (_stateTimer.hasElapsed(0.5)) {
-                    _intake.setVoltages(0);
-                    _currentState = State.STOW_INTAKE;
-                    _stateTimer.reset();
-                    System.out.println("State: COMPLETING_TRANSFER -> STOW_INTAKE");
-                }
+                _intake.setVoltages(0);
+                _currentState = State.STOW_INTAKE;
+                _stateTimer.reset();
+                System.out.println("State: COMPLETING_TRANSFER -> STOW_INTAKE");
                 break;
 
             case STOW_INTAKE:
                 _intake.setDesiredPivotAngle(IntakeState.IDLE);
-                _currentState = State.COMPLETED;
-                System.out.println("State: STOW_INTAKE -> COMPLETED");
+                if (_intake.isAtState(IntakeState.IDLE)) {
+                    _currentState = State.COMPLETED;
+                    System.out.println("State: STOW_INTAKE -> COMPLETED");
+                }
                 break;
 
             case COMPLETED:

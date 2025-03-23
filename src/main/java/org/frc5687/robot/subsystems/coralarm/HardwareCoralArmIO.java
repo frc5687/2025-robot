@@ -125,6 +125,15 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
         inputs.wheelAngle = _wheelAngle.getValueAsDouble();
         inputs.motorCurrent = 0.0;
+
+        if (inputs.isCoralDetected) {
+            _controller.setPID(Constants.CoralArm.kP, Constants.CoralArm.kI, Constants.CoralArm.kD);
+        } else {
+            _controller.setPID(
+                    Constants.CoralArm.NO_CORAL_kP,
+                    Constants.CoralArm.NO_CORAL_kI,
+                    Constants.CoralArm.NO_CORAL_kD);
+        }
     }
 
     @Override

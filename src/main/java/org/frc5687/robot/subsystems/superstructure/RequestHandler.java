@@ -60,6 +60,7 @@ public class RequestHandler implements EpilogueLog {
         // movement that crosses the collision zone
         if (needsCollisionAvoidance(request)) {
             _finalTargetState = request.targetPosition();
+            _lastActiveRequest = request;
             _inParallelMovement = true;
 
             double currentElevatorHeight = _container.getElevator().getElevatorHeight();
@@ -152,7 +153,8 @@ public class RequestHandler implements EpilogueLog {
         }
 
         if (isParallelMovementComplete()) {
-            _lastActiveRequest = getActiveRequest();
+            // This is done in the check for collision as the request is 
+            // _lastActiveRequest = getActiveRequest();
 
             _activeRequests.remove();
             _inParallelMovement = false;
@@ -299,21 +301,22 @@ public class RequestHandler implements EpilogueLog {
 
         if (goal.getElevator().isPresent()
                 && !_container.getElevator().isAtState(goal.getElevator().get())) {
-            // log("RequestProgress", "elevator not finished");
+            log("RequestProgress", "elevator not finished");
             return false;
         }
 
         if (goal.getAlgae().isPresent() && !_container.getAlgae().isAtState(goal.getAlgae().get())) {
-            // log("RequestProgress", "algae not finished");
+            log("RequestProgress", "algae not finished");
             return false;
         }
 
         if (goal.getCoral().isPresent() && !_container.getCoral().isAtState(goal.getCoral().get())) {
-            // log("RequestProgress", "coral not finished");
+            log("RequestProgress", "coral not finished");
             return false;
         }
 
         if (goal.getIntake().isPresent() && !_container.getIntake().isAtState(goal.getIntake().get())) {
+            log("RequestProgress", "intake not finished");
             return false;
         }
 

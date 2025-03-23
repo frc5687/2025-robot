@@ -50,33 +50,26 @@ public class IntakeAndIndexCoral extends OutliersCommand {
         SuperstructureRequest activeRequest = _manager.getRequestHandler().getActiveRequest();
         SuperstructureRequest lastRequest = _manager.getRequestHandler().getLastActiveRequest();
 
-        if (_initialRequest == null) {
-            return false;
-        }
+        if (_initialRequest != null) {
+            boolean differentFromActiveRequest =
+                    activeRequest != null
+                            && !_initialRequest.equals(activeRequest)
+                            && !_initialRequest.targetPosition().equals(activeRequest.targetPosition());
 
-        boolean differentFromActiveRequest =
-                activeRequest != null
-                        && !_initialRequest.targetPosition().equals(activeRequest.targetPosition());
+            boolean differentFromLastRequest =
+                    lastRequest != null
+                            && lastRequest != _initialRequest
+                            && !_initialRequest.targetPosition().equals(lastRequest.targetPosition());
 
-        boolean differentFromLastRequest =
-                lastRequest != null
-                        && lastRequest != _initialRequest
-                        && !_initialRequest.targetPosition().equals(lastRequest.targetPosition());
+            boolean requestChanged = differentFromActiveRequest || differentFromLastRequest;
 
-        boolean requestChanged = differentFromActiveRequest || differentFromLastRequest;
-
-        if (requestChanged) {
-            System.out.println("Request has changed");
-            System.out.println("Initial target position: " + _initialRequest.targetPosition());
-            if (differentFromActiveRequest) {
-                System.out.println("Active target position: " + activeRequest.targetPosition());
-            }
-            if (differentFromLastRequest) {
-                System.out.println("Last target position: " + lastRequest.targetPosition());
+            if (requestChanged) {
+                System.out.println("Request has changed, ending index command");
+                return true;
             }
         }
 
-        return requestChanged;
+        return false;
     }
 
     @Override

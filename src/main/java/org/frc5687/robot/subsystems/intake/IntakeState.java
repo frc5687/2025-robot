@@ -3,7 +3,7 @@ package org.frc5687.robot.subsystems.intake;
 import org.frc5687.robot.Constants;
 
 public enum IntakeState {
-    DEPLOYED(0.00),
+    DEPLOYED(0.005),
     PASSOFF_TO_CORAL(Constants.Intake.MAX_ANGLE),
     IDLE(2.38);
 

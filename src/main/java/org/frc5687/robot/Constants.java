@@ -279,12 +279,16 @@ public class Constants {
         public static final double CURRENT_LIMIT = 60;
 
         public static final double kP = 60.0;
-        public static final double kI = 15.0;
+        public static final double kI = 20.0;
         public static final double kD = 0.0;
         public static final double kS = 0.0;
         public static final double kV = 0.0;
         public static final double kA = 0.0;
         public static final double kG = 0.0;
+
+        public static final double SLOW_CENETERING_VOLTAGE = 2.0;
+        public static final double INDEX_VOLTAGE = -3.0;
+        public static final double INTAKE_VOLTAGE = 12.0;
     }
 
     public static class Elevator {
@@ -374,6 +378,12 @@ public class Constants {
         public static final double kV = 0.0;
         public static final double kS = 0.0;
 
+        public static final double NO_CORAL_kP = 25.0;
+        public static final double NO_CORAL_kI = 0.0;
+        public static final double NO_CORAL_kD = 0.5;
+        public static final double NO_CORAL_kV = 0.0;
+        public static final double NO_CORAL_kS = 0.0;
+
         public static final double kP_WHEEL = 6.0;
         public static final double kI_WHEEL = 0.0;
         public static final double kD_WHEEL = 0.0;
@@ -407,6 +417,8 @@ public class Constants {
         public static final double WHEEL_EJECT_CORAL_DUTY_CYCLE = -1.0;
         public static final double WHEEL_EJECT_TROTH_DUTY_CYCLE = 0.35;
         public static final double WHEEL_INDEX_ROTATIONS = 2.0;
+
+        public static final double WHEEL_GROUND_INDEX_DUTY_CYCLE = 0.6;
     }
 
     public static class Climber {
