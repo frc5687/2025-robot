@@ -18,7 +18,7 @@ public class SimCoralArmIO implements CoralArmIO {
 
     private boolean _previouslyInFunnelPosition = false;
     private double _timeEnteredFunnelPosition = 0;
-    private static final double SIM_CORAL_DETECTION_DELAY = 2.0;
+    private static final double SIM_CORAL_DETECTION_DELAY = 3.0;
     private boolean _simulatedCoralDetected = false;
     private double _wheelPosition = 0.0;
 
@@ -99,8 +99,8 @@ public class SimCoralArmIO implements CoralArmIO {
     }
 
     private boolean isInAnyPlacingPosition(double currentAngle) {
-        return isNearAngle(currentAngle, CoralState.PLACING_L1.getArmAngle())
-                || isNearAngle(currentAngle, CoralState.PLACING.getArmAngle())
+        // return isNearAngle(currentAngle, CoralState.PLACING_L1.getArmAngle())
+        return isNearAngle(currentAngle, CoralState.PLACING.getArmAngle())
                 || isNearAngle(currentAngle, CoralState.PLACING_L4.getArmAngle());
     }
 

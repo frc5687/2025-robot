@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
         Epilogue.configure(
                 config -> {
                     config.root = "Robot";
-                    config.minimumImportance = Logged.Importance.CRITICAL;
+                    config.minimumImportance = Logged.Importance.DEBUG;
                     config.errorHandler = ErrorHandler.printErrorMessages();
                     config.loggingPeriod = Seconds.of(0.1);
                 });

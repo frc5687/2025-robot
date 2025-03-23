@@ -19,6 +19,7 @@ import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchNoNormalVector;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.commands.intake.EmergencyEjectIntake;
+import org.frc5687.robot.subsystems.intake.IntakeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.util.Helpers;
@@ -30,6 +31,7 @@ public class OperatorInterface {
     private final OutliersController _operatorController;
 
     private Trigger _intakeCoralDetectedTrigger;
+    private Trigger _coralTransferredCondition;
 
     public OperatorInterface() {
         _driverController = new OutliersController(new CommandPS5Controller(0));
@@ -39,6 +41,17 @@ public class OperatorInterface {
     public void configureCommandMapping(RobotContainer container) {
         SuperstructureManager manager = container.getSuperstructureManager();
         _intakeCoralDetectedTrigger = new Trigger(container.getIntake()::isIntakeCoralDetected);
+
+        _coralTransferredCondition =
+                new Trigger(
+                        () ->
+                                container.getCoral().isCoralDetected()
+                                        && !container.getIntake().isIntakeCoralDetected()
+                                        && Helpers.epsilonEquals(
+                                                container.getIntake().getPivotArmAngleRads(),
+                                                IntakeState.PASSOFF_TO_CORAL.getValue(),
+                                                Math.toRadians(5)));
+
         configureDriverControls(container, manager);
         configureOperatorControls(container, manager);
     }
@@ -134,10 +147,19 @@ public class OperatorInterface {
                         manager.receiveFromGroundIntake(RequestType.IMMEDIATE),
                         Commands.waitSeconds(Constants.Intake.INTAKE_PASSOFF_DELAY),
                         Commands.runOnce(() -> container.getIntake().setVoltages(-3.0)),
+                        Commands.waitSeconds(Constants.Intake.INTAKE_PASSOFF_DELAY),
                         Commands.waitUntil(container.getCoral()::isCoralDetected),
+                        Commands.runOnce(() -> container.getIntake().setVoltages(0))));
+
+        _coralTransferredCondition.onTrue(
+                Commands.sequence(
+                        Commands.waitSeconds(Constants.Intake.INTAKE_PASSOFF_DELAY),
                         Commands.runOnce(() -> container.getIntake().setVoltages(0)),
-                        manager.createRequest(
-                                Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE)));
+                        Commands.runOnce(
+                                () -> {
+                                    System.out.println("Coral transferred successfully - auto stowing intake");
+                                }),
+                        Commands.runOnce(() -> container.getIntake().setDesiredPivotAngle(IntakeState.IDLE))));
 
         // _intakeCoralDetectedTrigger.onFalse(
         //         Commands.sequence(
