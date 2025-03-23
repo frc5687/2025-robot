@@ -378,9 +378,9 @@ public class Constants {
         public static final double kV = 0.0;
         public static final double kS = 0.0;
 
-        public static final double NO_CORAL_kP = 25.0;
+        public static final double NO_CORAL_kP = 15.0;
         public static final double NO_CORAL_kI = 0.0;
-        public static final double NO_CORAL_kD = 0.5;
+        public static final double NO_CORAL_kD = 0.0;
         public static final double NO_CORAL_kV = 0.0;
         public static final double NO_CORAL_kS = 0.0;
 
