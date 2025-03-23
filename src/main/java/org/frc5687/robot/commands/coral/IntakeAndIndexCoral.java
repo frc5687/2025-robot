@@ -1,5 +1,6 @@
 package org.frc5687.robot.commands.coral;
 
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
@@ -24,7 +25,12 @@ public class IntakeAndIndexCoral extends OutliersCommand {
     public void initialize() {
         System.out.println("Starting index command");
         if (_initialRequest == null) {
-            _initialRequest = _manager.getRequestHandler().getActiveRequest();
+            SuperstructureRequest activeRequest = _manager.getRequestHandler().getActiveRequest();
+            if (activeRequest != null) {
+                _initialRequest = activeRequest;
+            } else {
+                _initialRequest = _manager.getRequestHandler().getLastActiveRequest();
+            }
         }
         _coral.setWheelMotorDutyCycle(0.3);
     }
@@ -42,31 +48,42 @@ public class IntakeAndIndexCoral extends OutliersCommand {
         }
 
         SuperstructureRequest activeRequest = _manager.getRequestHandler().getActiveRequest();
+        SuperstructureRequest lastRequest = _manager.getRequestHandler().getLastActiveRequest();
 
-        // check if there's a new active request with a different target position
-        // if (_initialRequest == null) {
-        //     System.out.println("Request is null");
-        //     return true;
-        // }
+        if (_initialRequest == null) {
+            return false;
+        }
 
-        boolean differentRequest =
+        boolean differentFromActiveRequest =
                 activeRequest != null
                         && !_initialRequest.targetPosition().equals(activeRequest.targetPosition());
 
-        if (differentRequest) {
+        boolean differentFromLastRequest =
+                lastRequest != null
+                        && lastRequest != _initialRequest
+                        && !_initialRequest.targetPosition().equals(lastRequest.targetPosition());
+
+        boolean requestChanged = differentFromActiveRequest || differentFromLastRequest;
+
+        if (requestChanged) {
             System.out.println("Request has changed");
             System.out.println("Initial target position: " + _initialRequest.targetPosition());
-            System.out.println("Active target position: " + activeRequest.targetPosition());
+            if (differentFromActiveRequest) {
+                System.out.println("Active target position: " + activeRequest.targetPosition());
+            }
+            if (differentFromLastRequest) {
+                System.out.println("Last target position: " + lastRequest.targetPosition());
+            }
         }
 
-        return differentRequest;
+        return requestChanged;
     }
 
     @Override
     public void end(boolean interrupted) {
         if (_coral.isCoralDetected()) {
             double currentPos = _coral.getWheelMotorPosition();
-            _coral.setWheelMotorPosition(currentPos + 1.5);
+            _coral.setWheelMotorPosition(currentPos + Constants.CoralArm.WHEEL_INDEX_ROTATIONS);
         } else if (!interrupted) {
             // we need to explicitly stop coral
             _coral.setWheelMotorDutyCycle(0);

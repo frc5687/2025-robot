@@ -18,6 +18,7 @@ import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchNoNormalVector;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
+import org.frc5687.robot.commands.intake.EmergencyEjectIntake;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.util.Helpers;
@@ -99,16 +100,20 @@ public class OperatorInterface {
         _driverController.povUpLeft().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpRight().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
 
+        _driverController.povDown().whileTrue(new EmergencyEjectIntake(container.getIntake()));
+        _driverController.povDownLeft().whileTrue(new EmergencyEjectIntake(container.getIntake()));
+        _driverController.povDownRight().whileTrue(new EmergencyEjectIntake(container.getIntake()));
+
         _driverController
                 .leftTrigger()
                 .whileTrue(
                         Commands.sequence(
                                         manager.createRequest(
                                                 Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
-                                        Commands.run(() -> container.getIntake().setVoltages(-12, 4)))
+                                        Commands.run(() -> container.getIntake().setVoltages(12)))
                                 .finallyDo(
                                         (interrupted) -> {
-                                            container.getIntake().setVoltages(0, 0);
+                                            container.getIntake().setVoltages(0);
 
                                             if (!container.getIntake().isIntakeCoralDetected()) {
                                                 manager
@@ -119,25 +124,33 @@ public class OperatorInterface {
                                         })
                                 .handleInterrupt(
                                         () -> {
-                                            container.getIntake().setVoltages(0, 0);
+                                            container.getIntake().setVoltages(0);
                                         }));
 
         // This was the only way I got this to work the way I would like it too.
         _intakeCoralDetectedTrigger.onTrue(
                 Commands.sequence(
-                        Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
+                        Commands.runOnce(() -> container.getIntake().setVoltages(2)),
                         manager.receiveFromGroundIntake(RequestType.IMMEDIATE),
-                        Commands.waitSeconds(0.3),
-                        Commands.runOnce(() -> container.getIntake().setVoltages(0, -3.0)),
+                        Commands.waitSeconds(Constants.Intake.INTAKE_PASSOFF_DELAY),
+                        Commands.runOnce(() -> container.getIntake().setVoltages(-3.0)),
                         Commands.waitUntil(container.getCoral()::isCoralDetected),
-                        Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
+                        Commands.runOnce(() -> container.getIntake().setVoltages(0)),
                         manager.createRequest(
                                 Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE)));
+
+        // _intakeCoralDetectedTrigger.onFalse(
+        //         Commands.sequence(
+        //                 Commands.waitSeconds(Constants.Intake.INTAKE_PASSOFF_DELAY),
+        //                 Commands.runOnce(() -> container.getIntake().setVoltages(0)),
+        //                 Commands.runOnce(() ->
+        // container.getIntake().setDesiredPivotAngle(IntakeState.IDLE))));
         // _intakeCoralDetectedTrigger.onTrue(
         //         Commands.sequence(
         //                 Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
         //                 manager.createRequest(
-        //                         Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, RequestType.IMMEDIATE),
+        //                         Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
+        // RequestType.IMMEDIATE),
         //                 Commands.waitSeconds(0.3),
         //                 Commands.runOnce(() -> container.getIntake().setVoltages(0, -3.0)),
         //                 manager.indexCoral(),

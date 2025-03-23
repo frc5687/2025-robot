@@ -15,6 +15,7 @@ public class RequestHandler implements EpilogueLog {
 
     private Queue<SuperstructureRequest> _activeRequests;
     private SuperstructureRequest _queuedRequest = null;
+    private SuperstructureRequest _lastActiveRequest = null;
 
     private static final double ELEVATOR_THRESHOLD = 0.3; // L3
     private static final double CORAL_ANGLE_THRESHOLD = Units.degreesToRadians(250);
@@ -139,6 +140,8 @@ public class RequestHandler implements EpilogueLog {
         }
 
         if (isParallelMovementComplete()) {
+            _lastActiveRequest = getActiveRequest();
+
             _activeRequests.remove();
             _inParallelMovement = false;
             _finalTargetState = null;
@@ -252,13 +255,14 @@ public class RequestHandler implements EpilogueLog {
 
     private void executeActiveRequest() {
         var activeRequest = getActiveRequest();
-        if (activeRequest == null) return;
+        if (activeRequest == null) {
+            return;
+        }
 
-        // log("ExecutingRequest", activeRequest.description());
+        _lastActiveRequest = activeRequest;
         setSubsystemStates(activeRequest.targetPosition());
 
         if (activeRequestFinished()) {
-            // log("RequestCompleted", activeRequest.description());
             _activeRequests.remove();
         }
     }
@@ -311,6 +315,10 @@ public class RequestHandler implements EpilogueLog {
 
     public SuperstructureRequest getQueuedRequest() {
         return _queuedRequest;
+    }
+
+    public SuperstructureRequest getLastActiveRequest() {
+        return _lastActiveRequest;
     }
 
     @Override

@@ -37,13 +37,8 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
         _outputs.desiredAngleRad = desiredAngleClamped;
     }
 
-    public void setVoltages(double rollerVoltage, double intakeVoltage) {
-        setRollerVoltage(rollerVoltage);
+    public void setVoltages(double intakeVoltage) {
         setIntakeVoltage(intakeVoltage);
-    }
-
-    public void setRollerVoltage(double voltage) {
-        _outputs.rollerVoltage = MathUtil.clamp(voltage, -12.0, 12.0);
     }
 
     public void setIntakeVoltage(double voltage) {

@@ -57,17 +57,17 @@ public class SimIntakeIO implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
-        _armSim.update(Constants.UPDATE_PERIOD);
+        // _armSim.update(Constants.UPDATE_PERIOD);
 
-        double position = _armSim.getAngleRads();
-        double velocity = _armSim.getVelocityRadPerSec();
+        // double position = _armSim.getAngleRads();
+        // double velocity = _armSim.getVelocityRadPerSec();
 
-        _armEncoderSim.setDistance(position);
-        _armEncoderSim.setRate(velocity);
+        // _armEncoderSim.setDistance(position);
+        // _armEncoderSim.setRate(velocity);
 
-        inputs.armAngleRads = position;
+        // inputs.armAngleRads = position;
 
-        updateSimulatedCoralDetection(inputs);
+        // updateSimulatedCoralDetection(inputs);
     }
 
     @Override

@@ -4,15 +4,14 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
-import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.configs.CANrangeConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -20,71 +19,59 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+import com.ctre.phoenix6.signals.UpdateModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
-import org.frc5687.robot.util.TunableDouble;
 
 public class HardwareIntakeIO implements IntakeIO {
     private final TalonFX _pivotMotor;
-    private final TalonFX _rollerMotor;
+    // private final TalonFX _rollerMotor;
     private final TalonFX _beltMotor;
     private final CANcoder _encoder;
+    private final CANrange _range;
+
     private final StatusSignal<Angle> _encoderAngle;
     private final StatusSignal<Angle> _pivotMotorAngle;
+    private final StatusSignal<Boolean> _isCoralDetected;
 
-    private final VoltageOut _rollerVoltageReq = new VoltageOut(0);
+    // private final VoltageOut _rollerVoltageReq = new VoltageOut(0);
     private final VoltageOut _intakeVoltageReq = new VoltageOut(0);
 
     private final MotionMagicVoltage _motionMagicReq;
-    private final PositionVoltage _positionReq;
-
-    private static final TunableDouble positionTolerance =
-            new TunableDouble("Intake", "position_tolerance", 0.2);
-
-    private boolean _usingPositionControl = false;
-
-    private final LaserCan _laserCan;
-
-    private static final TunableDouble detectionRange =
-            new TunableDouble("Intake", "detection range", 50);
 
     public HardwareIntakeIO() {
         _pivotMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ARM, Constants.Intake.CAN_BUS);
-        _rollerMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ROLLER, Constants.Intake.CAN_BUS);
+        // _rollerMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_ROLLER, Constants.Intake.CAN_BUS);
         _beltMotor = new TalonFX(RobotMap.CAN.TALONFX.INTAKE_BELT, Constants.Intake.CAN_BUS);
-        _laserCan = new LaserCan(RobotMap.CAN.LASERCAN.INTAKE);
         _encoder = new CANcoder(RobotMap.CAN.CANCODER.INTAKE_ENCODER, Constants.Intake.CAN_BUS);
+        _range = new CANrange(RobotMap.CAN.CANRANGE.INTAKE_CORAL, Constants.Intake.CAN_BUS);
         configureCancoder();
+        configureCanrange(_range);
+
+        _isCoralDetected = _range.getIsDetected();
 
         _encoderAngle = _encoder.getAbsolutePosition();
         _encoderAngle.refresh();
         double encoderRad = _encoderAngle.getValue().in(Radians);
 
         _motionMagicReq = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
-        _positionReq = new PositionVoltage(0).withSlot(1).withEnableFOC(true);
 
         _pivotMotorAngle = _pivotMotor.getPosition();
         _pivotMotor.setPosition(Units.radiansToRotations(encoderRad * Constants.Intake.GEAR_RATIO));
 
-        configureMotor(_rollerMotor, Constants.Intake.ROLLER_INVERTED, false);
+        // configureMotor(_rollerMotor, Constants.Intake.ROLLER_INVERTED, false);
         configureMotor(_beltMotor, Constants.Intake.INTAKE_INVERTED, false);
         configureMotor(_pivotMotor, Constants.Intake.PIVOT_INVERTED, true);
     }
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
-        StatusSignal.refreshAll(_pivotMotorAngle, _encoderAngle);
+        StatusSignal.refreshAll(_pivotMotorAngle, _encoderAngle, _isCoralDetected);
 
-        var measurement = _laserCan.getMeasurement();
-        if (measurement == null) {
-            System.err.println("Intake laserCan measurement was null");
-            inputs.isCoralDetected = false;
-        } else {
-            inputs.isCoralDetected = measurement.distance_mm < detectionRange.get();
-        }
+        inputs.isCoralDetected = _isCoralDetected.getValue();
 
         inputs.armAngleRads = _pivotMotorAngle.getValue().in(Radians);
         inputs.encoderAngleRads = _encoderAngle.getValue().in(Radians);
@@ -92,7 +79,7 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void writeOutputs(IntakeOutputs outputs) {
-        _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
+        // _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
         _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
 
         double safeDesiredAngle =
@@ -100,20 +87,7 @@ public class HardwareIntakeIO implements IntakeIO {
                         outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE, Constants.Intake.MAX_ANGLE);
 
         double desiredRotations = Units.radiansToRotations(safeDesiredAngle);
-
-        double currentAngle = _pivotMotorAngle.getValue().in(Radians);
-
-        double error = Math.abs(currentAngle - safeDesiredAngle);
-
-        // if (error > positionTolerance.get()) {
         _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
-
-        //     _usingPositionControl = false;
-        // } else {
-        //     _pivotMotor.setControl(_positionReq.withPosition(desiredRotations));
-
-        //     _usingPositionControl = true;
-        // }
     }
 
     private void configureMotor(TalonFX motor, boolean isInverted, boolean attachCANcoder) {
@@ -128,7 +102,7 @@ public class HardwareIntakeIO implements IntakeIO {
         config.MotionMagic.MotionMagicCruiseVelocity = Constants.Intake.MAX_VELOCITY_RAD_PER_SEC;
         config.MotionMagic.MotionMagicAcceleration =
                 Constants.Intake.MAX_ACCELERATION_RAD_PER_SEC_SQUARED;
-        config.MotionMagic.MotionMagicJerk = 4000;
+        config.MotionMagic.MotionMagicJerk = Constants.Intake.MAX_JERK_RAD_PER_SEC_CUBED;
 
         config.Slot0.kP = Constants.Intake.kP;
         config.Slot0.kI = Constants.Intake.kI;
@@ -139,18 +113,6 @@ public class HardwareIntakeIO implements IntakeIO {
         config.Slot0.kG = Constants.Intake.kG;
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
-
-        Slot1Configs slot1 = new Slot1Configs();
-        slot1.kP = Constants.Intake.POS_kP;
-        slot1.kI = Constants.Intake.POS_kI;
-        slot1.kD = Constants.Intake.POS_kD;
-        slot1.kS = Constants.Intake.POS_kS;
-        slot1.kV = Constants.Intake.POS_kV;
-        slot1.kA = Constants.Intake.POS_kA;
-        slot1.kG = Constants.Intake.POS_kG;
-        slot1.GravityType = GravityTypeValue.Arm_Cosine;
-        slot1.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
-        config.Slot1 = slot1;
 
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.CurrentLimits.SupplyCurrentLimit = Constants.Intake.CURRENT_LIMIT;
@@ -178,5 +140,15 @@ public class HardwareIntakeIO implements IntakeIO {
         _cancoderConfigs.MagnetSensor.MagnetOffset = Constants.Intake.ENCODER_OFFSET;
         _cancoderConfigs.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         _encoder.getConfigurator().apply(_cancoderConfigs);
+    }
+
+    private void configureCanrange(CANrange range) {
+        var canrangeConfigs = new CANrangeConfiguration();
+        canrangeConfigs.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
+        canrangeConfigs.FovParams.FOVRangeX = 7; // TODO: tune
+        canrangeConfigs.FovParams.FOVRangeY = 7; // TODO: tune
+        // canrangeConfigs.ProximityParams.ProximityHysteresis = 0.04;
+        canrangeConfigs.ProximityParams.ProximityThreshold = 0.2; // TODO: Tune
+        range.getConfigurator().apply(canrangeConfigs);
     }
 }
