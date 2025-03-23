@@ -123,6 +123,18 @@ public class RequestHandler implements EpilogueLog {
     }
 
     public void execute() {
+        log(
+                "Previous Active",
+                getLastActiveRequest() == null ? "Null" : getLastActiveRequest().description(),
+                Importance.CRITICAL);
+        log(
+                "Active Request",
+                getActiveRequest() == null ? "Null" : getActiveRequest().description(),
+                Importance.CRITICAL);
+        log(
+                "Queued Request",
+                getQueuedRequest() == null ? "Null" : getQueuedRequest().description(),
+                Importance.CRITICAL);
         checkAndStartQueuedRequest();
 
         if (_inParallelMovement && _finalTargetState != null) {

@@ -17,7 +17,6 @@ public class SimIntakeIO implements IntakeIO {
     private final ProfiledPIDController _profiledPIDController;
 
     private double _rollerVoltage = 0.0;
-    private double _intakeVoltage = 0.0;
 
     private boolean _previouslyInIntakePosition = false;
     private double _timeEnteredIntakePosition = 0;
@@ -57,23 +56,22 @@ public class SimIntakeIO implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
-        // _armSim.update(Constants.UPDATE_PERIOD);
+        _armSim.update(Constants.UPDATE_PERIOD);
 
-        // double position = _armSim.getAngleRads();
-        // double velocity = _armSim.getVelocityRadPerSec();
+        double position = _armSim.getAngleRads();
+        double velocity = _armSim.getVelocityRadPerSec();
 
-        // _armEncoderSim.setDistance(position);
-        // _armEncoderSim.setRate(velocity);
+        _armEncoderSim.setDistance(position);
+        _armEncoderSim.setRate(velocity);
 
-        // inputs.armAngleRads = position;
+        inputs.armAngleRads = position;
 
-        // updateSimulatedCoralDetection(inputs);
+        updateSimulatedCoralDetection(inputs);
     }
 
     @Override
     public void writeOutputs(IntakeOutputs outputs) {
         _rollerVoltage = outputs.rollerVoltage;
-        _intakeVoltage = outputs.intakeVoltage;
 
         _profiledPIDController.setGoal(outputs.desiredAngleRad);
         double voltage = _profiledPIDController.calculate(_armSim.getAngleRads());

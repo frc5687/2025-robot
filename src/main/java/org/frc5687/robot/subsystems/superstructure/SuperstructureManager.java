@@ -124,21 +124,24 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     }
 
     public Command receiveFromGroundIntake(RequestType type) {
-        return createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, type)
-                .andThen(
-                        new InstantCommand(
-                                () -> {
-                                    SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
-                                    if (currentRequest == null) {
-                                        currentRequest =
-                                                new SuperstructureRequest(
-                                                        Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
-                                                        type,
-                                                        () -> true,
-                                                        "groundIntakeReq");
-                                    }
-                                    new IntakeAndIndexCoral(_container.getCoral(), this, currentRequest).schedule();
-                                }));
+        return new ParallelCommandGroup(
+                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, type),
+                new InstantCommand(
+                        () -> {
+                            SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
+                            if (currentRequest == null) {
+                                currentRequest = _requestHandler.getLastActiveRequest();
+                                if (currentRequest == null) {
+                                    currentRequest =
+                                            new SuperstructureRequest(
+                                                    Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
+                                                    type,
+                                                    () -> true,
+                                                    "groundIntakeReq");
+                                }
+                            }
+                            new IntakeAndIndexCoral(_container.getCoral(), this, currentRequest).schedule();
+                        }));
     }
 
     public Command autoReceiveFunnel() {
