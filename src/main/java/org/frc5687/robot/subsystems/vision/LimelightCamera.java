@@ -1,5 +1,6 @@
 package org.frc5687.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +18,12 @@ public class LimelightCamera extends Camera {
 
     private final String _limelightName;
     private int currentPipeline = -999; // random number...
+    public final Transform3d
+            _robotToCam; // will be used to triangulate the neural detections once I do that
 
-    public LimelightCamera(String limelightName) {
+    public LimelightCamera(String limelightName, Transform3d robotToCamera) {
         _limelightName = limelightName;
+        _robotToCam = robotToCamera;
     }
 
     @Override
@@ -78,6 +82,13 @@ public class LimelightCamera extends Camera {
                     RobotPoseEstimate robotPose =
                             RobotPoseEstimate.fromLimelight(mt2PoseEstimate, _limelightName);
                     poseEstimate = Optional.of(robotPose);
+                }
+            }
+            var neuralDetections = LimelightHelpers.getRawDetections(_limelightName);
+            for (var neuralDetection : neuralDetections) {
+                var obs = NeuralPipelineObservation.fromLimelight(neuralDetection, _robotToCam);
+                if (obs != null) {
+                    neuralObservations.add(obs);
                 }
             }
         }
