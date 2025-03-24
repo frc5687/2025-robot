@@ -3,9 +3,14 @@ package org.frc5687.robot.util.vision;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.RobotStateManager;
+import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.TunableDouble;
 
@@ -40,6 +45,8 @@ public class AlgaeTracker implements EpilogueLog {
             if (obs.getClassId() == ALGAE_CLASS_ID) processObservation(obs);
         }
         List<Pose2d> poses = new ArrayList<>();
+        var thing =
+                RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
         // iterate backwards, updating all algae & deleting improbable algae
         for (int i = _algae.size() - 1; i >= 0; i--) {
             var algae = _algae.get(i);
@@ -49,7 +56,7 @@ public class AlgaeTracker implements EpilogueLog {
             if (algae.prob < 0.2) {
                 _algae.remove(i); // remove the index i
             } else {
-                poses.add(new Pose2d(algae.x, algae.y, new Rotation2d()));
+                poses.add(thing.plus(new Transform2d(algae.x, algae.y, new Rotation2d())));
             }
         }
         log("algae poses", poses, Pose2d.struct, Importance.CRITICAL);
@@ -79,6 +86,19 @@ public class AlgaeTracker implements EpilogueLog {
         } else {
             _algae.add(new Algae(obs.getX(), obs.getY()));
         }
+    }
+
+    public Optional<Translation2d> getClosestAlgae(Translation2d robot) {
+        var minDist = Double.POSITIVE_INFINITY;
+        Optional<Translation2d> closestAlgae = Optional.empty();
+        for (var algae : _algae) {
+            var dist = Math.hypot(algae.x - robot.getX(), algae.y - robot.getY());
+            if (dist < minDist) {
+                minDist = dist;
+                closestAlgae = Optional.of(new Translation2d(algae.x, algae.y));
+            }
+        }
+        return closestAlgae;
     }
 
     class Algae {
