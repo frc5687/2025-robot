@@ -11,8 +11,11 @@ public class HardwareVisionIO implements VisionIO {
 
     public HardwareVisionIO() {
         _cams = new HashMap<>();
-        _cams.put("limelight-left", new LimelightCamera("limelight-left"));
-        _cams.put("limelight-center", new LimelightCamera("limelight-center"));
+        _cams.put(
+                "limelight-left", new LimelightCamera("limelight-left", Constants.Vision.ROBOT_TO_NW_CAM));
+        _cams.put(
+                "limelight-center",
+                new LimelightCamera("limelight-center", Constants.Vision.ROBOT_TO_NE_CAM));
         _cams.put(
                 "South_Camera",
                 new PhotonVisionCamera("South_Camera", Constants.Vision.ROBOT_TO_SOUTH_CAM));
