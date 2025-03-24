@@ -62,10 +62,14 @@ public class NeuralPipelineObservation implements EpilogueLog {
 
         double detectionWidth = rawDetection.corner2_X - rawDetection.corner0_X;
         double detectionHeight = rawDetection.corner2_Y - rawDetection.corner0_Y;
-        double detectionSizePixels = Math.max(detectionWidth, detectionHeight);
+        double ratio = detectionWidth / detectionHeight;
+        if (ratio > 1.3 || ratio < 1 / 1.3) {
+            return null; // elongated
+        }
+        double detectionSizePixels = (detectionWidth + detectionHeight) / 2;
         double radiansPerPixel = Units.degreesToRadians(81.984) / 640;
-        double detectionSizeAngle = detectionSizePixels * radiansPerPixel;
-        double distanceMeters = Units.inchesToMeters(17) / Math.tan(detectionSizeAngle);
+        double detectionSizeRadians = detectionSizePixels * radiansPerPixel;
+        double distanceMeters = Units.inchesToMeters(17) / Math.tan(detectionSizeRadians);
         double cameraX = distanceMeters * Math.cos(Units.degreesToRadians(rawDetection.txnc));
         double cameraY = -distanceMeters * Math.sin(Units.degreesToRadians(rawDetection.txnc));
 
