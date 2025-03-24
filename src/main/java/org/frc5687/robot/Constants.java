@@ -419,6 +419,7 @@ public class Constants {
         public static final double WHEEL_INDEX_ROTATIONS = 2.0;
 
         public static final double WHEEL_GROUND_INDEX_DUTY_CYCLE = 0.6;
+        public static final double WHEEL_FUNNEL_INDEX_DUTY_CYCLE = 0.6;
     }
 
     public static class Climber {
@@ -600,7 +601,7 @@ public class Constants {
     public static class DriveToPose {
         public static final double AGGRESSIVE_ACCEL_MULTIPLIER = 3;
         public static final double COUNTERACT_GAIN = 0.5;
-        public static final double DRIVE_KP = 4.0;
+        public static final double DRIVE_KP = 3.4;
         public static final double DRIVE_KI = 0.0;
         public static final double DRIVE_KD = 0.2;
         public static final double ROT_KP = 4.0;

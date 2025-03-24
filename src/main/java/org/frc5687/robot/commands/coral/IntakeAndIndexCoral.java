@@ -32,12 +32,12 @@ public class IntakeAndIndexCoral extends OutliersCommand {
                 _initialRequest = _manager.getRequestHandler().getLastActiveRequest();
             }
         }
-        _coral.setWheelMotorDutyCycle(0.3);
+        _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_FUNNEL_INDEX_DUTY_CYCLE);
     }
 
     @Override
     public void execute(double timestamp) {
-        _coral.setWheelMotorDutyCycle(0.3);
+        _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_FUNNEL_INDEX_DUTY_CYCLE);
     }
 
     @Override
