@@ -14,8 +14,8 @@ public class DriveToPose extends OutliersCommand {
     private final DriveSubsystem _drive;
     private final Supplier<Pose2d> _poseSupplier;
 
-    private final ProfiledPIDController _driveController;
-    private final ProfiledPIDController _thetaController;
+    protected final ProfiledPIDController _driveController;
+    protected final ProfiledPIDController _thetaController;
 
     private Translation2d _lastSetpointTranslation;
 
