@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchNoNormalVector;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
+import org.frc5687.robot.commands.elevator.GoToAlgaeHeight;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
@@ -83,8 +85,10 @@ public class OperatorInterface {
                 .rightBumper()
                 .whileTrue(
                         new ConditionalCommand(
-                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.ALGAE),
-                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT),
+                                new DynamicDriveToReefBranch(container.getDrive(), manager,
+        ReefSide.ALGAE),
+                                new DynamicDriveToReefBranch(container.getDrive(), manager,
+        ReefSide.RIGHT),
                                 manager::isAlgaeMode));
 
         // _driverController
@@ -144,12 +148,29 @@ public class OperatorInterface {
         // RequestType.IMMEDIATE),
         //                         container.getIntake()::isIntakeCoralDetected)));
 
+        // _driverController
+        //         .rightTrigger()
+        //         .whileTrue(
+        //                 new ParallelCommandGroup(
+        //                         manager.algaeIntake(Constants.SuperstructureGoals.LOW_ALGAE_GRAB),
+        //                         new DynamicDriveToReefBranch(container.getDrive(), manager,
+        // ReefSide.ALGAE)));
+
         _driverController
                 .rightTrigger()
                 .whileTrue(
                         new ConditionalCommand(
                                 new EjectAlgae(container.getAlgae(), container.getElevator()),
-                                new EjectCoral(container.getCoral()),
+                                new ConditionalCommand(
+                                        // AutoActions.autoPlace(container)
+                                        // .andThen(
+                                        new ParallelCommandGroup(
+                                                manager.hybridAlgaeIntake(),
+                                                new GoToAlgaeHeight(container.getElevator(), container.getDrive()),
+                                                new DynamicDriveToReefBranch(
+                                                        container.getDrive(), manager, ReefSide.ALGAE)),
+                                        new EjectCoral(container.getCoral()),
+                                        _driverController.povDown()),
                                 manager::isAlgaeMode));
 
         _driverController.rightMiddleButton().onTrue(new InstantCommand(container.getDrive()::zeroIMU));
