@@ -1,7 +1,6 @@
 package org.frc5687.robot.subsystems.intake;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;

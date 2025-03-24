@@ -33,7 +33,6 @@ import org.frc5687.robot.subsystems.elevator.ElevatorIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
-import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
@@ -85,9 +84,7 @@ public class RobotContainer implements EpilogueLog {
 
         RobotStateManager.getInstance()
                 .initEstimators(
-                        _drive::getModulePositions,
-                        _drive::getHeading,
-                        _drive::getMeasuredChassisSpeeds);
+                        _drive::getModulePositions, _drive::getHeading, _drive::getMeasuredChassisSpeeds);
 
         ElevatorIO elevatorIO;
         if (RobotBase.isSimulation()) {

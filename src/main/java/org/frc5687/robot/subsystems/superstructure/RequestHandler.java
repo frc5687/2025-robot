@@ -153,7 +153,7 @@ public class RequestHandler implements EpilogueLog {
         }
 
         if (isParallelMovementComplete()) {
-            // This is done in the check for collision as the request is 
+            // This is done in the check for collision as the request is
             // _lastActiveRequest = getActiveRequest();
 
             _activeRequests.remove();
