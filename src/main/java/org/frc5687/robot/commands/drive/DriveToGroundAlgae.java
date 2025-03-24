@@ -20,9 +20,7 @@ public class DriveToGroundAlgae extends DriveToPose {
             if (detection.isEmpty()) {
                 return robotPose;
             }
-            double x = detection.get().getX() - robotPose.getX();
-            double y = detection.get().getY() - robotPose.getY();
-            return new Pose2d(detection.get(), new Rotation2d(x, y));
+            return new Pose2d(detection.get(), detection.get().minus(robotPose.getTranslation()).getAngle());
         });
         _thetaController.setPID(8, 0, 0);
         _drive = drive;
