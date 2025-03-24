@@ -178,7 +178,7 @@ public class RobotContainer implements EpilogueLog {
                         .algaeIntake(Constants.SuperstructureGoals.LOW_ALGAE_GRAB)
                         .alongWith(
                                 new DynamicDriveToReefBranch(
-                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE)));
+                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE, true)));
 
         NamedCommands.registerCommand(
                 "HighAlgaeIntake",
@@ -186,7 +186,7 @@ public class RobotContainer implements EpilogueLog {
                         .algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB)
                         .alongWith(
                                 new DynamicDriveToReefBranch(
-                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE)));
+                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE, true)));
 
         NamedCommands.registerCommand(
                 "CoralL4",

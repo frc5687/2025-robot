@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
+import org.frc5687.robot.commands.auto.AutoActions;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
 import org.frc5687.robot.commands.drive.DriveToHP;
@@ -77,18 +78,17 @@ public class OperatorInterface {
                 .leftBumper()
                 .whileTrue(
                         new ConditionalCommand(
-                                new DynamicDriveToReefBranchAlgae(container.getDrive(), manager, ReefSide.ALGAE),
-                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.LEFT),
+                                new DynamicDriveToReefBranchAlgae(
+                                        container.getDrive(), manager, ReefSide.ALGAE, true),
+                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.LEFT, false),
                                 manager::isAlgaeMode));
 
         _driverController
                 .rightBumper()
                 .whileTrue(
                         new ConditionalCommand(
-                                new DynamicDriveToReefBranch(container.getDrive(), manager,
-        ReefSide.ALGAE),
-                                new DynamicDriveToReefBranch(container.getDrive(), manager,
-        ReefSide.RIGHT),
+                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.ALGAE, true),
+                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT, false),
                                 manager::isAlgaeMode));
 
         // _driverController
@@ -162,13 +162,13 @@ public class OperatorInterface {
                         new ConditionalCommand(
                                 new EjectAlgae(container.getAlgae(), container.getElevator()),
                                 new ConditionalCommand(
-                                        // AutoActions.autoPlace(container)
-                                        // .andThen(
-                                        new ParallelCommandGroup(
-                                                manager.hybridAlgaeIntake(),
-                                                new GoToAlgaeHeight(container.getElevator(), container.getDrive()),
-                                                new DynamicDriveToReefBranch(
-                                                        container.getDrive(), manager, ReefSide.ALGAE)),
+                                        AutoActions.autoPlace(container)
+                                                .andThen(
+                                                        new ParallelCommandGroup(
+                                                                manager.hybridAlgaeIntake(),
+                                                                new GoToAlgaeHeight(container.getElevator(), container.getDrive()),
+                                                                new DynamicDriveToReefBranch(
+                                                                        container.getDrive(), manager, ReefSide.ALGAE, true))),
                                         new EjectCoral(container.getCoral()),
                                         _driverController.povDown()),
                                 manager::isAlgaeMode));
