@@ -13,19 +13,15 @@ public class DriveToGroundAlgae extends DriveToPose {
     private final VisionSubsystem _vision;
 
     public DriveToGroundAlgae(DriveSubsystem drive, VisionSubsystem vision) {
-        super(
-                drive,
-                () -> {
-                    var robotPose =
-                            RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
-                    var detection = AlgaeTracker.getInstance().getClosestAlgae(robotPose.getTranslation());
-                    if (detection.isEmpty()) {
-                        return robotPose;
-                    }
-                    double x = detection.get().getX() - robotPose.getX();
-                    double y = detection.get().getY() - robotPose.getY();
-                    return new Pose2d(detection.get(), new Rotation2d(x, y));
-                });
+        super(drive, ()->{
+            var robotPose =
+                RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
+            var detection = AlgaeTracker.getInstance().getClosestAlgae(robotPose.getTranslation());
+            if (detection.isEmpty()) {
+                return robotPose;
+            }
+            return new Pose2d(detection.get(), detection.get().minus(robotPose.getTranslation()).getAngle());
+        });
         _thetaController.setPID(8, 0, 0);
         _drive = drive;
         _vision = vision;
