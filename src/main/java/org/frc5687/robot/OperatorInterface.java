@@ -120,7 +120,7 @@ public class OperatorInterface {
         _driverController
                 .leftTrigger()
                 .whileTrue(
-                        Commands.sequence(
+                        Commands.parallel(
                                         manager.createRequest(
                                                 Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
                                         Commands.run(
@@ -145,62 +145,6 @@ public class OperatorInterface {
                         Commands.runOnce(
                                 () -> container.getIntake().setVoltages(Constants.Intake.SLOW_CENETERING_VOLTAGE)),
                         manager.receiveFromGroundIntake(RequestType.IMMEDIATE)));
-
-        // RequestType.IMMEDIATE),
-        //                 Commands.waitSeconds(0.3),
-        //                 Commands.runOnce(() -> container.getIntake().setVoltages(0, -3.0)),
-        //                 manager.indexCoral(),
-        //                 Commands.runOnce(() -> container.getIntake().setVoltages(0, 0)),
-        //                 manager.createRequest(
-        //                         Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE)));
-
-        // _driverController
-        //         .leftTrigger()
-        //         .whileTrue(
-        //                 new ConditionalCommand(
-        //                         new SequentialCommandGroup(
-        //                                         manager.grabAlgae(
-        //                                                 Constants.SuperstructureGoals.GROUND_PICKUP,
-        // RequestType.IMMEDIATE),
-        //                                         new IntakeAlgae(container.getAlgae()),
-        //                                         manager.createRequest(
-        //                                                 new SuperstructureState(
-        //                                                         Optional.empty(),
-        //                                                         Optional.empty(),
-        //                                                         Optional.of(AlgaeState.IDLE),
-        //                                                         Optional.empty()),
-        //                                                 RequestType.IMMEDIATE),
-        //                                         new InstantCommand(() ->
-        // container.getAlgae().setWheelMotorVoltage(0)))
-        //                                 .alongWith(new DriveToGroundAlgae(container.getDrive(),
-        // container.getVision())),
-        //                         new InstantCommand(),
-        //                         manager::isAlgaeMode));
-        // .onTrue(
-        //         new SequentialCommandGroup(
-        //                 new InstantCommand(() -> container.getIntake().setVoltages(-12, 12)),
-        //                 manager.createRequest(
-        //                         Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
-        //                 new WaitUntilCommand(
-        //                         () ->
-        //                                 container.getIntake().isIntakeCoralDetected()
-        //                                         || !_driverController.leftTrigger().getAsBoolean()),
-        //                 new InstantCommand(() -> container.getIntake().setVoltages(0, 3)),
-        //                 new ConditionalCommand(
-        //                         new SequentialCommandGroup(
-        //                                 manager.createRequest(
-        //
-        // Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
-        //                                         RequestType.IMMEDIATE),
-        //                                 new InstantCommand(() -> container.getIntake().setVoltages(0,
-        // -12)),
-        //                                 manager.indexCoral(),
-        //                                 new InstantCommand(() -> container.getIntake().setVoltages(0,
-        // 0))),
-        //                         manager.createRequest(
-        //                                 Constants.SuperstructureGoals.STOW_INTAKE,
-        // RequestType.IMMEDIATE),
-        //                         container.getIntake()::isIntakeCoralDetected)));
 
         _driverController
                 .rightTrigger()

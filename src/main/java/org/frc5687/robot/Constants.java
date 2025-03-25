@@ -270,7 +270,7 @@ public class Constants {
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 5 * Math.PI;
         public static final double MAX_JERK_RAD_PER_SEC_CUBED = 30 * Math.PI;
 
-        public static final boolean PIVOT_INVERTED = false;
+        public static final boolean PIVOT_INVERTED = true;
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
@@ -278,15 +278,15 @@ public class Constants {
 
         public static final double CURRENT_LIMIT = 60;
 
-        public static final double kP = 60.0;
-        public static final double kI = 20.0;
+        public static final double kP = 20.0; // 60.0
+        public static final double kI = 0.0; // 25.0
         public static final double kD = 0.0;
         public static final double kS = 0.0;
         public static final double kV = 0.0;
         public static final double kA = 0.0;
         public static final double kG = 0.0;
 
-        public static final double SLOW_CENETERING_VOLTAGE = 2.0;
+        public static final double SLOW_CENETERING_VOLTAGE = 1.0;
         public static final double INDEX_VOLTAGE = -3.0;
         public static final double INTAKE_VOLTAGE = 12.0;
     }

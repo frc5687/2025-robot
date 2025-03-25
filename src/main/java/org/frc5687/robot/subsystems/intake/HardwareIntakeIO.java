@@ -23,6 +23,7 @@ import com.ctre.phoenix6.signals.UpdateModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
 
@@ -36,6 +37,7 @@ public class HardwareIntakeIO implements IntakeIO {
     private final StatusSignal<Angle> _encoderAngle;
     private final StatusSignal<Angle> _pivotMotorAngle;
     private final StatusSignal<Boolean> _isCoralDetected;
+    private final StatusSignal<Current> _rollerCurrent;
 
     // private final VoltageOut _rollerVoltageReq = new VoltageOut(0);
     private final VoltageOut _intakeVoltageReq = new VoltageOut(0);
@@ -54,6 +56,7 @@ public class HardwareIntakeIO implements IntakeIO {
 
         _isCoralDetected = _range.getIsDetected();
 
+        _rollerCurrent = _beltMotor.getSupplyCurrent();
         _encoderAngle = _encoder.getAbsolutePosition();
         _encoderAngle.refresh();
         double encoderRad = _encoderAngle.getValue().in(Radians);
@@ -70,12 +73,13 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
-        StatusSignal.refreshAll(_pivotMotorAngle, _encoderAngle, _isCoralDetected);
+        StatusSignal.refreshAll(_pivotMotorAngle, _encoderAngle, _isCoralDetected, _rollerCurrent);
 
         inputs.isCoralDetected = _isCoralDetected.getValue();
 
         inputs.armAngleRads = _pivotMotorAngle.getValue().in(Radians);
         inputs.encoderAngleRads = _encoderAngle.getValue().in(Radians);
+        inputs.rollerCurrent = _rollerCurrent.getValueAsDouble();
 
         _currentArmAngleRads = inputs.armAngleRads;
     }
@@ -141,9 +145,11 @@ public class HardwareIntakeIO implements IntakeIO {
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = Constants.Intake.CURRENT_LIMIT;
+        config.CurrentLimits.SupplyCurrentLimit = Constants.Intake.CURRENT_LIMIT / 2.0;
 
         if (attachCANcoder) {
+            config.CurrentLimits.SupplyCurrentLimit =
+                    Constants.Intake.CURRENT_LIMIT; // PIVOT MOTOR LARGER CURRENT
             config.Feedback.FeedbackRemoteSensorID = _encoder.getDeviceID();
             config.Feedback.RotorToSensorRatio = Constants.Intake.GEAR_RATIO;
             config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
