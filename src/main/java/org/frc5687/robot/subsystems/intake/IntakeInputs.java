@@ -11,6 +11,9 @@ public class IntakeInputs extends BaseInputs {
     @Logged(name = "Encoder Angle(Rads)", importance = Logged.Importance.CRITICAL)
     public double encoderAngleRads = 0;
 
+    @Logged(name = "Roller Current (A)", importance = Logged.Importance.CRITICAL)
+    public double rollerCurrent = 0.0;
+
     @Logged(name = "Is Coral Detected", importance = Logged.Importance.CRITICAL)
     public boolean isCoralDetected = false;
 }

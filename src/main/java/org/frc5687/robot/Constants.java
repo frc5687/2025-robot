@@ -254,33 +254,41 @@ public class Constants {
     public static class Intake {
 
         public static final String CAN_BUS = "CANivore";
-        public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
+        public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(50, 0, 0.5);
 
-        public static final double ENCODER_OFFSET = -0.62;
+        public static final double ENCODER_OFFSET = -0.3322;
 
         public static final DCMotor GEARBOX = Motors.getKrakenX44(1);
-        public static final double GEAR_RATIO = 5.0 * 9.0 * 4.0;
+        public static final double GEAR_RATIO = 5.0 * 4.0 * 4.0 * (50.0 / 35.0);
         public static final double ARM_LENGTH = Units.inchesToMeters(16);
-        public static final double ARM_MASS = Units.lbsToKilograms(13);
+        public static final double ARM_MASS = Units.lbsToKilograms(7.2); // fake probably
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = Units.degreesToRadians(135);
+        public static final double MAX_ANGLE = 2.958;
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 5 * Math.PI;
+        public static final double MAX_JERK_RAD_PER_SEC_CUBED = 30 * Math.PI;
 
         public static final boolean PIVOT_INVERTED = true;
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
+        public static final double INTAKE_PASSOFF_DELAY = 0.3;
+
         public static final double CURRENT_LIMIT = 60;
 
-        public static final double kP = 5.0;
-        public static final double kI = 0.0;
+        public static final double kP = 20.0; // 60.0
+        public static final double kI = 0.0; // 25.0
         public static final double kD = 0.0;
         public static final double kS = 0.0;
         public static final double kV = 0.0;
         public static final double kA = 0.0;
+        public static final double kG = 0.0;
+
+        public static final double SLOW_CENETERING_VOLTAGE = 1.0;
+        public static final double INDEX_VOLTAGE = -3.0;
+        public static final double INTAKE_VOLTAGE = 12.0;
     }
 
     public static class Elevator {
@@ -341,7 +349,7 @@ public class Constants {
         public static final boolean WHEEL_MOTOR_INVERTED = false;
         public static final double WHEEL_CURRENT_LIMIT = 20.0;
 
-        public static final double ENCODER_OFFSET = -0.5974121;
+        public static final double ENCODER_OFFSET = -0.67467;
 
         public static final double BOTTOM_EJECT_SAFE_ANGLE = 2.22;
         public static final double TOP_EJECT_SAFE_ANGLE = 1.5;
@@ -361,6 +369,7 @@ public class Constants {
 
     public static class CoralArm {
 
+        public static final String CAN_BUS = "CANivore";
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
         public static final double kP = 20.0;
@@ -368,6 +377,12 @@ public class Constants {
         public static final double kD = 0.8;
         public static final double kV = 0.0;
         public static final double kS = 0.0;
+
+        public static final double NO_CORAL_kP = 15.0;
+        public static final double NO_CORAL_kI = 0.0;
+        public static final double NO_CORAL_kD = 0.0;
+        public static final double NO_CORAL_kV = 0.0;
+        public static final double NO_CORAL_kS = 0.0;
 
         public static final double kP_WHEEL = 6.0;
         public static final double kI_WHEEL = 0.0;
@@ -381,7 +396,7 @@ public class Constants {
         public static final boolean WHEEL_MOTOR_INVERTED = true;
         public static final int NUM_MOTORS = 1;
 
-        public static final double ENCODER_OFFSET = 0.25708;
+        public static final double ENCODER_OFFSET = -0.1833; // maybe negative
         public static final boolean ENCODER_INVERTED = true;
 
         public static final DCMotor GEARBOX = Motors.getJohnsonElectric(1);
@@ -401,6 +416,10 @@ public class Constants {
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
         public static final double WHEEL_EJECT_CORAL_DUTY_CYCLE = -1.0;
         public static final double WHEEL_EJECT_TROTH_DUTY_CYCLE = 0.35;
+        public static final double WHEEL_INDEX_ROTATIONS = 2.0;
+
+        public static final double WHEEL_GROUND_INDEX_DUTY_CYCLE = 0.6;
+        public static final double WHEEL_FUNNEL_INDEX_DUTY_CYCLE = 0.6;
     }
 
     public static class Climber {
@@ -502,8 +521,8 @@ public class Constants {
                         Optional.empty());
         public static final SuperstructureState RECEIVE_FROM_GROUND_INTAKE =
                 new SuperstructureState(
-                        Optional.of(ElevatorState.FUNNEL_RECEIVE),
-                        Optional.of(CoralState.RECEIVE_FROM_FUNNEL),
+                        Optional.of(ElevatorState.GROUND_INTAKE_RECEIVE),
+                        Optional.of(CoralState.RECEIVE_FROM_GROUND_INTAKE),
                         Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.of(IntakeState.PASSOFF_TO_CORAL));
         public static final SuperstructureState STOW_INTAKE =
@@ -511,9 +530,9 @@ public class Constants {
                         Optional.empty(), Optional.empty(), Optional.empty(), Optional.of(IntakeState.IDLE));
         public static final SuperstructureState GROUND_INTAKE =
                 new SuperstructureState(
-                        Optional.empty(),
-                        Optional.empty(),
-                        Optional.empty(),
+                        Optional.of(ElevatorState.GROUND_INTAKE_RECEIVE),
+                        Optional.of(CoralState.RECEIVE_FROM_GROUND_INTAKE),
+                        Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.of(IntakeState.DEPLOYED));
 
         public static final SuperstructureState PLACE_CORAL_L4 =
@@ -582,7 +601,7 @@ public class Constants {
     public static class DriveToPose {
         public static final double AGGRESSIVE_ACCEL_MULTIPLIER = 3;
         public static final double COUNTERACT_GAIN = 0.5;
-        public static final double DRIVE_KP = 4.0;
+        public static final double DRIVE_KP = 3.4;
         public static final double DRIVE_KI = 0.0;
         public static final double DRIVE_KD = 0.2;
         public static final double ROT_KP = 4.0;

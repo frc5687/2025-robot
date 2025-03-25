@@ -6,7 +6,6 @@ package org.frc5687.robot;
 
 import static edu.wpi.first.units.Units.Seconds;
 
-import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
@@ -14,6 +13,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.errors.ErrorHandler;
 import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
@@ -41,7 +41,6 @@ public class Robot extends TimedRobot {
         Epilogue.bind(this);
         _robotContainer = new RobotContainer(this);
         Threads.setCurrentThreadPriority(true, 99);
-        CanBridge.runTCP();
 
         for (int i = 1; i <= 6; i++) {
             Pose2d left = ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.LEFT);
@@ -53,6 +52,8 @@ public class Robot extends TimedRobot {
                             "X: " + left.getX() + ", Y: " + left.getY() + " Heading: " + left.getRotation(),
                             "X: " + right.getX() + ", Y: " + right.getY() + " Heading: " + right.getRotation()));
         }
+
+        DriverStation.silenceJoystickConnectionWarning(true);
     }
 
     @Override

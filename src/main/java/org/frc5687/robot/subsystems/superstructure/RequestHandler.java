@@ -15,6 +15,7 @@ public class RequestHandler implements EpilogueLog {
 
     private Queue<SuperstructureRequest> _activeRequests;
     private SuperstructureRequest _queuedRequest = null;
+    private SuperstructureRequest _lastActiveRequest = null;
 
     private static final double ELEVATOR_THRESHOLD = 0.3; // L3
     private static final double CORAL_ANGLE_THRESHOLD = Units.degreesToRadians(250);
@@ -59,6 +60,7 @@ public class RequestHandler implements EpilogueLog {
         // movement that crosses the collision zone
         if (needsCollisionAvoidance(request)) {
             _finalTargetState = request.targetPosition();
+            _lastActiveRequest = request;
             _inParallelMovement = true;
 
             double currentElevatorHeight = _container.getElevator().getElevatorHeight();
@@ -122,6 +124,18 @@ public class RequestHandler implements EpilogueLog {
     }
 
     public void execute() {
+        log(
+                "Previous Active",
+                getLastActiveRequest() == null ? "Null" : getLastActiveRequest().description(),
+                Importance.CRITICAL);
+        log(
+                "Active Request",
+                getActiveRequest() == null ? "Null" : getActiveRequest().description(),
+                Importance.CRITICAL);
+        log(
+                "Queued Request",
+                getQueuedRequest() == null ? "Null" : getQueuedRequest().description(),
+                Importance.CRITICAL);
         checkAndStartQueuedRequest();
 
         if (_inParallelMovement && _finalTargetState != null) {
@@ -139,6 +153,9 @@ public class RequestHandler implements EpilogueLog {
         }
 
         if (isParallelMovementComplete()) {
+            // This is done in the check for collision as the request is
+            // _lastActiveRequest = getActiveRequest();
+
             _activeRequests.remove();
             _inParallelMovement = false;
             _finalTargetState = null;
@@ -252,13 +269,14 @@ public class RequestHandler implements EpilogueLog {
 
     private void executeActiveRequest() {
         var activeRequest = getActiveRequest();
-        if (activeRequest == null) return;
+        if (activeRequest == null) {
+            return;
+        }
 
-        // log("ExecutingRequest", activeRequest.description());
+        _lastActiveRequest = activeRequest;
         setSubsystemStates(activeRequest.targetPosition());
 
         if (activeRequestFinished()) {
-            // log("RequestCompleted", activeRequest.description());
             _activeRequests.remove();
         }
     }
@@ -283,21 +301,22 @@ public class RequestHandler implements EpilogueLog {
 
         if (goal.getElevator().isPresent()
                 && !_container.getElevator().isAtState(goal.getElevator().get())) {
-            // log("RequestProgress", "elevator not finished");
+            log("RequestProgress", "elevator not finished");
             return false;
         }
 
         if (goal.getAlgae().isPresent() && !_container.getAlgae().isAtState(goal.getAlgae().get())) {
-            // log("RequestProgress", "algae not finished");
+            log("RequestProgress", "algae not finished");
             return false;
         }
 
         if (goal.getCoral().isPresent() && !_container.getCoral().isAtState(goal.getCoral().get())) {
-            // log("RequestProgress", "coral not finished");
+            log("RequestProgress", "coral not finished");
             return false;
         }
 
         if (goal.getIntake().isPresent() && !_container.getIntake().isAtState(goal.getIntake().get())) {
+            log("RequestProgress", "intake not finished");
             return false;
         }
 
@@ -311,6 +330,10 @@ public class RequestHandler implements EpilogueLog {
 
     public SuperstructureRequest getQueuedRequest() {
         return _queuedRequest;
+    }
+
+    public SuperstructureRequest getLastActiveRequest() {
+        return _lastActiveRequest;
     }
 
     @Override

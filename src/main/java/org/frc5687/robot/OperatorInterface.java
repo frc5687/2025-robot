@@ -3,29 +3,35 @@ package org.frc5687.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import java.util.Optional;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
+
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.auto.AutoActions;
+
 import org.frc5687.robot.commands.coral.EjectCoral;
-import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
 import org.frc5687.robot.commands.drive.DriveToHP;
 import org.frc5687.robot.commands.drive.DynamicDriveToLane;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchNoNormalVector;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
+
 import org.frc5687.robot.commands.elevator.GoToAlgaeHeight;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
+
+import org.frc5687.robot.commands.intake.EmergencyEjectIntake;
+import org.frc5687.robot.subsystems.intake.IntakeState;
+
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
-import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 import org.frc5687.robot.util.Helpers;
 import org.frc5687.robot.util.OutliersController;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
@@ -34,6 +40,9 @@ public class OperatorInterface {
     private final OutliersController _driverController;
     private final OutliersController _operatorController;
 
+    private Trigger _intakeCoralDetectedTrigger;
+    private Trigger _coralTransferredCondition;
+
     public OperatorInterface() {
         _driverController = new OutliersController(new CommandPS5Controller(0));
         _operatorController = new OutliersController(new CommandPS5Controller(1));
@@ -41,6 +50,18 @@ public class OperatorInterface {
 
     public void configureCommandMapping(RobotContainer container) {
         SuperstructureManager manager = container.getSuperstructureManager();
+        _intakeCoralDetectedTrigger = new Trigger(container.getIntake()::isIntakeCoralDetected);
+
+        _coralTransferredCondition =
+                new Trigger(
+                        () ->
+                                container.getCoral().isCoralDetected()
+                                        && !container.getIntake().isIntakeCoralDetected()
+                                        && Helpers.epsilonEquals(
+                                                container.getIntake().getPivotArmAngleRads(),
+                                                IntakeState.PASSOFF_TO_CORAL.getValue(),
+                                                Math.toRadians(5)));
+
         configureDriverControls(container, manager);
         configureOperatorControls(container, manager);
     }
@@ -103,50 +124,38 @@ public class OperatorInterface {
         _driverController.povUpLeft().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpRight().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
 
+        _driverController.povDown().whileTrue(new EmergencyEjectIntake(container.getIntake()));
+        _driverController.povDownLeft().whileTrue(new EmergencyEjectIntake(container.getIntake()));
+        _driverController.povDownRight().whileTrue(new EmergencyEjectIntake(container.getIntake()));
+
         _driverController
                 .leftTrigger()
                 .whileTrue(
-                        new ConditionalCommand(
-                                new SequentialCommandGroup(
-                                                manager.grabAlgae(
-                                                        Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE),
-                                                new IntakeAlgae(container.getAlgae()),
-                                                manager.createRequest(
-                                                        new SuperstructureState(
-                                                                Optional.empty(),
-                                                                Optional.empty(),
-                                                                Optional.of(AlgaeState.IDLE),
-                                                                Optional.empty()),
-                                                        RequestType.IMMEDIATE),
-                                                new InstantCommand(() -> container.getAlgae().setWheelMotorVoltage(0)))
-                                        .alongWith(new DriveToGroundAlgae(container.getDrive(), container.getVision())),
-                                new InstantCommand(),
-                                manager::isAlgaeMode));
-        // .onTrue(
-        //         new SequentialCommandGroup(
-        //                 new InstantCommand(() -> container.getIntake().setVoltages(-12, 12)),
-        //                 manager.createRequest(
-        //                         Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
-        //                 new WaitUntilCommand(
-        //                         () ->
-        //                                 container.getIntake().isIntakeCoralDetected()
-        //                                         || !_driverController.leftTrigger().getAsBoolean()),
-        //                 new InstantCommand(() -> container.getIntake().setVoltages(0, 3)),
-        //                 new ConditionalCommand(
-        //                         new SequentialCommandGroup(
-        //                                 manager.createRequest(
-        //
-        // Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
-        //                                         RequestType.IMMEDIATE),
-        //                                 new InstantCommand(() -> container.getIntake().setVoltages(0,
-        // -12)),
-        //                                 manager.indexCoral(),
-        //                                 new InstantCommand(() -> container.getIntake().setVoltages(0,
-        // 0))),
-        //                         manager.createRequest(
-        //                                 Constants.SuperstructureGoals.STOW_INTAKE,
-        // RequestType.IMMEDIATE),
-        //                         container.getIntake()::isIntakeCoralDetected)));
+                        Commands.parallel(
+                                        manager.createRequest(
+                                                Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
+                                        Commands.run(
+                                                () -> container.getIntake().setVoltages(Constants.Intake.INTAKE_VOLTAGE)))
+                                .finallyDo(
+                                        (interrupted) -> {
+                                            container.getIntake().setVoltages(0);
+                                            if (!container.getIntake().isIntakeCoralDetected()) {
+                                                manager
+                                                        .createRequest(
+                                                                Constants.SuperstructureGoals.STOW_INTAKE, RequestType.IMMEDIATE)
+                                                        .schedule();
+                                            }
+                                        })
+                                .handleInterrupt(
+                                        () -> {
+                                            container.getIntake().setVoltages(0);
+                                        }));
+
+        _intakeCoralDetectedTrigger.onTrue(
+                Commands.sequence(
+                        Commands.runOnce(
+                                () -> container.getIntake().setVoltages(Constants.Intake.SLOW_CENETERING_VOLTAGE)),
+                        manager.receiveFromGroundIntake(RequestType.IMMEDIATE)));
 
         // _driverController
         //         .rightTrigger()

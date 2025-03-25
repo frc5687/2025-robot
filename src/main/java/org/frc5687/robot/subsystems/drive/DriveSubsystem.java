@@ -9,18 +9,16 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
-import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -33,6 +31,8 @@ import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
+import org.frc5687.robot.util.COMSwerveSetpointGenerator;
+import org.frc5687.robot.util.COMVelocityLimiter;
 import org.frc5687.robot.util.TunableDouble;
 
 public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs> {
@@ -48,15 +48,15 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     private TunableDouble d = new TunableDouble("Drive", "kD", 0);
     private TunableDouble s = new TunableDouble("Drive", "kS", 0);
 
+    private final COMVelocityLimiter _comLimiter;
+    private final boolean _enableCOMLimiter = true;
+
     private final Translation2d[] _moduleLocations;
-    private final SwerveSetpointGenerator _setpointGenerator;
-    private SwerveSetpoint _currentSetpoint =
-            new SwerveSetpoint(new ChassisSpeeds(), new SwerveModuleState[4], DriveFeedforwards.zeros(4));
+    private final COMSwerveSetpointGenerator _setpointGenerator;
+    private SwerveSetpoint _currentSetpoint;
 
     private final RobotConfig _robotConfig;
 
-    // I think I want to move Module creating into the IO classes as they can be considered as
-    // "Hardware"
     public DriveSubsystem(RobotContainer container, DriveIO io, Translation2d[] moduleLocations) {
         super(container, io, new DriveInputs(), new DriveOutputs());
         _container = container;
@@ -89,16 +89,19 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                         moduleLocations[2],
                         moduleLocations[3]);
 
+        _comLimiter = new COMVelocityLimiter();
+
         _setpointGenerator =
-                new SwerveSetpointGenerator(
+                new COMSwerveSetpointGenerator(
                         _robotConfig,
                         Constants.Motors.getKrakenX44(1).freeSpeedRadPerSec
-                                / (Constants.SwerveModule
-                                        .GEAR_RATIO_STEER) // steer motor max speed divided by reduction
-                        );
+                                / Constants.SwerveModule.GEAR_RATIO_STEER,
+                        container,
+                        _comLimiter);
+
         _currentSetpoint =
                 new SwerveSetpoint(
-                        _outputs.desiredSpeeds,
+                        new ChassisSpeeds(),
                         _inputs.measuredStates,
                         DriveFeedforwards.zeros(_robotConfig.numModules));
 
@@ -118,37 +121,34 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
         } else {
             log("alliance", "empty");
         }
+
         // Update PID if needed
         if (p.hasChanged() || i.hasChanged() || d.hasChanged() || s.hasChanged()) {
             _io.setPID(p.get(), i.get(), d.get(), 0, s.get(), 0, 0);
         }
+
+        if (_comLimiter != null) {
+            log("ElevatorHeight", _comLimiter.getLastElevatorHeight(), Importance.CRITICAL);
+            log("SpeedLimitFactor", _comLimiter.getLastSpeedFactor(), Importance.CRITICAL);
+        }
+
         updateSetpoint();
         outputs.desiredStates = _currentSetpoint.moduleStates();
     }
 
     public void setDesiredChassisSpeeds(ChassisSpeeds speeds) {
+        // if (_enableCOMLimiter) {
+        //     ChassisSpeeds limitedSpeeds = _comLimiter.limitSpeeds(speeds);
+        //     _outputs.desiredSpeeds = limitedSpeeds;
+        // } else {
         _outputs.desiredSpeeds = speeds;
+        // }
     }
 
     private void updateSetpoint() {
-        Pose2d robotPoseVel =
-                new Pose2d(
-                        _outputs.desiredSpeeds.vxMetersPerSecond * Constants.UPDATE_PERIOD,
-                        _outputs.desiredSpeeds.vyMetersPerSecond * Constants.UPDATE_PERIOD,
-                        Rotation2d.fromRadians(
-                                (_outputs.desiredSpeeds.omegaRadiansPerSecond) * Constants.UPDATE_PERIOD));
-
-        Twist2d twistVel = new Pose2d().log(robotPoseVel);
-        ChassisSpeeds updatedSpeeds =
-                new ChassisSpeeds(
-                        twistVel.dx / Constants.UPDATE_PERIOD,
-                        twistVel.dy / Constants.UPDATE_PERIOD,
-                        twistVel.dtheta / Constants.UPDATE_PERIOD);
-
-        // Move this to outputs
         _currentSetpoint =
                 _setpointGenerator.generateSetpoint(
-                        _currentSetpoint, updatedSpeeds, Constants.UPDATE_PERIOD);
+                        _currentSetpoint, _outputs.desiredSpeeds, Constants.UPDATE_PERIOD);
     }
 
     public Rotation2d getHeading() {
@@ -169,13 +169,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public Pose2d getPose() {
-        // if (_robotContainer.getQuestNav().timeSinceLastUpdate() < 0.040) { // FIXME
-        //     return RobotStateManager.getInstance()
-        //             .getPose(RobotCoordinate.ROBOT_BASE_QUESTNAV)
-        //             .toPose2d();
-        // } else {
         return RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
-        // }
     }
 
     public ChassisSpeeds getMeasuredChassisSpeeds() {
@@ -187,7 +181,6 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     public void resetPose(Pose2d pose) {
-        // _driveIO.setYaw(pose.getRotation());
         RobotStateManager.getInstance().resetEstimatedPose(pose);
     }
 
@@ -216,7 +209,6 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     }
 
     private void configureAutoBuilder(RobotConfig config) {
-        // FIXME use pose estimator
         AutoBuilder.configure(
                 this::getPose,
                 this::resetPose,
