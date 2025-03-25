@@ -42,8 +42,10 @@ public class AutoNetScore extends OutliersCommand {
         Pose2d currentPose =
                 RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
         double targetX =
-                FieldConstants.fieldLength / 2.0
-                        - Units.inchesToMeters(setpointDist.get()); // FIXME real value FIXME alliance
+                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
+                        ? FieldConstants.fieldLength / 2.0 + Units.inchesToMeters(setpointDist.get())
+                        : FieldConstants.fieldLength / 2.0
+                                - Units.inchesToMeters(setpointDist.get()); // FIXME real value FIXME alliance
         double error = targetX - currentPose.getX();
 
         Rotation2d targetTheta =
@@ -62,9 +64,11 @@ public class AutoNetScore extends OutliersCommand {
     public static boolean isCloseEnoughToShoot() {
         Pose2d currentPose =
                 RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
+
         double targetX =
-                FieldConstants.fieldLength / 2.0
-                        - Units.inchesToMeters(setpointDist.get()); // FIXME real value FIXME alliance
+                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
+                        ? FieldConstants.fieldLength / 2.0 + Units.inchesToMeters(setpointDist.get())
+                        : FieldConstants.fieldLength / 2.0 - Units.inchesToMeters(setpointDist.get());
         double error = targetX - currentPose.getX();
         Rotation2d targetTheta =
                 DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
@@ -79,8 +83,9 @@ public class AutoNetScore extends OutliersCommand {
         Pose2d currentPose =
                 RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
         double targetX =
-                FieldConstants.fieldLength / 2.0
-                        - Units.inchesToMeters(setpointDist.get()); // FIXME real value FIXME alliance
+                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
+                        ? FieldConstants.fieldLength / 2.0 + Units.inchesToMeters(setpointDist.get())
+                        : FieldConstants.fieldLength / 2.0 - Units.inchesToMeters(setpointDist.get());
         double error = targetX - currentPose.getX();
         return Math.abs(error) < Units.inchesToMeters(elevatorDist.get());
     }
