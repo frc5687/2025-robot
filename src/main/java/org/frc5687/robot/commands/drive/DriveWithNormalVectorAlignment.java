@@ -26,11 +26,17 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
                     Constants.DriveWithNormalVectorAlignment.NORMAL_VECTOR_OFFSET);
 
     // We blend the start and end for smooth transition
-    private final TunableDouble _blendStartDistance =
+    private final TunableDouble _blendStartDistanceReg =
             new TunableDouble(
                     "NormalVectorAlignment",
-                    "blendStart",
+                    "blendStartRegular",
                     Constants.DriveWithNormalVectorAlignment.BLEND_START);
+
+    private final TunableDouble _blendStartDistanceAlgae =
+            new TunableDouble(
+                    "NormalVectorAlignment",
+                    "blendStartAlgae",
+                    Constants.DriveWithNormalVectorAlignment.BLEND_START_ALGAE);
     private final TunableDouble _blendEndDistance =
             new TunableDouble(
                     "NormalVectorAlignment", "blendEnd", Constants.DriveWithNormalVectorAlignment.BLEND_END);
@@ -77,9 +83,13 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
             new TunableDouble("DriveToPose", "rotKi", Constants.DriveToPose.ROT_KI);
     private final TunableDouble _rotKd =
             new TunableDouble("DriveToPose", "rotKd", Constants.DriveToPose.ROT_KD);
+    private double _blendStartDistance;
 
     public DriveWithNormalVectorAlignment(
-            DriveSubsystem drive, SuperstructureManager manager, Supplier<Pose2d> finalPoseSupplier) {
+            DriveSubsystem drive,
+            SuperstructureManager manager,
+            Supplier<Pose2d> finalPoseSupplier,
+            boolean isAlgae) {
         _drive = drive;
         _manager = manager;
         _finalPoseSupplier = finalPoseSupplier;
@@ -90,6 +100,14 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
 
         _rotationController.enableContinuousInput(-Math.PI, Math.PI);
 
+        if (isAlgae) {
+            _blendStartDistance = _blendStartDistanceAlgae.get();
+            System.out.println(" algae");
+
+        } else {
+            _blendStartDistance = _blendStartDistanceReg.get();
+            System.out.println("not algae");
+        }
         addRequirements(drive);
     }
 
@@ -164,7 +182,7 @@ public class DriveWithNormalVectorAlignment extends OutliersCommand {
                     MathUtil.clamp(
                             1.0
                                     - (perpendicularDistance - _blendEndDistance.get())
-                                            / (_blendStartDistance.get() - _blendEndDistance.get()),
+                                            / (_blendStartDistance - _blendEndDistance.get()),
                             0.0,
                             1.0);
         }

@@ -618,6 +618,7 @@ public class Constants {
     public static class DriveWithNormalVectorAlignment {
         public static final double NORMAL_VECTOR_OFFSET = 0.6;
         public static final double BLEND_START = 0.5;
+        public static final double BLEND_START_ALGAE = 0.05;
         public static final double BLEND_END = 0.05;
     }
 }

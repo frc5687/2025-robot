@@ -23,7 +23,6 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     private final RobotContainer _container;
     private final RequestHandler _requestHandler;
     private boolean _forceQueueExecution = false;
-
     private SuperstructureMode _currentMode = SuperstructureMode.CORAL;
     private Optional<Pose2d> _goalPose = Optional.empty();
 
@@ -172,7 +171,37 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
 
     public Command algaeIntake(SuperstructureState state) {
         return new SequentialCommandGroup(
-                        grabAlgae(state, RequestType.IMMEDIATE),
+                        createRequest(state, RequestType.IMMEDIATE),
+                        // new IntakeAlgae(_container.getAlgae()),
+                        new WaitUntilCommand(
+                                () ->
+                                        _container
+                                                        .getDrive()
+                                                        .getPose()
+                                                        .getTranslation()
+                                                        .getDistance(FieldConstants.getAllianceSpecificReefCenter())
+                                                > 2),
+                        createRequest(
+                                new SuperstructureState(
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.of(AlgaeState.IDLE),
+                                        Optional.empty()),
+                                RequestType.IMMEDIATE),
+                        new InstantCommand(() -> _container.getAlgae().setWheelMotorVoltage(0)))
+                .withName("Algae Reef Intake");
+    }
+
+    public Command hybridAlgaeIntake() {
+
+        return new SequentialCommandGroup(
+                        createRequest(
+                                new SuperstructureState(
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.of(AlgaeState.REEF_PICKUP),
+                                        Optional.empty()),
+                                RequestType.IMMEDIATE),
                         new IntakeAlgae(_container.getAlgae()),
                         new WaitUntilCommand(
                                 () ->
@@ -208,6 +237,22 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     public void setGoalPose(Optional<Pose2d> goalPose) {
         _goalPose = goalPose;
     }
+
+    // private SuperstructureState getalgaeheight() {
+    //     SuperstructureState targetState = Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL;
+    //     int currentFace = 1;
+    //     Supplier<Pose2d> rawPose = () -> _container.getDrive().getPose();
+    //     var alliance = DriverStation.getAlliance();
+    //     if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+    //         Pose2d mirroredPose = FlippingUtil.flipFieldPose(rawPose.get());
+    //         currentFace = ReefAlignmentHelpers.calculateBestFace(mirroredPose);
+    //         return ReefAlignmentHelpers.calculateAlgaeHeight(currentFace);
+    //     } else {
+    //         currentFace = ReefAlignmentHelpers.calculateBestFace(rawPose.get());
+
+    //         return ReefAlignmentHelpers.calculateAlgaeHeight(currentFace);
+    //     }
+    // }
 
     private boolean isRobotWithinGoalPose() {
         if (_goalPose.isEmpty()) {
