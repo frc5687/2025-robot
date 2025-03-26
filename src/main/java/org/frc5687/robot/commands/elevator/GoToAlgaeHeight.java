@@ -19,7 +19,6 @@ public class GoToAlgaeHeight extends OutliersCommand {
 
     @Override
     public void initialize() {
-
         _algaeHeight = ReefAlignmentHelpers.calculateAlgaeHeight(() -> _drive.getPose()).get();
         _elevator.setDesiredHeight(_algaeHeight.getElevator().get());
     }

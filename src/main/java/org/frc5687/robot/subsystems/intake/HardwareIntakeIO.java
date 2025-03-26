@@ -80,7 +80,7 @@ public class HardwareIntakeIO implements IntakeIO {
         inputs.armAngleRads = _pivotMotorAngle.getValue().in(Radians);
         inputs.encoderAngleRads = _encoderAngle.getValue().in(Radians);
         inputs.rollerCurrent = _rollerCurrent.getValueAsDouble();
-
+        inputs.beltVelocity = _beltMotor.getVelocity().getValueAsDouble();
         _currentArmAngleRads = inputs.armAngleRads;
     }
 
@@ -91,19 +91,19 @@ public class HardwareIntakeIO implements IntakeIO {
         boolean isDesiredZero = Math.abs(outputs.desiredAngleRad) < 0.01;
         boolean isArmNearZero = Math.abs(_currentArmAngleRads) < Math.toRadians(2.0);
 
-        if (isDesiredZero && isArmNearZero) {
-            // _pivotMotor.setNeutralMode(NeutralModeValue.Coast);
-            _pivotMotor.setControl(new VoltageOut(0));
-        } else {
-            // _pivotMotor.setNeutralMode(NeutralModeValue.Brake);
+        // if (isDesiredZero && isArmNearZero) {
+        //     // _pivotMotor.setNeutralMode(NeutralModeValue.Coast);
+        //     _pivotMotor.setControl(new VoltageOut(0));
+        // } else {
+        // _pivotMotor.setNeutralMode(NeutralModeValue.Brake);
 
-            double safeDesiredAngle =
-                    MathUtil.clamp(
-                            outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE, Constants.Intake.MAX_ANGLE);
+        double safeDesiredAngle =
+                MathUtil.clamp(
+                        outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE, Constants.Intake.MAX_ANGLE);
 
-            double desiredRotations = Units.radiansToRotations(safeDesiredAngle);
-            _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
-        }
+        double desiredRotations = Units.radiansToRotations(safeDesiredAngle);
+        _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
+        // }
     }
 
     // @Override
@@ -145,7 +145,7 @@ public class HardwareIntakeIO implements IntakeIO {
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = Constants.Intake.CURRENT_LIMIT / 2.0;
+        config.CurrentLimits.SupplyCurrentLimit = Constants.Intake.CURRENT_LIMIT;
 
         if (attachCANcoder) {
             config.CurrentLimits.SupplyCurrentLimit =

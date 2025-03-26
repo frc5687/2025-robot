@@ -264,7 +264,7 @@ public class Constants {
         public static final double ARM_MASS = Units.lbsToKilograms(7.2); // fake probably
         public static final double MOI_ARM = SingleJointedArmSim.estimateMOI(ARM_LENGTH, ARM_MASS);
         public static final double MIN_ANGLE = 0.0;
-        public static final double MAX_ANGLE = 2.958;
+        public static final double MAX_ANGLE = 2.911;
 
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 5 * Math.PI;
@@ -274,19 +274,20 @@ public class Constants {
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
-        public static final double INTAKE_PASSOFF_DELAY = 0.3;
+        public static final double INTAKE_PASSOFF_DELAY = 0.3   ;
 
         public static final double CURRENT_LIMIT = 60;
 
-        public static final double kP = 20.0; // 60.0
-        public static final double kI = 0.0; // 25.0
+        public static final double kP = 50.0; // 60.0
+        public static final double kI = 25.0; // 25.0
         public static final double kD = 0.0;
         public static final double kS = 0.0;
         public static final double kV = 0.0;
         public static final double kA = 0.0;
         public static final double kG = 0.0;
 
-        public static final double SLOW_CENETERING_VOLTAGE = 1.0;
+        public static final double PULSE_THRESHOLD = 20;
+        public static final double SLOW_CENETERING_VOLTAGE = 2.0;
         public static final double INDEX_VOLTAGE = -3.0;
         public static final double INTAKE_VOLTAGE = 12.0;
     }
@@ -339,7 +340,7 @@ public class Constants {
     public static class AlgaeArm {
         public static final PIDConstants SIM_PID_CONSTANTS = new PIDConstants(20, 0, 0);
 
-        public static final double kP = 25.0; // 13
+        public static final double kP = 20.0; // 13
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 

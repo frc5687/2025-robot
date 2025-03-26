@@ -12,10 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
-
-import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.auto.AutoActions;
-
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DriveToHP;
 import org.frc5687.robot.commands.drive.DynamicDriveToLane;
@@ -23,13 +20,8 @@ import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchNoNormalVector;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
-
 import org.frc5687.robot.commands.elevator.GoToAlgaeHeight;
-import org.frc5687.robot.subsystems.algaearm.AlgaeState;
-
-import org.frc5687.robot.commands.intake.EmergencyEjectIntake;
 import org.frc5687.robot.subsystems.intake.IntakeState;
-
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
 import org.frc5687.robot.util.Helpers;
@@ -124,9 +116,9 @@ public class OperatorInterface {
         _driverController.povUpLeft().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpRight().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
 
-        _driverController.povDown().whileTrue(new EmergencyEjectIntake(container.getIntake()));
-        _driverController.povDownLeft().whileTrue(new EmergencyEjectIntake(container.getIntake()));
-        _driverController.povDownRight().whileTrue(new EmergencyEjectIntake(container.getIntake()));
+        // _driverController.povDown().whileTrue(new EmergencyEjectIntake(container.getIntake()));
+        // _driverController.povDownLeft().whileTrue(new EmergencyEjectIntake(container.getIntake()));
+        // _driverController.povDownRight().whileTrue(new EmergencyEjectIntake(container.getIntake()));
 
         _driverController
                 .leftTrigger()
@@ -186,7 +178,11 @@ public class OperatorInterface {
 
         _driverController
                 .leftMiddleButton()
-                .onTrue(new InstantCommand(container.getClimber()::toggleClimberSetpoint));
+                .onTrue(
+                        new SequentialCommandGroup(
+                                manager.createRequest(
+                                        Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE),
+                                new InstantCommand(container.getClimber()::toggleClimberSetpoint)));
 
         // _driverController
         //         .a()

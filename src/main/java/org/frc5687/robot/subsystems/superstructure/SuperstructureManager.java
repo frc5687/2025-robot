@@ -10,6 +10,7 @@ import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.IntakeAndIndexCoral;
 import org.frc5687.robot.commands.intake.GroundIndexCoral;
+import org.frc5687.robot.commands.intake.IntakeFromGround;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.FieldConstants;
@@ -104,6 +105,13 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         return _requestHandler;
     }
 
+    public Command runIntake() {
+        return new InstantCommand(
+                () -> {
+                    new IntakeFromGround(_container.getIntake());
+                });
+    }
+
     public Command receiveFunnel(RequestType type) {
         return createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type)
                 .andThen(
@@ -195,13 +203,6 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     public Command hybridAlgaeIntake() {
 
         return new SequentialCommandGroup(
-                        createRequest(
-                                new SuperstructureState(
-                                        Optional.empty(),
-                                        Optional.empty(),
-                                        Optional.of(AlgaeState.REEF_PICKUP),
-                                        Optional.empty()),
-                                RequestType.IMMEDIATE),
                         new IntakeAlgae(_container.getAlgae()),
                         new WaitUntilCommand(
                                 () ->

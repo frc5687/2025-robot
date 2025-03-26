@@ -123,6 +123,7 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         _controller.setGoal(safeAngle);
 
         double pidOutput = _controller.calculate(currentAngle);
+        System.out.println("Pid output: " + pidOutput);
         double ffOutput = calculateFeedForward(currentAngle);
 
         double totalVoltage = MathUtil.clamp(pidOutput + ffOutput, -12.0, 12.0);

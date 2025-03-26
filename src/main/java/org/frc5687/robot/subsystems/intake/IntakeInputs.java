@@ -16,4 +16,7 @@ public class IntakeInputs extends BaseInputs {
 
     @Logged(name = "Is Coral Detected", importance = Logged.Importance.CRITICAL)
     public boolean isCoralDetected = false;
+
+    @Logged(name = "Belt Velocity", importance = Logged.Importance.CRITICAL)
+    public double beltVelocity = 0.0;
 }
