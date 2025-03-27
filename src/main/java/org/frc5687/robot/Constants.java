@@ -274,7 +274,7 @@ public class Constants {
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
-        public static final double INTAKE_PASSOFF_DELAY = 0.3   ;
+        public static final double INTAKE_PASSOFF_DELAY = 0.3;
 
         public static final double CURRENT_LIMIT = 60;
 
