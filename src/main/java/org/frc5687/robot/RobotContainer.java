@@ -33,6 +33,7 @@ import org.frc5687.robot.subsystems.elevator.ElevatorIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
+import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
@@ -107,8 +108,8 @@ public class RobotContainer implements EpilogueLog {
                 RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
         _coralArm = new CoralArmSubsystem(this, coralArmIO);
 
-        // IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
-        IntakeIO intakeIO = new SimIntakeIO();
+        IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
+        // IntakeIO intakeIO = new SimIntakeIO();
         _intake = new IntakeSubsystem(this, intakeIO);
 
         ClimberIO climberIO =

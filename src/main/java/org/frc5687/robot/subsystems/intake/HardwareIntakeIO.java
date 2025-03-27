@@ -86,24 +86,26 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void writeOutputs(IntakeOutputs outputs) {
-        // _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
+        _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
 
         boolean isDesiredZero = Math.abs(outputs.desiredAngleRad) < 0.01;
         boolean isArmNearZero = Math.abs(_currentArmAngleRads) < Math.toRadians(2.0);
-
-        // if (isDesiredZero && isArmNearZero) {
-        //     // _pivotMotor.setNeutralMode(NeutralModeValue.Coast);
-        //     _pivotMotor.setControl(new VoltageOut(0));
-        // } else {
-        // _pivotMotor.setNeutralMode(NeutralModeValue.Brake);
 
         double safeDesiredAngle =
                 MathUtil.clamp(
                         outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE, Constants.Intake.MAX_ANGLE);
 
         double desiredRotations = Units.radiansToRotations(safeDesiredAngle);
-        // _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
-        // }
+
+        if (isDesiredZero && isArmNearZero) {
+
+            _pivotMotor.setControl(new VoltageOut(0));
+        } else {
+            _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
+
+            // double desiredRotations = Units.radiansToRotations(safeDesiredAngle);
+            // _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
+        }
     }
 
     // @Override
