@@ -15,21 +15,26 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import org.frc5687.robot.commands.algae.AutoNetScore;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.Optional;
+import org.frc5687.robot.commands.algae.AutoNetScore;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
+import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.EjectCoral;
+import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
 import org.frc5687.robot.commands.drive.DriveToHP;
-import org.frc5687.robot.commands.drive.DriveToPose;
+import org.frc5687.robot.commands.drive.DriveToProcessor;
 import org.frc5687.robot.commands.drive.DynamicDriveToLane;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.commands.intake.EmergencyEjectIntake;
+import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.subsystems.intake.IntakeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 import org.frc5687.robot.util.Helpers;
 import org.frc5687.robot.util.OutliersController;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
@@ -98,8 +103,11 @@ public class OperatorInterface {
                         new ConditionalCommand(
                                 new InstantCommand(() -> container.getVision().setPipelineIndex("South_Camera", 0))
                                         .andThen(
-                                                new DriveToPose(
-                                                        container.getDrive(), OperatorInterface::getProcessorLineupPose)),
+                                                new DriveToProcessor(
+                                                        container.getDrive(),
+                                                        () ->
+                                                                -modifyAxis(_driverController.getLeftX())
+                                                                        * Constants.DriveTrain.MAX_MPS)),
                                 new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT),
                                 manager::isAlgaeMode));
 
