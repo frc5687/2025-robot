@@ -64,12 +64,12 @@ public class LimelightCamera extends Camera {
                         observation =
                                 AprilTagObservation.fromLimelight(target, matchingRawFiducial, t2d, timestamp);
                     } else {
-                        System.err.println(
-                                "April tag observation "
-                                        + target.fiducialID
-                                        + " on camera "
-                                        + _limelightName
-                                        + " did not have matching raw fiducial");
+                        // System.err.println(
+                        //         "April tag observation "
+                        //                 + target.fiducialID
+                        //                 + " on camera "
+                        //                 + _limelightName
+                        //                 + " did not have matching raw fiducial");
                         observation = AprilTagObservation.fromLimelight(target, t2d, timestamp);
                     }
 
