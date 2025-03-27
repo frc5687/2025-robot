@@ -57,9 +57,7 @@ public class PhotonVisionCamera extends Camera {
                     tags.add(observation);
                 } else {
                     // neural detection
-                    var observation =
-                            NeuralPipelineObservation.fromPhotonVision(
-                                    _cam, _robotToCam, target, mostRecentResult.getTimestampSeconds());
+                    var observation = NeuralPipelineObservation.fromPhotonVision(_cam, _robotToCam, target);
                     if (observation.isPresent()) {
                         neuralObservations.add(observation.get());
                     }

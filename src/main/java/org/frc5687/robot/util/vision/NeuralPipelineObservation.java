@@ -1,6 +1,5 @@
 package org.frc5687.robot.util.vision;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -45,6 +44,13 @@ public class NeuralPipelineObservation implements EpilogueLog {
         this.y = y;
     }
 
+    /**
+     * algae only lol
+     *
+     * @param rawDetection
+     * @param robotToCamera
+     * @return
+     */
     public static NeuralPipelineObservation fromLimelight(
             RawDetection rawDetection, Transform3d robotToCamera) {
         if (robotToCamera.getRotation().getX() != 0.0)
@@ -78,12 +84,19 @@ public class NeuralPipelineObservation implements EpilogueLog {
 
         // worldToRobot + robotToCam + camToGamePiece
 
-        return new NeuralPipelineObservation(
-                rawDetection.classId, robotToGamePiece.getX(), robotToGamePiece.getY());
+        return new NeuralPipelineObservation(0, robotToGamePiece.getX(), robotToGamePiece.getY());
     }
 
+    /**
+     * coral only lol
+     *
+     * @param cam
+     * @param robotToCam
+     * @param target
+     * @return
+     */
     public static Optional<NeuralPipelineObservation> fromPhotonVision(
-            PhotonCamera cam, Transform3d robotToCam, PhotonTrackedTarget target, double timestamp) {
+            PhotonCamera cam, Transform3d robotToCam, PhotonTrackedTarget target) {
         if (target.objDetectId != 1) {
             return Optional.empty();
         }
@@ -92,19 +105,23 @@ public class NeuralPipelineObservation implements EpilogueLog {
             return Optional.empty();
         }
 
-        Rotation2d yaw =
-                Rotation2d.fromDegrees(target.yaw).minus(robotToCam.getRotation().toRotation2d());
-        double xDistance = CORAL_PITCH_TO_DIST.get(target.pitch);
+        Transform2d robotToCam2d =
+                new Transform2d(
+                        robotToCam.getX(),
+                        robotToCam.getY(),
+                        robotToCam.getRotation().toRotation2d()); // camera mounting point
+        double xDistance =
+                CORAL_PITCH_TO_DIST.get(
+                        target.pitch); // distance projected onto the (projection of the camera's normal vector
+        // onto the ground plane)
+        double yawRad =
+                Units.degreesToRadians(-target.yaw); // photonvision returns clockwise positive degrees
+        double yDistance = xDistance * Math.tan(yawRad); // my goat soh cah toa
+        Transform2d camToDetection = new Transform2d(xDistance, yDistance, Rotation2d.kZero);
+        Transform2d robotToDetection = robotToCam2d.plus(camToDetection);
 
-        Pose2d robotToCameraRay = new Pose2d(robotToCam.getX(), robotToCam.getY(), yaw);
-        double unitVectorX = yaw.getCos();
-        double unitVectorY = yaw.getCos();
-
-        // Pose2d robotToDetection = robotToCameraRay.plus(cameraRayToDetection);
-
-        // return Optional.of(
-        // new NeuralPipelineObservation(1, robotToDetection.getX(), robotToDetection.getY()));
-        return Optional.of(new NeuralPipelineObservation(1, unitVectorX, unitVectorY));
+        return Optional.of(
+                new NeuralPipelineObservation(1, robotToDetection.getX(), robotToDetection.getY()));
     }
 
     @Override

@@ -45,8 +45,6 @@ public class AlgaeTracker implements EpilogueLog {
             if (obs.getClassId() == ALGAE_CLASS_ID) processObservation(obs);
         }
         List<Pose2d> poses = new ArrayList<>();
-        var thing =
-                RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
         // iterate backwards, updating all algae & deleting improbable algae
         for (int i = _algae.size() - 1; i >= 0; i--) {
             var algae = _algae.get(i);
@@ -56,18 +54,26 @@ public class AlgaeTracker implements EpilogueLog {
             if (algae.prob < 0.2) {
                 _algae.remove(i); // remove the index i
             } else {
-                poses.add(thing.plus(new Transform2d(algae.x, algae.y, new Rotation2d())));
+                poses.add(new Pose2d(algae.x, algae.y, new Rotation2d()));
             }
         }
         log("algae poses", poses, Pose2d.struct, Importance.CRITICAL);
     }
 
     private synchronized void processObservation(NeuralPipelineObservation obs) {
+        if (obs.getClassId() != 0) return; // algae only
+        Transform2d robotToDetection = new Transform2d(obs.getX(), obs.getY(), Rotation2d.kZero);
+        Pose2d worldToRobot =
+                RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
+        Pose2d worldToDetection = worldToRobot.plus(robotToDetection);
+        double x = worldToDetection.getX();
+        double y = worldToDetection.getY();
+
         double closestDistance = Double.POSITIVE_INFINITY;
         int closestIndex = -1;
         for (int i = 0; i < _algae.size(); i++) {
             var alg = _algae.get(i);
-            double dist = Math.hypot(alg.x - obs.getX(), alg.y - obs.getY());
+            double dist = Math.hypot(alg.x - x, alg.y - y);
             if (dist < closestDistance) {
                 closestDistance = dist;
                 closestIndex = i;
@@ -76,15 +82,15 @@ public class AlgaeTracker implements EpilogueLog {
 
         if (closestDistance < closeEnough.get()) {
             var algae = _algae.get(closestIndex);
-            double errorX = obs.getX() - algae.x;
-            double errorY = obs.getY() - algae.y;
+            double errorX = x - algae.x;
+            double errorY = y - algae.y;
             algae.x += posLerp.get() * errorX;
             algae.y += posLerp.get() * errorY;
             algae.xVel += velLerp.get() / Constants.UPDATE_PERIOD * errorX;
             algae.yVel += velLerp.get() / Constants.UPDATE_PERIOD * errorY;
             algae.prob = algae.prob * 0.7 + 1.0 * 0.3;
         } else {
-            _algae.add(new Algae(obs.getX(), obs.getY()));
+            _algae.add(new Algae(x, y));
         }
     }
 
@@ -98,6 +104,12 @@ public class AlgaeTracker implements EpilogueLog {
                 closestAlgae = Optional.of(new Translation2d(algae.x, algae.y));
             }
         }
+        if (closestAlgae.isPresent())
+            log(
+                    "cloest algae",
+                    new Pose2d(closestAlgae.get(), Rotation2d.kZero),
+                    Pose2d.struct,
+                    Importance.CRITICAL);
         return closestAlgae;
     }
 
