@@ -180,7 +180,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     public Command algaeIntake(SuperstructureState state) {
         return new SequentialCommandGroup(
                         createRequest(state, RequestType.IMMEDIATE),
-                        // new IntakeAlgae(_container.getAlgae()),
+                        new IntakeAlgae(_container.getAlgae()),
                         new WaitUntilCommand(
                                 () ->
                                         _container
