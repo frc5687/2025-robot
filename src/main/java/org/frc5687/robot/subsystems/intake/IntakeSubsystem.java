@@ -50,6 +50,14 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
         return _inputs.armAngleRads;
     }
 
+    public double getBeltVelocity() {
+        return _inputs.beltVelocity;
+    }
+
+    public double getBeltAmps() {
+        return _inputs.rollerCurrent;
+    }
+
     public boolean isAtDesiredAngle() {
         double positionError = Math.abs(_inputs.armAngleRads - _outputs.desiredAngleRad);
         return positionError < POSITION_TOLERANCE_RAD;

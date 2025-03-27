@@ -23,6 +23,7 @@ import com.ctre.phoenix6.signals.UpdateModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotMap;
 
@@ -36,9 +37,11 @@ public class HardwareIntakeIO implements IntakeIO {
     private final StatusSignal<Angle> _encoderAngle;
     private final StatusSignal<Angle> _pivotMotorAngle;
     private final StatusSignal<Boolean> _isCoralDetected;
+    private final StatusSignal<Current> _rollerCurrent;
 
     // private final VoltageOut _rollerVoltageReq = new VoltageOut(0);
     private final VoltageOut _intakeVoltageReq = new VoltageOut(0);
+    private double _currentArmAngleRads = 0.0;
 
     private final MotionMagicVoltage _motionMagicReq;
 
@@ -53,6 +56,7 @@ public class HardwareIntakeIO implements IntakeIO {
 
         _isCoralDetected = _range.getIsDetected();
 
+        _rollerCurrent = _beltMotor.getSupplyCurrent();
         _encoderAngle = _encoder.getAbsolutePosition();
         _encoderAngle.refresh();
         double encoderRad = _encoderAngle.getValue().in(Radians);
@@ -69,26 +73,52 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeInputs inputs) {
-        StatusSignal.refreshAll(_pivotMotorAngle, _encoderAngle, _isCoralDetected);
+        StatusSignal.refreshAll(_pivotMotorAngle, _encoderAngle, _isCoralDetected, _rollerCurrent);
 
         inputs.isCoralDetected = _isCoralDetected.getValue();
 
         inputs.armAngleRads = _pivotMotorAngle.getValue().in(Radians);
         inputs.encoderAngleRads = _encoderAngle.getValue().in(Radians);
+        inputs.rollerCurrent = _rollerCurrent.getValueAsDouble();
+        inputs.beltVelocity = _beltMotor.getVelocity().getValueAsDouble();
+        _currentArmAngleRads = inputs.armAngleRads;
     }
 
     @Override
     public void writeOutputs(IntakeOutputs outputs) {
-        // _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
-        _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
+        // _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
+
+        boolean isDesiredZero = Math.abs(outputs.desiredAngleRad) < 0.01;
+        boolean isArmNearZero = Math.abs(_currentArmAngleRads) < Math.toRadians(2.0);
+
+        // if (isDesiredZero && isArmNearZero) {
+        //     // _pivotMotor.setNeutralMode(NeutralModeValue.Coast);
+        //     _pivotMotor.setControl(new VoltageOut(0));
+        // } else {
+        // _pivotMotor.setNeutralMode(NeutralModeValue.Brake);
 
         double safeDesiredAngle =
                 MathUtil.clamp(
                         outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE, Constants.Intake.MAX_ANGLE);
 
         double desiredRotations = Units.radiansToRotations(safeDesiredAngle);
-        _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
+        // _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
+        // }
     }
+
+    // @Override
+    // public void writeOutputs(IntakeOutputs outputs) {
+    //     // _rollerMotor.setControl(_rollerVoltageReq.withOutput(outputs.rollerVoltage));
+    //     _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
+
+    //     double safeDesiredAngle =
+    //             MathUtil.clamp(
+    //                     outputs.desiredAngleRad, Constants.Intake.MIN_ANGLE,
+    // Constants.Intake.MAX_ANGLE);
+
+    //     double desiredRotations = Units.radiansToRotations(safeDesiredAngle);
+    //     _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
+    // }
 
     private void configureMotor(TalonFX motor, boolean isInverted, boolean attachCANcoder) {
         var config = new TalonFXConfiguration();
@@ -118,6 +148,8 @@ public class HardwareIntakeIO implements IntakeIO {
         config.CurrentLimits.SupplyCurrentLimit = Constants.Intake.CURRENT_LIMIT;
 
         if (attachCANcoder) {
+            config.CurrentLimits.SupplyCurrentLimit =
+                    Constants.Intake.CURRENT_LIMIT; // PIVOT MOTOR LARGER CURRENT
             config.Feedback.FeedbackRemoteSensorID = _encoder.getDeviceID();
             config.Feedback.RotorToSensorRatio = Constants.Intake.GEAR_RATIO;
             config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;

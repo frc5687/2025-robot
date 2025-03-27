@@ -6,7 +6,6 @@ package org.frc5687.robot;
 
 import static edu.wpi.first.units.Units.Seconds;
 
-import au.grapplerobotics.CanBridge;
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
@@ -35,14 +34,13 @@ public class Robot extends TimedRobot {
         Epilogue.configure(
                 config -> {
                     config.root = "Robot";
-                    config.minimumImportance = Logged.Importance.DEBUG;
+                    config.minimumImportance = Logged.Importance.CRITICAL;
                     config.errorHandler = ErrorHandler.printErrorMessages();
                     config.loggingPeriod = Seconds.of(0.1);
                 });
         Epilogue.bind(this);
         _robotContainer = new RobotContainer(this);
         Threads.setCurrentThreadPriority(true, 99);
-        CanBridge.runTCP();
 
         for (int i = 1; i <= 6; i++) {
             Pose2d left = ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.LEFT);
