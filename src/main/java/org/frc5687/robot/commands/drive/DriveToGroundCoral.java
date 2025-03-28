@@ -33,13 +33,18 @@ public class DriveToGroundCoral extends DriveToPoseSmooth {
                     if (detection.isEmpty()) {
                         return robotPose;
                     }
-                    double xErr = detection.get().getX() - robotPose.getX();
-                    double yErr = detection.get().getY() - robotPose.getY();
-                    Rotation2d theta = new Rotation2d(xErr, yErr).plus(Rotation2d.k180deg);
-                    Translation2d robotToAlgaeArm = new Translation2d(xOffset.get(), yOffset.get());
+                    Translation2d robotToGroundIntake = new Translation2d(xOffset.get(), yOffset.get());
+                    Translation2d yOffsetPosition =
+                            robotPose
+                                    .getTranslation()
+                                    .plus(new Translation2d(0.0, yOffset.get()).rotateBy(robotPose.getRotation()));
+                    double xErr = detection.get().getX() - yOffsetPosition.getX();
+                    double yErr = detection.get().getY() - yOffsetPosition.getY();
+                    Rotation2d theta;
+                    theta = new Rotation2d(xErr, yErr).plus(Rotation2d.k180deg);
 
                     Translation2d robotTargetTranslation =
-                            detection.get().minus(robotToAlgaeArm.rotateBy(theta));
+                            detection.get().minus(robotToGroundIntake.rotateBy(theta));
 
                     return new Pose2d(robotTargetTranslation, theta);
                 });

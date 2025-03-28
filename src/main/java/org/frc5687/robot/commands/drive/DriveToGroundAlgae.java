@@ -4,12 +4,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import java.util.Optional;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
+import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.TunableDouble;
-import org.frc5687.robot.util.vision.AlgaeTracker;
 
 public class DriveToGroundAlgae extends DriveToPoseSmooth {
     private final DriveSubsystem _drive;
@@ -26,14 +27,20 @@ public class DriveToGroundAlgae extends DriveToPoseSmooth {
                 () -> {
                     var robotPose =
                             RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
-                    var detection = AlgaeTracker.getInstance().getClosestAlgae(robotPose.getTranslation());
+                    // var detection = AlgaeTracker.getInstance().getClosestAlgae(robotPose.getTranslation());
+                    var detection =
+                            Optional.of(FieldConstants.StagingPositions.rightIceCream.getTranslation());
                     if (detection.isEmpty()) {
                         return robotPose;
                     }
-                    double xErr = detection.get().getX() - robotPose.getX();
-                    double yErr = detection.get().getY() - robotPose.getY();
-                    Rotation2d theta = new Rotation2d(xErr, yErr);
                     Translation2d robotToAlgaeArm = new Translation2d(xOffset.get(), yOffset.get());
+                    Translation2d yOffsetPosition =
+                            robotPose
+                                    .getTranslation()
+                                    .plus(new Translation2d(0.0, yOffset.get()).rotateBy(robotPose.getRotation()));
+                    double xErr = detection.get().getX() - yOffsetPosition.getX();
+                    double yErr = detection.get().getY() - yOffsetPosition.getY();
+                    Rotation2d theta = new Rotation2d(xErr, yErr);
 
                     Translation2d robotTargetTranslation =
                             detection.get().minus(robotToAlgaeArm.rotateBy(theta));
