@@ -346,7 +346,6 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         //     return false;
         // }
 
-        System.out.println(_container.getCoral().isCoralDetected());
         return _container.getCoral().isCoralDetected();
     }
 
