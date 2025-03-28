@@ -93,8 +93,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                 () -> {
                     SuperstructureRequest activeRequest = _requestHandler.getActiveRequest();
                     return activeRequest == null;
-                },
-                this);
+                });
     }
 
     public Command createRequest(SuperstructureState placeState, RequestType type) {
@@ -113,23 +112,29 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     }
 
     public Command receiveFunnel(RequestType type) {
-
+        SuperstructureRequest currentRequest =
+                new SuperstructureRequest(
+                        Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type, () -> true, "req");
         return createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type)
-                .andThen(
-                        new InstantCommand(
-                                () -> {
-                                    SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
-                                    if (currentRequest == null) {
-                                        currentRequest =
-                                                new SuperstructureRequest(
-                                                        Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL,
-                                                        type,
-                                                        () -> true,
-                                                        "req");
-                                    }
-                                    // This only has worked if a schedule, I'm not sure why???
-                                    new IntakeAndIndexCoral(_container.getCoral(), this, currentRequest).schedule();
-                                }));
+                // .andThen(
+                //         new InstantCommand(
+                //                 () -> {
+                //                     SuperstructureRequest currentRequest =
+                // _requestHandler.getActiveRequest();
+                //                     if (currentRequest == null) {
+                //                         currentRequest =
+                //                                 new SuperstructureRequest(
+                //
+                // Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL,
+                //                                         type,
+                //                                         () -> true,
+                //                                         "req");
+                //                     }
+                //                     // This only has worked if a schedule, I'm not sure why???
+                //                     new IntakeAndIndexCoral(_container.getCoral(), this,
+                // currentRequest).schedule();
+                //                 }));
+                .andThen(new IntakeAndIndexCoral(_container.getCoral(), this, currentRequest));
     }
 
     public Command receiveFromGroundIntake(RequestType type) {
