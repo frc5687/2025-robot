@@ -106,7 +106,7 @@ public class AlgaeTracker implements EpilogueLog {
         }
         if (closestAlgae.isPresent())
             log(
-                    "cloest algae",
+                    "closest algae",
                     new Pose2d(closestAlgae.get(), Rotation2d.kZero),
                     Pose2d.struct,
                     Importance.CRITICAL);

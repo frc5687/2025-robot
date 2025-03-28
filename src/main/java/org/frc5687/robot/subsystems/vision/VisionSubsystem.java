@@ -22,6 +22,7 @@ import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.vision.AlgaeTracker;
 import org.frc5687.robot.util.vision.AprilTagObservation;
+import org.frc5687.robot.util.vision.CoralTracker;
 import org.frc5687.robot.util.vision.NeuralPipelineObservation;
 import org.frc5687.robot.util.vision.TargetCorners;
 
@@ -31,6 +32,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
     private static final double MAX_DISTANCE = 4.0;
     private static final double MIN_CONFIDENCE = 0.7;
     private static final AlgaeTracker _algaeTracker = AlgaeTracker.getInstance();
+    private static final CoralTracker _coralTracker = CoralTracker.getInstance();
 
     public VisionSubsystem(RobotContainer container, VisionIO io) {
         super(container, io, new VisionInputs(), new VisionOutputs());
@@ -100,15 +102,12 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         List<Pose2d> neuralDetections = new ArrayList<>();
         for (var observations : inputs.cameraNeuralPipelineObservations.values()) {
             for (var obs : observations) {
-                Transform2d robotToDetection = new Transform2d(obs.getX(), obs.getY(), new Rotation2d());
-                Pose2d worldToRobot =
-                        RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
-                Pose2d worldToDetection = worldToRobot.plus(robotToDetection);
-                neuralDetections.add(worldToDetection);
+                neuralDetections.add(new Pose2d(obs.getX(), obs.getY(), obs.getClassId() == 0 ? Rotation2d.kZero : Rotation2d.kCW_90deg)); // visually see the difference between coral and algae
             }
         }
         log("Raw Neural Detections", neuralDetections, Pose2d.struct, Importance.CRITICAL);
         _algaeTracker.update(inputs.cameraNeuralPipelineObservations.get("limelight-center"));
+        _coralTracker.update(inputs.cameraNeuralPipelineObservations.get("South_Camera"));
     }
 
     private List<AprilTagObservation> filterValidTags(List<AprilTagObservation> observations) {
