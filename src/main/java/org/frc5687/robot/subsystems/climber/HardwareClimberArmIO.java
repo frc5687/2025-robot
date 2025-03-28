@@ -52,8 +52,7 @@ public class HardwareClimberArmIO implements ClimberIO {
 
     @Override
     public void writeOutputs(ClimberOutputs outputs) {
-        // FIXME put this back
-        // _winchMotor.setControl(_voltageRequest.withOutput(outputs.climberVoltage));
-        // _servo.set(outputs.servoSetpoint);
+        _winchMotor.setControl(_voltageRequest.withOutput(outputs.climberVoltage));
+        _servo.set(outputs.servoSetpoint);
     }
 }
