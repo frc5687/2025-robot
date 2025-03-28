@@ -26,7 +26,7 @@ public class FieldConstants {
         public static final Pose2d centerFace =
                 new Pose2d(Units.inchesToMeters(235.726), 0, Rotation2d.fromDegrees(90));
         public static final Pose2d processorLineUp =
-                new Pose2d(Units.inchesToMeters(230.726), 0, Rotation2d.fromDegrees(-70));
+                new Pose2d(Units.inchesToMeters(230.726), 1.5, Rotation2d.fromDegrees(-70));
     }
 
     public static class Barge {

@@ -158,6 +158,10 @@ public class HardwareCoralArmIO implements CoralArmIO {
         } else {
             _wheelMotor.setControl(_wheelDutyCycleOut.withOutput(outputs.wheelDutyCycle));
         }
+        if (_wheelMotor.getRotorPosition().getValueAsDouble() > 5000) {
+            _wheelMotor.setPosition(0);
+            System.out.println("Coral Wheel Motor position reset");
+        }
     }
 
     private double getAngleRads() {

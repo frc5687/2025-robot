@@ -118,10 +118,10 @@ public class RobotContainer implements EpilogueLog {
 
         _superstructureManager = new SuperstructureManager(this);
 
+        configureDefaultCommands();
         _oi.configureCommandMapping(this);
 
         setupNamedCommand();
-        configureDefaultCommands();
 
         _autoChooser = AutoBuilder.buildAutoChooser("test");
         SmartDashboard.putData("Auto Chooser", _autoChooser);

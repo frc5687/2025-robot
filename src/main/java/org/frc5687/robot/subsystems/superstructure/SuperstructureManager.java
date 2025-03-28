@@ -113,6 +113,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     }
 
     public Command receiveFunnel(RequestType type) {
+
         return createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type)
                 .andThen(
                         new InstantCommand(

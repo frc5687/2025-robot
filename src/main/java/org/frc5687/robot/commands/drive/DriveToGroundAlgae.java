@@ -26,6 +26,7 @@ public class DriveToGroundAlgae extends DriveToPoseSmooth {
                     var robotPose =
                             RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
                     var detection = AlgaeTracker.getInstance().getClosestAlgae(robotPose.getTranslation());
+                    // var detection = Optional.of(Translation2d.kZero); // FIXME remove
                     if (detection.isEmpty()) {
                         return robotPose;
                     }

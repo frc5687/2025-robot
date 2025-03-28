@@ -69,7 +69,7 @@ public class Constants {
                 (45.0 / 15.0); // Inverse of the last stage, where we link to the bevel gear
         // public static final double COEFFICIENT_OF_FRICTION = 80.0 / 140.0;
 
-        public static final double COEFFICIENT_OF_FRICTION = 1.1;
+        public static final double COEFFICIENT_OF_FRICTION = 1.3;
 
         public static final double MAX_LINEAR_SPEED =
                 DCMotor.getKrakenX60Foc(1)
@@ -414,7 +414,7 @@ public class Constants {
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
         public static final double WHEEL_EJECT_CORAL_DUTY_CYCLE = -1.0;
-        public static final double WHEEL_EJECT_TROTH_DUTY_CYCLE = 0.35;
+        public static final double WHEEL_EJECT_TROTH_DUTY_CYCLE = 0.40;
         public static final double WHEEL_INDEX_ROTATIONS = 2.0;
 
         public static final double WHEEL_GROUND_INDEX_DUTY_CYCLE = 0.6;
@@ -542,7 +542,12 @@ public class Constants {
                         Optional.of(CoralState.RECEIVE_FROM_GROUND_INTAKE),
                         Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.of(IntakeState.DEPLOYED));
-
+        public static final SuperstructureState INTAKE_UNSTICK =
+                new SuperstructureState(
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.of(IntakeState.DEPLOYED_UNSTICK));
         public static final SuperstructureState PLACE_CORAL_L4 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4),

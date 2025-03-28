@@ -12,7 +12,8 @@ public enum LightState {
     FLASHING_WHITE(new StrobeAnimation(50, 50, 50, 0, 0.05, -1)),
     BLUE(0, 0, 255),
     RED(255, 0, 0),
-    PURPLE(255, 0, 255);
+    PURPLE(150, 0, 255),
+    PINK(255, 30, 190);
 
     public final Optional<Animation> _animation;
     public final int r;
