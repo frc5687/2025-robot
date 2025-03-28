@@ -1,5 +1,6 @@
 package org.frc5687.robot.commands.coral;
 
+import edu.wpi.first.wpilibj.Timer;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
@@ -23,6 +24,7 @@ public class IntakeAndIndexCoral extends OutliersCommand {
 
     @Override
     public void initialize() {
+        double timer1 = Timer.getFPGATimestamp();
         System.out.println("Starting index command");
         if (_initialRequest == null) {
             SuperstructureRequest activeRequest = _manager.getRequestHandler().getActiveRequest();
@@ -33,6 +35,7 @@ public class IntakeAndIndexCoral extends OutliersCommand {
             }
         }
         _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_FUNNEL_INDEX_DUTY_CYCLE);
+        System.out.println("init took " + (Timer.getFPGATimestamp() - timer1) + " seconds");
     }
 
     @Override
