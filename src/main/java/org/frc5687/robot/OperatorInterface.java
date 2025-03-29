@@ -20,9 +20,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import org.frc5687.robot.commands.algae.AutoNetScore;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
+import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.auto.AutoActions;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.coral.EmergencyEjectCoral;
+import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
 import org.frc5687.robot.commands.drive.DriveToHP;
 import org.frc5687.robot.commands.drive.DriveToProcessor;
 import org.frc5687.robot.commands.drive.DriveToProcessorLineup;
@@ -159,17 +161,16 @@ public class OperatorInterface {
                                         })
                                 .unless(manager::isAlgaeMode));
 
-        // _driverController
-        //         .leftTrigger()
-        //         .whileTrue(
-        //                 manager
-        //                         .createRequest(Constants.SuperstructureGoals.GROUND_PICKUP,
-        // RequestType.IMMEDIATE)
-        //                         .andThen(
-        //                                 new DriveToGroundAlgae(container.getDrive(),
-        // container.getVision())
-        //                                         .withDeadline(new IntakeAlgae(container.getAlgae())))
-        //                         .unless(manager::isCoralMode));
+        _driverController
+                .leftTrigger()
+                .whileTrue(
+                        manager
+                                .createRequest(Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE)
+                                .andThen(
+                                        new DriveToGroundAlgae(container.getDrive(), container.getVision())
+                                                .withDeadline(new IntakeAlgae(container.getAlgae())))
+                                .unless(manager::isCoralMode));
+
         // _intakeVelocityTrigger.onTrue(
         //         Commands.sequence(
         //                 Commands.runOnce(
@@ -229,8 +230,14 @@ public class OperatorInterface {
         _driverController
                 .leftMiddleButton()
                 .onTrue(
-                        new InstantCommand(() -> container.getVision().setPipelineIndex("South_Cam", -1))
-                                .alongWith(new InstantCommand(container.getClimber()::toggleClimberSetpoint)));
+                        new InstantCommand(() -> container.getVision().setPipelineIndex("South_Camera", -1))
+                                .alongWith(
+                                        manager
+                                                .createRequest(
+                                                        Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE)
+                                                .andThen(
+                                                        new InstantCommand(container.getClimber()::toggleClimberSetpoint))));
+        // ));
 
         _driverController
                 .a()
