@@ -61,7 +61,6 @@ public class CoralTracker implements EpilogueLog {
     }
 
     private synchronized void processObservation(NeuralPipelineObservation obs) {
-        if (obs.getClassId() != 0) return; // coral only
         Transform2d robotToDetection = new Transform2d(obs.getX(), obs.getY(), Rotation2d.kZero);
         Pose2d worldToRobot =
                 RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
