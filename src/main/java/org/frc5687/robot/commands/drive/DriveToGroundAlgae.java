@@ -54,13 +54,13 @@ public class DriveToGroundAlgae extends DriveToPoseSmooth {
 
     @Override
     public void initialize() {
-        _vision.setPipelineIndex("limelight-center", 1);
+        _vision.setPipelineIndex("limelight-left", 1);
         super.initialize();
     }
 
     @Override
     public void end(boolean interrupted) {
-        _vision.setPipelineIndex("limelight-center", 0);
+        _vision.setPipelineIndex("limelight-left", 0);
         super.end(interrupted);
     }
 }
