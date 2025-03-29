@@ -9,6 +9,8 @@ import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
 import org.frc5687.robot.commands.coral.IntakeAndIndexCoral;
+import org.frc5687.robot.commands.intake.GroundIndexCoral;
+import org.frc5687.robot.commands.intake.IntakeFromGround;
 import org.frc5687.robot.subsystems.algaearm.AlgaeState;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.FieldConstants;
@@ -22,7 +24,6 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     private final RobotContainer _container;
     private final RequestHandler _requestHandler;
     private boolean _forceQueueExecution = false;
-
     private SuperstructureMode _currentMode = SuperstructureMode.CORAL;
     private Optional<Pose2d> _goalPose = Optional.empty();
 
@@ -92,8 +93,7 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                 () -> {
                     SuperstructureRequest activeRequest = _requestHandler.getActiveRequest();
                     return activeRequest == null;
-                },
-                this);
+                });
     }
 
     public Command createRequest(SuperstructureState placeState, RequestType type) {
@@ -104,23 +104,65 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         return _requestHandler;
     }
 
+    public Command runIntake() {
+        return new InstantCommand(
+                () -> {
+                    new IntakeFromGround(_container.getIntake());
+                });
+    }
+
     public Command receiveFunnel(RequestType type) {
+        SuperstructureRequest currentRequest =
+                new SuperstructureRequest(
+                        Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type, () -> true, "req");
         return createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, type)
-                .andThen(
-                        new InstantCommand(
-                                () -> {
-                                    SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
+                // .andThen(
+                //         new InstantCommand(
+                //                 () -> {
+                //                     SuperstructureRequest currentRequest =
+                // _requestHandler.getActiveRequest();
+                //                     if (currentRequest == null) {
+                //                         currentRequest =
+                //                                 new SuperstructureRequest(
+                //
+                // Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL,
+                //                                         type,
+                //                                         () -> true,
+                //                                         "req");
+                //                     }
+                //                     // This only has worked if a schedule, I'm not sure why???
+                //                     new IntakeAndIndexCoral(_container.getCoral(), this,
+                // currentRequest).schedule();
+                //                 }));
+                .andThen(new IntakeAndIndexCoral(_container.getCoral(), this, currentRequest));
+    }
+
+    public Command receiveFromGroundIntake(RequestType type) {
+        return new ParallelCommandGroup(
+                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, type),
+                new InstantCommand(
+                        () -> {
+                            // Only schedule if not already running
+                            if (!GroundIndexCoral.isRunning()) {
+                                SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
+                                if (currentRequest == null) {
+                                    currentRequest = _requestHandler.getLastActiveRequest();
                                     if (currentRequest == null) {
                                         currentRequest =
                                                 new SuperstructureRequest(
-                                                        Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL,
+                                                        Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
                                                         type,
                                                         () -> true,
-                                                        "req");
+                                                        "groundIntakeReq");
                                     }
-                                    // This only has worked if a schedule, I'm not sure why???
-                                    new IntakeAndIndexCoral(_container.getCoral(), this, currentRequest).schedule();
-                                }));
+                                }
+                                new GroundIndexCoral(
+                                                _container.getCoral(), _container.getIntake(), this, currentRequest)
+                                        .schedule();
+                            } else {
+                                System.out.println("Skipping GroundIndexCoral scheduling - already running");
+                            }
+                        }));
     }
 
     public Command autoReceiveFunnel() {
@@ -143,7 +185,37 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
 
     public Command algaeIntake(SuperstructureState state) {
         return new SequentialCommandGroup(
-                        grabAlgae(state, RequestType.IMMEDIATE),
+                        createRequest(state, RequestType.IMMEDIATE),
+                        new IntakeAlgae(_container.getAlgae()),
+                        new WaitUntilCommand(
+                                () ->
+                                        _container
+                                                        .getDrive()
+                                                        .getPose()
+                                                        .getTranslation()
+                                                        .getDistance(FieldConstants.getAllianceSpecificReefCenter())
+                                                > 2),
+                        createRequest(
+                                new SuperstructureState(
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.of(AlgaeState.IDLE),
+                                        Optional.empty()),
+                                RequestType.IMMEDIATE),
+                        new InstantCommand(() -> _container.getAlgae().setWheelMotorVoltage(0)))
+                .withName("Algae Reef Intake");
+    }
+
+    public Command hybridAlgaeIntake() {
+
+        return new SequentialCommandGroup(
+                        createRequest(
+                                new SuperstructureState(
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.of(AlgaeState.REEF_PICKUP),
+                                        Optional.empty()),
+                                RequestType.IMMEDIATE),
                         new IntakeAlgae(_container.getAlgae()),
                         new WaitUntilCommand(
                                 () ->
@@ -179,6 +251,22 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     public void setGoalPose(Optional<Pose2d> goalPose) {
         _goalPose = goalPose;
     }
+
+    // private SuperstructureState getalgaeheight() {
+    //     SuperstructureState targetState = Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL;
+    //     int currentFace = 1;
+    //     Supplier<Pose2d> rawPose = () -> _container.getDrive().getPose();
+    //     var alliance = DriverStation.getAlliance();
+    //     if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+    //         Pose2d mirroredPose = FlippingUtil.flipFieldPose(rawPose.get());
+    //         currentFace = ReefAlignmentHelpers.calculateBestFace(mirroredPose);
+    //         return ReefAlignmentHelpers.calculateAlgaeHeight(currentFace);
+    //     } else {
+    //         currentFace = ReefAlignmentHelpers.calculateBestFace(rawPose.get());
+
+    //         return ReefAlignmentHelpers.calculateAlgaeHeight(currentFace);
+    //     }
+    // }
 
     private boolean isRobotWithinGoalPose() {
         if (_goalPose.isEmpty()) {
@@ -217,6 +305,16 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
 
         if (!isMovingUp) return false;
 
+        boolean intakeInReceivePosition =
+                _container
+                        .getIntake()
+                        .isAtState(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE.getIntake().get());
+
+        if (intakeInReceivePosition) {
+            System.out.println("Cannot move elevator - intake is in receive position");
+            return false;
+        }
+
         if (isCoralMode()) {
             return _container.getCoral().isCoralDetected();
         }
@@ -224,34 +322,79 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
         return true;
     }
 
+    // private boolean canElevatorGoUp(SuperstructureState requestedState) {
+    //     if (requestedState.getElevator().isEmpty()) return false;
+
+    //     double currentElevatorHeight = _container.getElevator().getElevatorHeight();
+    //     double requestedHeight = requestedState.getElevator().get().getHeight();
+    //     boolean isMovingUp = requestedHeight > currentElevatorHeight;
+
+    //     if (!isMovingUp) return false;
+
+    //     if (isCoralMode()) {
+    //         return _container.getCoral().isCoralDetected();
+    //     }
+
+    //     return true;
+    // }
+
     private boolean canElevatorGoUpAuto(SuperstructureState requestedState) {
-        // if (requestedState.getElevator().isEmpty()) return false;
+        // // Check if intake is in receive-from-intake position
+        // boolean intakeInReceivePosition =
+        //         _container
+        //                 .getIntake()
+        //
+        // .isAtState(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE.getIntake().get());
 
-        // double currentElevatorHeight = _container.getElevator().getElevatorHeight();
-        // double requestedHeight = requestedState.getElevator().get().getHeight();
-        // boolean isMovingUp = requestedHeight > currentElevatorHeight;
+        // if (intakeInReceivePosition) {
+        //     System.out.println("Cannot move elevator in auto - intake is in receive position");
+        //     return false;
+        // }
 
-        // if (!isMovingUp) return false;
-        System.out.println(_container.getCoral().isCoralDetected());
         return _container.getCoral().isCoralDetected();
     }
 
+    // private boolean canElevatorGoUpAuto(SuperstructureState requestedState) {
+    //     // if (requestedState.getElevator().isEmpty()) return false;
+
+    //     // double currentElevatorHeight = _container.getElevator().getElevatorHeight();
+    //     // double requestedHeight = requestedState.getElevator().get().getHeight();
+    //     // boolean isMovingUp = requestedHeight > currentElevatorHeight;
+
+    //     // if (!isMovingUp) return false;
+    //     System.out.println(_container.getCoral().isCoralDetected());
+    //     return _container.getCoral().isCoralDetected();
+    // }
+
     private boolean isElevatorGoingDown(SuperstructureState requestedState) {
-        if (requestedState.getElevator().isEmpty()) return false; // FIXME is this the correct behavior?
+        if (requestedState.getElevator().isEmpty()) return false;
 
         double elevatorHeight = _container.getElevator().getElevatorHeight();
-        return requestedState.getElevator().get().getHeight() < elevatorHeight;
+        boolean isMovingDown = requestedState.getElevator().get().getHeight() < elevatorHeight;
+
+        if (!isMovingDown) return false;
+
+        // Check if intake is in receive-from-intake position
+        boolean intakeInReceivePosition =
+                _container
+                        .getIntake()
+                        .isAtState(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE.getIntake().get());
+
+        if (intakeInReceivePosition) {
+            System.out.println("Cannot move elevator - intake is in receive position");
+            return false;
+        }
+
+        return true;
     }
 
-    // public boolean isSafe(RequestType type, Supplier<SuperstructureState> stateSupplier) {
-    //     if (type == RequestType.QUEUED) {
-    //         return _forceQueueExecution
-    //         || (isRobotWithinGoalPose() && canElevatorGoUp(stateSupplier.get()))
-    //         || isElevatorGoingDown(stateSupplier.get());  }
-    //     else if (type == RequestType.AUTO_SEQUENCE){
-    //         return canElevatorGoUp(stateSupplier.get())
-    //         || isElevatorGoingDown(stateSupplier.get());
-    //     } else return true; }
+    // private boolean isElevatorGoingDown(SuperstructureState requestedState) {
+    //     if (requestedState.getElevator().isEmpty()) return false; // FIXME is this the correct
+    //     // behavior?
+
+    //     double elevatorHeight = _container.getElevator().getElevatorHeight();
+    //     return requestedState.getElevator().get().getHeight() < elevatorHeight;
+    // }
 
     @Override
     public void periodic() {

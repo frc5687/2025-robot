@@ -33,6 +33,7 @@ import org.frc5687.robot.subsystems.elevator.ElevatorIO;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
 import org.frc5687.robot.subsystems.elevator.HardwareElevatorIO;
 import org.frc5687.robot.subsystems.elevator.SimElevatorIO;
+import org.frc5687.robot.subsystems.intake.HardwareIntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeIO;
 import org.frc5687.robot.subsystems.intake.IntakeSubsystem;
 import org.frc5687.robot.subsystems.intake.SimIntakeIO;
@@ -40,13 +41,12 @@ import org.frc5687.robot.subsystems.lights.HardwareLightsIO;
 import org.frc5687.robot.subsystems.lights.LightSubsystem;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
-import org.frc5687.robot.subsystems.vision.LimelightVisionIO;
+import org.frc5687.robot.subsystems.vision.HardwareVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.subsystems.vision.VisionIO;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
 import org.frc5687.robot.util.EpilogueLog;
 import org.frc5687.robot.util.Helpers;
-import org.frc5687.robot.util.QuestNav;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class RobotContainer implements EpilogueLog {
@@ -67,14 +67,10 @@ public class RobotContainer implements EpilogueLog {
 
     private SendableChooser<Command> _autoChooser;
 
-    private final QuestNav _questNav;
-
     public RobotContainer(Robot robot) {
         _robot = robot;
         _oi = new OperatorInterface();
-        _questNav = new QuestNav();
 
-        // TODO implement simulation io
         _lights = new LightSubsystem(this, new HardwareLightsIO());
 
         DriveIO driveIO =
@@ -84,16 +80,12 @@ public class RobotContainer implements EpilogueLog {
 
         _drive = new DriveSubsystem(this, driveIO, Constants.DriveTrain.MODULE_LOCATIONS);
 
-        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new LimelightVisionIO();
+        VisionIO visionIO = RobotBase.isSimulation() ? new SimVisionIO() : new HardwareVisionIO();
         _vision = new VisionSubsystem(this, visionIO);
 
         RobotStateManager.getInstance()
                 .initEstimators(
-                        _drive::getModulePositions,
-                        _drive::getHeading,
-                        _drive::getMeasuredChassisSpeeds,
-                        _vision,
-                        _questNav);
+                        _drive::getModulePositions, _drive::getHeading, _drive::getMeasuredChassisSpeeds);
 
         ElevatorIO elevatorIO;
         if (RobotBase.isSimulation()) {
@@ -116,10 +108,8 @@ public class RobotContainer implements EpilogueLog {
                 RobotBase.isSimulation() ? new SimCoralArmIO() : new HardwareCoralArmIO();
         _coralArm = new CoralArmSubsystem(this, coralArmIO);
 
-        IntakeIO intakeIO =
-                // RobotBase.isSimulation() ?
-                new SimIntakeIO();
-        //   : new HardwareIntakeIO();
+        IntakeIO intakeIO = RobotBase.isSimulation() ? new SimIntakeIO() : new HardwareIntakeIO();
+        // IntakeIO intakeIO = new SimIntakeIO();
         _intake = new IntakeSubsystem(this, intakeIO);
 
         ClimberIO climberIO =
@@ -128,10 +118,10 @@ public class RobotContainer implements EpilogueLog {
 
         _superstructureManager = new SuperstructureManager(this);
 
+        configureDefaultCommands();
         _oi.configureCommandMapping(this);
 
         setupNamedCommand();
-        configureDefaultCommands();
 
         _autoChooser = AutoBuilder.buildAutoChooser("test");
         SmartDashboard.putData("Auto Chooser", _autoChooser);
@@ -158,16 +148,8 @@ public class RobotContainer implements EpilogueLog {
     }
 
     private void setupNamedCommand() {
-        // if (RobotBase.isSimulation()) {
-        //     NamedCommands.registerCommand(
-        //             "ReceiveFunnel",
-        //             _superstructureManager
-        //                     .receiveFunnelSim(RequestType.IMMEDIATE)
-        //                     .andThen(new WaitCommand(1)));
-        // } else {
         NamedCommands.registerCommand(
                 "ReceiveFunnel", _superstructureManager.receiveFunnel(RequestType.IMMEDIATE));
-        // }
 
         NamedCommands.registerCommand(
                 "ReadyFunnel", _superstructureManager.receiveFunnelSim(RequestType.IMMEDIATE));
@@ -178,7 +160,7 @@ public class RobotContainer implements EpilogueLog {
                         .algaeIntake(Constants.SuperstructureGoals.LOW_ALGAE_GRAB)
                         .alongWith(
                                 new DynamicDriveToReefBranch(
-                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE)));
+                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE, true)));
 
         NamedCommands.registerCommand(
                 "HighAlgaeIntake",
@@ -186,7 +168,7 @@ public class RobotContainer implements EpilogueLog {
                         .algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB)
                         .alongWith(
                                 new DynamicDriveToReefBranch(
-                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE)));
+                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE, true)));
 
         NamedCommands.registerCommand(
                 "CoralL4",
@@ -212,7 +194,6 @@ public class RobotContainer implements EpilogueLog {
     }
 
     public void periodic() {
-        _questNav.timeSinceLastUpdate();
         RobotStateManager.getInstance().logComponentPoses();
         RobotStateManager.getInstance().updateOdometry();
         RobotStateManager.getInstance().logEstimatedPoses();
@@ -251,10 +232,6 @@ public class RobotContainer implements EpilogueLog {
 
     public VisionSubsystem getVision() {
         return _vision;
-    }
-
-    public QuestNav getQuestNav() {
-        return _questNav;
     }
 
     public SuperstructureManager getSuperstructureManager() {

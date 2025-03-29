@@ -11,7 +11,7 @@ import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class DynamicDriveToReefBranchAlgae extends DriveWithNormalVectorAlignment {
     public DynamicDriveToReefBranchAlgae(
-            DriveSubsystem drive, SuperstructureManager manager, ReefSide side) {
+            DriveSubsystem drive, SuperstructureManager manager, ReefSide side, boolean isAlgae) {
         super(
                 drive,
                 manager,
@@ -28,6 +28,7 @@ public class DynamicDriveToReefBranchAlgae extends DriveWithNormalVectorAlignmen
                         int currentFace = ReefAlignmentHelpers.calculateBestFace(robotPose);
                         return ReefAlignmentHelpers.calculateTargetPose(currentFace, side);
                     }
-                });
+                },
+                isAlgae);
     }
 }

@@ -27,6 +27,8 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
     protected void periodic(LightInputs inputs, LightOutputs outputs) {
         if (_container.getClimber().isSensorTriggered()) {
             outputs.desiredState = LightState.BLUE;
+        } else if (_container.getIntake().isIntakeCoralDetected()) {
+            outputs.desiredState = LightState.PINK;
         } else if (_container.getSuperstructureManager().isAlgaeMode()) {
             if (_container.getAlgae().isAlgaeDetected()) {
                 if (withinNetTolerance()) {

@@ -1,77 +1,66 @@
 package org.frc5687.robot.commands.drive;
 
-import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Timer;
-import org.frc5687.robot.commands.OutliersCommand;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import org.frc5687.robot.RobotStateManager;
+import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
 import org.frc5687.robot.util.TunableDouble;
+import org.frc5687.robot.util.vision.AlgaeTracker;
 
-public class DriveToGroundAlgae extends OutliersCommand {
+public class DriveToGroundAlgae extends DriveToPoseSmooth {
     private final DriveSubsystem _drive;
     private final VisionSubsystem _vision;
-    private final PIDController _distanceController;
-    private final PIDController _yController;
-    private final PIDController _thetaController;
 
-    private static final double BLIND_DRIVE_TIME = 0.2;
-
-    private static final TunableDouble distP = new TunableDouble("DriveToGroundAlgae", "distkP", 1.0);
-    private static final TunableDouble yP = new TunableDouble("DriveToGroundAlgae", "ykP", 8.0);
-    private static final TunableDouble angleP =
-            new TunableDouble("DriveToGroundAlgae", "anglekP", 1.0);
-
-    private static final TunableDouble horiz =
-            new TunableDouble("DriveToGroundAlgae", "horiz offset", -0.1);
-
-    private double lastDetected;
+    private static final TunableDouble xOffset =
+            new TunableDouble("DriveToGroundAlgae", "xOffset", 0.6);
+    private static final TunableDouble yOffset =
+            new TunableDouble("DriveToGroundAlgae", "yOffset", Units.inchesToMeters(-6.75));
 
     public DriveToGroundAlgae(DriveSubsystem drive, VisionSubsystem vision) {
+        super(
+                drive,
+                () -> {
+                    var robotPose =
+                            RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
+                    var detection = AlgaeTracker.getInstance().getClosestAlgae(robotPose.getTranslation());
+                    //     var detection =
+                    //
+                    // Optional.of(FieldConstants.StagingPositions.rightIceCream.getTranslation());
+                    if (detection.isEmpty()) {
+                        return robotPose;
+                    }
+                    Translation2d robotToAlgaeArm = new Translation2d(xOffset.get(), yOffset.get());
+                    Translation2d yOffsetPosition =
+                            robotPose
+                                    .getTranslation()
+                                    .plus(new Translation2d(0.0, yOffset.get()).rotateBy(robotPose.getRotation()));
+                    double xErr = detection.get().getX() - yOffsetPosition.getX();
+                    double yErr = detection.get().getY() - yOffsetPosition.getY();
+                    Rotation2d theta = new Rotation2d(xErr, yErr);
+
+                    Translation2d robotTargetTranslation =
+                            detection.get().minus(robotToAlgaeArm.rotateBy(theta));
+
+                    return new Pose2d(robotTargetTranslation, theta);
+                });
         _drive = drive;
         _vision = vision;
-        _distanceController = new PIDController(distP.get(), 0.0, 0.0);
-        _yController = new PIDController(yP.get(), 0.0, 0.0);
-        _thetaController = new PIDController(angleP.get(), 0.0, 0.0);
-        _thetaController.enableContinuousInput(-Math.PI, Math.PI);
         addRequirements(_drive);
     }
 
     @Override
     public void initialize() {
-        _vision.setPipelineIndex("North_Camera", 1);
-    }
-
-    @Override
-    protected void execute(double timestamp) {
-        if (distP.hasChanged() || angleP.hasChanged() || yP.hasChanged()) {
-            _distanceController.setP(distP.get());
-            _yController.setP(yP.get());
-            _thetaController.setP(angleP.get());
-        }
-        var detection = _vision.getClosestNeuralObservationOfType("North_Camera", 0);
-        if (detection.isPresent()) lastDetected = Timer.getFPGATimestamp();
-
-        if (Timer.getFPGATimestamp() - lastDetected > BLIND_DRIVE_TIME) {
-            ChassisSpeeds speeds = new ChassisSpeeds();
-            log("desired robot relative speeds", speeds, ChassisSpeeds.struct, Importance.CRITICAL);
-            _drive.setDesiredChassisSpeeds(speeds);
-        } else if (detection.isPresent()) {
-            double x = detection.get().getX();
-            double y = detection.get().getY() + horiz.get();
-            ChassisSpeeds speeds =
-                    new ChassisSpeeds(
-                            -_distanceController.calculate(Math.hypot(x, y)),
-                            _yController.calculate(Math.atan2(y, x)),
-                            _thetaController.calculate(Math.atan2(y, x)));
-            log("desired robot relative speeds", speeds, ChassisSpeeds.struct, Importance.CRITICAL);
-            _drive.setDesiredChassisSpeeds(speeds);
-        }
+        _vision.setPipelineIndex("limelight-center", 1);
+        super.initialize();
     }
 
     @Override
     public void end(boolean interrupted) {
-        _vision.setPipelineIndex("North_Camera", 0);
+        _vision.setPipelineIndex("limelight-center", 0);
+        super.end(interrupted);
     }
 }

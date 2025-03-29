@@ -132,8 +132,13 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
             log("SpeedLimitFactor", _comLimiter.getLastSpeedFactor(), Importance.CRITICAL);
         }
 
-        updateSetpoint();
-        outputs.desiredStates = _currentSetpoint.moduleStates();
+        if (outputs.bypassSetpointGenerator) {
+            var states = _kinematics.toSwerveModuleStates(outputs.desiredSpeeds);
+            outputs.desiredStates = states;
+        } else {
+            updateSetpoint();
+            outputs.desiredStates = _currentSetpoint.moduleStates();
+        }
     }
 
     public void setDesiredChassisSpeeds(ChassisSpeeds speeds) {
@@ -142,6 +147,17 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
         //     _outputs.desiredSpeeds = limitedSpeeds;
         // } else {
         _outputs.desiredSpeeds = speeds;
+        _outputs.bypassSetpointGenerator = false;
+        // }
+    }
+
+    public void setDesiredChassisSpeedsBypassSetpointGenerator(ChassisSpeeds speeds) {
+        // if (_enableCOMLimiter) {
+        //     ChassisSpeeds limitedSpeeds = _comLimiter.limitSpeeds(speeds);
+        //     _outputs.desiredSpeeds = limitedSpeeds;
+        // } else {
+        _outputs.desiredSpeeds = speeds;
+        _outputs.bypassSetpointGenerator = true;
         // }
     }
 
@@ -213,7 +229,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                 this::getPose,
                 this::resetPose,
                 this::getMeasuredChassisSpeeds,
-                this::setDesiredChassisSpeeds,
+                this::setDesiredChassisSpeedsBypassSetpointGenerator,
                 new PPHolonomicDriveController(
                         new PIDConstants(6.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
                 config,

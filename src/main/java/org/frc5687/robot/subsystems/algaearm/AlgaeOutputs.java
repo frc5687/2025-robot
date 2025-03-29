@@ -10,7 +10,7 @@ public class AlgaeOutputs extends BaseOutputs {
     @Logged(name = "Controller Output", importance = Logged.Importance.DEBUG)
     double controllerOutput = 0.0;
 
-    @Logged(name = "Desired Voltage (V)", importance = Logged.Importance.DEBUG)
+    @Logged(name = "Desired Voltage (V)", importance = Logged.Importance.CRITICAL)
     double voltageCommand = 0.0;
 
     @Logged(name = "Desired Voltage Feed Forward (V)", importance = Logged.Importance.DEBUG)

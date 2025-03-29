@@ -19,7 +19,7 @@ public class DriveToPoseSmooth extends OutliersCommand {
     private ChassisSpeeds _fieldRelativeVelocity;
     private final PIDController _xController;
     private final PIDController _yController;
-    private final PIDController _rotationController;
+    protected final PIDController _rotationController;
 
     private final TunableDouble _smoothingFactor =
             new TunableDouble("DriveToPose", "smoothingFactor", Constants.DriveToPose.SMOOTHING_FACTOR);

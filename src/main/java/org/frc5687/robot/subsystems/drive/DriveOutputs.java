@@ -12,6 +12,9 @@ public class DriveOutputs extends BaseOutputs {
             importance = Logged.Importance.CRITICAL)
     public ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
 
+    @Logged(name = "bypass setpoint generator", importance = Logged.Importance.CRITICAL)
+    public boolean bypassSetpointGenerator = false;
+
     @Logged(name = "Modules/Desired States", importance = Logged.Importance.CRITICAL)
     public SwerveModuleState[] desiredStates = new SwerveModuleState[4];
 }

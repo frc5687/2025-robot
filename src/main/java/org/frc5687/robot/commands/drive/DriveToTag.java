@@ -73,10 +73,10 @@ public class DriveToTag extends OutliersCommand {
         List<AprilTagObservation> observations;
 
         if (_reefSide == ReefSide.RIGHT) {
-            cameraName = "North_West_Camera";
+            cameraName = "limelight-left";
             observations = _vision.getNorthWestCameraObservations();
         } else {
-            cameraName = "North_Camera";
+            cameraName = "limelight-center";
             observations = _vision.getNorthCameraObservations();
         }
 

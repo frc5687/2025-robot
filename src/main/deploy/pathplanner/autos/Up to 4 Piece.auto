@@ -23,12 +23,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "ReceiveFunnel"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Right Coral to R6L"
@@ -47,12 +41,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "ReceiveFunnel"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Right Coral to R6R"
@@ -68,12 +56,6 @@
           "type": "path",
           "data": {
             "pathName": "R6R to Right Coral"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ReceiveFunnel"
           }
         },
         {
