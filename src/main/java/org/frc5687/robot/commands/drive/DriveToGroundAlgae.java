@@ -4,10 +4,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
+import java.util.Optional;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
+import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.TunableDouble;
 import org.frc5687.robot.util.vision.AlgaeTracker;
 
@@ -27,9 +30,9 @@ public class DriveToGroundAlgae extends DriveToPoseSmooth {
                     var robotPose =
                             RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
                     var detection = AlgaeTracker.getInstance().getClosestAlgae(robotPose.getTranslation());
-                    //     var detection =
-                    //
-                    // Optional.of(FieldConstants.StagingPositions.rightIceCream.getTranslation());
+                    if (RobotBase.isSimulation()) {
+                        detection = Optional.of(FieldConstants.StagingPositions.rightIceCream.getTranslation());
+                    }
                     if (detection.isEmpty()) {
                         return robotPose;
                     }
@@ -62,5 +65,10 @@ public class DriveToGroundAlgae extends DriveToPoseSmooth {
     public void end(boolean interrupted) {
         _vision.setPipelineIndex("limelight-left", 0);
         super.end(interrupted);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }
