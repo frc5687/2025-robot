@@ -542,6 +542,12 @@ public class Constants {
                         Optional.of(CoralState.RECEIVE_FROM_GROUND_INTAKE),
                         Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.of(IntakeState.DEPLOYED));
+        public static final SuperstructureState CLIMB =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.GROUND_INTAKE_RECEIVE),
+                        Optional.of(CoralState.RECEIVE_FROM_GROUND_INTAKE),
+                        Optional.of(AlgaeState.BARGE_DROPOFF),
+                        Optional.of(IntakeState.CLIMB));
         public static final SuperstructureState INTAKE_UNSTICK =
                 new SuperstructureState(
                         Optional.empty(),

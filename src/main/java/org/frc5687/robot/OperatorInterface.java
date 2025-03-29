@@ -26,9 +26,6 @@ import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.coral.EmergencyEjectCoral;
 import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
 import org.frc5687.robot.commands.drive.DriveToHP;
-import org.frc5687.robot.commands.drive.DriveToProcessor;
-import org.frc5687.robot.commands.drive.DriveToProcessorLineup;
-import org.frc5687.robot.commands.drive.DynamicDriveToNet;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
@@ -108,7 +105,8 @@ public class OperatorInterface {
                 .rightBumper()
                 .whileTrue(
                         // new ConditionalCommand(
-                        //         new InstantCommand(() -> container.getVision().setPipelineIndex("South_Camera", 0))
+                        //         new InstantCommand(() ->
+                        // container.getVision().setPipelineIndex("South_Camera", 0))
                         //                 .andThen(new DriveToProcessorLineup(container.getDrive()))
                         //                 .andThen(
                         //                         new DriveToProcessor(
@@ -116,8 +114,8 @@ public class OperatorInterface {
                         //                                 () ->
                         //                                         -modifyAxis(_driverController.getLeftX())
                         //                                                 * Constants.DriveTrain.MAX_MPS)),
-                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT, false));
-                                // manager::isAlgaeMode));
+                        new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT, false));
+        // manager::isAlgaeMode));
 
         // _driverController
         //         .leftJoystickButton()
@@ -233,15 +231,14 @@ public class OperatorInterface {
                         new InstantCommand(() -> container.getVision().setPipelineIndex("South_Camera", -1))
                                 .alongWith(
                                         manager
-                                                .createRequest(
-                                                        Constants.SuperstructureGoals.GROUND_INTAKE, RequestType.IMMEDIATE)
+                                                .createRequest(Constants.SuperstructureGoals.CLIMB, RequestType.IMMEDIATE)
                                                 .andThen(
                                                         new InstantCommand(container.getClimber()::toggleClimberSetpoint))));
         // ));
 
-        _driverController
-                .a()
-                .whileTrue(new DynamicDriveToNet(container.getDrive(), _driverController::getLeftX));
+        // _driverController
+        //         .a()
+        //         .whileTrue(new DynamicDriveToNet(container.getDrive(), _driverController::getLeftX));
 
         // _driverController
         //         .a()
