@@ -62,6 +62,11 @@ public class NeuralPipelineObservation implements EpilogueLog {
             return null;
         }
 
+        if (rawDetection.tync > 0.0) {
+            // reject algae on the reef :)
+            return null;
+        }
+
         Transform2d robotToCamera2d =
                 new Transform2d(
                         robotToCamera.getX(), robotToCamera.getY(), robotToCamera.getRotation().toRotation2d());
