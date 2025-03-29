@@ -30,7 +30,7 @@ public class EjectAlgae extends OutliersCommand {
         if (_elevator.getElevatorHeight() < ElevatorState.LOW_ALGAE_GRAB.getHeight()) {
             _algae.setWheelMotorVoltage(-2);
         } else {
-            _algae.setWheelMotorVoltage(-12);
+            _algae.setWheelMotorVoltage(-10);
         }
         // } else {
         //     _algae.setWheelMotorVoltage(0);
