@@ -60,6 +60,17 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "ReceiveFunnel",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ReceiveFunnel"
+        }
+      }
+    },
+    {
       "name": "CoralL2",
       "waypointRelativePos": 0.45,
       "endWaypointRelativePos": null,
@@ -72,7 +83,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.3,
+    "maxVelocity": 3.5,
     "maxAcceleration": 3.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
