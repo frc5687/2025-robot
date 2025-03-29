@@ -107,17 +107,17 @@ public class OperatorInterface {
         _driverController
                 .rightBumper()
                 .whileTrue(
-                        new ConditionalCommand(
-                                new InstantCommand(() -> container.getVision().setPipelineIndex("South_Camera", 0))
-                                        .andThen(new DriveToProcessorLineup(container.getDrive()))
-                                        .andThen(
-                                                new DriveToProcessor(
-                                                        container.getDrive(),
-                                                        () ->
-                                                                -modifyAxis(_driverController.getLeftX())
-                                                                        * Constants.DriveTrain.MAX_MPS)),
-                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT, false),
-                                manager::isAlgaeMode));
+                        // new ConditionalCommand(
+                        //         new InstantCommand(() -> container.getVision().setPipelineIndex("South_Camera", 0))
+                        //                 .andThen(new DriveToProcessorLineup(container.getDrive()))
+                        //                 .andThen(
+                        //                         new DriveToProcessor(
+                        //                                 container.getDrive(),
+                        //                                 () ->
+                        //                                         -modifyAxis(_driverController.getLeftX())
+                        //                                                 * Constants.DriveTrain.MAX_MPS)),
+                                new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT, false));
+                                // manager::isAlgaeMode));
 
         // _driverController
         //         .leftJoystickButton()

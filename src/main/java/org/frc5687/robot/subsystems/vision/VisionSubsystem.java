@@ -36,6 +36,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         super(container, io, new VisionInputs(), new VisionOutputs());
         setPipelineIndex("limelight-center", 0);
         setPipelineIndex("limelight-left", 0);
+        setPipelineIndex("South_Camera", 1);
     }
 
     public static boolean isValidTag(AprilTagObservation observation) {
