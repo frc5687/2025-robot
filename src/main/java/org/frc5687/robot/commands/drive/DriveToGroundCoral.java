@@ -3,7 +3,6 @@ package org.frc5687.robot.commands.drive;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Optional;
 import org.frc5687.robot.RobotStateManager;
@@ -21,7 +20,7 @@ public class DriveToGroundCoral extends DriveToPoseSmooth {
     private static final TunableDouble xOffset =
             new TunableDouble("DriveToGroundCoral", "xOffset", -0.6);
     private static final TunableDouble yOffset =
-            new TunableDouble("DriveToGroundCoral", "yOffset", Units.inchesToMeters(5));
+            new TunableDouble("DriveToGroundCoral", "yOffset", 0.07);
 
     public DriveToGroundCoral(DriveSubsystem drive, VisionSubsystem vision) {
         super(
