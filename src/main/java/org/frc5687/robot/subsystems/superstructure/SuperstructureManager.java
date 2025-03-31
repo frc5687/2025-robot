@@ -38,10 +38,18 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
 
     public void toggleMode() {
         if (_currentMode == SuperstructureMode.ALGAE) {
-            _currentMode = SuperstructureMode.CORAL;
+            setCoralMode();
         } else {
-            _currentMode = SuperstructureMode.ALGAE;
+            setAlgaeMode();
         }
+    }
+
+    public void setCoralMode() {
+        _currentMode = SuperstructureMode.CORAL;
+    }
+
+    public void setAlgaeMode() {
+        _currentMode = SuperstructureMode.ALGAE;
     }
 
     public boolean isCoralMode() {
