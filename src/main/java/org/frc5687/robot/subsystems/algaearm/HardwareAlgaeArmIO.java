@@ -160,6 +160,7 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         canrangeConfigs.FovParams.FOVRangeX = 7;
         canrangeConfigs.FovParams.FOVRangeY = 7;
         canrangeConfigs.ProximityParams.ProximityThreshold = 0.15;
+        // canrangeConfigs.ProximityParams.ProximityHysteresis = 0.1;
         range.getConfigurator().apply(canrangeConfigs);
     }
 

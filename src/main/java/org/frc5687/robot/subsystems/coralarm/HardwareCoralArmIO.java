@@ -19,7 +19,6 @@ import com.ctre.phoenix6.signals.UpdateModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
@@ -44,7 +43,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
     private final StatusSignal<Boolean> _pickupRangeDetected;
     private final StatusSignal<Boolean> _placeRangeDetected;
-    private final Debouncer _placeDebouncer;
+    // private final Debouncer _placeDebouncer;
 
     private final StatusSignal<Angle> _absoluteAngle;
     private final StatusSignal<Angle> _wheelAngle;
@@ -65,7 +64,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         // _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
         // _placeCoralDetectionSensor = new ProximitySensor(RobotMap.DIO.PLACE_CORAL_SENSOR);
         // _debouncer = new Debouncer(0.050, Debouncer.DebounceType.kRising);
-        _placeDebouncer = new Debouncer(0.050, Debouncer.DebounceType.kFalling);
+        // _placeDebouncer = new Debouncer(0.020, Debouncer.DebounceType.kFalling);
         TrapezoidProfile.Constraints constraints =
                 new TrapezoidProfile.Constraints(
                         Constants.CoralArm.MAX_VELOCITY_RAD_PER_SEC,
@@ -117,9 +116,10 @@ public class HardwareCoralArmIO implements CoralArmIO {
         inputs.angleRads = getAngleRads();
 
         inputs.isCoralDetected = _pickupRangeDetected.getValue();
-        inputs.isPlaceCoralDetectedRaw = _placeRangeDetected.getValue();
+        // inputs.isPlaceCoralDetectedRaw = _placeRangeDetected.getValue();
 
-        inputs.isPlaceCoralDetected = _placeDebouncer.calculate(inputs.isPlaceCoralDetectedRaw);
+        // inputs.isPlaceCoralDetected = _placeDebouncer.calculate(inputs.isPlaceCoralDetectedRaw);
+        inputs.isPlaceCoralDetected = _placeRangeDetected.getValue();
 
         // inputs.isPlaceCoralDetectedRaw = _placeCoralDetectionSensor.get();
         // inputs.isPlaceCoralDetected = _placeDebouncer.calculate(inputs.isPlaceCoralDetectedRaw);
@@ -174,7 +174,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         canrangeConfigs.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
         canrangeConfigs.FovParams.FOVRangeX = 7; // TODO: tune
         canrangeConfigs.FovParams.FOVRangeY = 7; // TODO: tune
-        // canrangeConfigs.ProximityParams.ProximityHysteresis = 0.04;
+        canrangeConfigs.ProximityParams.ProximityHysteresis = 0.05;
         canrangeConfigs.ProximityParams.ProximityThreshold = 0.15; // TODO: Tune
         range.getConfigurator().apply(canrangeConfigs);
     }
