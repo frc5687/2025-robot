@@ -171,7 +171,8 @@ public class OperatorInterface {
                 .rightTrigger()
                 .whileTrue(
                         new ConditionalCommand(
-                                new EjectAlgae(container.getAlgae(), container.getElevator()),
+                                new EjectAlgae(container.getAlgae(), container.getElevator())
+                                        .andThen(() -> manager.setCoralMode()),
                                 new ConditionalCommand(
                                         AutoActions.autoPlace(container)
                                                 .andThen(() -> manager.toggleMode())
@@ -229,7 +230,8 @@ public class OperatorInterface {
                                                 container,
                                                 () ->
                                                         -RobotContainer.modifyAxis(getDriverController().getLeftX())
-                                                                * Constants.DriveTrain.MAX_MPS)));
+                                                                * Constants.DriveTrain.MAX_MPS))
+                                .andThen(new InstantCommand(() -> manager.setCoralMode())));
     }
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
