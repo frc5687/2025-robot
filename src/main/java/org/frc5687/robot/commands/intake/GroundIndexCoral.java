@@ -92,7 +92,7 @@ public class GroundIndexCoral extends OutliersCommand {
             case PREPARE_FOR_TRANSFER:
                 if ((_intake.isAtState(
                                         Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE.getIntake().get())
-                                || _stateTimer.hasElapsed(0.3))
+                                || _stateTimer.hasElapsed(0.15))
                         && _stateTimer.hasElapsed(Constants.Intake.INTAKE_PASSOFF_DELAY)) {
                     _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_GROUND_INDEX_DUTY_CYCLE);
                     _intake.setVoltages(Constants.Intake.INDEX_VOLTAGE);
