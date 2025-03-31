@@ -68,6 +68,10 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
         return angleDiff < POSITION_TOLERANCE_RAD;
     }
 
+    public boolean isClimberOutForClimb() {
+        return _outputs.desiredAngleRad == IntakeState.CLIMB.getValue();
+    }
+
     private double calculateGravityFeedForward(double angle) {
         // return ((Constants.Intake.ARM_LENGTH / 2.0)
         //                 * (Constants.Intake.GEARBOX.rOhms * Constants.Intake.ARM_MASS * 9.81)

@@ -3,7 +3,7 @@ package org.frc5687.robot.commands.drive;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Optional;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
@@ -11,6 +11,7 @@ import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 import org.frc5687.robot.subsystems.vision.VisionSubsystem;
 import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.TunableDouble;
+import org.frc5687.robot.util.vision.CoralTracker;
 
 public class DriveToGroundCoral extends DriveToPoseSmooth {
     private final DriveSubsystem _drive;
@@ -19,7 +20,7 @@ public class DriveToGroundCoral extends DriveToPoseSmooth {
     private static final TunableDouble xOffset =
             new TunableDouble("DriveToGroundCoral", "xOffset", -0.6);
     private static final TunableDouble yOffset =
-            new TunableDouble("DriveToGroundCoral", "yOffset", Units.inchesToMeters(5));
+            new TunableDouble("DriveToGroundCoral", "yOffset", 0.07);
 
     public DriveToGroundCoral(DriveSubsystem drive, VisionSubsystem vision) {
         super(
@@ -27,9 +28,10 @@ public class DriveToGroundCoral extends DriveToPoseSmooth {
                 () -> {
                     var robotPose =
                             RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
-                    // var detection = CoralTracker.getInstance().getClosestCoral(robotPose.getTranslation());
-                    var detection =
-                            Optional.of(FieldConstants.StagingPositions.rightIceCream.getTranslation());
+                    var detection = CoralTracker.getInstance().getClosestCoral(robotPose.getTranslation());
+                    if (RobotBase.isSimulation()) {
+                        detection = Optional.of(FieldConstants.StagingPositions.rightIceCream.getTranslation());
+                    }
                     if (detection.isEmpty()) {
                         return robotPose;
                     }
@@ -61,7 +63,12 @@ public class DriveToGroundCoral extends DriveToPoseSmooth {
 
     @Override
     public void end(boolean interrupted) {
-        _vision.setPipelineIndex("South_Camera", 0);
+        // _vision.setPipelineIndex("South_Camera", 0);
         super.end(interrupted);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

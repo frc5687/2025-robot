@@ -19,6 +19,7 @@ import com.ctre.phoenix6.signals.UpdateModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
@@ -43,6 +44,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
 
     private final StatusSignal<Boolean> _pickupRangeDetected;
     private final StatusSignal<Boolean> _placeRangeDetected;
+    private final Debouncer _placeDebouncer;
 
     private final StatusSignal<Angle> _absoluteAngle;
     private final StatusSignal<Angle> _wheelAngle;
@@ -63,7 +65,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         // _coralDetectionSensor = new ProximitySensor(RobotMap.DIO.CORAL_SENSOR);
         // _placeCoralDetectionSensor = new ProximitySensor(RobotMap.DIO.PLACE_CORAL_SENSOR);
         // _debouncer = new Debouncer(0.050, Debouncer.DebounceType.kRising);
-        // _placeDebouncer = new Debouncer(0.050, Debouncer.DebounceType.kFalling);
+        _placeDebouncer = new Debouncer(0.050, Debouncer.DebounceType.kFalling);
         TrapezoidProfile.Constraints constraints =
                 new TrapezoidProfile.Constraints(
                         Constants.CoralArm.MAX_VELOCITY_RAD_PER_SEC,
@@ -115,10 +117,9 @@ public class HardwareCoralArmIO implements CoralArmIO {
         inputs.angleRads = getAngleRads();
 
         inputs.isCoralDetected = _pickupRangeDetected.getValue();
-        inputs.isPlaceCoralDetected = _placeRangeDetected.getValue();
+        inputs.isPlaceCoralDetectedRaw = _placeRangeDetected.getValue();
 
-        // inputs.isCoralDetectedRaw = _coralDetectionSensor.get();
-        // inputs.isCoralDetected = _debouncer.calculate(inputs.isCoralDetectedRaw);
+        inputs.isPlaceCoralDetected = _placeDebouncer.calculate(inputs.isPlaceCoralDetectedRaw);
 
         // inputs.isPlaceCoralDetectedRaw = _placeCoralDetectionSensor.get();
         // inputs.isPlaceCoralDetected = _placeDebouncer.calculate(inputs.isPlaceCoralDetectedRaw);

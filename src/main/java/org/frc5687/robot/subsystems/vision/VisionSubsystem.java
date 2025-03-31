@@ -111,7 +111,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
             }
         }
         log("Raw Neural Detections", neuralDetections, Pose2d.struct, Importance.CRITICAL);
-        _algaeTracker.update(inputs.cameraNeuralPipelineObservations.get("limelight-center"));
+        _algaeTracker.update(inputs.cameraNeuralPipelineObservations.get("limelight-left"));
         _coralTracker.update(inputs.cameraNeuralPipelineObservations.get("South_Camera"));
     }
 

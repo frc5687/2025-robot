@@ -4,7 +4,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.frc5687.robot.Constants;
@@ -85,26 +84,27 @@ public class SimIntakeIO implements IntakeIO {
     }
 
     private void updateSimulatedCoralDetection(IntakeInputs inputs) {
-        double currentAngle = _armSim.getAngleRads();
+        // double currentAngle = _armSim.getAngleRads();
 
-        boolean inIntakePosition = isNearAngle(currentAngle, IntakeState.DEPLOYED.getValue());
+        // boolean inIntakePosition = isNearAngle(currentAngle, IntakeState.DEPLOYED.getValue());
 
-        if (inIntakePosition && !_previouslyInIntakePosition) {
-            _timeEnteredIntakePosition = Timer.getFPGATimestamp();
-        }
+        // if (inIntakePosition && !_previouslyInIntakePosition) {
+        //     _timeEnteredIntakePosition = Timer.getFPGATimestamp();
+        // }
 
-        if (inIntakePosition
-                && (Timer.getFPGATimestamp() - _timeEnteredIntakePosition) > SIM_CORAL_DETECTION_DELAY) {
-            _simulatedCoralDetected = true;
-        }
+        // if (inIntakePosition
+        //         && (Timer.getFPGATimestamp() - _timeEnteredIntakePosition) >
+        // SIM_CORAL_DETECTION_DELAY) {
+        //     _simulatedCoralDetected = true;
+        // }
 
-        if (isNearAngle(currentAngle, IntakeState.PASSOFF_TO_CORAL.getValue())
-                || isNearAngle(currentAngle, IntakeState.IDLE.getValue())) {
-            _simulatedCoralDetected = false;
-        }
+        // if (isNearAngle(currentAngle, IntakeState.PASSOFF_TO_CORAL.getValue())
+        //         || isNearAngle(currentAngle, IntakeState.IDLE.getValue())) {
+        //     _simulatedCoralDetected = false;
+        // }
 
-        _previouslyInIntakePosition = inIntakePosition;
-        inputs.isCoralDetected = _simulatedCoralDetected;
+        // _previouslyInIntakePosition = inIntakePosition;
+        // inputs.isCoralDetected = _simulatedCoralDetected;
     }
 
     private boolean isNearAngle(double currentAngle, double targetAngle) {

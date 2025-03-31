@@ -26,11 +26,12 @@ public class NeuralPipelineObservation implements EpilogueLog {
     private static final InterpolatingDoubleTreeMap CORAL_PITCH_TO_DIST =
             new InterpolatingDoubleTreeMap();
 
-    private static final double MIN_PITCH = -9.4;
+    private static final double MIN_PITCH = -12.7;
     private static final double MAX_PITCH = 12.53;
 
     static {
-        CORAL_PITCH_TO_DIST.put(MIN_PITCH, Units.inchesToMeters(39));
+        CORAL_PITCH_TO_DIST.put(MIN_PITCH, Units.inchesToMeters(36));
+        CORAL_PITCH_TO_DIST.put(-9.4, Units.inchesToMeters(39));
         CORAL_PITCH_TO_DIST.put(-4.8, Units.inchesToMeters(46.5));
         CORAL_PITCH_TO_DIST.put(-1.0, Units.inchesToMeters(57));
         CORAL_PITCH_TO_DIST.put(4.2, Units.inchesToMeters(74));

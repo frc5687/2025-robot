@@ -5,6 +5,7 @@ import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.algaearm.AlgaeArmSubsystem;
 import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
+import org.frc5687.robot.util.TunableDouble;
 
 public class EjectAlgae extends OutliersCommand {
 
@@ -12,6 +13,8 @@ public class EjectAlgae extends OutliersCommand {
     private final ElevatorSubsystem _elevator;
     private double _timeLastSeen;
     private static final double EXTRA_TIME = 0.200;
+
+    private static final TunableDouble netVoltage = new TunableDouble("EjectAlgae", "netvoltage", -7);
 
     public EjectAlgae(AlgaeArmSubsystem algae, ElevatorSubsystem elevator) {
         _algae = algae;
@@ -30,7 +33,7 @@ public class EjectAlgae extends OutliersCommand {
         if (_elevator.getElevatorHeight() < ElevatorState.LOW_ALGAE_GRAB.getHeight()) {
             _algae.setWheelMotorVoltage(-2);
         } else {
-            _algae.setWheelMotorVoltage(-12);
+            _algae.setWheelMotorVoltage(netVoltage.get());
         }
         // } else {
         //     _algae.setWheelMotorVoltage(0);

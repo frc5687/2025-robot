@@ -17,6 +17,8 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.UpdateModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -42,6 +44,7 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
     private double _voltageCommand;
     private final StatusSignal<Angle> _absoluteAngle;
     private final StatusSignal<Boolean> _isAlgaeDetected;
+    private final Debouncer _debouncer;
 
     private final TrapezoidProfile.Constraints fastConstraints;
 
@@ -52,6 +55,7 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
         _pivotMotor = new VictorSP(RobotMap.PWM.ALGAE_PIVOT_MOTOR);
         _wheelMotor = new TalonFX(RobotMap.CAN.TALONFX.ALGAE_WHEEL, "CANivore");
         _canrange = new CANrange(RobotMap.CAN.CANRANGE.ALGAE_PICKUP, "CANivore");
+        _debouncer = new Debouncer(0.050, DebounceType.kRising);
         // _algaeDetectionSensor = new ProximitySensor(RobotMap.DIO.ALGAE_SENSOR);
 
         fastConstraints =
@@ -100,7 +104,8 @@ public class HardwareAlgaeArmIO implements AlgaeArmIO {
                         .div(Constants.UPDATE_PERIOD)
                         .getRadians();
         inputs.angleRads = getAngleRads();
-        inputs.isAlgaeDetected = _isAlgaeDetected.getValue();
+        inputs.isAlgaeDetectedRaw = _isAlgaeDetected.getValue();
+        inputs.isAlgaeDetected = _debouncer.calculate(_isAlgaeDetected.getValue());
         // inputs.isAlgaeDetected = _algaeDetectionSensor.get();
         inputs.angularVelocityRadPerSec = _angularVelocityFilter.calculate(radiansPerSecond);
         inputs.motorCurrent =
