@@ -28,7 +28,7 @@ public class DriveToGroundCoral extends DriveToPoseSmooth {
                 () -> {
                     var robotPose =
                             RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).toPose2d();
-                    var detection = CoralTracker.getInstance().getClosestCoral(robotPose.getTranslation());
+                    var detection = CoralTracker.getInstance().getClosestCoral(robotPose);
                     if (RobotBase.isSimulation()) {
                         detection = Optional.of(FieldConstants.StagingPositions.rightIceCream.getTranslation());
                     }

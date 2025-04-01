@@ -97,13 +97,15 @@ public class AlgaeTracker implements EpilogueLog {
         }
     }
 
-    public Optional<Translation2d> getClosestAlgae(Translation2d robot) {
+    public Optional<Translation2d> getClosestAlgae(Pose2d robot) {
         var minDist = Double.POSITIVE_INFINITY;
         Optional<Translation2d> closestAlgae = Optional.empty();
         for (var algae : _algae) {
             var dist = Math.hypot(algae.x - robot.getX(), algae.y - robot.getY());
-            if (dist < minDist) {
-                minDist = dist;
+            var angleToAlgae = new Rotation2d(algae.x - robot.getX(), algae.y - robot.getY());
+            var angleErr = Math.abs(robot.getRotation().minus(angleToAlgae).getRadians());
+            if (dist + angleErr < minDist) {
+                minDist = dist + angleErr;
                 closestAlgae = Optional.of(new Translation2d(algae.x, algae.y));
             }
         }
