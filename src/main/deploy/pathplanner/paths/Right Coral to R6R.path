@@ -60,17 +60,6 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ReceiveFunnel",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ReceiveFunnel"
-        }
-      }
-    },
-    {
       "name": "CoralL4",
       "waypointRelativePos": 0.5994309168781726,
       "endWaypointRelativePos": null,
