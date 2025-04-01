@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 5.908712121212122,
+        "y": 0.647964015151515
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 5.6952651515151524,
+        "y": 1.4178977272727276
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Processor"
     },
     {
       "anchor": {
-        "x": 5.911631438691737,
-        "y": 0.5831770557468223
+        "x": 5.093039772727273,
+        "y": 2.774810606060606
       },
       "prevControl": {
-        "x": 5.911631438691737,
-        "y": -0.4168229442531777
+        "x": 5.42845643939394,
+        "y": 2.2869318181818183
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef 5 Ball"
     }
   ],
   "rotationTargets": [],
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 109.3845156788219
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -64.14813745793958
   },
   "useDefaultConstraints": true
 }

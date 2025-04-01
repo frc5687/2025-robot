@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.17689393939394,
+        "y": 5.168465909090909
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.061174242424243,
+        "y": 6.167092803030303
+      },
+      "isLocked": false,
+      "linkedName": "Reef 3 Ball"
+    },
+    {
+      "anchor": {
+        "x": 6.594791666666667,
+        "y": 4.025
+      },
+      "prevControl": {
+        "x": 6.622425426136364,
+        "y": 5.189905894886365
+      },
+      "nextControl": {
+        "x": 6.567157907196969,
+        "y": 2.860094105113637
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.908712121212122,
+        "y": 0.647964015151515
+      },
+      "prevControl": {
+        "x": 6.259375,
+        "y": 2.1268465909090906
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Processor"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -64.14813745793958
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -117.07208023799271
+  },
+  "useDefaultConstraints": true
+}

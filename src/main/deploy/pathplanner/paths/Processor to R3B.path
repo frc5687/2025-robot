@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.908712121212122,
+        "y": 0.647964015151515
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.846354166666666,
+        "y": 2.2488162878787876
+      },
+      "isLocked": false,
+      "linkedName": "Processor"
+    },
+    {
+      "anchor": {
+        "x": 5.17689393939394,
+        "y": 5.168465909090909
+      },
+      "prevControl": {
+        "x": 6.876846590909093,
+        "y": 5.679214015151516
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef 3 Ball"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -117.07208023799271
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -64.14813745793958
+  },
+  "useDefaultConstraints": true
+}
