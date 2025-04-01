@@ -32,7 +32,7 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
         } else if (_container.getSuperstructureManager().isAlgaeMode()) {
             if (_container.getAlgae().isAlgaeDetected()) {
                 if (withinNetTolerance()) {
-                    outputs.desiredState = LightState.PURPLE;
+                    outputs.desiredState = LightState.FIRE;
                 } else {
                     outputs.desiredState = LightState.FLASHING_GREEN;
                 }
@@ -49,7 +49,7 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
     }
 
     private boolean withinNetTolerance() {
-        double targetX = FieldConstants.fieldLength / 2.0 - Units.inchesToMeters(42); // FIXME test
+        double targetX = FieldConstants.fieldLength / 2.0 - Units.inchesToMeters(46);
 
         double fieldX =
                 RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).getX();

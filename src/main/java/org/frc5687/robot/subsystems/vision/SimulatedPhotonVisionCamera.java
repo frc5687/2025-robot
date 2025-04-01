@@ -23,10 +23,10 @@ public class SimulatedPhotonVisionCamera extends PhotonVisionCamera {
         cameraProp.setLatencyStdDevMs(5);
 
         _cameraSim = new PhotonCameraSim(_cam, cameraProp);
-        _cameraSim.enableDrawWireframe(true);
-        _cameraSim.enableProcessedStream(true);
-        _cameraSim.enableRawStream(true);
-        _cameraSim.setMaxSightRange(8.0);
+        _cameraSim.enableDrawWireframe(false);
+        _cameraSim.enableProcessedStream(false);
+        _cameraSim.enableRawStream(false);
+        _cameraSim.setMaxSightRange(2.0);
 
         _visionSim.addCamera(_cameraSim, robotToCamera);
     }

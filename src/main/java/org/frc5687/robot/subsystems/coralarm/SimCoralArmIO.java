@@ -18,7 +18,7 @@ public class SimCoralArmIO implements CoralArmIO {
 
     private boolean _previouslyInFunnelPosition = false;
     private double _timeEnteredFunnelPosition = 0;
-    private static final double SIM_CORAL_DETECTION_DELAY = 3.0;
+    private static final double SIM_CORAL_DETECTION_DELAY = 1.0;
     private boolean _simulatedCoralDetected = false;
     private double _wheelPosition = 0.0;
 

@@ -114,6 +114,11 @@ public class OperatorInterface {
                                 new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT, false),
                                 _driverController.leftTrigger()::getAsBoolean));
 
+        _driverController
+                .leftBumper()
+                .and(_driverController.rightBumper())
+                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.L1, false));
+
         // _driverController
         //         .leftJoystickButton()
         //         .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), manager,
@@ -171,7 +176,8 @@ public class OperatorInterface {
                 .rightTrigger()
                 .whileTrue(
                         new ConditionalCommand(
-                                new EjectAlgae(container.getAlgae(), container.getElevator()),
+                                new EjectAlgae(container.getAlgae(), container.getElevator())
+                                        .andThen(() -> manager.setCoralMode()),
                                 new ConditionalCommand(
                                         AutoActions.autoPlace(container)
                                                 .andThen(() -> manager.toggleMode())
@@ -229,7 +235,8 @@ public class OperatorInterface {
                                                 container,
                                                 () ->
                                                         -RobotContainer.modifyAxis(getDriverController().getLeftX())
-                                                                * Constants.DriveTrain.MAX_MPS)));
+                                                                * Constants.DriveTrain.MAX_MPS))
+                                .andThen(new InstantCommand(() -> manager.setCoralMode())));
     }
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
@@ -329,6 +336,13 @@ public class OperatorInterface {
         _operatorController
                 .rightBumper()
                 .whileTrue(manager.algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB));
+
+        _operatorController
+                .leftTrigger()
+                .onTrue(
+                        manager
+                                .receiveFromGroundIntake(RequestType.IMMEDIATE)
+                                .unless(() -> !container.getIntake().isIntakeCoralDetected()));
     }
 
     public static double modifyAxis(double value) {

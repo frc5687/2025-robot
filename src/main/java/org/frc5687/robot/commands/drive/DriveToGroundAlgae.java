@@ -3,7 +3,6 @@ package org.frc5687.robot.commands.drive;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.Optional;
 import org.frc5687.robot.RobotStateManager;
@@ -21,7 +20,7 @@ public class DriveToGroundAlgae extends DriveToPoseSmooth {
     private static final TunableDouble xOffset =
             new TunableDouble("DriveToGroundAlgae", "xOffset", 0.6);
     private static final TunableDouble yOffset =
-            new TunableDouble("DriveToGroundAlgae", "yOffset", Units.inchesToMeters(-6.75));
+            new TunableDouble("DriveToGroundAlgae", "yOffset", -0.26);
 
     public DriveToGroundAlgae(DriveSubsystem drive, VisionSubsystem vision) {
         super(

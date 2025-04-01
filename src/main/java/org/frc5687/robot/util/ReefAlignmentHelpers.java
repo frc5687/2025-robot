@@ -3,7 +3,6 @@ package org.frc5687.robot.util;
 import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -20,17 +19,11 @@ public class ReefAlignmentHelpers {
             new TunableDouble("ReefAlignmentHelpers", "ALGAE_OFFSET", 0.152);
     public static final double SAFE_APPROACH_DISTANCE = 0.48;
 
-    public static final Transform2d REEF_CENTER_TO_LEFT_L1 =
-            new Transform2d(-1.428, 0.259, Rotation2d.fromDegrees(24));
-    public static final Transform2d REEF_CENTER_TO_RIGHT_L1 =
-            new Transform2d(-1.428, -0.259, Rotation2d.fromDegrees(-24));
-
     public enum ReefSide {
         LEFT,
         RIGHT,
         ALGAE,
-        LEFT_L1,
-        RIGHT_L1
+        L1,
     }
 
     public static int calculateBestFace(Pose2d robotPose) {
@@ -99,17 +92,11 @@ public class ReefAlignmentHelpers {
                             reefCenter.getX(), FieldConstants.fieldWidth - reefCenter.getY(), Rotation2d.kZero);
         }
 
-        if (side == ReefSide.LEFT_L1) {
-            return reefCenter.plus(
-                    new Transform2d(0.0, 0.0, basePose.getRotation()).plus(REEF_CENTER_TO_LEFT_L1));
-        } else if (side == ReefSide.RIGHT_L1) {
-            return reefCenter.plus(
-                    new Transform2d(0.0, 0.0, basePose.getRotation()).plus(REEF_CENTER_TO_RIGHT_L1));
-        }
-
         double lateralOffset = (side == ReefSide.LEFT) ? LEFT_OFFSET.get() : RIGHT_OFFSET.get();
         if (side == ReefSide.ALGAE) {
             lateralOffset = ALGAE_OFFSET.get();
+        } else if (side == ReefSide.L1) {
+            lateralOffset = (LEFT_OFFSET.get() + RIGHT_OFFSET.get()) / 2.0; // cewneter
         }
 
         double lateralAngle = basePose.getRotation().getRadians() + Math.PI / 2;
