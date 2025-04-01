@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0292088274060633,
-        "y": 1.8175552913861708
+        "x": 2.34896633342161,
+        "y": 2.738631322828389
       },
       "isLocked": false,
       "linkedName": "Coral Station Right"
@@ -20,15 +20,20 @@
         "y": 3.7359
       },
       "prevControl": {
-        "x": 2.9561568583888316,
-        "y": 3.2779551011003405
+        "x": 2.471599824549788,
+        "y": 3.373004253840042
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef 1 Right"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7067669793868924,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
@@ -45,11 +50,11 @@
     },
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8454305959302324,
+      "minWaypointRelativePos": 0.5026471288071069,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 4.42,
-        "maxAcceleration": 2.0,
+        "maxAcceleration": 2.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 360.0,
         "nominalVoltage": 12.0,
@@ -71,7 +76,7 @@
       }
     },
     {
-      "name": "CoralL2",
+      "name": "CoralL4",
       "waypointRelativePos": 0.45,
       "endWaypointRelativePos": null,
       "command": {
@@ -85,8 +90,8 @@
   "globalConstraints": {
     "maxVelocity": 4.42,
     "maxAcceleration": 4.42,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 360.0,
+    "maxAngularVelocity": 120.0,
+    "maxAngularAcceleration": 200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

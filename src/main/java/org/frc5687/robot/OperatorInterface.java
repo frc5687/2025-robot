@@ -114,6 +114,11 @@ public class OperatorInterface {
                                 new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT, false),
                                 _driverController.leftTrigger()::getAsBoolean));
 
+        _driverController
+                .leftBumper()
+                .and(_driverController.rightBumper())
+                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.L1, false));
+
         // _driverController
         //         .leftJoystickButton()
         //         .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), manager,
@@ -331,6 +336,13 @@ public class OperatorInterface {
         _operatorController
                 .rightBumper()
                 .whileTrue(manager.algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB));
+
+        _operatorController
+                .leftTrigger()
+                .onTrue(
+                        manager
+                                .receiveFromGroundIntake(RequestType.IMMEDIATE)
+                                .unless(() -> !container.getIntake().isIntakeCoralDetected()));
     }
 
     public static double modifyAxis(double value) {

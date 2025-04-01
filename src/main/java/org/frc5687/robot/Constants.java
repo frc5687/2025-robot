@@ -414,7 +414,7 @@ public class Constants {
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
         public static final double WHEEL_EJECT_CORAL_DUTY_CYCLE = -1.0;
-        public static final double WHEEL_EJECT_TROTH_DUTY_CYCLE = 0.40;
+        public static final double WHEEL_EJECT_TROTH_DUTY_CYCLE = 0.5;
         public static final double WHEEL_INDEX_ROTATIONS = 2.0;
 
         public static final double WHEEL_GROUND_INDEX_DUTY_CYCLE = 0.6;

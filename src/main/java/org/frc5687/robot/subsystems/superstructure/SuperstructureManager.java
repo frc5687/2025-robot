@@ -146,41 +146,19 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
     }
 
     public Command receiveFromGroundIntake(RequestType type) {
-        return new ParallelCommandGroup(
-                createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, type),
-                new InstantCommand(
-                        () -> {
-                            // Only schedule if not already running
-                            if (!GroundIndexCoral.isRunning()) {
-                                SuperstructureRequest currentRequest = _requestHandler.getActiveRequest();
-                                if (currentRequest == null) {
-                                    currentRequest = _requestHandler.getLastActiveRequest();
-                                    if (currentRequest == null) {
-                                        currentRequest =
-                                                new SuperstructureRequest(
-                                                        Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE,
-                                                        type,
-                                                        () -> true,
-                                                        "groundIntakeReq");
-                                    }
-                                }
-                                new GroundIndexCoral(
-                                                _container.getCoral(), _container.getIntake(), this, currentRequest)
-                                        .schedule();
-                            } else {
-                                System.out.println("Skipping GroundIndexCoral scheduling - already running");
-                            }
-                        }));
+        SuperstructureRequest currentRequest =
+                new SuperstructureRequest(
+                        Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, type, () -> true, "req");
+        return createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_GROUND_INTAKE, type)
+                .andThen(
+                        new GroundIndexCoral(
+                                _container.getCoral(), _container.getIntake(), this, currentRequest));
     }
 
     public Command autoReceiveFunnel() {
         return new SequentialCommandGroup(
                 createRequest(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL, RequestType.IMMEDIATE),
                 new IntakeAndIndexCoral(_container.getCoral(), this, _requestHandler.getActiveRequest()));
-    }
-
-    public Command indexCoral() {
-        return new IntakeAndIndexCoral(_container.getCoral(), this, _requestHandler.getActiveRequest());
     }
 
     public Command receiveFunnelSim(RequestType type) {
