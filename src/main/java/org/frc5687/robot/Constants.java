@@ -554,6 +554,12 @@ public class Constants {
                         Optional.empty(),
                         Optional.empty(),
                         Optional.of(IntakeState.DEPLOYED_UNSTICK));
+        public static final SuperstructureState AUTO_BACK_OFF =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L4_CORAL_PLACING),
+                        Optional.of(CoralState.PLACING),
+                        Optional.of(AlgaeState.BARGE_DROPOFF),
+                        Optional.empty());
         public static final SuperstructureState PLACE_CORAL_L4 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4),

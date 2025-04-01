@@ -129,6 +129,25 @@
           "data": {
             "name": "AutoPlace"
           }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R1R to MLoly"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoBackUp"
+                }
+              }
+            ]
+          }
         }
       ]
     }
