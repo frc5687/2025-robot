@@ -7,37 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Middle to R4L"
+            "pathName": "Center to R4L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceHybrid"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "R4B to Processor"
+            "pathName": "R4L to Center Safe"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Processor to R5B"
+            "pathName": "Center Safe to Processor Mid"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "R5B to Processor"
+            "name": "Processor"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Processor to R3B"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "R3B to Processor"
+            "name": "PlaceHybrid"
           }
         }
       ]

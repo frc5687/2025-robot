@@ -171,6 +171,14 @@ public class RobotContainer implements EpilogueLog {
                                         getDrive(), getSuperstructureManager(), ReefSide.ALGAE, true)));
 
         NamedCommands.registerCommand(
+                "Processor",
+                _superstructureManager.grabAlgae(
+                        Constants.SuperstructureGoals.PROCESSOR_DROPOFF, RequestType.IMMEDIATE));
+        NamedCommands.registerCommand("PlaceHybrid", AutoActions.autoHybridCycle(this));
+        NamedCommands.registerCommand("ProcessorAuto", AutoActions.autoProcessorDropOff(this));
+        NamedCommands.registerCommand("IntakeAlgae", AutoActions.autoPickupAlgaeOfReef(this));
+
+        NamedCommands.registerCommand(
                 "CoralL4",
                 _superstructureManager.createRequest(
                         Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.AUTO_SEQUENCE));
