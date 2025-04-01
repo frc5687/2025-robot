@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2896516393442625,
-        "y": 2.652407786885245
+        "x": 2.183778409090909,
+        "y": 2.2550426136363644
       },
       "isLocked": false,
       "linkedName": "Coral Station Right"
@@ -20,8 +20,8 @@
         "y": 3.7359
       },
       "prevControl": {
-        "x": 2.469467213114754,
-        "y": 2.940112704918032
+        "x": 2.4629829545454545,
+        "y": 2.7237073863636363
       },
       "nextControl": null,
       "isLocked": false,
@@ -37,7 +37,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.3262454434993971,
+      "minWaypointRelativePos": 0.5493291239147597,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 4.42,
@@ -53,7 +53,7 @@
   "eventMarkers": [
     {
       "name": "CoralL4",
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 0.7592738752959745,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
