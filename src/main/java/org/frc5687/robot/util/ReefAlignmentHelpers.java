@@ -18,6 +18,7 @@ public class ReefAlignmentHelpers {
     public static final TunableDouble ALGAE_OFFSET =
             new TunableDouble("ReefAlignmentHelpers", "ALGAE_OFFSET", 0.152);
     public static final double SAFE_APPROACH_DISTANCE = 0.48;
+    public static final double SAFE_APPROACH_DISTANCE_L1 = 0.4;
 
     public enum ReefSide {
         LEFT,
@@ -59,7 +60,7 @@ public class ReefAlignmentHelpers {
                 : FieldConstants.Reef.blueAllianceTagIds[faceIndex];
     }
 
-    public static Pose2d getFaceAlignedPose(int faceIndex) {
+    public static Pose2d getFaceAlignedPose(int faceIndex, double distance) {
         Pose2d facePose = FieldConstants.Reef.centerFaces[faceIndex];
 
         // Face rotation in field coordinates
@@ -71,10 +72,14 @@ public class ReefAlignmentHelpers {
         Translation2d facePosition = facePose.getTranslation();
         Translation2d outwardOffset =
                 new Translation2d(
-                        SAFE_APPROACH_DISTANCE * Math.cos(faceAngle.getRadians()),
-                        SAFE_APPROACH_DISTANCE * Math.sin(faceAngle.getRadians()));
+                        distance * Math.cos(faceAngle.getRadians()),
+                        distance * Math.sin(faceAngle.getRadians()));
 
         return new Pose2d(facePosition.plus(outwardOffset), robotRotation);
+    }
+
+    public static Pose2d getFaceAlignedPose(int faceIndex) {
+        return getFaceAlignedPose(faceIndex, SAFE_APPROACH_DISTANCE);
     }
 
     public static Pose2d calculateTargetPose(int faceNumber, ReefSide side) {
@@ -97,6 +102,7 @@ public class ReefAlignmentHelpers {
             lateralOffset = ALGAE_OFFSET.get();
         } else if (side == ReefSide.L1) {
             lateralOffset = (LEFT_OFFSET.get() + RIGHT_OFFSET.get()) / 2.0; // cewneter
+            basePose = getFaceAlignedPose(faceIndex, SAFE_APPROACH_DISTANCE_L1);
         }
 
         double lateralAngle = basePose.getRotation().getRadians() + Math.PI / 2;
