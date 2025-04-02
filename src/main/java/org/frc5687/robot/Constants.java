@@ -272,7 +272,7 @@ public class Constants {
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
-        public static final double INTAKE_PASSOFF_DELAY = 0.15;
+        public static final double INTAKE_PASSOFF_DELAY = 0.1;
 
         public static final double CURRENT_LIMIT = 60;
 
@@ -626,7 +626,7 @@ public class Constants {
     public static class DriveToPose {
         public static final double AGGRESSIVE_ACCEL_MULTIPLIER = 3;
         public static final double COUNTERACT_GAIN = 0.5;
-        public static final double DRIVE_KP = 3.4;
+        public static final double DRIVE_KP = 3.75;
         public static final double DRIVE_KI = 0.0;
         public static final double DRIVE_KD = 0.2;
         public static final double ROT_KP = 4.0;
