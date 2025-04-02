@@ -14,6 +14,7 @@ public enum LightState {
     FIRE(new FireAnimation()),
     BLUE(0, 0, 255),
     RED(255, 0, 0),
+    YELLOW(255, 150, 0),
     PURPLE(150, 0, 255),
     PINK(255, 30, 190);
 

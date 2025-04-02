@@ -9,6 +9,7 @@ import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.subsystems.SubsystemIO;
 import org.frc5687.robot.util.FieldConstants;
+import org.frc5687.robot.util.vision.CoralTracker;
 
 public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs> {
     private final RobotContainer _container;
@@ -31,11 +32,7 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
             outputs.desiredState = LightState.PINK;
         } else if (_container.getSuperstructureManager().isAlgaeMode()) {
             if (_container.getAlgae().isAlgaeDetected()) {
-                if (withinNetTolerance()) {
-                    outputs.desiredState = LightState.FIRE;
-                } else {
-                    outputs.desiredState = LightState.FLASHING_GREEN;
-                }
+                outputs.desiredState = LightState.FLASHING_GREEN;
             } else {
                 outputs.desiredState = LightState.SOLID_GREEN;
             }
@@ -43,7 +40,18 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
             if (_container.getCoral().isCoralDetected()) {
                 outputs.desiredState = LightState.FLASHING_WHITE;
             } else {
-                outputs.desiredState = LightState.SOLID_WHITE;
+                var pose = RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE);
+                if (pose != null
+                        && CoralTracker.getInstance().getClosestCoral(pose.toPose2d()).isPresent()) {
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isEmpty()) {
+                        outputs.desiredState = LightState.YELLOW;
+                    } else {
+                        outputs.desiredState = LightState.BLUE;
+                    }
+                } else {
+                    outputs.desiredState = LightState.SOLID_WHITE;
+                }
             }
         }
     }
