@@ -21,6 +21,7 @@ import org.frc5687.robot.commands.algae.AutoNetScore;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
+import org.frc5687.robot.commands.algae.SuckAlgae;
 import org.frc5687.robot.commands.auto.AutoActions;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
@@ -229,6 +230,7 @@ public class OperatorInterface {
                                 .andThen(
                                         new WaitUntilCommand(AutoNetScore::isCloseEnoughToShoot)
                                                 .alongWith(new WaitCommand(0.25)))
+                                .deadlineFor(new SuckAlgae(container.getAlgae()))
                                 .andThen(new EjectAlgae(container.getAlgae(), container.getElevator()))
                                 .deadlineFor(
                                         new AutoNetScore(
@@ -237,6 +239,23 @@ public class OperatorInterface {
                                                         -RobotContainer.modifyAxis(getDriverController().getLeftX())
                                                                 * Constants.DriveTrain.MAX_MPS))
                                 .andThen(new InstantCommand(() -> manager.setCoralMode())));
+
+        _driverController
+                .a()
+                .onTrue(
+                        new TeleopDriveWithSnapTo(
+                                Degrees.of(-75).in(Radians),
+                                container.getDrive(),
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftY())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftX())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getRightX())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () -> true));
     }
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
