@@ -13,7 +13,7 @@ public enum ElevatorState {
     LOW_ALGAE_GRAB(0.324),
     HIGH_ALGAE_GRAB(0.561 - 0.04),
     L4_CORAL_PLACING(Constants.Elevator.MAX_HEIGHT),
-    BARGE_PLACING(Constants.Elevator.MAX_HEIGHT);
+    BARGE_PLACING(0.65);
 
     private final double _height;
 
