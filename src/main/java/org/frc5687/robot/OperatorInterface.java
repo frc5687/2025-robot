@@ -132,6 +132,13 @@ public class OperatorInterface {
         _driverController.povUpLeft().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpRight().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
 
+        _driverController
+                .povLeft()
+                .onTrue(new InstantCommand(() -> container.getDrive().rosieEnabled = true));
+        _driverController
+                .povRight()
+                .onTrue(new InstantCommand(() -> container.getDrive().rosieEnabled = false));
+
         _driverController.povDown().whileTrue(new EmergencyEjectIntake(container.getIntake()));
         _driverController.povDownLeft().whileTrue(new EmergencyEjectIntake(container.getIntake()));
         _driverController.povDownRight().whileTrue(new EmergencyEjectIntake(container.getIntake()));
@@ -212,15 +219,18 @@ public class OperatorInterface {
                 .leftMiddleButton()
                 .onTrue(
                         new ConditionalCommand(
-                                new InstantCommand(container.getClimber()::toggleClimberSetpoint),
-                                new InstantCommand(() -> container.getVision().setPipelineIndex("South_Camera", -1))
-                                        .alongWith(
-                                                manager
-                                                        .createRequest(
-                                                                Constants.SuperstructureGoals.CLIMB, RequestType.IMMEDIATE)
-                                                        .andThen(
-                                                                new InstantCommand(container.getClimber()::toggleClimberSetpoint))),
-                                container.getIntake()::isClimberOutForClimb));
+                                        new InstantCommand(container.getClimber()::toggleClimberSetpoint),
+                                        new InstantCommand(
+                                                        () -> container.getVision().setPipelineIndex("South_Camera", -1))
+                                                .alongWith(
+                                                        manager
+                                                                .createRequest(
+                                                                        Constants.SuperstructureGoals.CLIMB, RequestType.IMMEDIATE)
+                                                                .andThen(
+                                                                        new InstantCommand(
+                                                                                container.getClimber()::toggleClimberSetpoint))),
+                                        container.getIntake()::isClimberOutForClimb)
+                                .alongWith(new InstantCommand(() -> container.getDrive().rosieEnabled = false)));
 
         _driverController
                 .b()

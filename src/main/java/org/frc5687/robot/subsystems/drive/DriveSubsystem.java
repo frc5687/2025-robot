@@ -57,6 +57,8 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     private final RobotConfig _robotConfig;
 
+    public boolean rosieEnabled;
+
     public DriveSubsystem(RobotContainer container, DriveIO io, Translation2d[] moduleLocations) {
         super(container, io, new DriveInputs(), new DriveOutputs());
         _container = container;
@@ -104,6 +106,8 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                         new ChassisSpeeds(),
                         _inputs.measuredStates,
                         DriveFeedforwards.zeros(_robotConfig.numModules));
+
+        rosieEnabled = true;
 
         configureAutoBuilder(_robotConfig);
     }
@@ -169,6 +173,14 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
 
     public Rotation2d getHeading() {
         return _inputs.yawPosition;
+    }
+
+    public Rotation2d getPitch() {
+        return _inputs.pitchPosition;
+    }
+
+    public Rotation2d getRoll() {
+        return _inputs.rollPosition;
     }
 
     public void zeroIMU() {
