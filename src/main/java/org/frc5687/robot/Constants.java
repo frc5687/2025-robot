@@ -300,7 +300,7 @@ public class Constants {
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
         public static final double MIN_HEIGHT = 0.0; // m
-        public static final double MAX_HEIGHT = 0.678; // m
+        public static final double MAX_HEIGHT = 0.678 + 0.007; // m
 
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =
@@ -563,6 +563,10 @@ public class Constants {
         public static final SuperstructureState PLACE_CORAL_L4 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4),
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
+        public static final SuperstructureState AUTO_L4_CORAL_PLACING =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4_AUTO),
                         Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
 
         public static final SuperstructureState PLACE_CORAL_L3 =
