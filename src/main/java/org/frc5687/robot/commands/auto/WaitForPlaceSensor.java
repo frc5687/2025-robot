@@ -12,13 +12,7 @@ public class WaitForPlaceSensor extends Command {
     }
 
     @Override
-    public void execute() {
-        // TODO Auto-generated method stub
-        super.execute();
-    }
-
-    @Override
     public boolean isFinished() {
-        return _arm.isPlaceCoralPlaced();
+        return _arm.isPlaceCoralPlaced() && !_arm.isCoralDetected();
     }
 }
