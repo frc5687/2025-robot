@@ -276,8 +276,8 @@ public class Constants {
 
         public static final double CURRENT_LIMIT = 60;
 
-        public static final double kP = 50.0; // 60.0
-        public static final double kI = 25.0; // 25.0
+        public static final double kP = 75.0;
+        public static final double kI = 25.0;
         public static final double kD = 0.0;
         public static final double kS = 0.0;
         public static final double kV = 0.0;
