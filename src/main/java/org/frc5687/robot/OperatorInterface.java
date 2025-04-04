@@ -171,7 +171,11 @@ public class OperatorInterface {
                                 manager
                                         .createRequest(
                                                 Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE)
-                                        .andThen(new IntakeAlgae(container.getAlgae())),
+                                        .andThen(new IntakeAlgae(container.getAlgae()))
+                                        .andThen(
+                                                manager.createRequest(
+                                                        Constants.SuperstructureGoals.PROCESSOR_DROPOFF,
+                                                        RequestType.IMMEDIATE)),
                                 manager::isCoralMode));
 
         _intakeCoralDetectedTrigger.onTrue(
