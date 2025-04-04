@@ -93,6 +93,7 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
+        _robotContainer.getCoral().setWheelMotorDutyCycle(0);
     }
 
     @Override
