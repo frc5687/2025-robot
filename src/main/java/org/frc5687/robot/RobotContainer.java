@@ -2,6 +2,7 @@ package org.frc5687.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,6 +42,7 @@ import org.frc5687.robot.subsystems.lights.HardwareLightsIO;
 import org.frc5687.robot.subsystems.lights.LightSubsystem;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureManager.SuperstructureMode;
 import org.frc5687.robot.subsystems.vision.HardwareVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.subsystems.vision.VisionIO;
@@ -198,6 +200,10 @@ public class RobotContainer implements EpilogueLog {
     }
 
     public void periodic() {
+        log(
+                "Is Algae Mode",
+                _superstructureManager.getCurrentMode() == SuperstructureMode.ALGAE,
+                Importance.CRITICAL);
         RobotStateManager.getInstance().logComponentPoses();
         RobotStateManager.getInstance().updateOdometry();
         RobotStateManager.getInstance().logEstimatedPoses();
