@@ -1,14 +1,11 @@
 package org.frc5687.robot.subsystems.lights;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
 import org.frc5687.robot.subsystems.SubsystemIO;
-import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.vision.CoralTracker;
 
 public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs> {
@@ -54,17 +51,5 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
                 }
             }
         }
-    }
-
-    private boolean withinNetTolerance() {
-        double targetX = FieldConstants.fieldLength / 2.0 - Units.inchesToMeters(46);
-
-        double fieldX =
-                RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE).getX();
-        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
-            fieldX = FieldConstants.fieldLength - fieldX;
-        }
-        double err = Math.abs(fieldX - targetX);
-        return err < Units.inchesToMeters(4);
     }
 }
