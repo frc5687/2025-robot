@@ -174,7 +174,7 @@ public class HardwareCoralArmIO implements CoralArmIO {
         canrangeConfigs.ToFParams.UpdateMode = UpdateModeValue.ShortRange100Hz;
         canrangeConfigs.FovParams.FOVRangeX = 7; // TODO: tune
         canrangeConfigs.FovParams.FOVRangeY = 7; // TODO: tune
-        canrangeConfigs.ProximityParams.ProximityHysteresis = 0.05;
+        canrangeConfigs.ProximityParams.ProximityHysteresis = 0.03;
         canrangeConfigs.ProximityParams.ProximityThreshold = 0.15; // TODO: Tune
         range.getConfigurator().apply(canrangeConfigs);
     }
