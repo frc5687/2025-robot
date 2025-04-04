@@ -231,6 +231,8 @@ public class OperatorInterface {
                                                                 .createRequest(
                                                                         Constants.SuperstructureGoals.CLIMB, RequestType.IMMEDIATE)
                                                                 .andThen(
+                                                                        new InstantCommand(container.getIntake()::disableIntakeMotors))
+                                                                .andThen(
                                                                         new InstantCommand(
                                                                                 container.getClimber()::toggleClimberSetpoint))),
                                         container.getIntake()::isClimberOutForClimb)
