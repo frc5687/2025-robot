@@ -1,1 +1,158 @@
-{"version":"2025.0","command":{"type":"sequential","data":{"commands":[{"type":"path","data":{"pathName":"(Flipped) Opp to R5R"}},{"type":"named","data":{"name":"AutoPlace"}},{"type":"parallel","data":{"commands":[{"type":"named","data":{"name":"ReceiveFunnel"}},{"type":"sequential","data":{"commands":[{"type":"path","data":{"pathName":"(Flipped) R5R to Right Coral"}},{"type":"path","data":{"pathName":"(Flipped) Right Coral to R6L"}}]}}]}},{"type":"named","data":{"name":"AutoPlace"}},{"type":"parallel","data":{"commands":[{"type":"named","data":{"name":"ReceiveFunnel"}},{"type":"sequential","data":{"commands":[{"type":"path","data":{"pathName":"(Flipped) R6L to Right Coral"}},{"type":"path","data":{"pathName":"(Flipped) Right Coral to R6R"}}]}}]}},{"type":"named","data":{"name":"AutoPlace"}},{"type":"parallel","data":{"commands":[{"type":"named","data":{"name":"ReceiveFunnel"}},{"type":"sequential","data":{"commands":[{"type":"path","data":{"pathName":"(Flipped) R6R to Right Coral"}},{"type":"path","data":{"pathName":"(Flipped) Right Coral to R1R"}}]}}]}},{"type":"named","data":{"name":"AutoPlace"}},{"type":"parallel","data":{"commands":[{"type":"path","data":{"pathName":"(Flipped) R1R to MLoly"}},{"type":"named","data":{"name":"AutoBackUp"}}]}}]}},"resetOdom":true,"folder":null,"choreoAuto":false}
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "(Flipped) Opp to R5R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "(Flipped) R5R to Right Coral"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "(Flipped) Right Coral to R6L"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReceiveFunnel"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "(Flipped) R6L to Right Coral"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "(Flipped) Right Coral to R6R"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReceiveFunnel"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "(Flipped) R6R to Right Coral"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "(Flipped) Right Coral to R1R"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReceiveFunnel"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "(Flipped) R1R to MLoly"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoBackUp"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
