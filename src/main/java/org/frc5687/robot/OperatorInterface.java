@@ -236,7 +236,8 @@ public class OperatorInterface {
                                                                         new InstantCommand(
                                                                                 container.getClimber()::toggleClimberSetpoint))),
                                         container.getIntake()::isClimberOutForClimb)
-                                .alongWith(new InstantCommand(() -> container.getDrive().rosieEnabled = false)));
+                                .alongWith(new InstantCommand(() -> container.getDrive().rosieEnabled = false))
+                                .alongWith(new InstantCommand(() -> container.getDrive().slowModeEnabled = true)));
 
         _driverController
                 .b()

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 
@@ -64,6 +65,12 @@ public class TeleopDriveCommand extends OutliersCommand {
                                 _xSupplier.getAsDouble(),
                                 _ySupplier.getAsDouble(),
                                 _rotationSupplier.getAsDouble());
+
+        if (_drive.slowModeEnabled) {
+            chassisSpeeds.vxMetersPerSecond *= 2.0 / Constants.DriveTrain.MAX_MPS;
+            chassisSpeeds.vyMetersPerSecond *= 2.0 / Constants.DriveTrain.MAX_MPS;
+            chassisSpeeds.omegaRadiansPerSecond /= 2.0;
+        }
 
         _drive.setDesiredChassisSpeeds(chassisSpeeds);
     }

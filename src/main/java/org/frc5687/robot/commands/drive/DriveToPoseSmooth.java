@@ -17,8 +17,8 @@ public class DriveToPoseSmooth extends OutliersCommand {
     private final Supplier<Pose2d> _poseSupplier;
 
     private ChassisSpeeds _fieldRelativeVelocity;
-    private final PIDController _xController;
-    private final PIDController _yController;
+    protected final PIDController _xController;
+    protected final PIDController _yController;
     protected final PIDController _rotationController;
 
     private final TunableDouble _smoothingFactor =

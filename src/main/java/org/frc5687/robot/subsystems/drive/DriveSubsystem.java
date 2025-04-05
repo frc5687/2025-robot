@@ -58,6 +58,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     private final RobotConfig _robotConfig;
 
     public boolean rosieEnabled;
+    public boolean slowModeEnabled;
 
     public DriveSubsystem(RobotContainer container, DriveIO io, Translation2d[] moduleLocations) {
         super(container, io, new DriveInputs(), new DriveOutputs());
@@ -108,6 +109,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                         DriveFeedforwards.zeros(_robotConfig.numModules));
 
         rosieEnabled = true;
+        slowModeEnabled = false;
 
         configureAutoBuilder(_robotConfig);
     }

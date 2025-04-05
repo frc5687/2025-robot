@@ -568,6 +568,10 @@ public class Constants {
                 new SuperstructureState(
                         Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4_AUTO),
                         Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
+        public static final SuperstructureState AUTO_L4_CORAL_PLACING_2 =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4_AUTO_2),
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
 
         public static final SuperstructureState PLACE_CORAL_L3 =
                 new SuperstructureState(

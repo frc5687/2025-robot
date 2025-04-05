@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "(Flipped) Opp to R5L"
+            "pathName": "(Flipped) Opp to R5R"
           }
         },
         {
@@ -17,9 +17,15 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReceiveFunnel"
+                }
+              },
               {
                 "type": "sequential",
                 "data": {
@@ -27,7 +33,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "(Flipped) R5L to Right Coral"
+                        "pathName": "(Flipped) R5R to Right Coral"
                       }
                     },
                     {
@@ -37,12 +43,6 @@
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ReceiveFunnel"
                 }
               }
             ]
@@ -55,9 +55,15 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReceiveFunnel"
+                }
+              },
               {
                 "type": "sequential",
                 "data": {
@@ -76,12 +82,6 @@
                     }
                   ]
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ReceiveFunnel"
-                }
               }
             ]
           }
@@ -93,9 +93,15 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReceiveFunnel"
+                }
+              },
               {
                 "type": "sequential",
                 "data": {
@@ -109,16 +115,10 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "(Flipped) Right Coral to R1R"
+                        "pathName": "(Flipped) Right Coral to R5L"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ReceiveFunnel"
                 }
               }
             ]
@@ -137,7 +137,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "(Flipped) R1R to MLoly"
+                  "pathName": "(Flipped) r5l backup"
                 }
               },
               {

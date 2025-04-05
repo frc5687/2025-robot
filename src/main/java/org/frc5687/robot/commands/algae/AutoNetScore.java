@@ -29,7 +29,7 @@ public class AutoNetScore extends OutliersCommand {
             new TunableDouble("AutoNetScore", "shoot distance (inches)", 4);
 
     private static final TunableDouble setpointDist =
-            new TunableDouble("AutoNetScore", "setpointDist (inches)", 54);
+            new TunableDouble("AutoNetScore", "setpointDist (inches)", 53);
 
     public AutoNetScore(RobotContainer _container, Supplier<Double> _ySupplier) {
         this._drive = _container.getDrive();

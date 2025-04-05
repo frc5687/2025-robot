@@ -10,7 +10,8 @@ public enum CoralState {
     PLACING_L1(4.4),
     PLACING(Units.degreesToRadians(30 + 90)), // 27.5 deg
     PLACING_L4(Units.degreesToRadians(30 + 90 + 10)), // 27.5 deg
-    PLACING_L4_AUTO(Units.degreesToRadians(30 + 90 + 10 + 5)); // a bit lower
+    PLACING_L4_AUTO(Units.degreesToRadians(30 + 90 + 10 + 5)), // a bit lower
+    PLACING_L4_AUTO_2(Units.degreesToRadians(30 + 90 + 10 + 7)); // a bit lower
 
     private final double _armAngle;
 
