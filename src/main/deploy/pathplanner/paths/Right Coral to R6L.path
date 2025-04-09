@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5455305713750034,
-        "y": 0.7363599874196086
+        "x": 1.5754210069444434,
+        "y": 0.7072866030092587
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.25194651952269,
-        "y": 1.4203124028790004
+        "x": 2.721521236590003,
+        "y": 1.782103226647989
       },
       "isLocked": false,
       "linkedName": "Coral Station Right"
@@ -20,8 +20,8 @@
         "y": 2.907
       },
       "prevControl": {
-        "x": 3.386358598922239,
-        "y": 2.5061776543124585
+        "x": 3.3842583090572034,
+        "y": 2.466494388903601
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,13 +32,26 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.6051949474299069,
+      "minWaypointRelativePos": 0.4974545454545465,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 2.5,
-        "maxAcceleration": 1.7,
+        "maxAcceleration": 2.5,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.16711141896802328,
+      "constraints": {
+        "maxVelocity": 4.42,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 360.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -47,19 +60,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ReceiveFunnel",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "ReceiveFunnel"
-        }
-      }
-    },
-    {
       "name": "CoralL4",
-      "waypointRelativePos": 0.7461532360406087,
+      "waypointRelativePos": 0.5,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -70,10 +72,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.5,
-    "maxAcceleration": 3.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxVelocity": 4.42,
+    "maxAcceleration": 4.42,
+    "maxAngularVelocity": 120.0,
+    "maxAngularAcceleration": 200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

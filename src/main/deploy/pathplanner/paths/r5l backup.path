@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.0
+        "x": 5.098,
+        "y": 2.872
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0,
-        "y": 7.0
+        "x": 5.536944203478358,
+        "y": 2.111726337887633
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef 5 Left"
     },
     {
       "anchor": {
-        "x": 5.911631438691737,
-        "y": 0.5831770557468223
+        "x": 5.733321471133475,
+        "y": 1.758725337658899
       },
       "prevControl": {
-        "x": 5.911631438691737,
-        "y": -0.4168229442531777
+        "x": 5.233321471133475,
+        "y": 2.6247507414433393
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,22 +33,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.5,
-    "maxAcceleration": 3.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxVelocity": 4.42,
+    "maxAcceleration": 4.42,
+    "maxAngularVelocity": 120.0,
+    "maxAngularAcceleration": 200.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

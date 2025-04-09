@@ -16,4 +16,7 @@ public class IntakeOutputs extends BaseOutputs {
 
     @Logged(name = "Dynamics Feed Forward (V)", importance = Logged.Importance.DEBUG)
     public double dynamicsFF = 0.0;
+
+    @Logged(name = "Intake Disabled", importance = Logged.Importance.CRITICAL)
+    public boolean disabled = false;
 }

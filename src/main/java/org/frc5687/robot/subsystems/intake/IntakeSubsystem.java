@@ -80,6 +80,10 @@ public class IntakeSubsystem extends OutliersSubsystem<IntakeInputs, IntakeOutpu
         return 0.0;
     }
 
+    public void disableIntakeMotors() {
+        _outputs.disabled = true;
+    }
+
     public boolean isIntakeCoralDetected() {
         return _inputs.isCoralDetected;
     }

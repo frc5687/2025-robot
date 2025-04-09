@@ -17,15 +17,73 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "R5R to Right Coral"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReceiveFunnel"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "R5R to Right Coral"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Right Coral to R6L"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Right Coral to R6L"
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReceiveFunnel"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "R6L to Right Coral"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Right Coral to R6R"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
@@ -35,15 +93,35 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "R6L to Right Coral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Right Coral to R6R"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReceiveFunnel"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "R6R to Right Coral"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Right Coral to R1R"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {
@@ -53,21 +131,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "R6R to Right Coral"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Right Coral to R1R"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoPlace"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "R1R to MLoly"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoBackUp"
+                }
+              }
+            ]
           }
         }
       ]

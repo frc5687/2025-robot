@@ -21,6 +21,7 @@ import org.frc5687.robot.commands.algae.AutoNetScore;
 import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.EmergencyEjectAlgae;
 import org.frc5687.robot.commands.algae.IntakeAlgae;
+import org.frc5687.robot.commands.algae.SuckAlgae;
 import org.frc5687.robot.commands.auto.AutoActions;
 import org.frc5687.robot.commands.coral.EjectCoral;
 import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
@@ -114,6 +115,11 @@ public class OperatorInterface {
                                 new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.RIGHT, false),
                                 _driverController.leftTrigger()::getAsBoolean));
 
+        _driverController
+                .leftBumper()
+                .and(_driverController.rightBumper())
+                .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), manager, ReefSide.L1, false));
+
         // _driverController
         //         .leftJoystickButton()
         //         .whileTrue(new DynamicDriveToReefBranch(container.getDrive(), manager,
@@ -125,6 +131,13 @@ public class OperatorInterface {
         _driverController.povUp().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpLeft().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
         _driverController.povUpRight().whileTrue(new EmergencyEjectAlgae(container.getAlgae()));
+
+        _driverController
+                .povLeft()
+                .onTrue(new InstantCommand(() -> container.getDrive().rosieEnabled = true));
+        _driverController
+                .povRight()
+                .onTrue(new InstantCommand(() -> container.getDrive().rosieEnabled = false));
 
         _driverController.povDown().whileTrue(new EmergencyEjectIntake(container.getIntake()));
         _driverController.povDownLeft().whileTrue(new EmergencyEjectIntake(container.getIntake()));
@@ -158,7 +171,11 @@ public class OperatorInterface {
                                 manager
                                         .createRequest(
                                                 Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE)
-                                        .andThen(new IntakeAlgae(container.getAlgae())),
+                                        .andThen(new IntakeAlgae(container.getAlgae()))
+                                        .andThen(
+                                                manager.createRequest(
+                                                        Constants.SuperstructureGoals.PROCESSOR_DROPOFF,
+                                                        RequestType.IMMEDIATE)),
                                 manager::isCoralMode));
 
         _intakeCoralDetectedTrigger.onTrue(
@@ -171,7 +188,8 @@ public class OperatorInterface {
                 .rightTrigger()
                 .whileTrue(
                         new ConditionalCommand(
-                                new EjectAlgae(container.getAlgae(), container.getElevator()),
+                                new EjectAlgae(container.getAlgae(), container.getElevator())
+                                        .andThen(() -> manager.setCoralMode()),
                                 new ConditionalCommand(
                                         AutoActions.autoPlace(container)
                                                 .andThen(() -> manager.toggleMode())
@@ -205,15 +223,21 @@ public class OperatorInterface {
                 .leftMiddleButton()
                 .onTrue(
                         new ConditionalCommand(
-                                new InstantCommand(container.getClimber()::toggleClimberSetpoint),
-                                new InstantCommand(() -> container.getVision().setPipelineIndex("South_Camera", -1))
-                                        .alongWith(
-                                                manager
-                                                        .createRequest(
-                                                                Constants.SuperstructureGoals.CLIMB, RequestType.IMMEDIATE)
-                                                        .andThen(
-                                                                new InstantCommand(container.getClimber()::toggleClimberSetpoint))),
-                                container.getIntake()::isClimberOutForClimb));
+                                        new InstantCommand(container.getClimber()::toggleClimberSetpoint),
+                                        new InstantCommand(
+                                                        () -> container.getVision().setPipelineIndex("South_Camera", -1))
+                                                .alongWith(
+                                                        manager
+                                                                .createRequest(
+                                                                        Constants.SuperstructureGoals.CLIMB, RequestType.IMMEDIATE)
+                                                                .andThen(
+                                                                        new InstantCommand(container.getIntake()::disableIntakeMotors))
+                                                                .andThen(
+                                                                        new InstantCommand(
+                                                                                container.getClimber()::toggleClimberSetpoint))),
+                                        container.getIntake()::isClimberOutForClimb)
+                                .alongWith(new InstantCommand(() -> container.getDrive().rosieEnabled = false))
+                                .alongWith(new InstantCommand(() -> container.getDrive().slowModeEnabled = true)));
 
         _driverController
                 .b()
@@ -223,13 +247,32 @@ public class OperatorInterface {
                                 .andThen(
                                         new WaitUntilCommand(AutoNetScore::isCloseEnoughToShoot)
                                                 .alongWith(new WaitCommand(0.25)))
+                                .deadlineFor(new SuckAlgae(container.getAlgae()))
                                 .andThen(new EjectAlgae(container.getAlgae(), container.getElevator()))
                                 .deadlineFor(
                                         new AutoNetScore(
                                                 container,
                                                 () ->
                                                         -RobotContainer.modifyAxis(getDriverController().getLeftX())
-                                                                * Constants.DriveTrain.MAX_MPS)));
+                                                                * Constants.DriveTrain.MAX_MPS))
+                                .andThen(new InstantCommand(() -> manager.setCoralMode())));
+
+        _driverController
+                .a()
+                .onTrue(
+                        new TeleopDriveWithSnapTo(
+                                Degrees.of(-75).in(Radians),
+                                container.getDrive(),
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftY())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getLeftX())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () ->
+                                        -RobotContainer.modifyAxis(getDriverController().getRightX())
+                                                * Constants.DriveTrain.MAX_MPS,
+                                () -> true));
     }
 
     /** OPERATOR CONTROLS: Coral Mode Algae Mode L1 L2 L3 L4 Place Reef Place Processor */
@@ -329,6 +372,13 @@ public class OperatorInterface {
         _operatorController
                 .rightBumper()
                 .whileTrue(manager.algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB));
+
+        _operatorController
+                .leftTrigger()
+                .onTrue(
+                        manager
+                                .receiveFromGroundIntake(RequestType.IMMEDIATE)
+                                .unless(() -> !container.getIntake().isIntakeCoralDetected()));
     }
 
     public static double modifyAxis(double value) {

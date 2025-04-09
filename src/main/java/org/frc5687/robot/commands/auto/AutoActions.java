@@ -2,9 +2,16 @@ package org.frc5687.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
+import org.frc5687.robot.commands.algae.EjectAlgae;
+import org.frc5687.robot.commands.drive.DriveToProcessorLineup;
+import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
+import org.frc5687.robot.commands.elevator.GoToAlgaeHeight;
+import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class AutoActions {
 
@@ -22,5 +29,32 @@ public class AutoActions {
                         () -> {
                             container.getCoral().setWheelMotorDutyCycle(0);
                         }));
+    }
+
+    public static Command autoProcessorDropOff(RobotContainer container) {
+        return new DriveToProcessorLineup(container.getDrive(), container.getSuperstructureManager())
+                .andThen(new EjectAlgae(container.getAlgae(), container.getElevator()));
+    }
+
+    public static Command autoHybridCycle(RobotContainer container) {
+        return autoPlace(container)
+                .andThen(() -> container.getSuperstructureManager().toggleMode())
+                .andThen(
+                        new ParallelCommandGroup(
+                                container.getSuperstructureManager().hybridAlgaeIntake(),
+                                new GoToAlgaeHeight(container.getElevator(), container.getDrive()),
+                                new DynamicDriveToReefBranch(
+                                        container.getDrive(),
+                                        container.getSuperstructureManager(),
+                                        ReefSide.ALGAE,
+                                        true)));
+    }
+
+    public static Command autoPickupAlgaeOfReef(RobotContainer container) {
+        return container.getSuperstructureManager().hybridAlgaeIntake();
+    }
+
+    public static Command autoGroundInakeCoral(RobotContainer container) {
+        return new WaitCommand(0);
     }
 }

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import org.frc5687.robot.Constants;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.drive.DriveSubsystem;
 
@@ -16,6 +17,7 @@ public class TeleopDriveCommand extends OutliersCommand {
     private final DoubleSupplier _ySupplier;
     private final DoubleSupplier _rotationSupplier;
     private final BooleanSupplier _fieldRelativeSupplier;
+    private static final double ROSIE_THRESHOLD = 10; // 10deg
 
     private boolean _rightStickCentered;
 
@@ -36,6 +38,16 @@ public class TeleopDriveCommand extends OutliersCommand {
 
     @Override
     public void execute(double timestamp) {
+        if (_drive.rosieEnabled
+                && (Math.abs(_drive.getPitch().getDegrees()) > ROSIE_THRESHOLD
+                        || Math.abs(_drive.getRoll().getDegrees()) > ROSIE_THRESHOLD)) {
+            var chassisSpeeds =
+                    new ChassisSpeeds(
+                            0.5 * _drive.getPitch().getDegrees(), -0.5 * _drive.getRoll().getDegrees(), 0.0);
+            _drive.setDesiredChassisSpeeds(chassisSpeeds);
+            return;
+        }
+
         // Calculate chassis speeds
         Optional<Alliance> alliance = DriverStation.getAlliance();
         Rotation2d relativeHeading = _drive.getHeading();
@@ -53,6 +65,12 @@ public class TeleopDriveCommand extends OutliersCommand {
                                 _xSupplier.getAsDouble(),
                                 _ySupplier.getAsDouble(),
                                 _rotationSupplier.getAsDouble());
+
+        if (_drive.slowModeEnabled) {
+            chassisSpeeds.vxMetersPerSecond *= 2.0 / Constants.DriveTrain.MAX_MPS;
+            chassisSpeeds.vyMetersPerSecond *= 2.0 / Constants.DriveTrain.MAX_MPS;
+            chassisSpeeds.omegaRadiansPerSecond /= 2.0;
+        }
 
         _drive.setDesiredChassisSpeeds(chassisSpeeds);
     }

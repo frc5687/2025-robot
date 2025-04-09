@@ -1,1 +1,85 @@
-{"version":"2025.0","command":{"type":"sequential","data":{"commands":[{"type":"path","data":{"pathName":"(Flipped)  (PUSH) Ally to R3R"}},{"type":"named","data":{"name":"AutoPlace"}},{"type":"path","data":{"pathName":"(Flipped) R5L to Right Coral"}},{"type":"named","data":{"name":"ReceiveFunnel"}},{"type":"path","data":{"pathName":"(Flipped) Right Coral to R6R"}},{"type":"named","data":{"name":"AutoPlace"}},{"type":"path","data":{"pathName":"(Flipped) R6R to Right Coral"}},{"type":"named","data":{"name":"ReceiveFunnel"}},{"type":"path","data":{"pathName":"(Flipped) Right Coral to R6L"}},{"type":"named","data":{"name":"AutoPlace"}},{"type":"path","data":{"pathName":"(Flipped) R6L to Right Coral"}},{"type":"named","data":{"name":"ReceiveFunnel"}}]}},"resetOdom":true,"folder":null,"choreoAuto":false}
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "(Flipped)  (PUSH) Ally to R3R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "(Flipped) R5L to Right Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ReceiveFunnel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "(Flipped) Right Coral to R6R"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "(Flipped) R6R to Right Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ReceiveFunnel"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "(Flipped) Right Coral to R6L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "(Flipped) R6L to Right Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ReceiveFunnel"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

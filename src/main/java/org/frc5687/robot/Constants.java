@@ -272,12 +272,12 @@ public class Constants {
         public static final boolean INTAKE_INVERTED = true;
         public static final boolean ROLLER_INVERTED = true;
 
-        public static final double INTAKE_PASSOFF_DELAY = 0.3;
+        public static final double INTAKE_PASSOFF_DELAY = 0.1;
 
         public static final double CURRENT_LIMIT = 60;
 
-        public static final double kP = 50.0; // 60.0
-        public static final double kI = 25.0; // 25.0
+        public static final double kP = 75.0;
+        public static final double kI = 25.0;
         public static final double kD = 0.0;
         public static final double kS = 0.0;
         public static final double kV = 0.0;
@@ -300,7 +300,7 @@ public class Constants {
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
         public static final double MIN_HEIGHT = 0.0; // m
-        public static final double MAX_HEIGHT = 0.678; // m
+        public static final double MAX_HEIGHT = 0.678 + 0.007; // m
 
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =
@@ -414,7 +414,7 @@ public class Constants {
         public static final double MAX_VELOCITY_RAD_PER_SEC = GEARBOX.freeSpeedRadPerSec / GEAR_RATIO;
         // public static final double MAX_ACCELERATION_RAD_PER_SEC_SQUARED = 20 * Math.PI;
         public static final double WHEEL_EJECT_CORAL_DUTY_CYCLE = -1.0;
-        public static final double WHEEL_EJECT_TROTH_DUTY_CYCLE = 0.40;
+        public static final double WHEEL_EJECT_TROTH_DUTY_CYCLE = 0.5;
         public static final double WHEEL_INDEX_ROTATIONS = 2.0;
 
         public static final double WHEEL_GROUND_INDEX_DUTY_CYCLE = 0.6;
@@ -554,9 +554,23 @@ public class Constants {
                         Optional.empty(),
                         Optional.empty(),
                         Optional.of(IntakeState.DEPLOYED_UNSTICK));
+        public static final SuperstructureState AUTO_BACK_OFF =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L4_CORAL_PLACING),
+                        Optional.of(CoralState.PLACING),
+                        Optional.of(AlgaeState.BARGE_DROPOFF),
+                        Optional.empty());
         public static final SuperstructureState PLACE_CORAL_L4 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4),
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
+        public static final SuperstructureState AUTO_L4_CORAL_PLACING =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4_AUTO),
+                        Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
+        public static final SuperstructureState AUTO_L4_CORAL_PLACING_2 =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4_AUTO_2),
                         Optional.of(AlgaeState.BARGE_DROPOFF), Optional.empty());
 
         public static final SuperstructureState PLACE_CORAL_L3 =
@@ -620,7 +634,7 @@ public class Constants {
     public static class DriveToPose {
         public static final double AGGRESSIVE_ACCEL_MULTIPLIER = 3;
         public static final double COUNTERACT_GAIN = 0.5;
-        public static final double DRIVE_KP = 3.4;
+        public static final double DRIVE_KP = 3.75;
         public static final double DRIVE_KI = 0.0;
         public static final double DRIVE_KD = 0.2;
         public static final double ROT_KP = 4.0;

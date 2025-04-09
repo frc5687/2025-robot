@@ -86,6 +86,10 @@ public class HardwareIntakeIO implements IntakeIO {
 
     @Override
     public void writeOutputs(IntakeOutputs outputs) {
+        if (outputs.disabled) {
+            return;
+        }
+
         _beltMotor.setControl(_intakeVoltageReq.withOutput(outputs.intakeVoltage));
 
         boolean isDesiredZero = Math.abs(outputs.desiredAngleRad) < 0.01;

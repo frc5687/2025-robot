@@ -24,6 +24,8 @@ public class CoralTracker implements EpilogueLog {
     private static final TunableDouble posLerp = new TunableDouble("CoralTracker", "posLerp", 0.5);
     private static final TunableDouble velLerp = new TunableDouble("CoralTracker", "velLerp", 0.005);
 
+    private static final TunableDouble weighting = new TunableDouble("CoralTracking", "weighting", 4);
+
     private static final int CORAL_CLASS_ID = 1;
 
     private CoralTracker() {
@@ -93,13 +95,17 @@ public class CoralTracker implements EpilogueLog {
         }
     }
 
-    public Optional<Translation2d> getClosestCoral(Translation2d robot) {
+    public Optional<Translation2d> getClosestCoral(Pose2d robot) {
         var minDist = Double.POSITIVE_INFINITY;
         Optional<Translation2d> closestCoral = Optional.empty();
         for (var coral : _coral) {
             var dist = Math.hypot(coral.x - robot.getX(), coral.y - robot.getY());
-            if (dist < minDist) {
-                minDist = dist;
+            var angleToCoral = new Rotation2d(coral.x - robot.getX(), coral.y - robot.getY());
+            var angleErr =
+                    Math.pow(robot.getRotation().plus(Rotation2d.k180deg).minus(angleToCoral).getRadians(), 2)
+                            * weighting.get();
+            if (dist + angleErr < minDist) {
+                minDist = dist + angleErr;
                 closestCoral = Optional.of(new Translation2d(coral.x, coral.y));
             }
         }

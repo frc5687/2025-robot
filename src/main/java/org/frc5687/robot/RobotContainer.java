@@ -2,6 +2,7 @@ package org.frc5687.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,6 +42,7 @@ import org.frc5687.robot.subsystems.lights.HardwareLightsIO;
 import org.frc5687.robot.subsystems.lights.LightSubsystem;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.subsystems.superstructure.SuperstructureManager;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureManager.SuperstructureMode;
 import org.frc5687.robot.subsystems.vision.HardwareVisionIO;
 import org.frc5687.robot.subsystems.vision.SimVisionIO;
 import org.frc5687.robot.subsystems.vision.VisionIO;
@@ -173,27 +175,40 @@ public class RobotContainer implements EpilogueLog {
         NamedCommands.registerCommand(
                 "CoralL4",
                 _superstructureManager.createRequest(
-                        Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.AUTO_SEQUENCE));
+                        Constants.SuperstructureGoals.AUTO_L4_CORAL_PLACING, RequestType.AUTO_SEQUENCE));
+
+        NamedCommands.registerCommand(
+                "CoralL4Low",
+                _superstructureManager.createRequest(
+                        Constants.SuperstructureGoals.AUTO_L4_CORAL_PLACING_2, RequestType.AUTO_SEQUENCE));
 
         NamedCommands.registerCommand(
                 "ForceCoralL4",
                 _superstructureManager.createRequest(
-                        Constants.SuperstructureGoals.PLACE_CORAL_L4, RequestType.IMMEDIATE));
+                        Constants.SuperstructureGoals.AUTO_L4_CORAL_PLACING, RequestType.IMMEDIATE));
 
         NamedCommands.registerCommand(
                 "CoralL3",
                 _superstructureManager.createRequest(
-                        Constants.SuperstructureGoals.PLACE_CORAL_L3, RequestType.IMMEDIATE));
+                        Constants.SuperstructureGoals.PLACE_CORAL_L3, RequestType.AUTO_SEQUENCE));
 
         NamedCommands.registerCommand(
                 "CoralL2",
                 _superstructureManager.createRequest(
                         Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.AUTO_SEQUENCE));
+        NamedCommands.registerCommand(
+                "AutoBackUp",
+                _superstructureManager.createRequest(
+                        Constants.SuperstructureGoals.AUTO_BACK_OFF, RequestType.AUTO_SEQUENCE));
 
         NamedCommands.registerCommand("AutoPlace", AutoActions.autoPlace(this));
     }
 
     public void periodic() {
+        log(
+                "Is Algae Mode",
+                _superstructureManager.getCurrentMode() == SuperstructureMode.ALGAE,
+                Importance.CRITICAL);
         RobotStateManager.getInstance().logComponentPoses();
         RobotStateManager.getInstance().updateOdometry();
         RobotStateManager.getInstance().logEstimatedPoses();

@@ -10,9 +10,9 @@ import org.frc5687.robot.util.FieldConstants;
 
 public class DriveToHP extends DriveToPoseSmooth {
 
-    private static final double TARGET_X = 1.1;
-    private static final double TARGET_Y_LOWER = 1.0;
-    private static final double TARGET_Y_UPPER = 7.0;
+    private static final double TARGET_X = 1.05;
+    private static final double TARGET_Y_LOWER = 0.95;
+    private static final double TARGET_Y_UPPER = FieldConstants.fieldWidth - TARGET_Y_LOWER;
     private static final double TARGET_ANGLE_LOWER = 53.0;
     private static final double TARGET_ANGLE_UPPER = -53.0;
 
