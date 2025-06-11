@@ -41,18 +41,6 @@ public class Robot extends TimedRobot {
         Epilogue.bind(this);
         _robotContainer = new RobotContainer(this);
         Threads.setCurrentThreadPriority(true, 99);
-
-        for (int i = 1; i <= 6; i++) {
-            Pose2d left = ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.LEFT);
-            Pose2d right = ReefAlignmentHelpers.calculateTargetPose(i, ReefSide.RIGHT);
-            System.out.println(
-                    String.format(
-                            "Face: %d\n Left: %s\n Right: %s\n",
-                            i,
-                            "X: " + left.getX() + ", Y: " + left.getY() + " Heading: " + left.getRotation(),
-                            "X: " + right.getX() + ", Y: " + right.getY() + " Heading: " + right.getRotation()));
-        }
-
         DriverStation.silenceJoystickConnectionWarning(true);
     }
 
@@ -93,7 +81,6 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
-        _robotContainer.getCoral().setWheelMotorDutyCycle(0);
     }
 
     @Override

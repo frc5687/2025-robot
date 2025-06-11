@@ -13,7 +13,7 @@ import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.TunableDouble;
 import org.frc5687.robot.util.vision.CoralTracker;
 
-public class DriveToGroundCoral extends DriveToPoseSmooth {
+public class DriveToGroundCoral extends DriveToPose {
     private final DriveSubsystem _drive;
     private final VisionSubsystem _vision;
 
