@@ -64,9 +64,10 @@ public class RobotContainer implements EpilogueLog {
                         _drive,
                         () -> -modifyAxis(_oi.getDriverController().getLeftY()) * Constants.DriveTrain.MAX_MPS,
                         () -> -modifyAxis(_oi.getDriverController().getLeftX()) * Constants.DriveTrain.MAX_MPS,
-                        () -> -modifyAxis(_oi.getDriverController().getRightX()) * Constants.DriveTrain.MAX_ANG_VEL,
-                        () -> true
-                        ));
+                        () ->
+                                -modifyAxis(_oi.getDriverController().getRightX())
+                                        * Constants.DriveTrain.MAX_ANG_VEL,
+                        () -> true));
     }
 
     public Command getAutonomousCommand() {

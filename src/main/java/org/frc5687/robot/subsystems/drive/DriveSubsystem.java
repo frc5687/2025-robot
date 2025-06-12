@@ -10,7 +10,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.epilogue.NotLogged;
@@ -33,7 +32,6 @@ import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
-import org.frc5687.robot.util.BrokenCOMSwerveSetpointGenerator;
 import org.frc5687.robot.util.COMVelocityLimiter;
 import org.frc5687.robot.util.TunableDouble;
 
@@ -100,8 +98,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
                 new SwerveSetpointGenerator(
                         _robotConfig,
                         Constants.Motors.getKrakenX44(1).freeSpeedRadPerSec
-                                / Constants.SwerveModule.GEAR_RATIO_STEER
-                        );
+                                / Constants.SwerveModule.GEAR_RATIO_STEER);
 
         _currentSetpoint =
                 new SwerveSetpoint(

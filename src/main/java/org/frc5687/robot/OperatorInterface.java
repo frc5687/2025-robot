@@ -8,22 +8,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
-import org.frc5687.robot.commands.drive.DriveToGroundCoral;
-import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.util.Helpers;
 import org.frc5687.robot.util.OutliersController;
-import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class OperatorInterface {
     private final OutliersController _driverController;
