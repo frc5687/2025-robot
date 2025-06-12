@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import org.frc5687.robot.commands.algae.EjectAlgae;
 import org.frc5687.robot.commands.algae.IdleAlgae;
 import org.frc5687.robot.commands.auto.AutoActions;
 import org.frc5687.robot.commands.coral.IdleCoral;
@@ -158,24 +159,26 @@ public class RobotContainer implements EpilogueLog {
 
         NamedCommands.registerCommand(
                 "LowAlgaeIntake",
-                _superstructureManager
-                        .algaeIntake(Constants.SuperstructureGoals.LOW_ALGAE_GRAB)
-                        .alongWith(
-                                new DynamicDriveToReefBranch(
-                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE, true)));
+                new DynamicDriveToReefBranch(getDrive(), getSuperstructureManager(), ReefSide.ALGAE, true));
 
         NamedCommands.registerCommand(
                 "HighAlgaeIntake",
-                _superstructureManager
-                        .algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB)
-                        .alongWith(
-                                new DynamicDriveToReefBranch(
-                                        getDrive(), getSuperstructureManager(), ReefSide.ALGAE, true)));
-
+                new DynamicDriveToReefBranch(getDrive(), getSuperstructureManager(), ReefSide.ALGAE, true));
+        NamedCommands.registerCommand(
+                "RunAlgaeIntakeHigh",
+                _superstructureManager.algaeIntake(Constants.SuperstructureGoals.HIGH_ALGAE_GRAB));
+        NamedCommands.registerCommand(
+                "RunAlgaeIntakeLow",
+                _superstructureManager.algaeIntake(Constants.SuperstructureGoals.LOW_ALGAE_GRAB));
         NamedCommands.registerCommand(
                 "CoralL4",
                 _superstructureManager.createRequest(
                         Constants.SuperstructureGoals.AUTO_L4_CORAL_PLACING, RequestType.AUTO_SEQUENCE));
+
+        NamedCommands.registerCommand(
+                "AlgaeNet",
+                _superstructureManager.createRequest(
+                        Constants.SuperstructureGoals.BARGE_DROPOFF, RequestType.IMMEDIATE));
 
         NamedCommands.registerCommand(
                 "CoralL4Low",
@@ -195,13 +198,22 @@ public class RobotContainer implements EpilogueLog {
         NamedCommands.registerCommand(
                 "CoralL2",
                 _superstructureManager.createRequest(
-                        Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.AUTO_SEQUENCE));
+                        Constants.SuperstructureGoals.PLACE_CORAL_L2, RequestType.IMMEDIATE));
         NamedCommands.registerCommand(
                 "AutoBackUp",
                 _superstructureManager.createRequest(
                         Constants.SuperstructureGoals.AUTO_BACK_OFF, RequestType.AUTO_SEQUENCE));
-
+        NamedCommands.registerCommand(
+                "AlgaeBackUp",
+                _superstructureManager.createRequest(
+                        Constants.SuperstructureGoals.ALGAE_BACK_OFF, RequestType.AUTO_SEQUENCE));
+        NamedCommands.registerCommand(
+                "GotoAlgae",
+                _superstructureManager.algaeIntake(Constants.SuperstructureGoals.LOW_ALGAE_GRAB));
         NamedCommands.registerCommand("AutoPlace", AutoActions.autoPlace(this));
+        NamedCommands.registerCommand("AutoGrabAlgae", AutoActions.autoPickupAlgaeOfReef(this));
+        NamedCommands.registerCommand("AutoPlaceAlgaeNet", AutoActions.autoPlaceAlgaeNet(this));
+        NamedCommands.registerCommand("ShootAlgae", new EjectAlgae(_algaeArm, _elevator));
     }
 
     public void periodic() {

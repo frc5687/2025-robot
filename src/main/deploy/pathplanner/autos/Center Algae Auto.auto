@@ -1,0 +1,111 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center to R4L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoPlace"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R4L back up a little bit"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "LowAlgaeIntake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "RunAlgaeIntakeLow"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R4 Algae to Net Dropoff"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAlgae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Net Dropoff to R3 Algae"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "HighAlgaeIntake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "RunAlgaeIntakeHigh"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R3 Algae to Net Dropoff"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.25
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAlgae"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

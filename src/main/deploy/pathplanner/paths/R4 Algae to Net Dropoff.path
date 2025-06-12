@@ -3,40 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.1776,
-        "y": 3.7359
+        "x": 5.802591875248474,
+        "y": 3.823655296778355
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.7186202469369816,
-        "y": 2.7967301231989716
+        "x": 7.170675897421003,
+        "y": 3.809864007318773
       },
       "isLocked": false,
-      "linkedName": "Reef 1 Right"
+      "linkedName": "R4 Algae Pickup"
     },
     {
       "anchor": {
-        "x": 1.5754210069444434,
-        "y": 0.7072866030092587
+        "x": 7.332165935757436,
+        "y": 4.6508
       },
       "prevControl": {
-        "x": 2.288454445165515,
-        "y": 2.0785435661828964
+        "x": 6.311023902184015,
+        "y": 4.6720220289265795
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Coral Station Right"
+      "linkedName": "NetDropoff1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6250919754155125,
+      "rotationDegrees": 0.40201595641547266
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0,
+      "minWaypointRelativePos": 0.5,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 4.42,
-        "maxAcceleration": 4.42,
+        "maxVelocity": 1.0,
+        "maxAcceleration": 1.5,
         "maxAngularVelocity": 120.0,
         "maxAngularAcceleration": 200.0,
         "nominalVoltage": 12.0,
@@ -45,7 +50,19 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "AlgaeNet",
+      "waypointRelativePos": 0.7837346909020216,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "AlgaeNet"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.42,
     "maxAcceleration": 4.42,
@@ -56,13 +73,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.0
+    "rotation": 0.10678181224437143
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 179.00322414381387
   },
   "useDefaultConstraints": true
 }

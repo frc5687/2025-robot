@@ -54,6 +54,10 @@ public class AutoActions {
         return container.getSuperstructureManager().hybridAlgaeIntake();
     }
 
+    public static Command autoPlaceAlgaeNet(RobotContainer container) {
+        return new EjectAlgae(container.getAlgae(), container.getElevator());
+    }
+
     public static Command autoGroundInakeCoral(RobotContainer container) {
         return new WaitCommand(0);
     }

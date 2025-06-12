@@ -560,6 +560,12 @@ public class Constants {
                         Optional.of(CoralState.PLACING),
                         Optional.of(AlgaeState.BARGE_DROPOFF),
                         Optional.empty());
+        public static final SuperstructureState ALGAE_BACK_OFF =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.LOW_ALGAE_GRAB),
+                        Optional.of(CoralState.IDLE),
+                        Optional.of(AlgaeState.REEF_PICKUP),
+                        Optional.empty());
         public static final SuperstructureState PLACE_CORAL_L4 =
                 new SuperstructureState(
                         Optional.of(ElevatorState.L4_CORAL_PLACING), Optional.of(CoralState.PLACING_L4),
