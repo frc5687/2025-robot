@@ -13,7 +13,7 @@ import org.frc5687.robot.util.FieldConstants;
 import org.frc5687.robot.util.TunableDouble;
 import org.frc5687.robot.util.vision.AlgaeTracker;
 
-public class DriveToGroundAlgae extends DriveToPose {
+public class DriveToGroundAlgae extends DriveToPoseSmooth {
     private final DriveSubsystem _drive;
     private final VisionSubsystem _vision;
 

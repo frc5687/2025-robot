@@ -23,6 +23,33 @@ public class LightSubsystem extends OutliersSubsystem<LightInputs, LightOutputs>
 
     @Override
     protected void periodic(LightInputs inputs, LightOutputs outputs) {
-        outputs.desiredState = LightState.SOLID_WHITE;
+        if (_container.getClimber().isSensorTriggered()) {
+            outputs.desiredState = LightState.BLUE;
+        } else if (_container.getIntake().isIntakeCoralDetected()) {
+            outputs.desiredState = LightState.PINK;
+        } else if (_container.getSuperstructureManager().isAlgaeMode()) {
+            if (_container.getAlgae().isAlgaeDetected()) {
+                outputs.desiredState = LightState.FLASHING_GREEN;
+            } else {
+                outputs.desiredState = LightState.SOLID_GREEN;
+            }
+        } else { // coral mode
+            if (_container.getCoral().isCoralDetected()) {
+                outputs.desiredState = LightState.FLASHING_WHITE;
+            } else {
+                var pose = RobotStateManager.getInstance().getPose(RobotCoordinate.ROBOT_BASE_SWERVE);
+                if (pose != null
+                        && CoralTracker.getInstance().getClosestCoral(pose.toPose2d()).isPresent()) {
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isEmpty()) {
+                        outputs.desiredState = LightState.YELLOW;
+                    } else {
+                        outputs.desiredState = LightState.BLUE;
+                    }
+                } else {
+                    outputs.desiredState = LightState.SOLID_WHITE;
+                }
+            }
+        }
     }
 }

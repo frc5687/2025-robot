@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.function.Supplier;
 import org.frc5687.robot.Constants;
+import org.frc5687.robot.subsystems.superstructure.SuperstructureState;
 
 public class ReefAlignmentHelpers {
     public static final TunableDouble LEFT_OFFSET =
@@ -114,21 +115,21 @@ public class ReefAlignmentHelpers {
         return new Pose2d(finalPosition, basePose.getRotation());
     }
 
-    // public static Supplier<SuperstructureState> calculateAlgaeHeight(Supplier<Pose2d> robotPose) {
-    //     int currentFace = 1;
-    //     var alliance = DriverStation.getAlliance();
-    //     if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-    //         Pose2d mirroredPose = FlippingUtil.flipFieldPose(robotPose.get());
-    //         currentFace = ReefAlignmentHelpers.calculateBestFace(mirroredPose);
-    //     } else {
-    //         currentFace = ReefAlignmentHelpers.calculateBestFace(robotPose.get());
-    //     }
+    public static Supplier<SuperstructureState> calculateAlgaeHeight(Supplier<Pose2d> robotPose) {
+        int currentFace = 1;
+        var alliance = DriverStation.getAlliance();
+        if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+            Pose2d mirroredPose = FlippingUtil.flipFieldPose(robotPose.get());
+            currentFace = ReefAlignmentHelpers.calculateBestFace(mirroredPose);
+        } else {
+            currentFace = ReefAlignmentHelpers.calculateBestFace(robotPose.get());
+        }
 
-    //     System.out.println(currentFace);
-    //     if (currentFace % 2 == 0) {
-    //         return () -> Constants.SuperstructureGoals.LOW_ALGAE_GRAB;
-    //     } else {
-    //         return () -> Constants.SuperstructureGoals.HIGH_ALGAE_GRAB;
-    //     }
-    // }
+        System.out.println(currentFace);
+        if (currentFace % 2 == 0) {
+            return () -> Constants.SuperstructureGoals.LOW_ALGAE_GRAB;
+        } else {
+            return () -> Constants.SuperstructureGoals.HIGH_ALGAE_GRAB;
+        }
+    }
 }

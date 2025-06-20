@@ -9,8 +9,6 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
-import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.epilogue.NotLogged;
@@ -33,7 +31,7 @@ import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.RobotStateManager;
 import org.frc5687.robot.RobotStateManager.RobotCoordinate;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
-import org.frc5687.robot.util.BrokenCOMSwerveSetpointGenerator;
+import org.frc5687.robot.util.COMSwerveSetpointGenerator;
 import org.frc5687.robot.util.COMVelocityLimiter;
 import org.frc5687.robot.util.TunableDouble;
 
@@ -54,7 +52,7 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
     private final boolean _enableCOMLimiter = true;
 
     private final Translation2d[] _moduleLocations;
-    private final SwerveSetpointGenerator _setpointGenerator;
+    private final COMSwerveSetpointGenerator _setpointGenerator;
     private SwerveSetpoint _currentSetpoint;
 
     private final RobotConfig _robotConfig;
@@ -97,11 +95,12 @@ public class DriveSubsystem extends OutliersSubsystem<DriveInputs, DriveOutputs>
         _comLimiter = new COMVelocityLimiter();
 
         _setpointGenerator =
-                new SwerveSetpointGenerator(
+                new COMSwerveSetpointGenerator(
                         _robotConfig,
                         Constants.Motors.getKrakenX44(1).freeSpeedRadPerSec
-                                / Constants.SwerveModule.GEAR_RATIO_STEER
-                        );
+                                / Constants.SwerveModule.GEAR_RATIO_STEER,
+                        container,
+                        _comLimiter);
 
         _currentSetpoint =
                 new SwerveSetpoint(

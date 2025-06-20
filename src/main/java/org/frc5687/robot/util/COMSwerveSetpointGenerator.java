@@ -7,8 +7,9 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
+import org.frc5687.robot.subsystems.elevator.ElevatorState;
 
-public class BrokenCOMSwerveSetpointGenerator {
+public class COMSwerveSetpointGenerator {
     private final SwerveSetpointGenerator _baseGenerator;
     private final COMVelocityLimiter _comLimiter;
     private final RobotContainer _container;
@@ -20,7 +21,7 @@ public class BrokenCOMSwerveSetpointGenerator {
     private final TunableDouble _angularAccelScalingMultiplier =
             new TunableDouble("COMSetpoint", "AngularAccelScalingMultiplier", 0.7);
 
-    public BrokenCOMSwerveSetpointGenerator(
+    public COMSwerveSetpointGenerator(
             RobotConfig config,
             double maxSteerVelocityRadsPerSec,
             RobotContainer container,
@@ -33,10 +34,10 @@ public class BrokenCOMSwerveSetpointGenerator {
     public SwerveSetpoint generateSetpoint(
             SwerveSetpoint prevSetpoint, ChassisSpeeds desiredSpeeds, double dt) {
 
-        // only limit if we are over L2 FIXME add this back
-        // if (_container.getElevator().getElevatorHeight() < ElevatorState.L2_CORAL_PLACING.getHeight()) {
-        //     return _baseGenerator.generateSetpoint(prevSetpoint, desiredSpeeds, dt);
-        // }
+        // only limit if we are over L2
+        if (_container.getElevator().getElevatorHeight() < ElevatorState.L2_CORAL_PLACING.getHeight()) {
+            return _baseGenerator.generateSetpoint(prevSetpoint, desiredSpeeds, dt);
+        }
 
         PathConstraints heightConstraints = createHeightConstraints(_comLimiter.calculateSpeedFactor());
         return _baseGenerator.generateSetpoint(prevSetpoint, desiredSpeeds, heightConstraints, dt);
