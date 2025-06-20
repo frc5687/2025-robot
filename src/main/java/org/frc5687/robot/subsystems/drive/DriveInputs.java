@@ -27,7 +27,7 @@ public class DriveInputs extends BaseInputs {
     @Logged(name = "Gyro/Yaw Rate (rad/s)", importance = Logged.Importance.DEBUG)
     public double yawVelocityRadPerSec = 0.0;
 
-    @Logged(name = "Modules/States", importance = Logged.Importance.CRITICAL)
+    @Logged(name = "Modules/States", importance = Logged.Importance.DEBUG)
     public SwerveModuleState[] measuredStates = new SwerveModuleState[4];
 
     @Logged(name = "Modules/Positions", importance = Logged.Importance.DEBUG)

@@ -34,8 +34,7 @@ public class BrokenCOMSwerveSetpointGenerator {
             SwerveSetpoint prevSetpoint, ChassisSpeeds desiredSpeeds, double dt) {
 
         // only limit if we are over L2 FIXME add this back
-        // if (_container.getElevator().getElevatorHeight() <
-        // ElevatorState.L2_CORAL_PLACING.getHeight()) {
+        // if (_container.getElevator().getElevatorHeight() < ElevatorState.L2_CORAL_PLACING.getHeight()) {
         //     return _baseGenerator.generateSetpoint(prevSetpoint, desiredSpeeds, dt);
         // }
 
