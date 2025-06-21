@@ -5,11 +5,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.subsystems.OutliersSubsystem;
+import org.frc5687.robot.util.TunableDouble;
 
 public class ClimberSubsystem extends OutliersSubsystem<ClimberInputs, ClimberOutputs> {
 
     private final ProfiledPIDController _pidController;
-
+    private static final TunableDouble climbVoltage = new TunableDouble("climb", "climb volts", 12);
     public ClimberSubsystem(RobotContainer container, ClimberIO io) {
         super(container, io, new ClimberInputs(), new ClimberOutputs());
 
@@ -44,6 +45,7 @@ public class ClimberSubsystem extends OutliersSubsystem<ClimberInputs, ClimberOu
 
     public void toggleClimberSetpoint() {
         if (_outputs.motorSetpointRads != Constants.Climber.CLIMBER_UP_RADS) {
+
             _outputs.servoSetpoint = 0.0;
             _pidController.setConstraints(
                     new TrapezoidProfile.Constraints(
@@ -60,6 +62,14 @@ public class ClimberSubsystem extends OutliersSubsystem<ClimberInputs, ClimberOu
             _outputs.motorVelocityRadPerSec = Constants.Climber.FAST_VELOCITY_RAD_PER_SEC;
             _outputs.motorSetpointRads = Constants.Climber.CLIMBER_DOWN_RADS;
         }
+    }
+
+    public void startClimber() {
+        _outputs.climberVoltage = climbVoltage.get();
+    }
+
+    public boolean isClimberTriggered(){
+        return _inputs.climberStatorCurrent > 30;
     }
 
     public boolean isSensorTriggered() {

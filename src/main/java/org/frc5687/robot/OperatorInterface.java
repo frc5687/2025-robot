@@ -3,11 +3,14 @@ package org.frc5687.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
 
+import java.time.InstantSource;
+
 import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -234,11 +237,17 @@ public class OperatorInterface {
                                                                         new InstantCommand(container.getIntake()::disableIntakeMotors))
                                                                 .andThen(
                                                                         new InstantCommand(
-                                                                                container.getClimber()::toggleClimberSetpoint))),
+                                                                                container.getClimber()::toggleClimberSetpoint)).andThen(new InstantCommand(container.getClimber()::startClimber) {       
+                                                                                })),
                                         container.getIntake()::isClimberOutForClimb)
                                 .alongWith(new InstantCommand(() -> container.getDrive().rosieEnabled = false))
                                 .alongWith(new InstantCommand(() -> container.getDrive().slowModeEnabled = true)));
 
+        if(container.getClimber().isClimberTriggered()){
+                _driverController.setRumble(RumbleType.kBothRumble, 1);
+        }
+
+        _driverController.leftJoystickButton().onTrue(new InstantCommand(container.getClimber()::startClimber));
         _driverController
                 .b()
                 .whileTrue(

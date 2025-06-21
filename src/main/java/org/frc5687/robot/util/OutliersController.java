@@ -1,5 +1,6 @@
 package org.frc5687.robot.util;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -94,7 +95,7 @@ public class OutliersController {
             return _ps5Controller.L2();
         }
     }
-
+    
     public Trigger rightTrigger() {
         if (_xboxController != null) {
             return _xboxController.rightTrigger();
@@ -234,6 +235,16 @@ public class OutliersController {
             return _ps4Controller.R3();
         } else {
             return _ps5Controller.R3();
+        }
+    }
+
+    public void setRumble(RumbleType type, double value){
+        if (_xboxController != null) {
+            _ps5Controller.setRumble(type, value);
+        } else if (_ps4Controller != null) {
+            _ps5Controller.setRumble(type, value);
+        } else {
+            _ps5Controller.setRumble(type, value);
         }
     }
 }

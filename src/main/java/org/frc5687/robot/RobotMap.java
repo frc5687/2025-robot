@@ -46,6 +46,7 @@ public class RobotMap {
             public static final int CLIMBER_WINCH = 19;
             public static final int ALGAE_WHEEL = 20;
             public static final int CORAL_WHEEL_MOTOR = 21;
+            public static final int CLIMBER_MOTOR = 22;
         }
 
         public static class CANCODER {
