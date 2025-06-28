@@ -182,13 +182,13 @@ public class Constants {
          *
          */
         public static final SwerveModuleConfig NW_CONFIG =
-                SwerveModule.createModuleConfig("NW", -0.474609375, false, false);
+                SwerveModule.createModuleConfig("NW", 0.8505859375, false, false);
         public static final SwerveModuleConfig NE_CONFIG =
-                SwerveModule.createModuleConfig("NE", 0.1811524, false, false);
+                SwerveModule.createModuleConfig("NE", -0.8203125, false, false);
         public static final SwerveModuleConfig SW_CONFIG =
-                SwerveModule.createModuleConfig("SW", -0.0573731, false, false);
+                SwerveModule.createModuleConfig("SW", -0.063232421875, false, false);
         public static final SwerveModuleConfig SE_CONFIG =
-                SwerveModule.createModuleConfig("SE", 0.3584248, false, false);
+                SwerveModule.createModuleConfig("SE", -0.148193359375, false, false);
 
         public static final SwerveModuleConfig SIM_NW_CONFIG =
                 SwerveModule.createSimModuleConfig("NW", -0.474609375, false, false);

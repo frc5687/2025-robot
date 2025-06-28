@@ -68,6 +68,17 @@ public class IntakeAndIndexCoral extends OutliersCommand {
 
             if (requestChanged) {
                 System.out.println("Request has changed, ending index command");
+                if (activeRequest != null) {
+                    System.out.println("Initial Request = " + activeRequest.description());
+                } else {
+                    System.out.println("active request is null");
+                }
+                if (lastRequest != null) {
+                    System.out.println("Initial Request = " + lastRequest.description());
+
+                } else {
+                    System.out.println("last request is null");
+                }
                 return true;
             }
         }
