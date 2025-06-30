@@ -192,6 +192,19 @@ public class SuperstructureManager extends SubsystemBase implements EpilogueLog 
                 .withName("Algae Reef Intake");
     }
 
+    public Command algaeIntakeAuto() {
+        return new SequentialCommandGroup(
+                        createRequest(
+                                new SuperstructureState(
+                                        Optional.empty(),
+                                        Optional.empty(),
+                                        Optional.of(AlgaeState.REEF_PICKUP),
+                                        Optional.empty()),
+                                RequestType.IMMEDIATE),
+                        new IntakeAlgae(_container.getAlgae()))
+                .withName("AlgaeIntakeAuto");
+    }
+
     public Command hybridAlgaeIntake() {
 
         return new SequentialCommandGroup(

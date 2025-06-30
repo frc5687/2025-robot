@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.478205593633829,
-        "y": 5.410450307853159
+        "x": 6.588636363636364,
+        "y": 5.674621212121211
       },
       "isLocked": false,
       "linkedName": "NetDropoff1"
@@ -20,8 +20,8 @@
         "y": 5.50075220724907
       },
       "prevControl": {
-        "x": 6.572882420422863,
-        "y": 5.212856499767656
+        "x": 5.997727272727272,
+        "y": 6.285227272727272
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,7 +29,21 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.501650165016498,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 2.5,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 120.0,
+        "maxAngularAcceleration": 200.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {

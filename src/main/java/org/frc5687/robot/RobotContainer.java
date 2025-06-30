@@ -214,6 +214,8 @@ public class RobotContainer implements EpilogueLog {
         NamedCommands.registerCommand("AutoGrabAlgae", AutoActions.autoPickupAlgaeOfReef(this));
         NamedCommands.registerCommand("AutoPlaceAlgaeNet", AutoActions.autoPlaceAlgaeNet(this));
         NamedCommands.registerCommand("ShootAlgae", new EjectAlgae(_algaeArm, _elevator));
+
+        NamedCommands.registerCommand("HybridAlgaeAuto", AutoActions.autoHybridCycle(this));
     }
 
     public void periodic() {

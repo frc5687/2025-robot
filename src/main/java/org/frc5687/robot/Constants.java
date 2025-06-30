@@ -300,7 +300,7 @@ public class Constants {
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
         public static final double MIN_HEIGHT = 0.0; // m
-        public static final double MAX_HEIGHT = 0.678 + 0.007; // m
+        public static final double MAX_HEIGHT = 0.675 + 0.00; // m
 
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =

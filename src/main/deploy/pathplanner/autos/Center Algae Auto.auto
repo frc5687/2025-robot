@@ -13,32 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "AutoPlace"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "R4L back up a little bit"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "LowAlgaeIntake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "RunAlgaeIntakeLow"
-                }
-              }
-            ]
+            "name": "HybridAlgaeAuto"
           }
         },
         {
@@ -50,7 +25,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 0.2
           }
         },
         {
@@ -93,13 +68,19 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.25
+            "waitTime": 0.2
           }
         },
         {
           "type": "named",
           "data": {
             "name": "ShootAlgae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Net Dropoff Back Up"
           }
         }
       ]
