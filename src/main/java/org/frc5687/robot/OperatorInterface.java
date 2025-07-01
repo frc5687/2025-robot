@@ -188,8 +188,7 @@ public class OperatorInterface {
                 .rightTrigger()
                 .whileTrue(
                         new ConditionalCommand(
-                                new EjectAlgae(container.getAlgae(), container.getElevator())
-                                        .andThen(() -> manager.setCoralMode()),
+                                new EjectAlgae(container.getAlgae(), container.getElevator()),
                                 new ConditionalCommand(
                                         AutoActions.autoPlace(container)
                                                 .andThen(() -> manager.toggleMode())
@@ -230,8 +229,6 @@ public class OperatorInterface {
                                                         manager
                                                                 .createRequest(
                                                                         Constants.SuperstructureGoals.CLIMB, RequestType.IMMEDIATE)
-                                                                .andThen(
-                                                                        new InstantCommand(container.getIntake()::disableIntakeMotors))
                                                                 .andThen(
                                                                         new InstantCommand(
                                                                                 container.getClimber()::toggleClimberSetpoint))),

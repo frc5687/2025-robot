@@ -14,7 +14,7 @@ public class EjectAlgae extends OutliersCommand {
     private double _timeLastSeen;
     private static final double EXTRA_TIME = 0.200;
 
-    private static final TunableDouble netVoltage = new TunableDouble("EjectAlgae", "netvoltage", -7);
+    private static final TunableDouble netVoltage = new TunableDouble("EjectAlgae", "netvoltage", -12);
 
     public EjectAlgae(AlgaeArmSubsystem algae, ElevatorSubsystem elevator) {
         _algae = algae;
