@@ -94,7 +94,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     }
 
     public boolean isAtDesiredPosition() {
-        return Math.abs(_outputs.desiredHeight - _inputs.heightPositionMeters) < 0.01;
+        return Math.abs(_outputs.desiredHeight - _inputs.heightPositionMeters) < 0.02;
     }
 
     public double getElevatorHeight() {
@@ -118,7 +118,7 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
     public boolean isAtState(ElevatorState state) {
         double heightDiff = Math.abs(state.getHeight() - getElevatorHeight());
         // 1 cm tolerance
-        boolean isWithinPositionTolerance = heightDiff < 0.01;
+        boolean isWithinPositionTolerance = heightDiff < 0.02;
         // Also check velocity is close to zero (added)
         boolean isVelocityNearZero = Math.abs(_inputs.firstStageVelocityMPS) < 0.01;
 

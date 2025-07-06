@@ -14,7 +14,11 @@ public class EjectAlgae extends OutliersCommand {
     private double _timeLastSeen;
     private static final double EXTRA_TIME = 0.200;
 
-    private static final TunableDouble netVoltage = new TunableDouble("EjectAlgae", "netvoltage", -12);
+    private static final TunableDouble netVoltage =
+            new TunableDouble("EjectAlgae", "netvoltage", -12);
+
+    private static final TunableDouble procVoltage =
+            new TunableDouble("EjectAlgae", "procVoltage", -4);
 
     public EjectAlgae(AlgaeArmSubsystem algae, ElevatorSubsystem elevator) {
         _algae = algae;
@@ -31,7 +35,7 @@ public class EjectAlgae extends OutliersCommand {
         if (_algae.isAlgaeDetected()) _timeLastSeen = Timer.getFPGATimestamp();
         // if (_algae.isSafeToEject()) {
         if (_elevator.getElevatorHeight() < ElevatorState.LOW_ALGAE_GRAB.getHeight()) {
-            _algae.setWheelMotorVoltage(-2);
+            _algae.setWheelMotorVoltage(procVoltage.get());
         } else {
             _algae.setWheelMotorVoltage(netVoltage.get());
         }

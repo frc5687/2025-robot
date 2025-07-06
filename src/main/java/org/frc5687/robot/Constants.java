@@ -424,7 +424,7 @@ public class Constants {
     public static class Climber {
         public static final String CAN_BUS = "CANivore";
         public static final double CLIMBER_UP_RADS = 300;
-        public static final double CLIMBER_DOWN_RADS = 1450;
+        public static final double CLIMBER_DOWN_RADS = 1650;
 
         public static final double SLOW_VELOCITY_RAD_PER_SEC = 120;
         public static final double FAST_VELOCITY_RAD_PER_SEC = 1000;

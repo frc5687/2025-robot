@@ -251,8 +251,7 @@ public class OperatorInterface {
                                                 container,
                                                 () ->
                                                         -RobotContainer.modifyAxis(getDriverController().getLeftX())
-                                                                * Constants.DriveTrain.MAX_MPS))
-                                .andThen(new InstantCommand(() -> manager.setCoralMode())));
+                                                                * Constants.DriveTrain.MAX_MPS)));
 
         _driverController
                 .a()
