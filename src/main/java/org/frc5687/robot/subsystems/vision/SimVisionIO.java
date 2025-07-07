@@ -31,9 +31,9 @@ public class SimVisionIO implements VisionIO {
                 new SimulatedPhotonVisionCamera(
                         "limelight-center", Constants.Vision.ROBOT_TO_NE_CAM, _visionSim));
         _cams.put(
-                "South_Camera",
+                "Reef_Peeper",
                 new SimulatedPhotonVisionCamera(
-                        "South_Camera", Constants.Vision.ROBOT_TO_SOUTH_CAM, _visionSim));
+                        "Reef_Peeper", Constants.Vision.ROBOT_TO_SOUTH_CAM, _visionSim));
     }
 
     @Override

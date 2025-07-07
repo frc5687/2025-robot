@@ -8,42 +8,50 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3867311291457467,
-        "y": 1.2544600855553611
+        "x": 2.721521236590003,
+        "y": 1.782103226647989
       },
       "isLocked": false,
       "linkedName": "Coral Station Right"
     },
     {
       "anchor": {
-        "x": 5.098,
-        "y": 2.872
+        "x": 3.786,
+        "y": 2.907
       },
       "prevControl": {
-        "x": 4.801636155985169,
-        "y": 1.9858853614936447
+        "x": 3.3842583090572034,
+        "y": 2.466494388903601
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef 5 Left"
+      "linkedName": "Reef 6 Left"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.8633968683932348,
-      "rotationDegrees": 119.99999999999999
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7137432582487309,
+      "minWaypointRelativePos": 0.4974545454545465,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 2.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.16711141896802328,
+      "constraints": {
         "maxVelocity": 4.42,
-        "maxAcceleration": 2.0,
-        "maxAngularVelocity": 120.0,
-        "maxAngularAcceleration": 200.0,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 360.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -53,7 +61,7 @@
   "eventMarkers": [
     {
       "name": "CoralL4",
-      "waypointRelativePos": 0.7491563554555667,
+      "waypointRelativePos": 0.5,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -73,7 +81,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": null,

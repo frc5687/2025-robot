@@ -1,1 +1,93 @@
-{"version":"2025.0","waypoints":[{"anchor":{"x":3.58232,"y":5.01685},"prevControl":null,"nextControl":{"x":2.85718572480813,"y":5.71941976690292},"isLocked":false,"linkedName":"Reef 2 Right"},{"anchor":{"x":1.5754210069444434,"y":7.344713396990741},"prevControl":{"x":2.6516868080138596,"y":6.275941919363849},"nextControl":null,"isLocked":false,"linkedName":null}],"rotationTargets":[],"constraintZones":[{"name":"Constraints Zone","minWaypointRelativePos":0.7977574750830579,"maxWaypointRelativePos":1.0,"constraints":{"maxVelocity":4.42,"maxAcceleration":3.5,"maxAngularVelocity":540.0,"maxAngularAcceleration":360.0,"nominalVoltage":12.0,"unlimited":false}},{"name":"Constraints Zone","minWaypointRelativePos":0,"maxWaypointRelativePos":0.12878727791878172,"constraints":{"maxVelocity":4.42,"maxAcceleration":3.5,"maxAngularVelocity":540.0,"maxAngularAcceleration":200.0,"nominalVoltage":12.0,"unlimited":false}}],"pointTowardsZones":[],"eventMarkers":[{"name":"ReadyFunnel","waypointRelativePos":0.0690926079734219,"endWaypointRelativePos":null,"command":{"type":"named","data":{"name":"ReadyFunnel"}}}],"globalConstraints":{"maxVelocity":4.42,"maxAcceleration":4.42,"maxAngularVelocity":120.0,"maxAngularAcceleration":200.0,"nominalVoltage":12.0,"unlimited":false},"goalEndState":{"velocity":0,"rotation":-53.0},"reversed":false,"folder":null,"idealStartingState":{"velocity":0,"rotation":-59.99999999999999},"useDefaultConstraints":true}
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.58232,
+        "y": 5.01685
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.8571857248081294,
+        "y": 5.71941976690292
+      },
+      "isLocked": false,
+      "linkedName": "Reef 2 Right"
+    },
+    {
+      "anchor": {
+        "x": 1.5754210069444434,
+        "y": 7.344713396990741
+      },
+      "prevControl": {
+        "x": 2.6516868080138596,
+        "y": 6.275941919363849
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.7977574750830579,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 4.42,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 360.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.12878727791878172,
+      "constraints": {
+        "maxVelocity": 4.42,
+        "maxAcceleration": 3.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 200.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "ReadyFunnel",
+      "waypointRelativePos": 0.0690926079734219,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ReadyFunnel"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.42,
+    "maxAcceleration": 4.42,
+    "maxAngularVelocity": 120.0,
+    "maxAngularAcceleration": 200.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -53.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -59.99999999999999
+  },
+  "useDefaultConstraints": true
+}

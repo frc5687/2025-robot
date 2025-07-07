@@ -3,13 +3,15 @@ package org.frc5687.robot.commands.elevator;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.elevator.ElevatorState;
 import org.frc5687.robot.subsystems.elevator.ElevatorSubsystem;
+import org.frc5687.robot.util.TunableDouble;
 
 public class HomeElevator extends OutliersCommand {
     private final ElevatorSubsystem _elevator;
-    private final double HOMING_VOLTAGE = -0.3;
-    private final double CURRENT_THRESHOLD = 25.0;
-    private final double LASER_TARGET = 0.05;
-    private final double LASER_TOLERANCE = 0.01;
+
+    private static final TunableDouble HOMING_VOLTAGE =
+            new TunableDouble("HomeElevator", "homing voltage", -0.5);
+    private static final TunableDouble CURRENT_THRESHOLD =
+            new TunableDouble("HomeElevator", "current threshold", 1.0);
 
     private boolean _isFinished = false;
 
@@ -25,17 +27,13 @@ public class HomeElevator extends OutliersCommand {
 
     @Override
     public void execute(double timestamp) {
-        _elevator.setVoltage(HOMING_VOLTAGE);
-        boolean currentSpiked = _elevator.getAverageCurrent() > CURRENT_THRESHOLD;
+        _elevator.setVoltage(HOMING_VOLTAGE.get());
+        boolean currentSpiked = _elevator.getAverageCurrent() > CURRENT_THRESHOLD.get();
 
-        // Check if laser range finder is at target (you'll need to add laser getter to
-        // ElevatorSubsystem)
-        boolean atLaserTarget = Math.abs(_elevator.getLaserDistance() - LASER_TARGET) < LASER_TOLERANCE;
-
-        if (currentSpiked || atLaserTarget) {
+        if (currentSpiked) {
+            System.out.println("zeroed elevator");
             _elevator.setVoltage(0.0);
-            // Reset encoder position to zero (you'll need to add this method to ElevatorSubsystem)
-            // _elevator.resetEncoderPosition();
+            _elevator.zeroElevator();
             _elevator.setDesiredHeight(ElevatorState.STOWED);
             _isFinished = true;
         }

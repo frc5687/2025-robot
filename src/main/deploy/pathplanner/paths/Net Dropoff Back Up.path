@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.560628616898148,
-        "y": 4.062346860532408
+        "x": 7.329119318181817,
+        "y": 5.804928977272727
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.464116955226988,
-        "y": 4.062346860532408
+        "x": 5.960816642721157,
+        "y": 5.68121028382677
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "NetDropoff2"
     },
     {
       "anchor": {
-        "x": 6.325584852430556,
-        "y": 4.062346860532408
+        "x": 5.7712121212121215,
+        "y": 5.670227549953531
       },
       "prevControl": {
-        "x": 7.400665173498602,
-        "y": 4.065424114313851
+        "x": 6.300446838157171,
+        "y": 5.7143169294959355
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,19 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ReceiveFunnel",
+      "waypointRelativePos": 0.33003300330032176,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ReceiveFunnel"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.42,
     "maxAcceleration": 4.42,
@@ -42,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -180.0
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -180.0
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

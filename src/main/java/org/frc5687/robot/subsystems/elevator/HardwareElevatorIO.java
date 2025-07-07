@@ -286,4 +286,12 @@ public class HardwareElevatorIO implements ElevatorIO {
             _safetyTripped = false;
         }
     }
+
+    @Override
+    public void zeroElevator() {
+        _westMotor.setPosition(0);
+        _eastMotor.setPosition(0);
+
+        System.out.println("Elevator Zeroed");
+    }
 }

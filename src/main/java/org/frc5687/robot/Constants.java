@@ -182,13 +182,13 @@ public class Constants {
          *
          */
         public static final SwerveModuleConfig NW_CONFIG =
-                SwerveModule.createModuleConfig("NW", -0.474609375, false, false);
+                SwerveModule.createModuleConfig("NW", 0.8505859375, false, false);
         public static final SwerveModuleConfig NE_CONFIG =
-                SwerveModule.createModuleConfig("NE", 0.1811524, false, false);
+                SwerveModule.createModuleConfig("NE", -0.8203125, false, false);
         public static final SwerveModuleConfig SW_CONFIG =
-                SwerveModule.createModuleConfig("SW", -0.0573731, false, false);
+                SwerveModule.createModuleConfig("SW", -0.063232421875, false, false);
         public static final SwerveModuleConfig SE_CONFIG =
-                SwerveModule.createModuleConfig("SE", 0.3584248, false, false);
+                SwerveModule.createModuleConfig("SE", -0.148193359375, false, false);
 
         public static final SwerveModuleConfig SIM_NW_CONFIG =
                 SwerveModule.createSimModuleConfig("NW", -0.474609375, false, false);
@@ -300,7 +300,7 @@ public class Constants {
         public static final double DRUM_RADIUS = Units.inchesToMeters(2.25 / 2); // m
 
         public static final double MIN_HEIGHT = 0.0; // m
-        public static final double MAX_HEIGHT = 0.678 + 0.007; // m
+        public static final double MAX_HEIGHT = 0.675 + 0.00; // m
 
         public static final double EFFICIENCY = 0.85;
         public static final double MAX_VELOCITY_MPS =
@@ -424,7 +424,7 @@ public class Constants {
     public static class Climber {
         public static final String CAN_BUS = "CANivore";
         public static final double CLIMBER_UP_RADS = 300;
-        public static final double CLIMBER_DOWN_RADS = 1450;
+        public static final double CLIMBER_DOWN_RADS = 1650;
 
         public static final double SLOW_VELOCITY_RAD_PER_SEC = 120;
         public static final double FAST_VELOCITY_RAD_PER_SEC = 1000;
@@ -460,14 +460,16 @@ public class Constants {
                         0.24084,
                         new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
         public static final Transform3d ROBOT_TO_SOUTH_CAM =
+                // new Transform3d(
+                //         -0.072,
+                //         -0.265,
+                //         0.662,
+                //         new Rotation3d( // ROUGHLY, the mount is insane
+                //                 Units.degreesToRadians(4),
+                //                 Units.degreesToRadians(12),
+                //                 Units.degreesToRadians(180 - 15)));
                 new Transform3d(
-                        -0.072,
-                        -0.265,
-                        0.662,
-                        new Rotation3d( // ROUGHLY, the mount is insane
-                                Units.degreesToRadians(4),
-                                Units.degreesToRadians(12),
-                                Units.degreesToRadians(180 - 15)));
+                        -0.2667, -0.3175, 0.2286, new Rotation3d(0, 0, Units.degreesToRadians(-150)));
 
         public static final Matrix<N3, N3> simCalibrationMatrix = new Matrix<>(Nat.N3(), Nat.N3());
         public static final double simFocalLength =
@@ -559,6 +561,12 @@ public class Constants {
                         Optional.of(ElevatorState.L4_CORAL_PLACING),
                         Optional.of(CoralState.PLACING),
                         Optional.of(AlgaeState.BARGE_DROPOFF),
+                        Optional.empty());
+        public static final SuperstructureState ALGAE_BACK_OFF =
+                new SuperstructureState(
+                        Optional.of(ElevatorState.LOW_ALGAE_GRAB),
+                        Optional.of(CoralState.IDLE),
+                        Optional.of(AlgaeState.REEF_PICKUP),
                         Optional.empty());
         public static final SuperstructureState PLACE_CORAL_L4 =
                 new SuperstructureState(

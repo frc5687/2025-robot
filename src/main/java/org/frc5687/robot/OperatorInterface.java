@@ -32,6 +32,7 @@ import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.commands.elevator.GoToAlgaeHeight;
+import org.frc5687.robot.commands.elevator.HomeElevator;
 import org.frc5687.robot.commands.intake.EmergencyEjectIntake;
 import org.frc5687.robot.subsystems.intake.IntakeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
@@ -188,8 +189,7 @@ public class OperatorInterface {
                 .rightTrigger()
                 .whileTrue(
                         new ConditionalCommand(
-                                new EjectAlgae(container.getAlgae(), container.getElevator())
-                                        .andThen(() -> manager.setCoralMode()),
+                                new EjectAlgae(container.getAlgae(), container.getElevator()),
                                 new ConditionalCommand(
                                         AutoActions.autoPlace(container)
                                                 .andThen(() -> manager.toggleMode())
@@ -225,13 +225,11 @@ public class OperatorInterface {
                         new ConditionalCommand(
                                         new InstantCommand(container.getClimber()::toggleClimberSetpoint),
                                         new InstantCommand(
-                                                        () -> container.getVision().setPipelineIndex("South_Camera", -1))
+                                                        () -> container.getVision().setPipelineIndex("Reef_Peeper", -1))
                                                 .alongWith(
                                                         manager
                                                                 .createRequest(
                                                                         Constants.SuperstructureGoals.CLIMB, RequestType.IMMEDIATE)
-                                                                .andThen(
-                                                                        new InstantCommand(container.getIntake()::disableIntakeMotors))
                                                                 .andThen(
                                                                         new InstantCommand(
                                                                                 container.getClimber()::toggleClimberSetpoint))),
@@ -254,8 +252,7 @@ public class OperatorInterface {
                                                 container,
                                                 () ->
                                                         -RobotContainer.modifyAxis(getDriverController().getLeftX())
-                                                                * Constants.DriveTrain.MAX_MPS))
-                                .andThen(new InstantCommand(() -> manager.setCoralMode())));
+                                                                * Constants.DriveTrain.MAX_MPS)));
 
         _driverController
                 .a()
@@ -294,6 +291,8 @@ public class OperatorInterface {
                 .back()
                 .onTrue(new InstantCommand(manager::forceQueueExecution))
                 .onFalse(new InstantCommand(manager::releaseQueueExecution));
+
+        _operatorController.povDown().whileTrue(new HomeElevator(container.getElevator()));
 
         /*
          * Mode-aware L1 action (x button)

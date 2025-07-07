@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center to R4L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "HybridAlgaeAuto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "R4 Algae to Net Dropoff"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootAlgae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Net Dropoff to Side Pickup 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AlgaeGroundAuto"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

@@ -3,44 +3,48 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5754210069444434,
-        "y": 0.7072866030092587
+        "x": 5.802591875248474,
+        "y": 3.823655296778355
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3867311291457467,
-        "y": 1.2544600855553611
+        "x": 7.170675897421003,
+        "y": 3.809864007318773
       },
       "isLocked": false,
-      "linkedName": "Coral Station Right"
+      "linkedName": "R4 Algae Pickup"
     },
     {
       "anchor": {
-        "x": 5.098,
-        "y": 2.872
+        "x": 7.332165935757436,
+        "y": 4.6508
       },
       "prevControl": {
-        "x": 4.801636155985169,
-        "y": 1.9858853614936447
+        "x": 6.5,
+        "y": 4.098863636363635
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef 5 Left"
+      "linkedName": "NetDropoff1"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8633968683932348,
-      "rotationDegrees": 119.99999999999999
+      "waypointRelativePos": 0.05933682373473029,
+      "rotationDegrees": 179.46349580001663
+    },
+    {
+      "waypointRelativePos": 0.6561954624781774,
+      "rotationDegrees": 0.40201595641547266
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7137432582487309,
+      "minWaypointRelativePos": 0.5,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 4.42,
+        "maxVelocity": 2.0,
         "maxAcceleration": 2.0,
         "maxAngularVelocity": 120.0,
         "maxAngularAcceleration": 200.0,
@@ -52,13 +56,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "CoralL4",
-      "waypointRelativePos": 0.7491563554555667,
+      "name": "AlgaeNet",
+      "waypointRelativePos": 0.7837346909020216,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "CoralL4"
+          "name": "AlgaeNet"
         }
       }
     }
@@ -73,13 +77,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 0.10678181224437143
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 53.0
+    "rotation": 179.00322414381387
   },
   "useDefaultConstraints": true
 }

@@ -36,7 +36,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         super(container, io, new VisionInputs(), new VisionOutputs());
         setPipelineIndex("limelight-center", 0);
         setPipelineIndex("limelight-left", 0);
-        setPipelineIndex("South_Camera", 1);
+        setPipelineIndex("Reef_Peeper", 1);
     }
 
     public static boolean isValidTag(AprilTagObservation observation) {
@@ -112,7 +112,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         }
         log("Raw Neural Detections", neuralDetections, Pose2d.struct, Importance.CRITICAL);
         _algaeTracker.update(inputs.cameraNeuralPipelineObservations.get("limelight-left"));
-        _coralTracker.update(inputs.cameraNeuralPipelineObservations.get("South_Camera"));
+        _coralTracker.update(inputs.cameraNeuralPipelineObservations.get("Reef_Peeper"));
     }
 
     private List<AprilTagObservation> filterValidTags(List<AprilTagObservation> observations) {

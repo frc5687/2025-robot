@@ -108,7 +108,7 @@ public class HardwareIntakeIO implements IntakeIO {
         //     _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
 
         // double desiredRotations = Units.radiansToRotations(safeDesiredAngle);
-        _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
+        // _pivotMotor.setControl(_motionMagicReq.withPosition(desiredRotations));
         // }
     }
 
