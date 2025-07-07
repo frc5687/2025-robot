@@ -6,4 +6,6 @@ public interface ElevatorIO extends SubsystemIO<ElevatorInputs, ElevatorOutputs>
     void setPID(double kP, double kI, double kD, double kV, double kS, double kA, double kG);
 
     default void resetSafety() {}
+
+    default void zeroElevator() {}
 }

@@ -17,8 +17,7 @@ public class HardwareVisionIO implements VisionIO {
                 "limelight-center",
                 new LimelightCamera("limelight-center", Constants.Vision.ROBOT_TO_NE_CAM));
         _cams.put(
-                "South_Camera",
-                new PhotonVisionCamera("South_Camera", Constants.Vision.ROBOT_TO_SOUTH_CAM));
+                "Reef_Peeper", new PhotonVisionCamera("Reef_Peeper", Constants.Vision.ROBOT_TO_SOUTH_CAM));
     }
 
     @Override

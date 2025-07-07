@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.588636363636364,
-        "y": 5.674621212121211
+        "x": 6.903787878787878,
+        "y": 5.241287878787878
       },
       "isLocked": false,
       "linkedName": "NetDropoff1"
     },
     {
       "anchor": {
-        "x": 5.574119318181818,
-        "y": 5.804928977272727
+        "x": 6.598484848484849,
+        "y": 5.73371212121212
       },
       "prevControl": {
-        "x": 6.135425892140503,
-        "y": 6.589404042750929
+        "x": 6.9825757575757565,
+        "y": 5.1625
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,11 +32,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.501650165016498,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0.44224422442244227,
+      "maxWaypointRelativePos": 0,
       "constraints": {
-        "maxVelocity": 2.0,
-        "maxAcceleration": 1.75,
+        "maxVelocity": 1.5,
+        "maxAcceleration": 1.5,
         "maxAngularVelocity": 120.0,
         "maxAngularAcceleration": 200.0,
         "nominalVoltage": 12.0,
@@ -45,19 +45,7 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "CoralL2",
-      "waypointRelativePos": 0.2764689444012442,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "RunAlgaeIntakeHigh"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.42,
     "maxAcceleration": 4.42,
@@ -68,7 +56,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.25280290049757
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": null,

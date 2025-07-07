@@ -2,6 +2,7 @@ package org.frc5687.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -9,9 +10,11 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.RobotContainer;
 import org.frc5687.robot.commands.algae.EjectAlgae;
+import org.frc5687.robot.commands.drive.DriveToGroundAlgae;
 import org.frc5687.robot.commands.drive.DriveToProcessorLineup;
 import org.frc5687.robot.commands.drive.DynamicDriveToReefBranch;
 import org.frc5687.robot.commands.elevator.GoToAlgaeHeight;
+import org.frc5687.robot.subsystems.superstructure.RequestType;
 import org.frc5687.robot.util.ReefAlignmentHelpers.ReefSide;
 
 public class AutoActions {
@@ -58,6 +61,20 @@ public class AutoActions {
 
     public static Command autoPlaceAlgaeNet(RobotContainer container) {
         return new EjectAlgae(container.getAlgae(), container.getElevator());
+    }
+
+    public static Command autoGroundAlgaeIntake(RobotContainer container) {
+
+        return new InstantCommand(
+                        () ->
+                                container
+                                        .getSuperstructureManager()
+                                        .createRequest(
+                                                Constants.SuperstructureGoals.GROUND_PICKUP, RequestType.IMMEDIATE))
+                .andThen(
+                        new ParallelCommandGroup(
+                                new DriveToGroundAlgae(container.getDrive(), container.getVision()),
+                                container.getSuperstructureManager().algaeGroundIntakeAuto()));
     }
 
     public static Command autoGroundInakeCoral(RobotContainer container) {

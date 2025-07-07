@@ -101,6 +101,14 @@ public class ElevatorSubsystem extends OutliersSubsystem<ElevatorInputs, Elevato
         return _inputs.heightPositionMeters;
     }
 
+    public void zeroElevator() {
+        _elevatorIO.zeroElevator();
+    }
+
+    public boolean isElevatorCurrentAboveThreshold() {
+        return getAverageCurrent() > 10;
+    }
+
     public void setVoltage(double voltage) {
         _outputs.controlMode = ElevatorControlMode.VOLTAGE;
         _outputs.voltageCommandEast = voltage;

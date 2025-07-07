@@ -460,14 +460,16 @@ public class Constants {
                         0.24084,
                         new Rotation3d(0, Units.degreesToRadians(-10), Units.degreesToRadians(-20)));
         public static final Transform3d ROBOT_TO_SOUTH_CAM =
+                // new Transform3d(
+                //         -0.072,
+                //         -0.265,
+                //         0.662,
+                //         new Rotation3d( // ROUGHLY, the mount is insane
+                //                 Units.degreesToRadians(4),
+                //                 Units.degreesToRadians(12),
+                //                 Units.degreesToRadians(180 - 15)));
                 new Transform3d(
-                        -0.072,
-                        -0.265,
-                        0.662,
-                        new Rotation3d( // ROUGHLY, the mount is insane
-                                Units.degreesToRadians(4),
-                                Units.degreesToRadians(12),
-                                Units.degreesToRadians(180 - 15)));
+                        -0.2667, -0.3175, 0.2286, new Rotation3d(0, 0, Units.degreesToRadians(-150)));
 
         public static final Matrix<N3, N3> simCalibrationMatrix = new Matrix<>(Nat.N3(), Nat.N3());
         public static final double simFocalLength =

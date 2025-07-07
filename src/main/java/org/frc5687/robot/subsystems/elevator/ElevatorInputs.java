@@ -12,7 +12,7 @@ public class ElevatorInputs extends BaseInputs {
     @Logged(name = "First Stage Velocity (mps)", importance = Logged.Importance.DEBUG)
     public double firstStageVelocityMPS = 0.0;
 
-    @Logged(name = "Platform Motors Current (A)", importance = Logged.Importance.DEBUG)
+    @Logged(name = "Platform Motors Current (A)", importance = Logged.Importance.CRITICAL)
     public double[] platformMotorCurrents = new double[2];
 
     @Logged(name = "Platform Acceleration (m/s^2)", importance = Logged.Importance.DEBUG)

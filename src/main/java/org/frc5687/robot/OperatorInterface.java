@@ -32,6 +32,7 @@ import org.frc5687.robot.commands.drive.DynamicDriveToReefBranchAlgae;
 import org.frc5687.robot.commands.drive.TeleopDriveCommand;
 import org.frc5687.robot.commands.drive.TeleopDriveWithSnapTo;
 import org.frc5687.robot.commands.elevator.GoToAlgaeHeight;
+import org.frc5687.robot.commands.elevator.HomeElevator;
 import org.frc5687.robot.commands.intake.EmergencyEjectIntake;
 import org.frc5687.robot.subsystems.intake.IntakeState;
 import org.frc5687.robot.subsystems.superstructure.RequestType;
@@ -224,7 +225,7 @@ public class OperatorInterface {
                         new ConditionalCommand(
                                         new InstantCommand(container.getClimber()::toggleClimberSetpoint),
                                         new InstantCommand(
-                                                        () -> container.getVision().setPipelineIndex("South_Camera", -1))
+                                                        () -> container.getVision().setPipelineIndex("Reef_Peeper", -1))
                                                 .alongWith(
                                                         manager
                                                                 .createRequest(
@@ -290,6 +291,8 @@ public class OperatorInterface {
                 .back()
                 .onTrue(new InstantCommand(manager::forceQueueExecution))
                 .onFalse(new InstantCommand(manager::releaseQueueExecution));
+
+        _operatorController.povDown().whileTrue(new HomeElevator(container.getElevator()));
 
         /*
          * Mode-aware L1 action (x button)
