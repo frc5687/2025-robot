@@ -1,6 +1,7 @@
 package org.frc5687.robot.commands.coral;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.frc5687.robot.Constants;
 import org.frc5687.robot.commands.OutliersCommand;
 import org.frc5687.robot.subsystems.coralarm.CoralArmSubsystem;
@@ -10,7 +11,21 @@ import org.frc5687.robot.subsystems.superstructure.SuperstructureRequest;
 public class IntakeAndIndexCoral extends OutliersCommand {
     private final CoralArmSubsystem _coral;
     private final SuperstructureManager _manager;
+
+    private static boolean _isRunning = false;
+
+    private enum State {
+        INITIALIZE,
+        PREPARE_FOR_TRANSFER,
+        TRANSFERRING_CORAL,
+        COMPLETING_TRANSFER,
+        COMPLETED
+    }
+
+    private State _currentState = State.INITIALIZE;
     private SuperstructureRequest _initialRequest;
+    private final Timer _stateTimer = new Timer();
+    private boolean _coralDetected = false;
 
     public IntakeAndIndexCoral(
             CoralArmSubsystem coral,
@@ -24,8 +39,19 @@ public class IntakeAndIndexCoral extends OutliersCommand {
 
     @Override
     public void initialize() {
-        double timer1 = Timer.getFPGATimestamp();
-        System.out.println("Starting index command");
+        if (_isRunning) {
+            System.out.println("GroundIndexCoral already running, canceling this instance");
+            CommandScheduler.getInstance().cancel(this);
+            return;
+        }
+
+        System.out.println("Starting index state machine");
+        _isRunning = true;
+        _currentState = State.INITIALIZE;
+        _stateTimer.reset();
+        _stateTimer.start();
+        _coralDetected = false;
+
         if (_initialRequest == null) {
             SuperstructureRequest activeRequest = _manager.getRequestHandler().getActiveRequest();
             if (activeRequest != null) {
@@ -34,22 +60,53 @@ public class IntakeAndIndexCoral extends OutliersCommand {
                 _initialRequest = _manager.getRequestHandler().getLastActiveRequest();
             }
         }
-        _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_FUNNEL_INDEX_DUTY_CYCLE);
-        System.out.println("init took " + (Timer.getFPGATimestamp() - timer1) + " seconds");
     }
 
     @Override
     public void execute(double timestamp) {
-        _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_FUNNEL_INDEX_DUTY_CYCLE);
+        if (!_coralDetected && _coral.isCoralDetected()) {
+            _coralDetected = true;
+            double currentPos = _coral.getWheelMotorPosition();
+            _coral.setWheelMotorPosition(currentPos + Constants.CoralArm.WHEEL_INDEX_ROTATIONS);
+            System.out.println("Coral detected - Adding index rotations");
+        }
+
+        switch (_currentState) {
+            case INITIALIZE:
+                if (_manager.getRequestHandler().getActiveRequest() == null) {
+                    _currentState = State.PREPARE_FOR_TRANSFER;
+                    System.out.println("State: INITIALIZE -> PREPARE_FOR_TRANSFER");
+                    break;
+                }
+                break;
+
+            case PREPARE_FOR_TRANSFER:
+                if (_coral.isAtState(Constants.SuperstructureGoals.RECEIVE_FROM_FUNNEL.getCoral().get())) {
+                    _coral.setWheelMotorDutyCycle(Constants.CoralArm.WHEEL_FUNNEL_INDEX_DUTY_CYCLE);
+                    _currentState = State.TRANSFERRING_CORAL;
+                    System.out.println("State: PREPARE_FOR_TRANSFER -> TRANSFERRING_CORAL");
+                }
+                break;
+
+            case TRANSFERRING_CORAL:
+                if (_coralDetected) {
+                    _currentState = State.COMPLETING_TRANSFER;
+                    System.out.println("State: TRANSFERRING_CORAL -> COMPLETING_TRANSFER");
+                }
+                break;
+
+            case COMPLETING_TRANSFER:
+                _currentState = State.COMPLETED;
+                System.out.println("State: TRANSFERING_CORAL -> COMPLETED");
+                break;
+
+            case COMPLETED:
+                break;
+        }
     }
 
     @Override
     public boolean isFinished() {
-        if (_coral.isCoralDetected()) {
-            System.out.println("Index complete due to seeing coral");
-            return true;
-        }
-
         SuperstructureRequest activeRequest = _manager.getRequestHandler().getActiveRequest();
         SuperstructureRequest lastRequest = _manager.getRequestHandler().getLastActiveRequest();
 
@@ -72,17 +129,27 @@ public class IntakeAndIndexCoral extends OutliersCommand {
             }
         }
 
-        return false;
+        return _currentState == State.COMPLETED;
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (_coral.isCoralDetected()) {
-            double currentPos = _coral.getWheelMotorPosition();
-            _coral.setWheelMotorPosition(currentPos + Constants.CoralArm.WHEEL_INDEX_ROTATIONS);
-        } else if (!interrupted) {
-            // we need to explicitly stop coral
-            _coral.setWheelMotorDutyCycle(0);
+        _isRunning = false;
+
+        if (interrupted) {
+            System.out.println("IntakeAndIndexCoral interrupted");
+            if (!_coral.isCoralDetected()) {
+                _coral.setWheelMotorDutyCycle(0);
+            }
+        } else {
+            System.out.println("IntakeAndIndexCoral completed successfully");
+            if (!_coralDetected) {
+                _coral.setWheelMotorDutyCycle(0);
+            }
         }
+    }
+
+    public static boolean isRunning() {
+        return _isRunning;
     }
 }
