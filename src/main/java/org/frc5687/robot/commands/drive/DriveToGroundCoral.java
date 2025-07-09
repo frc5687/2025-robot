@@ -57,13 +57,13 @@ public class DriveToGroundCoral extends DriveToPoseSmooth {
 
     @Override
     public void initialize() {
-        _vision.setPipelineIndex("Reef_Peeper", 1);
+        _vision.setPipelineIndex("North_Camera", 1);
         super.initialize();
     }
 
     @Override
     public void end(boolean interrupted) {
-        // _vision.setPipelineIndex("Reef_Peeper", 0);
+        // _vision.setPipelineIndex("North_Camera", 0);
         super.end(interrupted);
     }
 

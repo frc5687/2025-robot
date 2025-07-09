@@ -225,7 +225,7 @@ public class OperatorInterface {
                         new ConditionalCommand(
                                         new InstantCommand(container.getClimber()::toggleClimberSetpoint),
                                         new InstantCommand(
-                                                        () -> container.getVision().setPipelineIndex("Reef_Peeper", -1))
+                                                        () -> container.getVision().setPipelineIndex("North_Camera", -1))
                                                 .alongWith(
                                                         manager
                                                                 .createRequest(

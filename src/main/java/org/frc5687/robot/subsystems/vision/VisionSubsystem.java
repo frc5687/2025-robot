@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,17 +38,30 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         super(container, io, new VisionInputs(), new VisionOutputs());
         setPipelineIndex("limelight-center", 0);
         setPipelineIndex("limelight-left", 0);
-        setPipelineIndex("Reef_Peeper", 1);
+        setPipelineIndex("North_Camera", 1);
     }
 
     public static boolean isValidTag(AprilTagObservation observation) {
         if (observation == null) return false;
 
         boolean isValidId = false;
-        for (int id : FieldConstants.Reef.blueAllianceTagIds) {
-            if (id == observation.getId()) {
-                isValidId = true;
-                break;
+        if (DriverStation.getAlliance().get() == Alliance.Blue) {
+
+            for (int id : FieldConstants.Reef.blueAllianceTagIds) {
+                if (id == observation.getId()) {
+                    isValidId = true;
+                    break;
+                }
+            }
+        }
+
+        if (DriverStation.getAlliance().get() == Alliance.Red) {
+
+            for (int id : FieldConstants.Reef.redAllianceTagIds) {
+                if (id == observation.getId()) {
+                    isValidId = true;
+                    break;
+                }
             }
         }
         if (!isValidId) return false;
@@ -112,7 +127,7 @@ public class VisionSubsystem extends OutliersSubsystem<VisionInputs, VisionOutpu
         }
         log("Raw Neural Detections", neuralDetections, Pose2d.struct, Importance.CRITICAL);
         _algaeTracker.update(inputs.cameraNeuralPipelineObservations.get("limelight-left"));
-        _coralTracker.update(inputs.cameraNeuralPipelineObservations.get("Reef_Peeper"));
+        _coralTracker.update(inputs.cameraNeuralPipelineObservations.get("North_Camera"));
     }
 
     private List<AprilTagObservation> filterValidTags(List<AprilTagObservation> observations) {

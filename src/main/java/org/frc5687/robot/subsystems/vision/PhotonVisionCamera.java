@@ -54,7 +54,10 @@ public class PhotonVisionCamera extends Camera {
                     // apriltag detection
                     AprilTagObservation observation =
                             AprilTagObservation.fromPhotonVision(target, mostRecentResult.getTimestampSeconds());
-                    tags.add(observation);
+                    if (VisionSubsystem.isValidTag(observation)) {
+
+                        tags.add(observation);
+                    }
                 } else {
                     // neural detection
                     var observation = NeuralPipelineObservation.fromPhotonVision(_cam, _robotToCam, target);
